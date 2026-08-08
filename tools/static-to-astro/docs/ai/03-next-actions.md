@@ -4,10 +4,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint`（oneshot SUCCESS recorded · total **80** · capture inserted id + data/site_slug fps · **no** cleanup until separate approval）· `READY_FOR_CLEANUP: false` · oneshot re-run **forbidden**
+2. **並行可 (Kit Core):** oneshot SUCCESS + post-success **80-row baseline recorded** · `READY_FOR_CLEANUP: false` · cleanup = **separate explicit approval only** · oneshot re-run **forbidden** · guard expected total stays **79**
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD CREATE oneshot post-success baseline (2026-08-08)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true` |
+| Counts | total **80** · published **74** · gosaki **80** · TBD **1** · target **1** |
+| Target times | `2026-08-08 11:25:17.007763+00` |
+| site_slug fp | `1d780b234483e3c860a66cec93311718` |
+| data fp | `221256605d1501abc7cab3e044d54e2b` |
+| RLS fp | `3f6c87dda8edf44159d939ec69fbcc2b` (unchanged) |
+| Cleanup | `CLEANUP_EXECUTED: false` · `READY_FOR_CLEANUP: false` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
+POST_SUCCESS_BASELINE_RECORDED: true
+CURRENT_TOTAL: 80
+CURRENT_TBD: 1
+TARGET_EXISTS: true
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+CLEANUP_EXECUTED: false
+READY_FOR_CLEANUP: false
+ONESHOT_RERUN_FORBIDDEN: true
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot SUCCESS (2026-08-08)
 
@@ -22,6 +50,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 SUCCESS_RECORDED: true
 ACTUAL_WRITE_EXECUTED: true
 TARGET_ROW_EXACT: true
@@ -29,6 +58,8 @@ TARGET_ROW_EXISTS: true
 CURRENT_TOTAL: 80
 CURRENT_PUBLISHED: 74
 CURRENT_TBD: 1
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
 READY_FOR_RETRY: false
 CLEANUP_EXECUTED: false
 READY_FOR_CLEANUP: false

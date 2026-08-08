@@ -7,8 +7,9 @@
 - **Follow-up (2026-08-06):** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` — owner gate = `sites` resolve + `rpc('can_write_site', { p_site_id })` (**not** legacy `is_admin`) · staging RLS template SELECT+INSERT · expected total **79** · `READY_FOR_RETRY: false`
 - **Follow-up (2026-08-06):** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` — staging apply SUCCESS · policy count **4** · owner **79** / anon **74** / `can_write_site=true` · current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · Schedule row write **0** at apply · `READY_FOR_RETRY: false`
 - **Follow-up (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-success-recording` — human oneshot **INSERTED_EXACT** · `schedule-2026-11-001` · counts **80/74/gosaki80/tbd1/target1** · terminal succeeded · re-run **forbidden** · cleanup **not** done · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`
-- **Date:** 2026-08-03 · authz/RLS template + apply record 2026-08-06 · oneshot SUCCESS 2026-08-08
-- **Status:** **COMPLETE (implementation + boundary hardening + preflight/authz fixes + RLS apply + oneshot SUCCESS recorded + offline verifier)**
+- **Follow-up (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording` — SELECT-only 80-row baseline · site_slug `1d780b234483e3c860a66cec93311718` · data `221256605d1501abc7cab3e044d54e2b` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`
+- **Date:** 2026-08-03 · authz/RLS template + apply record 2026-08-06 · oneshot SUCCESS + post-success baseline 2026-08-08
+- **Status:** **COMPLETE (implementation + boundary hardening + preflight/authz fixes + RLS apply + oneshot SUCCESS + post-success baseline + offline verifier)**
 - **This phase (historical):** Path B CREATE-only oneshot wire · **low-level INSERT non-exported** · INSERT直前再guard · schema probe · arms OFF · no Save in implementation phase
 
 Prior: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md`
@@ -25,6 +26,7 @@ CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 SITE_WRITER_RLS_TEMPLATE_CREATED: true
 SITE_WRITER_RLS_APPLIED: true
@@ -35,6 +37,13 @@ ANON_VISIBILITY_PASS: true
 CAN_WRITE_SITE_PASS: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
+POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
+PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
+ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 POLICY_COUNT: 4
 SCHEDULE_ROW_WRITE_EXECUTED: true
 TARGET_ROW_EXISTS: true
@@ -68,7 +77,7 @@ CLEANUP_IMPLEMENTED: false
 MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint
+NEXT_PRIMARY_RECOMMENDED: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
 FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS · process-scoped exactly 9 keys · superseded by oneshot SUCCESS)
 EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation (COMPLETE · human runbook §7)
 WRITE_STACK_GATE_CORRECTION: cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction (COMPLETE · oneshot-only proven)
@@ -78,6 +87,7 @@ AUTH_BEFORE_PREFLIGHT_FIX: cms-core-v2-schedule-tbd-create-oneshot-auth-before-p
 SITE_OWNER_AUTHZ: cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template (COMPLETE · offline)
 SITE_WRITER_RLS_APPLY: cms-core-v2-schedules-site-writer-rls-apply-result-recording (COMPLETE · docs)
 ONESHOT_SUCCESS: cms-core-v2-schedule-tbd-create-oneshot-success-recording (COMPLETE · INSERTED_EXACT · re-run forbidden)
+POST_SUCCESS_BASELINE: cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording (COMPLETE · 80-row fps fixed)
 ```
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
@@ -106,6 +116,8 @@ ONESHOT_SUCCESS: cms-core-v2-schedule-tbd-create-oneshot-success-recording (COMP
 **Site-scoped owner authz (2026-08-06):** oneshot gate is **not** legacy `is_admin` / `admin_users`. Call order: signed-in → resolve `sites.id` for `site_slug=gosaki-piano` (0/multi fail-closed) → `rpc('can_write_site', { p_site_id })` must be `true` → preflight (expected total **79**) → INSERT max 1. Owner (`site_members.role=owner`) · editor · platform_admin are all via `can_write_site`. Staging RLS: `schedules_site_writer_select` + `schedules_site_writer_insert` **applied** (2026-08-06) · keeps `schedules_public_select` + `schedules_admin_all`. Current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b`. Docs: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md` · `cms-core-v2-schedules-site-writer-rls-apply-result.md`.
 
 **Oneshot SUCCESS (2026-08-08):** operator CREATE once → **INSERTED_EXACT** · `legacy_id=schedule-2026-11-001` · published/show_on_home **false** · counts **80/74/80/0/1/1** · authz path sites → `can_write_site` → preflight → INSERT under site-writer RLS · prior failures (query-builder / auth-before-preflight / owner≠`is_admin`) closed · terminal **succeeded** · re-run **forbidden** · cleanup separate approval only · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`. Runtime preflight baseline in guards remains **79** (historical oneshot gate — do not rewrite to 80).
+
+**Post-success baseline (2026-08-08):** SELECT-only PASS · `created_at`/`updated_at` `2026-08-08 11:25:17.007763+00` · site_slug fp `1d780b234483e3c860a66cec93311718` · data fp `221256605d1501abc7cab3e044d54e2b` · index/trigger unchanged · RLS `3f6c87dda8edf44159d939ec69fbcc2b` · historical 79-row site_slug/data fps retained · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
 
 - Uses `buildScheduleTbdSavePayload` · `mode=tbd-v1` · `operation=create` · `dryRun` write path via `tbdWriteEnabled`
 - No `buildScheduleLockedWriteRequest` / UPDATE

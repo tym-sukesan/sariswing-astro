@@ -42,8 +42,6 @@ const GUARDS = path.join(
   "../../src/lib/admin/staging-write/gosaki-schedule-tbd-create-oneshot-guards.ts",
 );
 
-const CURRENT_RLS_FP = "3f6c87dda8edf44159d939ec69fbcc2b";
-
 let passed = 0;
 let failed = 0;
 function assert(name, cond, detail = "") {
@@ -107,19 +105,32 @@ assert(
     /is_admin/.test(doc),
 );
 assert(
-  "pending SELECT-only fingerprint",
-  /DATA_SITE_SLUG_FINGERPRINT_POST_SUCCESS:\s*pending-select-only/.test(doc) &&
-    /pending SELECT-only/.test(doc),
+  "post-success fingerprints recorded",
+  /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(doc) &&
+    /POST_SUCCESS_DATA_FP:\s*221256605d1501abc7cab3e044d54e2b/.test(doc) &&
+    !/pending-select-only/.test(doc),
+);
+assert(
+  "historical 79-row fps retained",
+  /PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL:\s*a4ff22feb81e19789732525937f4be7e/.test(
+    doc,
+  ) &&
+    /PRE_ONESHOT_DATA_FP_HISTORICAL:\s*1910b4faa5b17344d63968dc25f89cd6/.test(
+      doc,
+    ),
+);
+assert(
+  "target timestamps",
+  /2026-08-08 11:25:17\.007763\+00/.test(doc),
 );
 assert(
   "current RLS fp",
-  new RegExp(CURRENT_RLS_FP).test(doc),
+  /3f6c87dda8edf44159d939ec69fbcc2b/.test(doc),
 );
 assert(
-  "next primary select-only",
-  /cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint/.test(
-    doc,
-  ),
+  "next primary cleanup gate",
+  /READY_FOR_CLEANUP:\s*false/.test(doc) &&
+    /cleanup requires separate explicit approval/i.test(doc),
 );
 assert(
   "guards still baseline 79",
@@ -129,7 +140,8 @@ assert(
   "impl records success",
   /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(impl) &&
     /ACTUAL_WRITE_EXECUTED:\s*true/.test(impl) &&
-    /CURRENT_TOTAL:\s*80/.test(impl),
+    /CURRENT_TOTAL:\s*80/.test(impl) &&
+    /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(impl),
 );
 assert(
   "final-preflight records success",
@@ -137,7 +149,8 @@ assert(
     finalDoc,
   ) &&
     /ACTUAL_WRITE_EXECUTED:\s*true/.test(finalDoc) &&
-    /CURRENT_TOTAL:\s*80/.test(finalDoc),
+    /CURRENT_TOTAL:\s*80/.test(finalDoc) &&
+    /POST_SUCCESS_DATA_FP:\s*221256605d1501abc7cab3e044d54e2b/.test(finalDoc),
 );
 assert(
   "authz records owner write success",
@@ -149,14 +162,20 @@ assert(
   "apply-result post-oneshot",
   /ACTUAL_WRITE_EXECUTED:\s*true/.test(apply) &&
     /CURRENT_TOTAL:\s*80/.test(apply) &&
-    /SCHEDULE_ROW_WRITE_AT_APPLY:\s*false/.test(apply),
+    /SCHEDULE_ROW_WRITE_AT_APPLY:\s*false/.test(apply) &&
+    /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(apply),
 );
 assert(
-  "AI context records success",
+  "AI context records success + baseline",
   /cms-core-v2-schedule-tbd-create-oneshot-success-recording/.test(ai0) &&
     /INSERTED_EXACT/.test(ai0) &&
     /CURRENT_TOTAL:\s*80/.test(ai3) &&
-    /post-success-select-only-fingerprint/.test(hand),
+    /POST_SUCCESS_BASELINE_RECORDED:\s*true/.test(hand) &&
+    /post-success-baseline/.test(hand),
+);
+assert(
+  "baseline doc referenced",
+  /cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline/.test(doc),
 );
 assert(
   "npm script registered",

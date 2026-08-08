@@ -14,6 +14,7 @@
 - **Site-scoped owner authz (2026-08-06):** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` — gate = `can_write_site` (not legacy `is_admin`) · mapping PASS
 - **Site-writer RLS apply recorded (2026-08-06):** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` — applied SUCCESS · policy count **4** · RLS fp `3f6c87dda8edf44159d939ec69fbcc2b`
 - **Oneshot SUCCESS recorded (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-success-recording` — **INSERTED_EXACT** · counts **80/74/gosaki80/tbd1/target1** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`
+- **Post-success baseline recorded (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording` — SELECT-only PASS · site_slug `1d780b234483e3c860a66cec93311718` · data `221256605d1501abc7cab3e044d54e2b` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -34,6 +35,7 @@ CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 SITE_WRITER_RLS_APPLIED: true
 RLS_MIGRATION_EXECUTED: true
@@ -43,6 +45,13 @@ ANON_VISIBILITY_PASS: true
 CAN_WRITE_SITE_PASS: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
+POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
+PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
+ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 POLICY_COUNT: 4
 SCHEDULE_ROW_WRITE_EXECUTED: true
 TARGET_ROW_EXISTS: true
@@ -76,7 +85,7 @@ EDGE_CHANGED: false
 PACKAGE_REGENERATED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint
+NEXT_PRIMARY_RECOMMENDED: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
 ```
 
 **SQL Editor PASS (operator, staging only · historical pre-oneshot):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3 · total **79** at that time.
@@ -86,6 +95,8 @@ NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-create-oneshot-post-success-s
 **Second single-click (2026-08-05):** runtime preflight **failed** · `total schedules drift (expected 79, got 74)` · 74 = published / `schedules_public_select` · cause = auth before preflight missing · exact SELECT `NOT_INSERTED` · baseline 79/74/0/0 · cleanup 不要. See `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
 
 **Oneshot SUCCESS (2026-08-08):** sites → `can_write_site` → preflight → INSERT · **INSERTED_EXACT** · `schedule-2026-11-001` · counts **80/74/gosaki80/tbd1/target1** · published false · terminal succeeded · re-run forbidden · cleanup not done · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`.
+
+**Post-success baseline (2026-08-08):** SELECT-only PASS · site_slug fp `1d780b234483e3c860a66cec93311718` · data fp `221256605d1501abc7cab3e044d54e2b` · index/trigger unchanged · RLS `3f6c87dda8edf44159d939ec69fbcc2b` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
 
 **ACTUAL_WRITE_READY false** (do not re-arm). **ACTUAL_WRITE_EXECUTED true** (human CREATE once). Arms OFF · production untouched · Cursor did not click Save in this recording phase.
 
@@ -745,7 +756,7 @@ commit;
 | CURRENT_TOTAL / CURRENT_TBD / CURRENT_TARGET | **80 / 1 / 1** |
 | PRODUCTION_UNCHANGED | **true** |
 
-**Next Primary:** `cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint` — SELECT-only capture inserted id + data/site_slug fingerprints · **no** cleanup until separate approval · oneshot re-run **forbidden**.
+**Next Primary:** cleanup requires **separate explicit approval** only (`READY_FOR_CLEANUP: false`) · oneshot re-run **forbidden** · after cleanup re-SELECT fingerprints.
 
 ---
 

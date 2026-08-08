@@ -5,17 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD CREATE oneshot SUCCESS RECORDED
-Phase: cms-core-v2-schedule-tbd-create-oneshot-success-recording
-Decision: INSERTED_EXACT · schedule-2026-11-001 · counts 80/74/gosaki80/tbd1/target1 · site-owner can_write_site + site-writer RLS · cleanup not done · re-run forbidden
+Current phase: CMS Core v2 Schedule TBD CREATE oneshot post-success baseline RECORDED
+Phase: cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording
+Decision: SELECT-only PASS · 80-row pre-cleanup baseline fixed · site_slug 1d780b23… · data 22125660… · RLS 3f6c87… · index/trigger unchanged · historical 79-row fps retained · cleanup not done
 ACTUAL_WRITE_EXECUTED: true
-TARGET_ROW_EXACT: true
+TARGET_EXISTS: true
+POST_SUCCESS_BASELINE_RECORDED: true
 READY_FOR_RETRY: false
 READY_FOR_CLEANUP: false
 CLEANUP_EXECUTED: false
 ARMS_OFF: true
-Next Primary: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint (SELECT-only id + data fps)
-Prior: final retry readiness READY_FOR_RETRY true · operator CREATE once · site-writer RLS apply
+Next Primary: cleanup only with separate explicit approval (READY_FOR_CLEANUP false)
+Prior: oneshot SUCCESS cef4de14 · SELECT-only fingerprint capture
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
@@ -23,12 +24,20 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD CREATE oneshot post-success baseline (2026-08-08)
+
+- Counts **80/74/gosaki80/tbd1/target1** · `created_at`/`updated_at` `2026-08-08 11:25:17.007763+00`
+- site_slug fp `1d780b234483e3c860a66cec93311718` · data fp `221256605d1501abc7cab3e044d54e2b`
+- index/trigger unchanged · RLS `3f6c87dda8edf44159d939ec69fbcc2b`
+- Historical 79-row site_slug/data fps retained · guard expected total **79**
+- Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`
+
 ## CMS Core v2 Schedule TBD CREATE oneshot SUCCESS (2026-08-08)
 
 - Outcome **INSERTED_EXACT** · `legacy_id=schedule-2026-11-001` · unpublished TBD · total **80** / published **74** / TBD **1** / target **1**
 - Authz: sites → `can_write_site` → preflight → INSERT · site-writer RLS
 - Failures closed: query-builder · auth-before-preflight · owner≠`is_admin`
-- Inserted UUID / post-success data fingerprints: **pending SELECT-only**
+- Post-success baseline recorded (above)
 - Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`
 
 ## CMS Core v2 schedules site-writer RLS staging apply result (2026-08-06)

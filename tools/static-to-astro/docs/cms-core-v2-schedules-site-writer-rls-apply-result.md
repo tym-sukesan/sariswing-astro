@@ -1,8 +1,8 @@
 # CMS Core v2 — schedules site-writer RLS staging apply result
 
 - **Phase:** `cms-core-v2-schedules-site-writer-rls-apply-result-recording`
-- **Date recorded:** 2026-08-06 · **post-oneshot note:** 2026-08-08
-- **Status:** **COMPLETE (docs / offline recording)** · oneshot CREATE later **SUCCESS** (row write proved under these policies)
+- **Date recorded:** 2026-08-06 · **post-oneshot note:** 2026-08-08 · **post-success baseline:** 2026-08-08
+- **Status:** **COMPLETE (docs / offline recording)** · oneshot CREATE later **SUCCESS** · post-success 80-row baseline **recorded**
 - **HEAD at apply:** `3e5bc88f63f498bf9e673cea4e9985424947c747`
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` — **untouched**
@@ -17,6 +17,7 @@ Prior: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md` · apply re
 ```txt
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 RLS_MIGRATION_EXECUTED: true
 RLS_POSTCHECK_PASS: true
 post_apply_pass: true
@@ -30,6 +31,13 @@ OWNER_WRITE_SUCCESS: true
 LEGACY_PUBLIC_ADMIN_POLICIES_RETAINED: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
+POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
+PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
+ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 POLICY_COUNT: 4
 SCHEDULE_ROW_WRITE_AT_APPLY: false
 SCHEDULE_ROW_WRITE_EXECUTED: true
@@ -51,7 +59,7 @@ DB_WRITE_EXECUTED: true
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
-NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint
+NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
 ```
 
 ---
@@ -94,7 +102,15 @@ NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-f
 | TBD | **1** |
 | target `schedule-2026-11-001` | **1** |
 
-Owner write SUCCESS under site-writer RLS · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`. No UPDATE/DELETE writer policies.
+| Fingerprint | Post-success | Historical pre-oneshot |
+| --- | --- | --- |
+| site_slug_count | `1d780b234483e3c860a66cec93311718` | `a4ff22feb81e19789732525937f4be7e` |
+| data | `221256605d1501abc7cab3e044d54e2b` | `1910b4faa5b17344d63968dc25f89cd6` |
+| index | `cbaada6b44ae2cd07f4a0516f9d0f9b3` | unchanged |
+| trigger | `2e9899f09421456307b3c96402574106` | unchanged |
+| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | current site-writer (unchanged by INSERT) |
+
+Owner write SUCCESS under site-writer RLS · Docs: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md` · `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`. No UPDATE/DELETE writer policies.
 ---
 
 ## 3. Live JWT probe at apply (arms OFF · no INSERT · historical)

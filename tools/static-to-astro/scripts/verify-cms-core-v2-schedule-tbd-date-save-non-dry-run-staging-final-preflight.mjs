@@ -80,7 +80,11 @@ assert(
   "oneshot success recorded",
   /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc) &&
     /INSERTED_EXACT/.test(doc) &&
-    /CURRENT_TOTAL:\s*80/.test(doc),
+    /CURRENT_TOTAL:\s*80/.test(doc) &&
+    /POST_SUCCESS_DATA_FP:\s*221256605d1501abc7cab3e044d54e2b/.test(doc) &&
+    /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED:\s*true/.test(
+      doc,
+    ),
 );
 assert("ARMS_OFF true", /ARMS_OFF:\s*true/.test(doc));
 assert("DB_WRITE_EXECUTED true", /DB_WRITE_EXECUTED:\s*true/.test(doc));

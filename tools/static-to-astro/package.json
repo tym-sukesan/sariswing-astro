@@ -43,6 +43,7 @@
     "verify:cms-core-v2-schedule-site-owner-authz-rls-implementation": "node scripts/verify-cms-core-v2-schedule-site-owner-authz-rls-implementation.mjs",
     "verify:cms-core-v2-schedules-site-writer-rls-apply-result": "node scripts/verify-cms-core-v2-schedules-site-writer-rls-apply-result.mjs",
     "verify:cms-core-v2-schedule-tbd-create-oneshot-success-result": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-success-result.mjs",
+    "verify:cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.mjs",
     "verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",
     "verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers": "node scripts/verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
     "verify:cms-core-v2-schedule-tbd-staging-migration-gate": "node scripts/verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",

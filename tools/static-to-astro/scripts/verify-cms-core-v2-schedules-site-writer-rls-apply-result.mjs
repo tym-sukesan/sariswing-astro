@@ -103,6 +103,14 @@ assert("SCHEDULE_ROW_WRITE_EXECUTED true", /SCHEDULE_ROW_WRITE_EXECUTED:\s*true/
 assert("TARGET_ROW_EXISTS true", /TARGET_ROW_EXISTS:\s*true/.test(doc));
 assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
 assert("oneshot success recorded", /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc));
+assert(
+  "post-success baseline recorded",
+  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED:\s*true/.test(
+    doc,
+  ) &&
+    /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(doc) &&
+    /POST_SUCCESS_DATA_FP:\s*221256605d1501abc7cab3e044d54e2b/.test(doc),
+);
 assert("READY_FOR_RETRY false", /READY_FOR_RETRY:\s*false/.test(doc));
 assert("ROLLBACK_EXECUTED false", /ROLLBACK_EXECUTED:\s*false/.test(doc));
 assert("PRODUCTION_UNCHANGED true", /PRODUCTION_UNCHANGED:\s*true/.test(doc));

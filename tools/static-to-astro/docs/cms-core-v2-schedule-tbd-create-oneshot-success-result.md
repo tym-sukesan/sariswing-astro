@@ -1,12 +1,13 @@
 # CMS Core v2 — Schedule TBD CREATE oneshot success result
 
 - **Phase:** `cms-core-v2-schedule-tbd-create-oneshot-success-recording`
+- **Follow-up:** `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording` (SELECT-only 80-row baseline fixed)
 - **Date recorded:** 2026-08-08
-- **Status:** **COMPLETE (docs / offline recording)**
-- **HEAD at recording start:** `a14b6a8aa21af862e1c55156a0d8cd2200350667`
+- **Status:** **COMPLETE (docs / offline recording)** · post-success baseline **RECORDED**
+- **HEAD at success docs commit:** `cef4de140de121f53331e3d87ff4de32b2565f78`
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` — **untouched**
-- **This phase:** record human oneshot CREATE SUCCESS · **no** Cursor SQL · **no** cleanup/DELETE/UPDATE · **no** arm/process · **no** commit/push by Cursor until operator asks
+- **This phase (historical):** record human oneshot CREATE SUCCESS · **no** cleanup/DELETE/UPDATE
 
 Prior: site-writer RLS applied · final retry readiness `READY_FOR_RETRY: true` · operator executed CREATE once
 
@@ -16,7 +17,9 @@ Prior: site-writer RLS applied · final retry readiness `READY_FOR_RETRY: true` 
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 SUCCESS_RECORDED: true
+POST_SUCCESS_BASELINE_RECORDED: true
 OUTCOME: INSERTED_EXACT
 ACTUAL_WRITE_EXECUTED: true
 SCHEDULE_ROW_WRITE_EXECUTED: true
@@ -37,11 +40,20 @@ CONTRACT_VIOLATIONS: 0
 SITE_WRITER_RLS_APPLIED: true
 OWNER_AUTHZ_PATH_USED: sites -> can_write_site -> preflight -> INSERT
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
-DATA_SITE_SLUG_FINGERPRINT_POST_SUCCESS: pending-select-only
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
+POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
+PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
+ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
+TARGET_CREATED_AT: 2026-08-08 11:25:17.007763+00
+TARGET_UPDATED_AT: 2026-08-08 11:25:17.007763+00
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
-NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint (SELECT-only · capture inserted id + data/site_slug fps)
+NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
+POST_SUCCESS_BASELINE_DOC: cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md
 ```
 
 ---
@@ -59,8 +71,8 @@ NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-f
 | `date_status` / `date` | `tbd` / `null` |
 | Terminal | **succeeded** · re-click / re-arm **forbidden** |
 | Server | stopped · **4321** not LISTEN |
-| Inserted UUID | **pending SELECT-only** (not pasted in this chat · do not invent) |
-| Exact success timestamptz | **pending SELECT-only** (`created_at` / `updated_at` of target row) |
+| Inserted UUID | **not pasted** (do not invent) |
+| `created_at` / `updated_at` | `2026-08-08 11:25:17.007763+00` |
 | Operator confirm day | **2026-08-08** (recording session) |
 
 ---
@@ -120,33 +132,19 @@ Fixed INSERT allowlist matches `buildTbdCreateOneshotFixedInsertPayload()` / fin
 
 ---
 
-## 7. Next: SELECT-only fingerprint refresh (no write)
+## 7. Post-success baseline (SELECT-only PASS)
 
-Data / `site_slug` catalog fingerprints **changed** because a row was inserted. RLS policy fingerprint `3f6c87dda8edf44159d939ec69fbcc2b` may stay valid (policies unchanged).
+Full detail: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
 
-```sql
--- staging only · SELECT-only · do not paste UUID/email in chat if sharing counts only
-select id, created_at, updated_at, legacy_id, site_slug, date_status, date,
-       published, show_on_home, title, month
-from public.schedules
-where site_slug = 'gosaki-piano'
-  and legacy_id = 'schedule-2026-11-001';
--- Expect: exactly 1 row
+| Kind | Post-success (80 / pre-cleanup) | Historical pre-oneshot (79) |
+| --- | --- | --- |
+| site_slug_count | `1d780b234483e3c860a66cec93311718` | `a4ff22feb81e19789732525937f4be7e` |
+| data | `221256605d1501abc7cab3e044d54e2b` | `1910b4faa5b17344d63968dc25f89cd6` |
+| index | `cbaada6b44ae2cd07f4a0516f9d0f9b3` | unchanged |
+| trigger | `2e9899f09421456307b3c96402574106` | unchanged |
+| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | current site-writer (unchanged by INSERT) |
 
-select
-  (select count(*) from public.schedules) as total,
-  (select count(*) from public.schedules where published = true) as published,
-  (select count(*) from public.schedules where site_slug = 'gosaki-piano') as gosaki,
-  (select count(*) from public.schedules where site_slug = 'mio-kisaragi-jazz') as mio,
-  (select count(*) from public.schedules where coalesce(date_status,'confirmed') = 'tbd') as tbd,
-  (select count(*) from public.schedules
-     where site_slug = 'gosaki-piano' and legacy_id = 'schedule-2026-11-001') as target;
-
--- Expect: 80 / 74 / 80 / 0 / 1 / 1
-
--- Then re-run existing data + site_slug md5 fingerprint queries from TBD migration gate SoT;
--- record NEW values as POST_ONESHOT baseline (do not rewrite pre-oneshot history).
-```
+After cleanup, re-SELECT fingerprints in a dedicated phase — do not assume values here.
 
 ---
 

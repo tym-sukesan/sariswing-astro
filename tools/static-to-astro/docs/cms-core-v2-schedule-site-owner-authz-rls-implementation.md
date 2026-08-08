@@ -3,8 +3,9 @@
 - **Phase:** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template`
 - **Follow-up:** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` (staging apply recorded 2026-08-06)
 - **Follow-up (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-success-recording` — owner write **SUCCESS** via `can_write_site` + site-writer RLS · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`
-- **Date:** 2026-08-06 · oneshot SUCCESS 2026-08-08
-- **Status:** **COMPLETE (offline template + client gate)** · staging RLS **applied** · oneshot INSERT **proved** under site-writer RLS
+- **Follow-up (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording` — 80-row baseline fps fixed · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`
+- **Date:** 2026-08-06 · oneshot SUCCESS + post-success baseline 2026-08-08
+- **Status:** **COMPLETE (offline template + client gate)** · staging RLS **applied** · oneshot INSERT **proved** · post-success baseline **recorded**
 - **HEAD baseline (template commit):** `b75cc41…` · **apply HEAD:** `3e5bc88f63f498bf9e673cea4e9985424947c747`
 - **This phase (historical):** client gate → `can_write_site` · staging RLS migration templates · offline verifiers
 
@@ -16,6 +17,7 @@
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 OWNER_ADMIN_DISTINCT: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 SITE_WRITER_RLS_TEMPLATE_CREATED: true
@@ -29,6 +31,11 @@ OWNER_WRITE_SUCCESS: true
 LEGACY_PUBLIC_ADMIN_POLICIES_RETAINED: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
+POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
+POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
+PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
+ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 POLICY_COUNT: 4
 READY_FOR_MIGRATION_EXECUTION: false
 SCHEDULE_ROW_WRITE_EXECUTED: true
@@ -49,7 +56,7 @@ ENV_CHANGED: false
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint
+NEXT: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
 ```
 
 **Pre-apply baseline (historical):** total **79** · published **74** · gosaki **79** · null/orphan/mio/tbd/target **0** · policies: `schedules_public_select`, `schedules_admin_all` · writer policies absent · RLS fp `e7344ff0de1d5e2862965ffc0e4e72cf`.
@@ -57,6 +64,8 @@ NEXT: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerpri
 **Post-apply current (2026-08-06 01:28:23.744153+00 · pre-oneshot):** policy count **4** · same data baseline · owner visibility **79** · anon **74** · `can_write_site=true` · RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`.
 
 **Post-oneshot (2026-08-08):** owner INSERT SUCCESS · total **80** · published **74** · gosaki **80** · TBD **1** · target **1** · path sites → `can_write_site` → preflight → INSERT · legacy public + admin_all retained · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`.
+
+**Post-success baseline (2026-08-08):** site_slug fp `1d780b234483e3c860a66cec93311718` · data fp `221256605d1501abc7cab3e044d54e2b` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
 
 ---
 

@@ -132,7 +132,11 @@ assert(
   "oneshot success recorded",
   /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc) &&
     /INSERTED_EXACT/.test(doc) &&
-    /CURRENT_TOTAL:\s*80/.test(doc),
+    /CURRENT_TOTAL:\s*80/.test(doc) &&
+    /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(doc) &&
+    /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED:\s*true/.test(
+      doc,
+    ),
 );
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
 assert("env unchanged", /ENV_CHANGED:\s*false|env unchanged/i.test(doc));

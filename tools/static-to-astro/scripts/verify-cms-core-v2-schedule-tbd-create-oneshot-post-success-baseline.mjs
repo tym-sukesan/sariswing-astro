@@ -79,11 +79,27 @@ assert(
   ) && /POST_SUCCESS_BASELINE_RECORDED:\s*true/.test(doc),
 );
 assert("HEAD recorded", new RegExp(HEAD).test(doc));
-assert("CURRENT_TOTAL 80", /CURRENT_TOTAL:\s*80/.test(doc));
-assert("CURRENT_TBD 1", /CURRENT_TBD:\s*1/.test(doc));
-assert("TARGET_EXISTS true", /TARGET_EXISTS:\s*true/.test(doc));
-assert("CLEANUP_EXECUTED false", /CLEANUP_EXECUTED:\s*false/.test(doc));
-assert("READY_FOR_CLEANUP false", /READY_FOR_CLEANUP:\s*false/.test(doc));
+assert(
+  "historical post-success total 80",
+  /HISTORICAL_POST_SUCCESS_TOTAL:\s*80/.test(doc) ||
+    (/schedules total[\s\S]*\*\*80\*\*/.test(doc) &&
+      /HISTORICAL_POST_SUCCESS/.test(doc)),
+);
+assert(
+  "historical post-success TBD 1",
+  /HISTORICAL_POST_SUCCESS_TBD:\s*1/.test(doc) ||
+    /TBD[\s\S]*\*\*1\*\*/.test(doc),
+);
+assert("TARGET_EXISTS true (historical)", /TARGET_EXISTS:\s*true/.test(doc));
+assert(
+  "cleanup at this phase false",
+  /CLEANUP_EXECUTED_AT_THIS_PHASE:\s*false/.test(doc),
+);
+assert(
+  "cleanup later recorded",
+  /CLEANUP_LATER_RECORDED:\s*true/.test(doc) &&
+    /POST_CLEANUP_CURRENT_TOTAL:\s*79/.test(doc),
+);
 assert(
   "target timestamps",
   /2026-08-08 11:25:17\.007763\+00/.test(doc),

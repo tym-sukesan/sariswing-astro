@@ -18,6 +18,7 @@ Prior: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md` · apply re
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED: true
 RLS_MIGRATION_EXECUTED: true
 RLS_POSTCHECK_PASS: true
 post_apply_pass: true
@@ -26,6 +27,7 @@ OWNER_VISIBILITY_PASS: true
 ANON_VISIBILITY_PASS: true
 CAN_WRITE_SITE_PASS: true
 SITE_WRITER_RLS_APPLIED: true
+SITE_WRITER_RLS_RETAINED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 OWNER_WRITE_SUCCESS: true
 LEGACY_PUBLIC_ADMIN_POLICIES_RETAINED: true
@@ -35,31 +37,38 @@ POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
 POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
 POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
 POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+POST_CLEANUP_SITE_SLUG_FP: a4ff22feb81e19789732525937f4be7e
+POST_CLEANUP_DATA_FP: 1910b4faa5b17344d63968dc25f89cd6
+DATA_BASELINE_RESTORED: true
+SITE_SLUG_BASELINE_RESTORED: true
 PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
 PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
 ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 POLICY_COUNT: 4
 SCHEDULE_ROW_WRITE_AT_APPLY: false
 SCHEDULE_ROW_WRITE_EXECUTED: true
-TARGET_ROW_EXISTS: true
+TARGET_ROW_EXISTS: false
 TARGET_ROW_EXACT: true
 OUTCOME: INSERTED_EXACT
-CURRENT_TOTAL: 80
+CLEANUP_DELETE_OUTCOME: DELETED_EXACT
+CURRENT_TOTAL: 79
 CURRENT_PUBLISHED: 74
-CURRENT_GOSAKI: 80
-CURRENT_TBD: 1
-CURRENT_TARGET: 1
+CURRENT_GOSAKI: 79
+CURRENT_TBD: 0
+CURRENT_TARGET: 0
 ROLLBACK_EXECUTED: false
+RLS_ROLLBACK_EXECUTED: false
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: true
 READY_FOR_RETRY: false
 READY_FOR_CLEANUP: false
-CLEANUP_EXECUTED: false
+CLEANUP_EXECUTED: true
+POC_CLOSE_READY: true
 DB_WRITE_EXECUTED: true
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
-NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
+NEXT_PRIMARY: PoC closed for row write · site-writer RLS remains current · no oneshot re-arm
 ```
 
 ---
@@ -92,25 +101,25 @@ NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANU
 
 ---
 
-## 2b. Current post-oneshot baseline (2026-08-08)
+## 2b. Post-oneshot then post-cleanup baselines
 
-| Metric | Value |
-| --- | ---: |
-| schedules total | **80** |
-| published | **74** |
-| gosaki | **80** |
-| TBD | **1** |
-| target `schedule-2026-11-001` | **1** |
+| Metric | Post-success (historical 80) | Post-cleanup (current) |
+| --- | ---: | ---: |
+| schedules total | **80** | **79** |
+| published | **74** | **74** |
+| gosaki | **80** | **79** |
+| TBD | **1** | **0** |
+| target `schedule-2026-11-001` | **1** | **0** |
 
-| Fingerprint | Post-success | Historical pre-oneshot |
+| Fingerprint | Post-success (historical) | Post-cleanup (current / restored) |
 | --- | --- | --- |
 | site_slug_count | `1d780b234483e3c860a66cec93311718` | `a4ff22feb81e19789732525937f4be7e` |
 | data | `221256605d1501abc7cab3e044d54e2b` | `1910b4faa5b17344d63968dc25f89cd6` |
 | index | `cbaada6b44ae2cd07f4a0516f9d0f9b3` | unchanged |
 | trigger | `2e9899f09421456307b3c96402574106` | unchanged |
-| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | current site-writer (unchanged by INSERT) |
+| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | retained (site-writer · not rolled back) |
 
-Owner write SUCCESS under site-writer RLS · Docs: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md` · `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`. No UPDATE/DELETE writer policies.
+Docs: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md` · `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md` · `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`. No UPDATE/DELETE writer policies.
 ---
 
 ## 3. Live JWT probe at apply (arms OFF · no INSERT · historical)

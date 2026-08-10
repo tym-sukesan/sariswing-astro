@@ -1,18 +1,19 @@
 # CMS Core v2 — Schedule TBD CREATE oneshot post-success baseline
 
 - **Phase:** `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording`
+- **Follow-up (2026-08-10):** cleanup DELETED_EXACT restored 79-row catalog · this 80-row snapshot **retained as history** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`
 - **Date recorded:** 2026-08-08
-- **Status:** **COMPLETE (docs / offline recording)**
+- **Status:** **COMPLETE (docs / offline recording)** · historical **80-row / pre-cleanup** evidence (do not erase)
 - **HEAD:** `cef4de140de121f53331e3d87ff4de32b2565f78` (oneshot SUCCESS docs commit)
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` — **untouched**
-- **This phase:** record SELECT-only post-success / pre-cleanup 80-row baseline · **no** Cursor SQL · **no** cleanup/DELETE/UPDATE · **no** arm/process · **no** commit/push by Cursor until operator asks
+- **This phase (historical):** record SELECT-only post-success / pre-cleanup 80-row baseline
 
 Prior: `cms-core-v2-schedule-tbd-create-oneshot-success-recording` · operator SELECT-only PASS
 
 ---
 
-## 0. Gates
+## 0. Gates (historical post-success / pre-cleanup snapshot)
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
@@ -24,15 +25,14 @@ TARGET_ROW_EXACT: true
 ONESHOT_TERMINAL: succeeded
 ONESHOT_RERUN_FORBIDDEN: true
 READY_FOR_RETRY: false
-CLEANUP_EXECUTED: false
-READY_FOR_CLEANUP: false
-CURRENT_TOTAL: 80
-CURRENT_PUBLISHED: 74
-CURRENT_GOSAKI: 80
-CURRENT_MIO: 0
-CURRENT_TBD: 1
-CURRENT_TARGET: 1
-CONTRACT_VIOLATIONS: 0
+CLEANUP_EXECUTED_AT_THIS_PHASE: false
+HISTORICAL_POST_SUCCESS_TOTAL: 80
+HISTORICAL_POST_SUCCESS_TBD: 1
+HISTORICAL_POST_SUCCESS_TARGET: 1
+CURRENT_PUBLISHED_AT_POST_SUCCESS: 74
+CURRENT_GOSAKI_AT_POST_SUCCESS: 80
+CURRENT_MIO_AT_POST_SUCCESS: 0
+CONTRACT_VIOLATIONS_AT_POST_SUCCESS: 0
 POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
 POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
 POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
@@ -42,10 +42,12 @@ PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
 PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
 ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
+CLEANUP_LATER_RECORDED: true
+POST_CLEANUP_CURRENT_TOTAL: 79
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
-NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
+NEXT_PRIMARY: see cleanup-result · PoC CLOSE_READY
 ```
 
 ---
@@ -86,13 +88,13 @@ NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANU
 | trigger | `2e9899f09421456307b3c96402574106` | `2e9899f09421456307b3c96402574106` (unchanged) |
 | RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | pre-writer `e7344ff0de1d5e2862965ffc0e4e72cf` · current site-writer same as post-success |
 
-**Do not** erase historical 79-row site_slug/data values. **Do not** rewrite `TBD_CREATE_ONESHOT_PREFLIGHT_BASELINE.totalSchedules=79`. After cleanup, re-SELECT fingerprints in a new phase (expected return toward 79-row catalog).
+**Do not** erase this 80-row snapshot after cleanup. **Do not** rewrite `TBD_CREATE_ONESHOT_PREFLIGHT_BASELINE.totalSchedules=79`. Cleanup (2026-08-10) restored site_slug/data to historical 79-row values — see `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`.
 
 ---
 
-## 4. Explicit non-actions
+## 4. Explicit non-actions (this historical phase)
 
-- No SQL / DB write / DELETE / UPDATE by Cursor
+- No SQL / DB write / DELETE / UPDATE by Cursor in this phase
 - No oneshot re-execution · no arm / process / env
-- No cleanup · `READY_FOR_CLEANUP: false`
+- Cleanup recorded separately · this doc remains pre-cleanup evidence
 - Production untouched · commit/push only when operator requests

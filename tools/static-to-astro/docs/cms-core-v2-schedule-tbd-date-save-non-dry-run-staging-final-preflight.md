@@ -36,8 +36,10 @@ CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 SITE_WRITER_RLS_APPLIED: true
+SITE_WRITER_RLS_RETAINED: true
 RLS_MIGRATION_EXECUTED: true
 RLS_POSTCHECK_PASS: true
 OWNER_VISIBILITY_PASS: true
@@ -49,21 +51,27 @@ POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
 POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
 POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
 POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+POST_CLEANUP_SITE_SLUG_FP: a4ff22feb81e19789732525937f4be7e
+POST_CLEANUP_DATA_FP: 1910b4faa5b17344d63968dc25f89cd6
+DATA_BASELINE_RESTORED: true
+SITE_SLUG_BASELINE_RESTORED: true
 PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
 PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
 ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 POLICY_COUNT: 4
 SCHEDULE_ROW_WRITE_EXECUTED: true
-TARGET_ROW_EXISTS: true
+TARGET_ROW_EXISTS: false
 TARGET_ROW_EXACT: true
 OUTCOME: INSERTED_EXACT
-CURRENT_TOTAL: 80
+CLEANUP_DELETE_OUTCOME: DELETED_EXACT
+CURRENT_TOTAL: 79
 CURRENT_PUBLISHED: 74
-CURRENT_GOSAKI: 80
-CURRENT_TBD: 1
-CURRENT_TARGET: 1
+CURRENT_GOSAKI: 79
+CURRENT_TBD: 0
+CURRENT_TARGET: 0
 ONESHOT_TERMINAL: succeeded
 ONESHOT_RERUN_FORBIDDEN: true
+POC_CLOSE_READY: true
 READY_FOR_MIGRATION_EXECUTION: false
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
@@ -79,13 +87,13 @@ ENV_FILE_UNCHANGED: true
 ENV_CHANGED: false
 DB_WRITE_EXECUTED: true
 SAVE_EXECUTED: true
-CLEANUP_EXECUTED: false
+CLEANUP_EXECUTED: true
 CLEANUP_NEEDED: false
 EDGE_CHANGED: false
 PACKAGE_REGENERATED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
+NEXT_PRIMARY_RECOMMENDED: PoC closed for row write · site-writer RLS remains current · no oneshot re-arm
 ```
 
 **SQL Editor PASS (operator, staging only · historical pre-oneshot):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3 · total **79** at that time.
@@ -94,11 +102,13 @@ NEXT_PRIMARY_RECOMMENDED: cleanup requires separate explicit approval only (READ
 
 **Second single-click (2026-08-05):** runtime preflight **failed** · `total schedules drift (expected 79, got 74)` · 74 = published / `schedules_public_select` · cause = auth before preflight missing · exact SELECT `NOT_INSERTED` · baseline 79/74/0/0 · cleanup 不要. See `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
 
-**Oneshot SUCCESS (2026-08-08):** sites → `can_write_site` → preflight → INSERT · **INSERTED_EXACT** · `schedule-2026-11-001` · counts **80/74/gosaki80/tbd1/target1** · published false · terminal succeeded · re-run forbidden · cleanup not done · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`.
+**Oneshot SUCCESS (2026-08-08):** sites → `can_write_site` → preflight → INSERT · **INSERTED_EXACT** · `schedule-2026-11-001` · historical counts **80/74/gosaki80/tbd1/target1** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`.
 
-**Post-success baseline (2026-08-08):** SELECT-only PASS · site_slug fp `1d780b234483e3c860a66cec93311718` · data fp `221256605d1501abc7cab3e044d54e2b` · index/trigger unchanged · RLS `3f6c87dda8edf44159d939ec69fbcc2b` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
+**Post-success baseline (2026-08-08 · historical 80-row):** SELECT-only PASS · site_slug fp `1d780b234483e3c860a66cec93311718` · data fp `221256605d1501abc7cab3e044d54e2b` · retained · Doc: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
 
-**ACTUAL_WRITE_READY false** (do not re-arm). **ACTUAL_WRITE_EXECUTED true** (human CREATE once). Arms OFF · production untouched · Cursor did not click Save in this recording phase.
+**Cleanup (2026-08-10):** **DELETED_EXACT** · current **79/74/79/0/0** · site_slug/data restored · site-writer RLS retained · `POC_CLOSE_READY: true` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`.
+
+**ACTUAL_WRITE_READY false** (do not re-arm). **ACTUAL_WRITE_EXECUTED true** (CREATE once · cleaned). Arms OFF · production untouched.
 
 ---
 
@@ -753,10 +763,10 @@ commit;
 | ACTUAL_WRITE_READY | **false** (do not re-arm) |
 | ACTUAL_WRITE_EXECUTED | **true** (2026-08-08 oneshot SUCCESS · INSERTED_EXACT) |
 | ARMS_OFF / CLEANUP_EXECUTED / READY_FOR_RETRY | **true / false / false** |
-| CURRENT_TOTAL / CURRENT_TBD / CURRENT_TARGET | **80 / 1 / 1** |
+| CURRENT_TOTAL / CURRENT_TBD / CURRENT_TARGET | **79 / 0 / 0** (post-cleanup) |
 | PRODUCTION_UNCHANGED | **true** |
 
-**Next Primary:** cleanup requires **separate explicit approval** only (`READY_FOR_CLEANUP: false`) · oneshot re-run **forbidden** · after cleanup re-SELECT fingerprints.
+**Next Primary:** PoC **CLOSE_READY** · site-writer RLS remains · oneshot re-run **forbidden** · no cleanup re-delete.
 
 ---
 

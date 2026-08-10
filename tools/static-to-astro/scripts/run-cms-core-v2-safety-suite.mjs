@@ -171,6 +171,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.mjs",
   },
   {
+    id: "schedule-tbd-create-oneshot-cleanup-result",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

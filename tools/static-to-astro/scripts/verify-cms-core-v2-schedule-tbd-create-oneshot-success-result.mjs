@@ -79,18 +79,21 @@ assert(
 assert("OUTCOME INSERTED_EXACT", /OUTCOME:\s*INSERTED_EXACT/.test(doc));
 assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
 assert("TARGET_ROW_EXACT true", /TARGET_ROW_EXACT:\s*true/.test(doc));
-assert("TARGET_ROW_EXISTS true", /TARGET_ROW_EXISTS:\s*true/.test(doc));
+assert("TARGET_ROW_EXISTS false", /TARGET_ROW_EXISTS:\s*false/.test(doc));
 assert("ONESHOT_TERMINAL succeeded", /ONESHOT_TERMINAL:\s*succeeded/.test(doc));
 assert("ONESHOT_RERUN_FORBIDDEN true", /ONESHOT_RERUN_FORBIDDEN:\s*true/.test(doc));
 assert("READY_FOR_RETRY false", /READY_FOR_RETRY:\s*false/.test(doc));
-assert("CLEANUP_EXECUTED false", /CLEANUP_EXECUTED:\s*false/.test(doc));
-assert("READY_FOR_CLEANUP false", /READY_FOR_CLEANUP:\s*false/.test(doc));
-assert("CURRENT_TOTAL 80", /CURRENT_TOTAL:\s*80/.test(doc));
+assert("CLEANUP_EXECUTED true", /CLEANUP_EXECUTED:\s*true/.test(doc));
+assert("CLEANUP_RECORDED true", /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED:\s*true/.test(doc));
+assert("CURRENT_TOTAL 79", /CURRENT_TOTAL:\s*79/.test(doc));
 assert("CURRENT_PUBLISHED 74", /CURRENT_PUBLISHED:\s*74/.test(doc));
-assert("CURRENT_GOSAKI 80", /CURRENT_GOSAKI:\s*80/.test(doc));
-assert("CURRENT_TBD 1", /CURRENT_TBD:\s*1/.test(doc));
-assert("CURRENT_TARGET 1", /CURRENT_TARGET:\s*1/.test(doc));
+assert("CURRENT_GOSAKI 79", /CURRENT_GOSAKI:\s*79/.test(doc));
+assert("CURRENT_TBD 0", /CURRENT_TBD:\s*0/.test(doc));
+assert("CURRENT_TARGET 0", /CURRENT_TARGET:\s*0/.test(doc));
 assert("CONTRACT_VIOLATIONS 0", /CONTRACT_VIOLATIONS:\s*0/.test(doc));
+assert("DATA_BASELINE_RESTORED true", /DATA_BASELINE_RESTORED:\s*true/.test(doc));
+assert("SITE_SLUG_BASELINE_RESTORED true", /SITE_SLUG_BASELINE_RESTORED:\s*true/.test(doc));
+assert("POC_CLOSE_READY true", /POC_CLOSE_READY:\s*true/.test(doc));
 assert("legacy_id fixed", /schedule-2026-11-001/.test(doc));
 assert("site_slug gosaki-piano", /gosaki-piano/.test(doc));
 assert("published false", /published[\s\S]*\*\*false\*\*/.test(doc));
@@ -111,6 +114,11 @@ assert(
     !/pending-select-only/.test(doc),
 );
 assert(
+  "post-cleanup fps restored",
+  /POST_CLEANUP_SITE_SLUG_FP:\s*a4ff22feb81e19789732525937f4be7e/.test(doc) &&
+    /POST_CLEANUP_DATA_FP:\s*1910b4faa5b17344d63968dc25f89cd6/.test(doc),
+);
+assert(
   "historical 79-row fps retained",
   /PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL:\s*a4ff22feb81e19789732525937f4be7e/.test(
     doc,
@@ -128,54 +136,56 @@ assert(
   /3f6c87dda8edf44159d939ec69fbcc2b/.test(doc),
 );
 assert(
-  "next primary cleanup gate",
-  /READY_FOR_CLEANUP:\s*false/.test(doc) &&
-    /cleanup requires separate explicit approval/i.test(doc),
+  "PoC closed next primary",
+  /POC_CLOSE_READY:\s*true/.test(doc) &&
+    /PoC closed for row write/i.test(doc),
 );
 assert(
   "guards still baseline 79",
   /totalSchedules:\s*79/.test(guards),
 );
 assert(
-  "impl records success",
-  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(impl) &&
+  "impl records cleanup",
+  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED:\s*true/.test(impl) &&
     /ACTUAL_WRITE_EXECUTED:\s*true/.test(impl) &&
-    /CURRENT_TOTAL:\s*80/.test(impl) &&
-    /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(impl),
+    /CURRENT_TOTAL:\s*79/.test(impl) &&
+    /CLEANUP_EXECUTED:\s*true/.test(impl),
 );
 assert(
-  "final-preflight records success",
-  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(
+  "final-preflight records cleanup",
+  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED:\s*true/.test(
     finalDoc,
   ) &&
     /ACTUAL_WRITE_EXECUTED:\s*true/.test(finalDoc) &&
-    /CURRENT_TOTAL:\s*80/.test(finalDoc) &&
-    /POST_SUCCESS_DATA_FP:\s*221256605d1501abc7cab3e044d54e2b/.test(finalDoc),
+    /CURRENT_TOTAL:\s*79/.test(finalDoc) &&
+    /DATA_BASELINE_RESTORED:\s*true/.test(finalDoc),
 );
 assert(
-  "authz records owner write success",
+  "authz records cleanup restore",
   /OWNER_WRITE_SUCCESS:\s*true/.test(authz) &&
-    /ACTUAL_WRITE_EXECUTED:\s*true/.test(authz) &&
-    /CURRENT_TOTAL:\s*80/.test(authz),
+    /CLEANUP_EXECUTED:\s*true/.test(authz) &&
+    /CURRENT_TOTAL:\s*79/.test(authz),
 );
 assert(
-  "apply-result post-oneshot",
+  "apply-result post-cleanup",
   /ACTUAL_WRITE_EXECUTED:\s*true/.test(apply) &&
-    /CURRENT_TOTAL:\s*80/.test(apply) &&
-    /SCHEDULE_ROW_WRITE_AT_APPLY:\s*false/.test(apply) &&
-    /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(apply),
+    /CURRENT_TOTAL:\s*79/.test(apply) &&
+    /SITE_WRITER_RLS_RETAINED:\s*true/.test(apply) &&
+    /POST_CLEANUP_SITE_SLUG_FP:\s*a4ff22feb81e19789732525937f4be7e/.test(apply),
 );
 assert(
-  "AI context records success + baseline",
-  /cms-core-v2-schedule-tbd-create-oneshot-success-recording/.test(ai0) &&
-    /INSERTED_EXACT/.test(ai0) &&
-    /CURRENT_TOTAL:\s*80/.test(ai3) &&
-    /POST_SUCCESS_BASELINE_RECORDED:\s*true/.test(hand) &&
-    /post-success-baseline/.test(hand),
+  "AI context records cleanup",
+  /cms-core-v2-schedule-tbd-create-oneshot-cleanup-recording/.test(ai0) &&
+    /POC_CLOSE_READY:\s*true/.test(ai3) &&
+    /DELETED_EXACT/.test(hand),
 );
 assert(
   "baseline doc referenced",
   /cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline/.test(doc),
+);
+assert(
+  "cleanup doc referenced",
+  /cms-core-v2-schedule-tbd-create-oneshot-cleanup-result/.test(doc),
 );
 assert(
   "npm script registered",

@@ -2,12 +2,13 @@
 
 - **Phase:** `cms-core-v2-schedule-tbd-create-oneshot-success-recording`
 - **Follow-up:** `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline-recording` (SELECT-only 80-row baseline fixed)
-- **Date recorded:** 2026-08-08
-- **Status:** **COMPLETE (docs / offline recording)** · post-success baseline **RECORDED**
+- **Follow-up (2026-08-10):** `cms-core-v2-schedule-tbd-create-oneshot-cleanup-recording` — DELETED_EXACT · counts restored **79** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`
+- **Date recorded:** 2026-08-08 · cleanup recorded 2026-08-10
+- **Status:** **COMPLETE (docs / offline recording)** · post-success baseline **RECORDED** · cleanup **RECORDED** · PoC **CLOSE_READY**
 - **HEAD at success docs commit:** `cef4de140de121f53331e3d87ff4de32b2565f78`
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` — **untouched**
-- **This phase (historical):** record human oneshot CREATE SUCCESS · **no** cleanup/DELETE/UPDATE
+- **This phase (historical):** record human oneshot CREATE SUCCESS · cleanup later restored 79-row baseline
 
 Prior: site-writer RLS applied · final retry readiness `READY_FOR_RETRY: true` · operator executed CREATE once
 
@@ -18,42 +19,52 @@ Prior: site-writer RLS applied · final retry readiness `READY_FOR_RETRY: true` 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED: true
 SUCCESS_RECORDED: true
 POST_SUCCESS_BASELINE_RECORDED: true
+CLEANUP_RECORDED: true
 OUTCOME: INSERTED_EXACT
+CLEANUP_DELETE_OUTCOME: DELETED_EXACT
 ACTUAL_WRITE_EXECUTED: true
 SCHEDULE_ROW_WRITE_EXECUTED: true
-TARGET_ROW_EXISTS: true
+TARGET_ROW_EXISTS: false
 TARGET_ROW_EXACT: true
 ONESHOT_TERMINAL: succeeded
 ONESHOT_RERUN_FORBIDDEN: true
 READY_FOR_RETRY: false
-CLEANUP_EXECUTED: false
+CLEANUP_EXECUTED: true
 READY_FOR_CLEANUP: false
-CURRENT_TOTAL: 80
+CURRENT_TOTAL: 79
 CURRENT_PUBLISHED: 74
-CURRENT_GOSAKI: 80
+CURRENT_GOSAKI: 79
 CURRENT_MIO: 0
-CURRENT_TBD: 1
-CURRENT_TARGET: 1
+CURRENT_TBD: 0
+CURRENT_TARGET: 0
 CONTRACT_VIOLATIONS: 0
 SITE_WRITER_RLS_APPLIED: true
+SITE_WRITER_RLS_RETAINED: true
 OWNER_AUTHZ_PATH_USED: sites -> can_write_site -> preflight -> INSERT
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
 POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
 POST_SUCCESS_INDEX_FP: cbaada6b44ae2cd07f4a0516f9d0f9b3
 POST_SUCCESS_TRIGGER_FP: 2e9899f09421456307b3c96402574106
+POST_CLEANUP_SITE_SLUG_FP: a4ff22feb81e19789732525937f4be7e
+POST_CLEANUP_DATA_FP: 1910b4faa5b17344d63968dc25f89cd6
+DATA_BASELINE_RESTORED: true
+SITE_SLUG_BASELINE_RESTORED: true
 PRE_ONESHOT_SITE_SLUG_FP_HISTORICAL: a4ff22feb81e19789732525937f4be7e
 PRE_ONESHOT_DATA_FP_HISTORICAL: 1910b4faa5b17344d63968dc25f89cd6
 ONESHOT_GUARD_EXPECTED_TOTAL_REMAINS: 79
 TARGET_CREATED_AT: 2026-08-08 11:25:17.007763+00
 TARGET_UPDATED_AT: 2026-08-08 11:25:17.007763+00
+POC_CLOSE_READY: true
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
-NEXT_PRIMARY: cleanup requires separate explicit approval only (READY_FOR_CLEANUP false)
+NEXT_PRIMARY: PoC closed for row write · site-writer RLS remains current · no oneshot re-arm
 POST_SUCCESS_BASELINE_DOC: cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md
+CLEANUP_RESULT_DOC: cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md
 ```
 
 ---
@@ -124,33 +135,32 @@ Fixed INSERT allowlist matches `buildTbdCreateOneshotFixedInsertPayload()` / fin
 
 ## 6. Cleanup
 
-- **Not executed** · **not approved**
-- Manual rollback (separate approval only):
-  `DELETE FROM public.schedules WHERE site_slug='gosaki-piano' AND legacy_id='schedule-2026-11-001';`
-  (assert count=1 first · staging only)
-- `READY_FOR_CLEANUP: false`
+- **Executed (2026-08-10):** outcome **DELETED_EXACT** · candidate_rows **1** · deleted_rows **1** · no retry
+- Observed: `2026-08-10 00:33:33.416919+00`
+- Post-cleanup current: total **79** / published **74** / gosaki **79** / TBD **0** / target **0**
+- site_slug/data restored to `a4ff22feb81e19789732525937f4be7e` / `1910b4faa5b17344d63968dc25f89cd6`
+- Site-writer RLS **retained** (not rolled back) · Doc: `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`
+- Do **not** re-delete / re-arm oneshot
 
 ---
 
-## 7. Post-success baseline (SELECT-only PASS)
+## 7. Post-success baseline (SELECT-only PASS · historical 80-row)
 
-Full detail: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md`.
+Full detail: `cms-core-v2-schedule-tbd-create-oneshot-post-success-baseline.md` (**retain** — do not erase after cleanup).
 
-| Kind | Post-success (80 / pre-cleanup) | Historical pre-oneshot (79) |
+| Kind | Post-success (80 / pre-cleanup · historical) | Post-cleanup restored (current) |
 | --- | --- | --- |
 | site_slug_count | `1d780b234483e3c860a66cec93311718` | `a4ff22feb81e19789732525937f4be7e` |
 | data | `221256605d1501abc7cab3e044d54e2b` | `1910b4faa5b17344d63968dc25f89cd6` |
 | index | `cbaada6b44ae2cd07f4a0516f9d0f9b3` | unchanged |
 | trigger | `2e9899f09421456307b3c96402574106` | unchanged |
-| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | current site-writer (unchanged by INSERT) |
-
-After cleanup, re-SELECT fingerprints in a dedicated phase — do not assume values here.
+| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` | retained (site-writer) |
 
 ---
 
 ## 8. Explicit non-actions (this recording phase)
 
-- No process / env / arm / SQL / DB write / cleanup by Cursor
+- No process / env / arm / SQL / DB write by Cursor in docs recording
 - No oneshot re-execution
 - Production untouched
 - Commit/push only when operator requests

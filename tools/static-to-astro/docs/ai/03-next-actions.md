@@ -1,36 +1,59 @@
-Last updated: 2026-08-08
+Last updated: 2026-08-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** oneshot SUCCESS + post-success **80-row baseline recorded** · `READY_FOR_CLEANUP: false` · cleanup = **separate explicit approval only** · oneshot re-run **forbidden** · guard expected total stays **79**
+2. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** (`POC_CLOSE_READY: true`) · cleanup **DELETED_EXACT** · current total **79** · site-writer RLS **retained** · oneshot re-run **forbidden** · guard expected total stays **79**
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
 
-## 0. CMS Core v2 Schedule TBD CREATE oneshot post-success baseline (2026-08-08)
+## 0. CMS Core v2 Schedule TBD CREATE oneshot cleanup (2026-08-10)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED: true` |
+| Outcome | `DELETED_EXACT` · candidate/deleted **1** |
+| Counts | total **79** · published **74** · gosaki **79** · TBD **0** · target **0** |
+| Restored fps | site_slug `a4ff22feb81e19789732525937f4be7e` · data `1910b4faa5b17344d63968dc25f89cd6` |
+| RLS | `3f6c87dda8edf44159d939ec69fbcc2b` · site-writer **retained** |
+| PoC | `POC_CLOSE_READY: true` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED: true
+CLEANUP_RECORDED: true
+CLEANUP_EXECUTED: true
+TARGET_EXISTS: false
+CURRENT_TOTAL: 79
+CURRENT_TBD: 0
+DATA_BASELINE_RESTORED: true
+SITE_SLUG_BASELINE_RESTORED: true
+SITE_WRITER_RLS_RETAINED: true
+POC_CLOSE_READY: true
+ONESHOT_RERUN_FORBIDDEN: true
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. CMS Core v2 Schedule TBD CREATE oneshot post-success baseline (2026-08-08 · historical 80-row)
 
 | Item | Value |
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true` |
-| Counts | total **80** · published **74** · gosaki **80** · TBD **1** · target **1** |
-| Target times | `2026-08-08 11:25:17.007763+00` |
-| site_slug fp | `1d780b234483e3c860a66cec93311718` |
-| data fp | `221256605d1501abc7cab3e044d54e2b` |
-| RLS fp | `3f6c87dda8edf44159d939ec69fbcc2b` (unchanged) |
-| Cleanup | `CLEANUP_EXECUTED: false` · `READY_FOR_CLEANUP: false` |
+| Historical counts | total **80** · TBD **1** · target **1** (pre-cleanup) |
+| Historical fps | site_slug `1d780b234483e3c860a66cec93311718` · data `221256605d1501abc7cab3e044d54e2b` |
+| Note | Retained after cleanup · current catalog is 79-row |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
 POST_SUCCESS_BASELINE_RECORDED: true
-CURRENT_TOTAL: 80
-CURRENT_TBD: 1
-TARGET_EXISTS: true
+HISTORICAL_POST_SUCCESS_TOTAL: 80
 POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
 POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
-CLEANUP_EXECUTED: false
-READY_FOR_CLEANUP: false
+CLEANUP_LATER_RECORDED: true
+POST_CLEANUP_CURRENT_TOTAL: 79
 ONESHOT_RERUN_FORBIDDEN: true
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
@@ -43,26 +66,25 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true` |
 | Outcome | `INSERTED_EXACT` · `schedule-2026-11-001` · gosaki-piano |
-| Counts | total **80** · published **74** · gosaki **80** · TBD **1** · target **1** |
+| Current after cleanup | total **79** · TBD **0** · target **0** |
 | Authz | sites → `can_write_site` → preflight → INSERT |
 | Terminal | succeeded · re-run forbidden |
-| Cleanup | `CLEANUP_EXECUTED: false` · `READY_FOR_CLEANUP: false` |
+| Cleanup | `CLEANUP_EXECUTED: true` · `POC_CLOSE_READY: true` |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_POST_SUCCESS_BASELINE_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED: true
 SUCCESS_RECORDED: true
 ACTUAL_WRITE_EXECUTED: true
-TARGET_ROW_EXACT: true
-TARGET_ROW_EXISTS: true
-CURRENT_TOTAL: 80
-CURRENT_PUBLISHED: 74
-CURRENT_TBD: 1
-POST_SUCCESS_SITE_SLUG_FP: 1d780b234483e3c860a66cec93311718
-POST_SUCCESS_DATA_FP: 221256605d1501abc7cab3e044d54e2b
+TARGET_ROW_EXISTS: false
+CURRENT_TOTAL: 79
+CURRENT_TBD: 0
+CLEANUP_EXECUTED: true
+DATA_BASELINE_RESTORED: true
+SITE_SLUG_BASELINE_RESTORED: true
+POC_CLOSE_READY: true
 READY_FOR_RETRY: false
-CLEANUP_EXECUTED: false
-READY_FOR_CLEANUP: false
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
@@ -76,15 +98,17 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | Applied at | `2026-08-06 01:28:23.744153+00` |
 | Policies | +`schedules_site_writer_select` / `_insert` · count **4** |
 | Current RLS fp | `3f6c87dda8edf44159d939ec69fbcc2b` |
-| Note | Apply-time data 79/target0; post-oneshot CURRENT_TOTAL **80** |
+| Note | Apply-time data 79/target0 · post-cleanup current **79** · site-writer retained |
 
 ```txt
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 SITE_WRITER_RLS_APPLIED: true
+SITE_WRITER_RLS_RETAINED: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 ACTUAL_WRITE_EXECUTED: true
-TARGET_ROW_EXISTS: true
-CURRENT_TOTAL: 80
+TARGET_ROW_EXISTS: false
+CURRENT_TOTAL: 79
+CLEANUP_EXECUTED: true
 READY_FOR_RETRY: false
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true

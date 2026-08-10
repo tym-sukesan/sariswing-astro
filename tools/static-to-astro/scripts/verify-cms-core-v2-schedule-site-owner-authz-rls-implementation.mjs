@@ -94,8 +94,8 @@ assert("READY_FOR_RETRY false", /READY_FOR_RETRY:\s*false/.test(doc));
 assert("SCHEDULE_ROW_WRITE_EXECUTED true", /SCHEDULE_ROW_WRITE_EXECUTED:\s*true/.test(doc));
 assert("DB_WRITE_EXECUTED true", /DB_WRITE_EXECUTED:\s*true/.test(doc));
 assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
-assert("TARGET_ROW_EXISTS true", /TARGET_ROW_EXISTS:\s*true/.test(doc));
-assert("CURRENT_TOTAL 80", /CURRENT_TOTAL:\s*80/.test(doc));
+assert("TARGET_ROW_EXISTS false", /TARGET_ROW_EXISTS:\s*false/.test(doc));
+assert("CURRENT_TOTAL 79", /CURRENT_TOTAL:\s*79/.test(doc));
 assert("oneshot success recorded", /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc));
 assert(
   "post-success baseline recorded",
@@ -103,6 +103,12 @@ assert(
     doc,
   ) &&
     /POST_SUCCESS_SITE_SLUG_FP:\s*1d780b234483e3c860a66cec93311718/.test(doc),
+);
+assert(
+  "cleanup recorded",
+  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_CLEANUP_RECORDED:\s*true/.test(doc) &&
+    /CLEANUP_EXECUTED:\s*true/.test(doc) &&
+    /DATA_BASELINE_RESTORED:\s*true/.test(doc),
 );
 assert("baseline 79/74 historical", /Pre-apply baseline[\s\S]*total\s*\*\*79\*\*/.test(doc) && /published\s*\*\*74\*\*/.test(doc));
 assert("owner ≠ legacy admin", /owner ≠ legacy|Owner ≠ legacy|do not conflate|OWNER_ADMIN_DISTINCT/i.test(doc));

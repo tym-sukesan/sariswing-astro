@@ -5,27 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD CREATE oneshot cleanup RECORDED · PoC CLOSE_READY
-Phase: cms-core-v2-schedule-tbd-create-oneshot-cleanup-recording
-Decision: DELETED_EXACT · post-cleanup 79/74/gosaki79/tbd0/target0 · site_slug/data restored to pre-oneshot · site-writer RLS retained · 80-row post-success history retained · oneshot re-run forbidden
-CLEANUP_EXECUTED: true
-TARGET_EXISTS: false
-CURRENT_TOTAL: 79
-CURRENT_TBD: 0
-DATA_BASELINE_RESTORED: true
-SITE_SLUG_BASELINE_RESTORED: true
-SITE_WRITER_RLS_RETAINED: true
-POC_CLOSE_READY: true
-READY_FOR_RETRY: false
+Current phase: cross-module-owner-authz-consistency-audit COMPLETE (read-only)
+HEAD: a073bbce534039fe1a9dbbf4058ed91258192f78
+AUTHZ_MATRIX_COMPLETE: true
+SCHEDULE_STATUS: PARTIAL (CREATE ALIGNED staging-proven · UPDATE LEGACY is_admin)
+DISCOGRAPHY_STATUS: LEGACY (is_admin · owner cannot write · not staging-proven for owner)
+ABOUT_STATUS: PARTIAL (Contents LEGACY ADMIN_EMAILS · Supabase ALIGNED can_write_site)
+YOUTUBE_CURRENT_STATUS: LEGACY (Contents requireAdminUser)
+YOUTUBE_SUPABASE_STATUS: ALIGNED (can_write_site)
+ADMIN_SHELL_STATUS: PARTIAL (signed-in only · mock role UI-only)
+REFERENCE_IMPLEMENTATION_FREEZE_READY: false
+RECOMMENDED_NEXT_PRIMARY: discography-site-owner-authz-planning
+DB_WRITE_EXECUTED: false
 ARMS_OFF: true
-Next Primary: PoC closed for row write · site-writer RLS remains · no oneshot re-arm
-Prior: post-success baseline 7657e729 · operator cleanup once · observed 2026-08-10 00:33:33.416919+00
+Prior PoC: TBD CREATE oneshot CLOSED · total 79 · site-writer RLS retained · oneshot re-run forbidden
 Gosaki CLIENT_SHARE_READY: true (maintained)
-seedAppliedStaging: true
-readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
+Doc: tools/static-to-astro/docs/cross-module-owner-authz-consistency-audit.md
 ```
+
+## Cross-module owner authz consistency audit (2026-08-11)
+
+- Read-only matrix vs ADR `can_write_site` · do not treat Schedule CREATE as automatic SoT for all modules
+- BLOCKERS: Discography `is_admin` · Schedule UPDATE no site-writer UPDATE · split authz across modules
+- Forbidden: add owner to `admin_users`
+- Next Primary: `discography-site-owner-authz-planning` (docs-only)
+- Doc: `cross-module-owner-authz-consistency-audit.md`
 
 ## CMS Core v2 Schedule TBD CREATE oneshot cleanup (2026-08-10)
 

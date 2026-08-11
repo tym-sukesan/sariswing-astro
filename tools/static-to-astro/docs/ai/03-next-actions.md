@@ -1,13 +1,44 @@
-Last updated: 2026-08-10
+Last updated: 2026-08-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** (`POC_CLOSE_READY: true`) · cleanup **DELETED_EXACT** · current total **79** · site-writer RLS **retained** · oneshot re-run **forbidden** · guard expected total stays **79**
-3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
-4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+1. **Primary (Kit Core):** `discography-site-owner-authz-planning`（docs-only）— Discography は `is_admin` LEGACY · pure site owner は write 不可 · owner→`admin_users` 禁止 · Doc: `cross-module-owner-authz-consistency-audit.md`
+2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
+3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained** · oneshot re-run **forbidden** · Alternate next: `schedule-update-site-writer-rls-planning`
+4. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定** · `REFERENCE_IMPLEMENTATION_FREEZE_READY: false`.
+
+## 0. Cross-module owner authz consistency audit (2026-08-11)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CROSS_MODULE_OWNER_AUTHZ_CONSISTENCY_AUDIT_COMPLETE: true` |
+| Matrix | `AUTHZ_MATRIX_COMPLETE: true` |
+| Schedule | CREATE **ALIGNED** · UPDATE **LEGACY** → status **PARTIAL** |
+| Discography | **LEGACY** · owner write **no** |
+| About | Contents **LEGACY** · Supabase **ALIGNED** → **PARTIAL** |
+| YouTube | Contents **LEGACY** · Supabase **ALIGNED** |
+| Shell | **PARTIAL** (signed-in only) |
+| Freeze | `REFERENCE_IMPLEMENTATION_FREEZE_READY: false` |
+| Next | `discography-site-owner-authz-planning` |
+
+```txt
+CROSS_MODULE_OWNER_AUTHZ_CONSISTENCY_AUDIT_COMPLETE: true
+AUTHZ_MATRIX_COMPLETE: true
+SCHEDULE_STATUS: PARTIAL
+DISCOGRAPHY_STATUS: LEGACY
+ABOUT_STATUS: PARTIAL
+YOUTUBE_CURRENT_STATUS: LEGACY
+YOUTUBE_SUPABASE_STATUS: ALIGNED
+ADMIN_SHELL_STATUS: PARTIAL
+REFERENCE_IMPLEMENTATION_FREEZE_READY: false
+RECOMMENDED_NEXT_PRIMARY: discography-site-owner-authz-planning
+DB_WRITE_EXECUTED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot cleanup (2026-08-10)
 

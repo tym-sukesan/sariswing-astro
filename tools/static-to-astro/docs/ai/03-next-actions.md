@@ -1,13 +1,38 @@
-Last updated: 2026-08-11
+Last updated: 2026-08-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** `discography-site-owner-authz-planning`（docs-only）— Discography は `is_admin` LEGACY · pure site owner は write 不可 · owner→`admin_users` 禁止 · Doc: `cross-module-owner-authz-consistency-audit.md`
+1. **Primary (Kit Core):** `discography-site-owner-authz-implementation-and-migration-template`（offline）— Edge/RPC `is_admin`→`can_write_site` · writer SELECT RLS templates · **no** SQL apply until separate approval · Doc: `discography-site-owner-authz-planning.md`
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained** · oneshot re-run **forbidden** · Alternate next: `schedule-update-site-writer-rls-planning`
+3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained** · oneshot re-run **forbidden** · Alternate: `schedule-update-site-writer-rls-planning`
 4. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定** · `REFERENCE_IMPLEMENTATION_FREEZE_READY: false`.
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · `REFERENCE_IMPLEMENTATION_FREEZE_READY: false`.
+
+## 0. Discography site-owner authz planning (2026-08-12)
+
+| Item | Value |
+| --- | --- |
+| Gate | `DISCOGRAPHY_SITE_OWNER_AUTHZ_PLANNING_COMPLETE: true` |
+| Current | `legacy_is_admin` (Edge + RPC + `*_admin_all`) |
+| Target | `sites` resolve → `can_write_site` → site-scoped RLS |
+| Migration | `MIGRATION_REQUIRED: true` (RLS + RPC redefine) |
+| Ready | `IMPLEMENTATION_READY: true` (templates next · apply later) |
+| Next | `discography-site-owner-authz-implementation-and-migration-template` |
+
+```txt
+DISCOGRAPHY_SITE_OWNER_AUTHZ_PLANNING_COMPLETE: true
+CURRENT_AUTHZ_PATH: legacy_is_admin
+TARGET_AUTHZ_PATH: sites_resolve_can_write_site_site_scoped_rls
+MIGRATION_REQUIRED: true
+IMPLEMENTATION_READY: true
+OWNER_TO_ADMIN_USERS_FORBIDDEN: true
+DB_WRITE_EXECUTED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-implementation-and-migration-template
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Cross-module owner authz consistency audit (2026-08-11)
 

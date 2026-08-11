@@ -176,6 +176,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.mjs",
   },
   {
+    id: "discography-site-owner-authz-planning",
+    kind: "node",
+    script: "verify-discography-site-owner-authz-planning.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

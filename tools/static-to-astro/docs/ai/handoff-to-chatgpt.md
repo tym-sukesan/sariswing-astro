@@ -5,32 +5,43 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: cross-module-owner-authz-consistency-audit COMPLETE (read-only)
-HEAD: a073bbce534039fe1a9dbbf4058ed91258192f78
-AUTHZ_MATRIX_COMPLETE: true
-SCHEDULE_STATUS: PARTIAL (CREATE ALIGNED staging-proven · UPDATE LEGACY is_admin)
-DISCOGRAPHY_STATUS: LEGACY (is_admin · owner cannot write · not staging-proven for owner)
-ABOUT_STATUS: PARTIAL (Contents LEGACY ADMIN_EMAILS · Supabase ALIGNED can_write_site)
-YOUTUBE_CURRENT_STATUS: LEGACY (Contents requireAdminUser)
-YOUTUBE_SUPABASE_STATUS: ALIGNED (can_write_site)
-ADMIN_SHELL_STATUS: PARTIAL (signed-in only · mock role UI-only)
-REFERENCE_IMPLEMENTATION_FREEZE_READY: false
-RECOMMENDED_NEXT_PRIMARY: discography-site-owner-authz-planning
+Current phase: discography-site-owner-authz-planning COMPLETE (docs / offline verifier)
+HEAD: 6240be7a0a853c671d7ce6affd3041ea08755bad
+DISCOGRAPHY_SITE_OWNER_AUTHZ_PLANNING_COMPLETE: true
+CURRENT_AUTHZ_PATH: legacy_is_admin
+TARGET_AUTHZ_PATH: sites_resolve_can_write_site_site_scoped_rls
+MIGRATION_REQUIRED: true
+IMPLEMENTATION_READY: true
+OWNER_TO_ADMIN_USERS_FORBIDDEN: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-implementation-and-migration-template
 DB_WRITE_EXECUTED: false
+CODE_IMPLEMENTATION_EXECUTED: false
 ARMS_OFF: true
-Prior PoC: TBD CREATE oneshot CLOSED · total 79 · site-writer RLS retained · oneshot re-run forbidden
+Prior audit: Discography LEGACY · REFERENCE_IMPLEMENTATION_FREEZE_READY false
+Prior PoC: TBD CREATE oneshot CLOSED · total 79 · site-writer RLS retained
 Gosaki CLIENT_SHARE_READY: true (maintained)
+seedAppliedStaging: true
+readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: tools/static-to-astro/docs/cross-module-owner-authz-consistency-audit.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-planning.md
 ```
+
+## Discography site-owner authz planning (2026-08-12)
+
+- Target: `sites` resolve → `can_write_site` → site-scoped RLS (parent + tracks)
+- Slice A: Edge+RPC gate swap + writer SELECT · keep DEFINER track replace TX
+- Slice B: UPDATE RLS + minimal grants for PostgREST · Slice C: tracks INSERT/DELETE only if retiring DEFINER
+- Forbidden: owner → `admin_users` · no Schedule blind copy
+- Next: `discography-site-owner-authz-implementation-and-migration-template` (offline templates · no apply)
+- Doc: `discography-site-owner-authz-planning.md`
 
 ## Cross-module owner authz consistency audit (2026-08-11)
 
 - Read-only matrix vs ADR `can_write_site` · do not treat Schedule CREATE as automatic SoT for all modules
 - BLOCKERS: Discography `is_admin` · Schedule UPDATE no site-writer UPDATE · split authz across modules
 - Forbidden: add owner to `admin_users`
-- Next Primary: `discography-site-owner-authz-planning` (docs-only)
+- Next Primary superseded by Discography planning / implementation-template
 - Doc: `cross-module-owner-authz-consistency-audit.md`
 
 ## CMS Core v2 Schedule TBD CREATE oneshot cleanup (2026-08-10)

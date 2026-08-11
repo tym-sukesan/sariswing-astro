@@ -1,9 +1,11 @@
-Last updated: 2026-08-11
+Last updated: 2026-08-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**Cross-module owner authz consistency audit (2026-08-11):** **COMPLETE (read-only)** — Phase `cross-module-owner-authz-consistency-audit` · HEAD `a073bbce` · matrix PASS · Schedule CREATE **ALIGNED** (staging) · Schedule UPDATE **LEGACY** · Discography **LEGACY** (owner cannot write) · About Contents **LEGACY** / Supabase **ALIGNED** · YouTube Contents **LEGACY** / Supabase **ALIGNED** · shell **PARTIAL** · `REFERENCE_IMPLEMENTATION_FREEZE_READY: false` · Next Primary: `discography-site-owner-authz-planning` · Doc: `cross-module-owner-authz-consistency-audit.md` · **no** SQL/DB/arm/commit.
+**Discography site-owner authz planning (2026-08-12):** **COMPLETE (docs / offline verifier)** — Phase `discography-site-owner-authz-planning` · HEAD `6240be7a` · CURRENT=`legacy_is_admin` · TARGET=`sites`→`can_write_site`→site-scoped RLS · Slice A: Edge+RPC gate + writer SELECT · Slice B: UPDATE RLS+grants · album/tracks replace TX kept in DEFINER · `MIGRATION_REQUIRED: true` · `IMPLEMENTATION_READY: true` · owner→`admin_users` **forbidden** · Next: `discography-site-owner-authz-implementation-and-migration-template` · Doc: `discography-site-owner-authz-planning.md` · **no** SQL/code impl/arm.
+
+**Cross-module owner authz consistency audit (2026-08-11):** **COMPLETE (read-only)** — Phase `cross-module-owner-authz-consistency-audit` · HEAD `a073bbce` · matrix PASS · Schedule CREATE **ALIGNED** (staging) · Schedule UPDATE **LEGACY** · Discography **LEGACY** (owner cannot write) · About Contents **LEGACY** / Supabase **ALIGNED** · YouTube Contents **LEGACY** / Supabase **ALIGNED** · shell **PARTIAL** · `REFERENCE_IMPLEMENTATION_FREEZE_READY: false` · Next Primary superseded by Discography planning above · Doc: `cross-module-owner-authz-consistency-audit.md` · **no** SQL/DB/arm/commit.
 
 **CMS Core v2 Schedule TBD CREATE oneshot cleanup (2026-08-10):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-cleanup-recording` · **DELETED_EXACT** · candidate/deleted **1** · post-cleanup total **79** / TBD **0** / target **0** · site_slug/data restored `a4ff22fe…` / `1910b4fa…` · index/trigger/RLS unchanged · site-writer RLS **retained** · 80-row post-success history **retained** · guard expected total **79** · oneshot re-run **forbidden** · `POC_CLOSE_READY: true` · Doc: `cms-core-v2-schedule-tbd-create-oneshot-cleanup-result.md`.
 

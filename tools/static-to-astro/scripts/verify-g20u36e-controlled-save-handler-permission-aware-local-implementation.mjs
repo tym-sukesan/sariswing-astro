@@ -184,7 +184,12 @@ assert(
   !/SERVICE_ROLE_KEY|createClient\([^)]*service/i.test(handlerExec) &&
     /SUPABASE_SERVICE_ROLE_CONNECTED\s*=\s*false/.test(handler),
 );
-assert("handler is_admin check", /\.rpc\(\s*["']is_admin["']\s*\)/.test(handler));
+assert(
+  "handler can_write_site check (Slice A; supersedes is_admin owner gate)",
+  /assertCanWriteSiteForSiteSlug/.test(handler) &&
+    /\.rpc\(\s*["']can_write_site["']\s*,\s*\{\s*p_site_id/.test(handler) &&
+    !/\.rpc\(\s*["']is_admin["']\s*\)/.test(handler),
+);
 assert(
   "handler title only update",
   /\.update\(\s*\{\s*title:\s*CONTROLLED_SAVE_TITLE_AFTER\s*\}\s*\)/.test(handler),

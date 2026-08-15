@@ -2,7 +2,7 @@
  * G-20u36b / G-20u36d / G-20u36e / G-20u36f / G-20u43 — Gosaki Discography Edge dry-run (+ controlled Save).
  * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
- * Controlled Save: allowlisted slices only · user JWT + is_admin · no service_role.
+ * Controlled Save: allowlisted slices only · user JWT + can_write_site · no service_role.
  * G-20u36e/f: track-title · G-20u43: discography-004 label original↔temporary (local · not deployed in G-20u43).
  */
 
@@ -990,10 +990,97 @@ export function createUserJwtSupabaseClient(input: {
   });
 }
 
-export async function assertOperatorIsAdmin(
+/**
+ * Site-scoped write gate (CMS Core v2).
+ * Exact singleton sites resolve by site_slug → can_write_site(site_id).
+ * Does NOT use legacy is_admin / admin_users as owner substitute.
+ */
+export async function assertCanWriteSiteForSiteSlug(
   client: SupabaseClient,
-): Promise<{ ok: true } | { ok: false; reasonCode: string; status: number; message: string }> {
-  const { data, error } = await client.rpc("is_admin");
+  siteSlug: string,
+): Promise<
+  | { ok: true; siteId: string }
+  | { ok: false; reasonCode: string; status: number; message: string }
+> {
+  const slug = String(siteSlug ?? "").trim();
+  if (!slug || slug !== SITE_SLUG) {
+    return {
+      ok: false,
+      reasonCode: "site_mismatch",
+      status: 400,
+      message: `siteSlug must be "${SITE_SLUG}"`,
+    };
+  }
+
+  const { data: siteRows, error: siteError } = await client
+    .from("sites")
+    .select("id,site_slug,status")
+    .eq("site_slug", slug);
+
+  if (siteError) {
+    const msg = String(siteError.message ?? "");
+    if (/jwt|token|auth/i.test(msg)) {
+      return {
+        ok: false,
+        reasonCode: "invalid_jwt",
+        status: 401,
+        message: "Invalid or expired Authorization",
+      };
+    }
+    return {
+      ok: false,
+      reasonCode: "site_resolve_failed",
+      status: 503,
+      message: "sites resolve failed",
+    };
+  }
+
+  const rows = Array.isArray(siteRows) ? siteRows : [];
+  if (rows.length === 0) {
+    return {
+      ok: false,
+      reasonCode: "site_resolve_failed",
+      status: 503,
+      message: "sites row missing — run Core v2 tenancy first",
+    };
+  }
+  if (rows.length > 1) {
+    return {
+      ok: false,
+      reasonCode: "site_resolve_ambiguous",
+      status: 409,
+      message: "sites.site_slug must resolve to exactly one row",
+    };
+  }
+
+  const siteRow = rows[0] as { id?: unknown; site_slug?: unknown; status?: unknown };
+  const siteId = String(siteRow.id ?? "").trim();
+  if (!siteId) {
+    return {
+      ok: false,
+      reasonCode: "site_resolve_failed",
+      status: 503,
+      message: "sites.id missing after resolve",
+    };
+  }
+  if (String(siteRow.site_slug ?? "").trim() !== SITE_SLUG) {
+    return {
+      ok: false,
+      reasonCode: "site_slug_mismatch",
+      status: 409,
+      message: "sites.site_slug does not match expected gosaki-piano",
+    };
+  }
+  if (String(siteRow.status ?? "").trim() !== "active") {
+    return {
+      ok: false,
+      reasonCode: "site_suspended",
+      status: 403,
+      message: "site is not active",
+    };
+  }
+
+  const { data, error } = await client.rpc("can_write_site", { p_site_id: siteId });
   if (error) {
     const msg = String(error.message ?? "");
     if (/jwt|token|auth/i.test(msg)) {
@@ -1006,20 +1093,20 @@ export async function assertOperatorIsAdmin(
     }
     return {
       ok: false,
-      reasonCode: "admin_probe_failed",
+      reasonCode: "can_write_site_probe_failed",
       status: 403,
-      message: "Admin probe failed",
+      message: "can_write_site probe failed",
     };
   }
   if (data !== true) {
     return {
       ok: false,
-      reasonCode: "admin_required",
+      reasonCode: "can_write_site_denied",
       status: 403,
-      message: "public.is_admin() must be true",
+      message: "can_write_site(site_id) must be true",
     };
   }
-  return { ok: true };
+  return { ok: true, siteId };
 }
 
 function resolveControlledLegacyId(request: DryRunRequest): string {
@@ -1433,7 +1520,7 @@ export function classifyG20u43LabelUpdateOutcome(input: {
 }
 
 /**
- * Controlled Save — G-20u43 discography-004 label only · user JWT + is_admin + optimistic lock.
+ * Controlled Save — G-20u43 discography-004 label only · user JWT + can_write_site + optimistic lock.
  * Does not modify G-20u36e/f track-title allowlist path.
  */
 export async function handleControlledG20u43LabelSaveHttp(input: {
@@ -1577,12 +1664,12 @@ export async function handleControlledG20u43LabelSaveHttp(input: {
     });
   }
 
-  const admin = await assertOperatorIsAdmin(client);
-  if (!admin.ok) {
+  const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+  if (!writeAuthz.ok) {
     return buildControlledSaveFailure({
-      reasonCode: admin.reasonCode,
-      message: admin.message,
-      status: admin.status,
+      reasonCode: writeAuthz.reasonCode,
+      message: writeAuthz.message,
+      status: writeAuthz.status,
       legacyId,
       approvalId,
     });
@@ -1795,7 +1882,7 @@ export async function handleControlledG20u43LabelSaveHttp(input: {
 }
 
 /**
- * Controlled Save — user JWT + is_admin + RLS + title-only single-row UPDATE.
+ * Controlled Save — user JWT + can_write_site + RLS + title-only single-row UPDATE.
  * Allowlisted slices only (G-20u36e forward · G-20u36f restore). Never logs Authorization / JWT.
  */
 export async function handleControlledG20u36eSaveHttp(input: {
@@ -1866,12 +1953,12 @@ export async function handleControlledG20u36eSaveHttp(input: {
     });
   }
 
-  const admin = await assertOperatorIsAdmin(client);
-  if (!admin.ok) {
+  const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+  if (!writeAuthz.ok) {
     return buildControlledSaveFailure({
-      reasonCode: admin.reasonCode,
-      message: admin.message,
-      status: admin.status,
+      reasonCode: writeAuthz.reasonCode,
+      message: writeAuthz.message,
+      status: writeAuthz.status,
       legacyId: gates.legacyId,
       approvalId: gates.approvalId,
       sliceId: gates.sliceId,
@@ -2233,7 +2320,7 @@ function assertOperationalNoUnexpectedPayloadKeys(request: DryRunRequest): strin
 
 /**
  * Operational Discography Save — editable form fields + track list for any gosaki-piano album.
- * Requires GOSAKI_DISCOGRAPHY_SAVE_ARMED=true · JWT · is_admin · optimistic lock.
+ * Requires GOSAKI_DISCOGRAPHY_SAVE_ARMED=true · JWT · can_write_site · optimistic lock.
  */
 export async function handleOperationalDiscographySaveHttp(input: {
   request: DryRunRequest;
@@ -2429,12 +2516,12 @@ export async function handleOperationalDiscographySaveHttp(input: {
     });
   }
 
-  const admin = await assertOperatorIsAdmin(client);
-  if (!admin.ok) {
+  const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+  if (!writeAuthz.ok) {
     return buildControlledSaveFailure({
-      reasonCode: admin.reasonCode,
-      message: admin.message,
-      status: admin.status,
+      reasonCode: writeAuthz.reasonCode,
+      message: writeAuthz.message,
+      status: writeAuthz.status,
       legacyId,
       approvalId,
     });

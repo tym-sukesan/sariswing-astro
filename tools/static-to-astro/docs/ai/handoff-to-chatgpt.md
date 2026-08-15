@@ -5,35 +5,44 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-planning COMPLETE (docs / offline verifier)
-HEAD: 6240be7a0a853c671d7ce6affd3041ea08755bad
-DISCOGRAPHY_SITE_OWNER_AUTHZ_PLANNING_COMPLETE: true
-CURRENT_AUTHZ_PATH: legacy_is_admin
-TARGET_AUTHZ_PATH: sites_resolve_can_write_site_site_scoped_rls
-MIGRATION_REQUIRED: true
-IMPLEMENTATION_READY: true
-OWNER_TO_ADMIN_USERS_FORBIDDEN: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-implementation-and-migration-template
+Current phase: discography-site-owner-authz-implementation-and-migration-template-slice-a COMPLETE (offline · not applied)
+HEAD start: 280a1eb330511ec4583ed4eb3acd44abf76d9143
+SLICE_A_IMPLEMENTED: true
+EDGE_AUTHZ_ALIGNED: true
+RPC_AUTHZ_ALIGNED: true
+WRITER_SELECT_TEMPLATE_READY: true
+ROLLBACK_TEMPLATE_READY: true
+UPDATE_GRANTS_CHANGED: false
+TRACK_WRITE_GRANTS_CHANGED: false
 DB_WRITE_EXECUTED: false
-CODE_IMPLEMENTATION_EXECUTED: false
+MIGRATION_APPLIED: false
+STAGING_APPLY_READY: false
+OWNER_TO_ADMIN_USERS_FORBIDDEN: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-preflight
 ARMS_OFF: true
-Prior audit: Discography LEGACY · REFERENCE_IMPLEMENTATION_FREEZE_READY false
+Prior: discography-site-owner-authz-planning COMPLETE
 Prior PoC: TBD CREATE oneshot CLOSED · total 79 · site-writer RLS retained
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-planning.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-implementation.md
 ```
+
+## Discography site-owner authz Slice A implementation (2026-08-12)
+
+- Edge: `assertCanWriteSiteForSiteSlug` (sites singleton → `can_write_site`) · no `is_admin` owner gate
+- RPC FORWARD/ROLLBACK templates · DEFINER album+tracks TX retained · authz inside DEFINER
+- RLS: writer SELECT only on `discography` + `discography_tracks` · no UPDATE/INSERT/DELETE policies/grants
+- Staging apply **not** executed · next = SELECT-only preflight
+- Doc: `discography-site-owner-authz-slice-a-implementation.md`
 
 ## Discography site-owner authz planning (2026-08-12)
 
 - Target: `sites` resolve → `can_write_site` → site-scoped RLS (parent + tracks)
-- Slice A: Edge+RPC gate swap + writer SELECT · keep DEFINER track replace TX
-- Slice B: UPDATE RLS + minimal grants for PostgREST · Slice C: tracks INSERT/DELETE only if retiring DEFINER
+- Slice A offline implementation complete above · Slice B/C deferred
 - Forbidden: owner → `admin_users` · no Schedule blind copy
-- Next: `discography-site-owner-authz-implementation-and-migration-template` (offline templates · no apply)
 - Doc: `discography-site-owner-authz-planning.md`
 
 ## Cross-module owner authz consistency audit (2026-08-11)

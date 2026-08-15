@@ -3,11 +3,41 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** `discography-site-owner-authz-implementation-and-migration-template`（offline）— Edge/RPC `is_admin`→`can_write_site` · writer SELECT RLS templates · **no** SQL apply until separate approval · Doc: `discography-site-owner-authz-planning.md`
+1. **Primary (Kit Core):** `discography-site-owner-authz-slice-a-staging-preflight`（SELECT-only）— writer SELECT RLS + RPC redefine apply packets · **no** apply until explicit approval · Doc: `discography-site-owner-authz-slice-a-implementation.md`
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained** · oneshot re-run **forbidden** · Alternate: `schedule-update-site-writer-rls-planning`
 4. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · `REFERENCE_IMPLEMENTATION_FREEZE_READY: false`.
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **not applied** on staging yet.
+
+## 0. Discography site-owner authz Slice A implementation (2026-08-12)
+
+| Item | Value |
+| --- | --- |
+| Gate | `DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_IMPLEMENTATION_COMPLETE: true` |
+| Edge | `assertCanWriteSiteForSiteSlug` · no `is_admin` owner gate |
+| RPC templates | FORWARD `can_write_site` · ROLLBACK `is_admin` |
+| RLS templates | `discography*_site_writer_select` only |
+| Grants | UPDATE/track write **unchanged** |
+| Apply | `MIGRATION_APPLIED: false` · `STAGING_APPLY_READY: false` |
+| Next | `discography-site-owner-authz-slice-a-staging-preflight` |
+
+```txt
+DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_IMPLEMENTATION_COMPLETE: true
+SLICE_A_IMPLEMENTED: true
+EDGE_AUTHZ_ALIGNED: true
+RPC_AUTHZ_ALIGNED: true
+WRITER_SELECT_TEMPLATE_READY: true
+ROLLBACK_TEMPLATE_READY: true
+UPDATE_GRANTS_CHANGED: false
+TRACK_WRITE_GRANTS_CHANGED: false
+DB_WRITE_EXECUTED: false
+MIGRATION_APPLIED: false
+STAGING_APPLY_READY: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-preflight
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz planning (2026-08-12)
 

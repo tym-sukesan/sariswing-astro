@@ -124,15 +124,21 @@ assert(
 );
 
 assert(
-  "Edge still is_admin gate (pre-implementation)",
-  /assertOperatorIsAdmin/.test(edge) && /rpc\("is_admin"\)/.test(edge),
+  "planning doc records pre-impl CODE_IMPLEMENTATION_EXECUTED false",
+  /CODE_IMPLEMENTATION_EXECUTED:\s*false/.test(doc),
 );
 assert(
-  "Edge has no can_write_site yet",
-  !/can_write_site/.test(edge),
+  "planning doc TARGET can_write_site",
+  /TARGET_AUTHZ_PATH:\s*sites_resolve_can_write_site_site_scoped_rls/.test(doc),
 );
 assert(
-  "RPC still is_admin gate (pre-implementation)",
+  "live Edge Slice A can_write_site (post-planning)",
+  /assertCanWriteSiteForSiteSlug/.test(edge) &&
+    /rpc\(\s*["']can_write_site["']/.test(edge) &&
+    !/assertOperatorIsAdmin/.test(edge),
+);
+assert(
+  "historical RPC migration retains is_admin (staging apply SoT until Slice A apply)",
   /public\.is_admin\(\)/.test(rpc) && /admin_required/.test(rpc),
 );
 assert(

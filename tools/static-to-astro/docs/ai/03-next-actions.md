@@ -1,13 +1,77 @@
-Last updated: 2026-08-12
+Last updated: 2026-08-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** `discography-site-owner-authz-slice-a-staging-preflight`（SELECT-only）— writer SELECT RLS + RPC redefine apply packets · **no** apply until explicit approval · Doc: `discography-site-owner-authz-slice-a-implementation.md`
-2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained** · oneshot re-run **forbidden** · Alternate: `schedule-update-site-writer-rls-planning`
-4. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **not applied** on staging yet.
+1. **Primary (Kit Core):** Slice A **staging apply** (`discography-site-owner-authz-slice-a-staging-apply`) — writer SELECT RLS then RPC `can_write_site` redefine · **only after** explicit operator approval (`承認します。この操作を1回だけ実行してください。`) · staging `kmjqppxjdnwwrtaeqjta` only
+2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
+3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **not applied yet**.
+
+## 0. Discography site-owner authz Slice A staging preflight result (2026-08-15)
+
+| Item | Value |
+| --- | --- |
+| Gate | `DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_STAGING_PREFLIGHT_RESULT_RECORDED: true` |
+| Catalog | `CATALOG_PREFLIGHT_PASS: true` |
+| Owner | `OWNER_FIXTURE_READY: true` · `can_write_site=true` · `is_admin=false` |
+| Fingerprints | policy `2ae7c192…` · grants `88986aa5…` · RPC `a04cb160…` |
+| Forward policies | **absent** (0) · current policies **4** |
+| RPC current | historical `is_admin()` · no `can_write_site` in body |
+| Apply | `STAGING_APPLY_READY: true` · `STAGING_APPLY_EXECUTED: false` |
+| Next | `discography-site-owner-authz-slice-a-staging-apply` (explicit approval) |
+
+```txt
+DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_STAGING_PREFLIGHT_RESULT_RECORDED: true
+PREFLIGHT_RECORDED: true
+CATALOG_PREFLIGHT_PASS: true
+OWNER_FIXTURE_READY: true
+OWNER_CAN_WRITE_SITE: true
+OWNER_IS_ADMIN: false
+FORWARD_POLICIES_ABSENT: true
+RPC_IS_HISTORICAL_IS_ADMIN: true
+SLICE_A_SCOPE_DRIFT: false
+APPLY_PACKET_READY: true
+STAGING_APPLY_READY: true
+STAGING_APPLY_EXECUTED: false
+MIGRATION_APPLIED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-apply
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Discography site-owner authz Slice A staging preflight (2026-08-15 · historical packet)
+
+Packet-phase snapshot retained. Operator catalog + owner JWT results are in the result-recording section above.
+
+| Item | Value |
+| --- | --- |
+| Gate | `DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_STAGING_PREFLIGHT_COMPLETE: true` |
+| `PREFLIGHT_PASS` | **false** (catalog SELECT awaiting operator) |
+| `STAGING_REF_OK` | **true** |
+| Anon baseline | albums **4** · tracks **34** · all `gosaki-piano` |
+| Owner fixture | `OWNER_FIXTURE_READY: false` |
+| Apply | `STAGING_APPLY_READY: false` · `APPLY_PACKET_READY: true` |
+| Next | `discography-site-owner-authz-slice-a-staging-preflight-result` |
+
+```txt
+DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_STAGING_PREFLIGHT_COMPLETE: true
+PREFLIGHT_PASS: false
+PREFLIGHT_SELECT_PACKET_READY: true
+APPLY_PACKET_READY: true
+STAGING_APPLY_READY: false
+STAGING_REF_OK: true
+FORWARD_POLICIES_ABSENT: unknown
+RPC_IS_HISTORICAL_IS_ADMIN: unknown
+OWNER_FIXTURE_READY: false
+DB_WRITE_EXECUTED: false
+MIGRATION_APPLIED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-preflight-result
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A implementation (2026-08-12)
 

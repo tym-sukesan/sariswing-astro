@@ -5,37 +5,55 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-implementation-and-migration-template-slice-a COMPLETE (offline · not applied)
-HEAD start: 280a1eb330511ec4583ed4eb3acd44abf76d9143
-SLICE_A_IMPLEMENTED: true
-EDGE_AUTHZ_ALIGNED: true
-RPC_AUTHZ_ALIGNED: true
-WRITER_SELECT_TEMPLATE_READY: true
-ROLLBACK_TEMPLATE_READY: true
-UPDATE_GRANTS_CHANGED: false
-TRACK_WRITE_GRANTS_CHANGED: false
-DB_WRITE_EXECUTED: false
+Current phase: discography-site-owner-authz-slice-a-staging-preflight-result-recording COMPLETE
+HEAD: 266f7b00a665d9356533975e6cfefea31a80594d
+PREFLIGHT_RECORDED: true
+CATALOG_PREFLIGHT_PASS: true
+OWNER_JWT_LIVE_PROBE_PASS: true
+OWNER_FIXTURE_READY: true
+OWNER_CAN_WRITE_SITE: true
+OWNER_IS_ADMIN: false
+STAGING_REF_OK: true
+SITE_MAPPING_SAFE: true
+FORWARD_POLICIES_ABSENT: true
+RPC_IS_HISTORICAL_IS_ADMIN: true
+CURRENT_POLICY_FP: 2ae7c19292f2c8c5ae68f27c0fe10221
+CURRENT_GRANTS_FP: 88986aa562aad21b7defa89648288083
+CURRENT_RPC_FP: a04cb160099bada44a358404c9eed74c
+SLICE_A_SCOPE_DRIFT: false
+APPLY_PACKET_READY: true
+STAGING_APPLY_READY: true
+STAGING_APPLY_EXECUTED: false
 MIGRATION_APPLIED: false
-STAGING_APPLY_READY: false
-OWNER_TO_ADMIN_USERS_FORBIDDEN: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-preflight
+DB_WRITE_EXECUTED: false
 ARMS_OFF: true
-Prior: discography-site-owner-authz-planning COMPLETE
-Prior PoC: TBD CREATE oneshot CLOSED · total 79 · site-writer RLS retained
-Gosaki CLIENT_SHARE_READY: true (maintained)
+PORT_4321_NO_LISTEN: false
+PORT_4321_LISTEN_PID: 11341
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-apply
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-staging-preflight-result.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-implementation.md
 ```
+
+## Discography site-owner authz Slice A staging preflight result (2026-08-15)
+
+- Catalog SELECT-only PASS (operator) · albums **4** / tracks **34** / gosaki-piano · orphans **0** · sites singleton **1**
+- Owner JWT live probe **PASS**: `can_write_site=true` · `is_admin=false` · do **not** add owner to `admin_users`
+- Current RPC = historical `is_admin()` (baseline, not design-correct)
+- Writer SELECT policies **absent** (0) · apply packets ready · **not applied**
+- Apply requires separate explicit human approval
+- Doc: `discography-site-owner-authz-slice-a-staging-preflight-result.md`
+
+## Discography site-owner authz Slice A staging preflight (2026-08-15 · historical packet)
+
+- SELECT packet + anon REST 4/34 · packet-phase `PREFLIGHT_PASS: false` retained as snapshot
+- Doc: `discography-site-owner-authz-slice-a-staging-preflight.md`
 
 ## Discography site-owner authz Slice A implementation (2026-08-12)
 
-- Edge: `assertCanWriteSiteForSiteSlug` (sites singleton → `can_write_site`) · no `is_admin` owner gate
-- RPC FORWARD/ROLLBACK templates · DEFINER album+tracks TX retained · authz inside DEFINER
-- RLS: writer SELECT only on `discography` + `discography_tracks` · no UPDATE/INSERT/DELETE policies/grants
-- Staging apply **not** executed · next = SELECT-only preflight
+- Edge: `assertCanWriteSiteForSiteSlug` · RPC/RLS templates offline · not applied
 - Doc: `discography-site-owner-authz-slice-a-implementation.md`
 
 ## Discography site-owner authz planning (2026-08-12)

@@ -1,9 +1,13 @@
-Last updated: 2026-08-12
+Last updated: 2026-08-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**Discography site-owner authz Slice A implementation (2026-08-12):** **COMPLETE (offline · templates not applied)** — Phase `discography-site-owner-authz-implementation-and-migration-template-slice-a` · HEAD start `280a1eb3` · Edge `assertCanWriteSiteForSiteSlug` · RPC FORWARD/ROLLBACK templates · writer SELECT RLS templates both tables · `UPDATE_GRANTS_CHANGED: false` · `MIGRATION_APPLIED: false` · `STAGING_APPLY_READY: false` · Next: `discography-site-owner-authz-slice-a-staging-preflight` · Doc: `discography-site-owner-authz-slice-a-implementation.md` · **no** SQL apply/arm/Save/commit.
+**Discography site-owner authz Slice A staging preflight result (2026-08-15):** **COMPLETE (docs / recording)** — Phase `discography-site-owner-authz-slice-a-staging-preflight-result-recording` · HEAD `266f7b00` · catalog SELECT PASS · owner JWT live probe **PASS** (`can_write_site=true` · `is_admin=false`) · fps policy `2ae7c192…` / grants `88986aa5…` / RPC `a04cb160…` · `FORWARD_POLICIES_ABSENT: true` · RPC historical `is_admin` · `STAGING_APPLY_READY: true` (apply still needs explicit human approval) · `STAGING_APPLY_EXECUTED: false` · 4321 still LISTEN PID 11341 at recording · Doc: `discography-site-owner-authz-slice-a-staging-preflight-result.md`.
+
+**Discography site-owner authz Slice A staging preflight (2026-08-15):** **COMPLETE (packet + anon spot-check · historical)** — Phase `discography-site-owner-authz-slice-a-staging-preflight` · packet gates remain `PREFLIGHT_PASS: false` · superseded by result recording above · Doc: `discography-site-owner-authz-slice-a-staging-preflight.md`.
+
+**Discography site-owner authz Slice A implementation (2026-08-12):** **COMPLETE (offline · templates not applied)** — Phase `discography-site-owner-authz-implementation-and-migration-template-slice-a` · Edge `assertCanWriteSiteForSiteSlug` · RPC/RLS templates · `MIGRATION_APPLIED: false` · Doc: `discography-site-owner-authz-slice-a-implementation.md`.
 
 **Discography site-owner authz planning (2026-08-12):** **COMPLETE (docs / offline verifier)** — Phase `discography-site-owner-authz-planning` · HEAD `6240be7a` · CURRENT=`legacy_is_admin` · TARGET=`sites`→`can_write_site`→site-scoped RLS · Slice A implemented offline above · Slice B/C deferred · owner→`admin_users` **forbidden** · Doc: `discography-site-owner-authz-planning.md`.
 

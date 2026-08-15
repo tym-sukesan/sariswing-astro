@@ -5,31 +5,46 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-live-can-write-site-probe-planning COMPLETE
-HEAD: cdcdff7ddf86d30e5126c697e53f2ecb12571c3a
-LIVE_EDGE_AUTHZ_PROBE_POSSIBLE: true
-ARM_ON_REQUIRED: true
-SAFE_STOP_POINT: release_read_failed after can_write_site
-RPC_REACHED: false
+Current phase: discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight COMPLETE
+HEAD: 7d0434b5ffba905a70136870dbedb7ea77da5dd9
+EXECUTION_PREFLIGHT_PASS: true
+STAGING_REF_HARD_FIXED: true
+VERSION_47_CONFIRMED: true
+TARGET_999_ABSENT: true
+PRE_BASELINE_PASS: true
+SECRET_ON_COMMAND: supabase secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta
+SECRET_OFF_COMMAND: supabase secrets unset GOSAKI_DISCOGRAPHY_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta
+OWNER_PROBE_PACKET_READY: true
+EXPECTED_SAFE_STOP: release_read_failed
+RPC_REACHED_EXPECTED: false
 DATA_WRITE_REACHABLE: false
-READY_FOR_OPERATOR_PROBE: false
-LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
+NO_RETRY_RULE_FIXED: true
+POST_BASELINE_PACKET_READY: true
+READY_FOR_OPERATOR_PROBE: true
 PROBE_EXECUTED: false
-ARM_CHANGED: false
 SECRETS_CHANGED: false
-DB_RPC_PROBE_IS_NOT_LIVE_EDGE_PROOF: true
-LIVE_STAGING_FUNCTION_VERSION: 47
-POST_DEPLOY_VERIFICATION_PASS: true
+LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
+STOP_REASONS: none
 ALBUMS_CURRENT: 4
 TRACKS_CURRENT: 34
 ARMS_OFF: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-live-can-write-site-probe-planning.md
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-execution
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice A live Edge can_write_site probe execution preflight (2026-08-16)
+
+- Packet locked · **not executed** · CLI 2.102.0
+- Secret ON: `supabase secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta`
+- Secret OFF: `supabase secrets unset GOSAKI_DISCOGRAPHY_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta` (unset, not `=false`)
+- One owner POST `legacyId=discography-999` → expected 403 `release_read_failed` · no RPC
+- Baseline: VERSION 47 · albums 4 · tracks 34 · 999=0
+- `READY_FOR_OPERATOR_PROBE: true` · Cursor must not run Secrets/POST
+- Doc: `discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight.md`
 
 ## Discography site-owner authz Slice A live Edge can_write_site probe planning (2026-08-15)
 

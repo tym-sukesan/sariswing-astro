@@ -3,10 +3,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **live `can_write_site` probe preflight** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight`) — planning **COMPLETE** · recommended packet = operational Save + owner JWT + absent `discography-999` → `release_read_failed` · **arm ON required** (Edge secret only) · **not executed** · no real Save
+1. **Primary (Kit Core):** Slice A **live `can_write_site` probe execution** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-execution`) — execution-preflight **PASS** · packet locked · **only after** explicit one-shot operator approval · Cursor must **not** set Secrets or POST · expected `release_read_failed` · then Secret unset
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · post-deploy probe PASS · live `can_write_site` **unconfirmed** · no real Save.
+
+## 0. Discography site-owner authz Slice A live Edge can_write_site probe execution preflight (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `EXECUTION_PREFLIGHT_PASS: true` · `READY_FOR_OPERATOR_PROBE: true` |
+| CLI | 2.102.0 · ON `secrets set …=true --project-ref kmjqppxjdnwwrtaeqjta` · OFF `secrets unset … --project-ref kmjqppxjdnwwrtaeqjta` |
+| Baseline | VERSION **47** · albums **4** · tracks **34** · `discography-999=0` |
+| Expected | 403 `release_read_failed` · RPC not reached |
+| Executed | **false** |
+
+```txt
+EXECUTION_PREFLIGHT_PASS: true
+STAGING_REF_HARD_FIXED: true
+VERSION_47_CONFIRMED: true
+TARGET_999_ABSENT: true
+PRE_BASELINE_PASS: true
+OWNER_PROBE_PACKET_READY: true
+EXPECTED_SAFE_STOP: release_read_failed
+RPC_REACHED_EXPECTED: false
+DATA_WRITE_REACHABLE: false
+NO_RETRY_RULE_FIXED: true
+POST_BASELINE_PACKET_READY: true
+READY_FOR_OPERATOR_PROBE: true
+PROBE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A live Edge can_write_site probe planning (2026-08-15)
 

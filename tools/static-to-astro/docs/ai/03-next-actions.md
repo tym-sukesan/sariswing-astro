@@ -3,10 +3,42 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **Edge deploy** (`discography-site-owner-authz-slice-a-edge-deploy`) — `gosaki-discography-save-dry-run` (`assertCanWriteSiteForSiteSlug`) · **only after** explicit operator approval · staging only · no Save in that phase
+1. **Primary (Kit Core):** Slice A **Edge deploy** (`discography-site-owner-authz-slice-a-edge-deploy`) — preflight **PASS** · `gosaki-discography-save-dry-run` · command `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta` · **only after** explicit operator approval · Cursor must **not** deploy · no Save / arm ON / Secrets change in that phase
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **not** deployed · no real Save.
+
+## 0. Discography site-owner authz Slice A Edge deploy preflight (2026-08-15)
+
+| Item | Value |
+| --- | --- |
+| Gate | `EDGE_PREFLIGHT_PASS: true` · `STAGING_EDGE_DEPLOY_READY: true` |
+| Function | `gosaki-discography-save-dry-run` |
+| Source | `supabase/functions/gosaki-discography-save-dry-run/` |
+| Mirror | handler byte-eq · index stale · `MIRROR_IN_SYNC: false` |
+| Local authz | `can_write_site` · no `is_admin` Edge gate · JWT preserved |
+| Live staging | VERSION **46** @ 2026-07-21 · Slice A authz **unconfirmed** |
+| Secrets | existing `SUPABASE_URL` + `SUPABASE_ANON_KEY` · no service_role · no new secrets |
+| Deploy | **not executed** · linked-project.json is production — `--project-ref` mandatory |
+| Next | `discography-site-owner-authz-slice-a-edge-deploy` (explicit approval) |
+
+```txt
+EDGE_PREFLIGHT_PASS: true
+FUNCTION_NAME: gosaki-discography-save-dry-run
+FUNCTION_SOURCE_PATH: supabase/functions/gosaki-discography-save-dry-run/
+MIRROR_IN_SYNC: false
+EDGE_AUTHZ_CAN_WRITE_SITE: true
+LEGACY_IS_ADMIN_EDGE_GATE_PRESENT: false
+CALLER_JWT_PRESERVED: true
+SERVICE_ROLE_USED: false
+NON_MUTATING_POST_DEPLOY_PROBE_READY: true
+LIVE_EDGE_SLICE_A_AUTHZ_CONFIRMED: false
+STOP_REASONS: none
+STAGING_EDGE_DEPLOY_READY: true
+EDGE_DEPLOY_EXECUTED: false
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-edge-deploy
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A staging apply result (2026-08-15)
 

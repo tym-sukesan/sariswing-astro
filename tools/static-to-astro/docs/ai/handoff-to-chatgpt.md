@@ -5,36 +5,45 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-staging-apply-result-recording COMPLETE
-HEAD: 2cec8be41794566f87bbbf4f6f2f6686e0c0abc4
-SLICE_A_STAGING_APPLY_RECORDED: true
-RLS_APPLY_CONFIRMED: true
-RPC_REDEFINE_CONFIRMED: true
-OWNER_RPC_AUTHZ_PROBE_PASS: true
-STAGING_RLS_CHANGE_EXECUTED: true
-STAGING_RPC_REDEFINE_EXECUTED: true
-DISCOGRAPHY_DATA_WRITE_EXECUTED: false
+Current phase: discography-site-owner-authz-slice-a-edge-deploy-preflight COMPLETE
+HEAD: b435a9e5d16bc5ecbbbd85b4c7127a77088225c3
+EDGE_PREFLIGHT_PASS: true
+FUNCTION_NAME: gosaki-discography-save-dry-run
+FUNCTION_SOURCE_PATH: supabase/functions/gosaki-discography-save-dry-run/
+MIRROR_IN_SYNC: false
+EDGE_AUTHZ_CAN_WRITE_SITE: true
+LEGACY_IS_ADMIN_EDGE_GATE_PRESENT: false
+CALLER_JWT_PRESERVED: true
+SERVICE_ROLE_USED: false
+LIVE_STAGING_FUNCTION_VERSION: 46
+LIVE_EDGE_SLICE_A_AUTHZ_CONFIRMED: false
+STAGING_EDGE_DEPLOY_READY: true
 EDGE_DEPLOY_EXECUTED: false
+DISCOGRAPHY_DATA_WRITE_EXECUTED: false
 REAL_SAVE_EXECUTED: false
-POLICY_COUNT: 6
-ALBUMS_CURRENT: 4
-TRACKS_CURRENT: 34
+STOP_REASONS: none
+SLICE_A_STAGING_APPLY_RECORDED: true
 CURRENT_POLICY_FP: fa62157c08cffc8b49c38256ad8dfe26
-CURRENT_POLICY_FP_RECORDED: true
-SLICE_A_DB_BASELINE_COMPLETE: true
-PRE_APPLY_POLICY_FP: 2ae7c19292f2c8c5ae68f27c0fe10221
 CURRENT_GRANTS_FP: 88986aa562aad21b7defa89648288083
 CURRENT_RPC_FP: f4d50563f2e08abcfcded8e8ade7fb3b
-HISTORICAL_PRE_APPLY_RPC_FP: a04cb160099bada44a358404c9eed74c
-PORT_4321_NO_LISTEN: true
 ARMS_OFF: true
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-edge-deploy
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-staging-apply-result.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-edge-deploy-preflight.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice A Edge deploy preflight (2026-08-15)
+
+- Function `gosaki-discography-save-dry-run` · deploy from root `supabase/functions/` (handler mirror byte-eq; tools `index.ts` stale)
+- Local Edge: `assertCanWriteSiteForSiteSlug` · caller JWT forwarded to `can_write_site` + operational RPC · no `is_admin` · no `service_role`
+- Live staging: VERSION **46** (2026-07-21) · Slice A authz **unconfirmed** · do not treat live as already `can_write_site`
+- Deploy command (not executed): `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
+- `linked-project.json` is production — omitting `--project-ref` is forbidden
+- First post-deploy probe: OPTIONS / unauth / dryRun / save-not-armed · arm stays OFF · no data write
+- Doc: `discography-site-owner-authz-slice-a-edge-deploy-preflight.md`
 
 ## Discography site-owner authz Slice A staging apply result (2026-08-15)
 

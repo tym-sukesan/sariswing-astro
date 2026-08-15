@@ -196,6 +196,11 @@ const STEPS = [
     script: "verify-discography-site-owner-authz-slice-a-staging-preflight-result.mjs",
   },
   {
+    id: "discography-site-owner-authz-slice-a-staging-apply-result",
+    kind: "node",
+    script: "verify-discography-site-owner-authz-slice-a-staging-apply-result.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

@@ -3,10 +3,43 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **staging apply** (`discography-site-owner-authz-slice-a-staging-apply`) — writer SELECT RLS then RPC `can_write_site` redefine · **only after** explicit operator approval (`承認します。この操作を1回だけ実行してください。`) · staging `kmjqppxjdnwwrtaeqjta` only · RPC packets are BEGIN/COMMIT atomic
+1. **Primary (Kit Core):** Slice A **Edge deploy** (`discography-site-owner-authz-slice-a-edge-deploy`) — `gosaki-discography-save-dry-run` (`assertCanWriteSiteForSiteSlug`) · **only after** explicit operator approval · staging only · no Save in that phase
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **not applied yet**.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **not** deployed · no real Save.
+
+## 0. Discography site-owner authz Slice A staging apply result (2026-08-15)
+
+| Item | Value |
+| --- | --- |
+| Gate | `DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_A_STAGING_APPLY_RESULT_RECORDED: true` |
+| RLS | policy_count **6** · writer SELECT ×2 present |
+| RPC | `can_write_site` · md5 `f4d50563f2e08abcfcded8e8ade7fb3b` |
+| Owner probe | **PASS** · `legacy_id_mismatch` 400 · no row write |
+| Data | albums **4** · tracks **34** |
+| Grants fp | `88986aa562aad21b7defa89648288083` (unchanged) |
+| Policy fp | `fa62157c08cffc8b49c38256ad8dfe26` (pre-apply `2ae7c192…` retired) |
+| Next | `discography-site-owner-authz-slice-a-edge-deploy` |
+
+```txt
+SLICE_A_STAGING_APPLY_RECORDED: true
+RLS_APPLY_CONFIRMED: true
+RPC_REDEFINE_CONFIRMED: true
+OWNER_RPC_AUTHZ_PROBE_PASS: true
+STAGING_RLS_CHANGE_EXECUTED: true
+STAGING_RPC_REDEFINE_EXECUTED: true
+DISCOGRAPHY_DATA_WRITE_EXECUTED: false
+EDGE_DEPLOY_EXECUTED: false
+REAL_SAVE_EXECUTED: false
+CURRENT_RPC_FP: f4d50563f2e08abcfcded8e8ade7fb3b
+CURRENT_GRANTS_FP: 88986aa562aad21b7defa89648288083
+CURRENT_POLICY_FP: fa62157c08cffc8b49c38256ad8dfe26
+CURRENT_POLICY_FP_RECORDED: true
+SLICE_A_DB_BASELINE_COMPLETE: true
+PORT_4321_NO_LISTEN: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-edge-deploy
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A apply-packet atomicity (2026-08-15)
 

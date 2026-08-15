@@ -5,42 +5,45 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-staging-preflight-result-recording COMPLETE
-HEAD: 266f7b00a665d9356533975e6cfefea31a80594d
-PREFLIGHT_RECORDED: true
-CATALOG_PREFLIGHT_PASS: true
-OWNER_JWT_LIVE_PROBE_PASS: true
-OWNER_FIXTURE_READY: true
-OWNER_CAN_WRITE_SITE: true
-OWNER_IS_ADMIN: false
-STAGING_REF_OK: true
-SITE_MAPPING_SAFE: true
-FORWARD_POLICIES_ABSENT: true
-RPC_IS_HISTORICAL_IS_ADMIN: true
-CURRENT_POLICY_FP: 2ae7c19292f2c8c5ae68f27c0fe10221
+Current phase: discography-site-owner-authz-slice-a-staging-apply-result-recording COMPLETE
+HEAD: 2cec8be41794566f87bbbf4f6f2f6686e0c0abc4
+SLICE_A_STAGING_APPLY_RECORDED: true
+RLS_APPLY_CONFIRMED: true
+RPC_REDEFINE_CONFIRMED: true
+OWNER_RPC_AUTHZ_PROBE_PASS: true
+STAGING_RLS_CHANGE_EXECUTED: true
+STAGING_RPC_REDEFINE_EXECUTED: true
+DISCOGRAPHY_DATA_WRITE_EXECUTED: false
+EDGE_DEPLOY_EXECUTED: false
+REAL_SAVE_EXECUTED: false
+POLICY_COUNT: 6
+ALBUMS_CURRENT: 4
+TRACKS_CURRENT: 34
+CURRENT_POLICY_FP: fa62157c08cffc8b49c38256ad8dfe26
+CURRENT_POLICY_FP_RECORDED: true
+SLICE_A_DB_BASELINE_COMPLETE: true
+PRE_APPLY_POLICY_FP: 2ae7c19292f2c8c5ae68f27c0fe10221
 CURRENT_GRANTS_FP: 88986aa562aad21b7defa89648288083
-CURRENT_RPC_FP: a04cb160099bada44a358404c9eed74c
-SLICE_A_SCOPE_DRIFT: false
-APPLY_PACKET_READY: true
-STAGING_APPLY_READY: true
-STAGING_APPLY_EXECUTED: false
-RPC_FORWARD_ATOMIC: true
-RPC_ROLLBACK_ATOMIC: true
-RLS_SCOPE_UNCHANGED: true
-WRITE_GRANTS_UNCHANGED: true
-ROLLBACK_BASELINE_TARGET_OK: true
-MIGRATION_APPLIED: false
-DB_WRITE_EXECUTED: false
+CURRENT_RPC_FP: f4d50563f2e08abcfcded8e8ade7fb3b
+HISTORICAL_PRE_APPLY_RPC_FP: a04cb160099bada44a358404c9eed74c
+PORT_4321_NO_LISTEN: true
 ARMS_OFF: true
-PORT_4321_NO_LISTEN: false
-PORT_4321_LISTEN_PID: 11341
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-staging-apply
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-staging-preflight-result.md
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-edge-deploy
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-staging-apply-result.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice A staging apply result (2026-08-15)
+
+- Writer SELECT RLS applied · policy_count **6** · public/admin retained · writer SELECT ×2
+- RPC redefine applied · `can_write_site` · md5 `f4d50563f2e08abcfcded8e8ade7fb3b` (pre-apply `a04cb160…` historical)
+- Owner JWT non-mutating RPC probe **PASS**: authz inside DEFINER then `legacy_id_mismatch` 400 · **no** row write
+- albums **4** / tracks **34** unchanged · grants fp `88986aa5…` · policy fp `fa62157c08cffc8b49c38256ad8dfe26` (pre-apply `2ae7c192…` retired)
+- Edge **not** deployed · no real Save · owner not in `admin_users`
+- Doc: `discography-site-owner-authz-slice-a-staging-apply-result.md`
 
 ## Discography site-owner authz Slice A staging preflight result (2026-08-15)
 

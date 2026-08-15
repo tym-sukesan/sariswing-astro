@@ -49,6 +49,7 @@
     "verify:discography-site-owner-authz-slice-a-implementation": "node scripts/verify-discography-site-owner-authz-slice-a-implementation.mjs",
     "verify:discography-site-owner-authz-slice-a-staging-preflight": "node scripts/verify-discography-site-owner-authz-slice-a-staging-preflight.mjs",
     "verify:discography-site-owner-authz-slice-a-staging-preflight-result": "node scripts/verify-discography-site-owner-authz-slice-a-staging-preflight-result.mjs",
+    "verify:discography-site-owner-authz-slice-a-staging-apply-result": "node scripts/verify-discography-site-owner-authz-slice-a-staging-apply-result.mjs",
     "verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",
     "verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers": "node scripts/verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
     "verify:cms-core-v2-schedule-tbd-staging-migration-gate": "node scripts/verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",

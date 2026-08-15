@@ -3,10 +3,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **Edge deploy** (`discography-site-owner-authz-slice-a-edge-deploy`) — preflight **PASS** · `gosaki-discography-save-dry-run` · command `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta` · **only after** explicit operator approval · Cursor must **not** deploy · no Save / arm ON / Secrets change in that phase
+1. **Primary (Kit Core):** Slice A **live `can_write_site` probe planning** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-planning`) — post-deploy verification **PASS** · Edge VERSION **47** · arm stays OFF until a later explicit approval · do **not** treat live Edge `can_write_site` as confirmed · no real Save
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **not** deployed · no real Save.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · post-deploy probe PASS · live `can_write_site` **unconfirmed** · no real Save.
+
+## 0. Discography site-owner authz Slice A Edge post-deploy verification (2026-08-15)
+
+| Item | Value |
+| --- | --- |
+| Gate | `POST_DEPLOY_VERIFICATION_PASS: true` |
+| Live | VERSION **47** · OPTIONS 200 · unauth 401 · dryRun 200 · Save `save_not_armed` 403 |
+| Data | albums **4** · tracks **34** |
+| `LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED` | **false** |
+| Next | `discography-site-owner-authz-slice-a-live-can-write-site-probe-planning` |
+
+```txt
+EDGE_POST_DEPLOY_RESPONDS: true
+OPTIONS_PASS: true
+UNAUTH_SAVE_REJECT_PASS: true
+DRY_RUN_PASS: true
+NOT_ARMED_PASS: true
+DATA_UNCHANGED: true
+ALBUMS_CURRENT: 4
+TRACKS_CURRENT: 34
+LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
+STOP_REASONS: none
+POST_DEPLOY_VERIFICATION_PASS: true
+EDGE_DEPLOY_EXECUTED: true
+RPC_WRITE_REACHED: false
+REAL_SAVE_EXECUTED: false
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-planning
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A Edge deploy preflight (2026-08-15)
 

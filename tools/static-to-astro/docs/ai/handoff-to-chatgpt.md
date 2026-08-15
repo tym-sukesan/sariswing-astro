@@ -5,35 +5,43 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-edge-deploy-preflight COMPLETE
-HEAD: b435a9e5d16bc5ecbbbd85b4c7127a77088225c3
-EDGE_PREFLIGHT_PASS: true
-FUNCTION_NAME: gosaki-discography-save-dry-run
-FUNCTION_SOURCE_PATH: supabase/functions/gosaki-discography-save-dry-run/
-MIRROR_IN_SYNC: false
-EDGE_AUTHZ_CAN_WRITE_SITE: true
-LEGACY_IS_ADMIN_EDGE_GATE_PRESENT: false
-CALLER_JWT_PRESERVED: true
-SERVICE_ROLE_USED: false
-LIVE_STAGING_FUNCTION_VERSION: 46
-LIVE_EDGE_SLICE_A_AUTHZ_CONFIRMED: false
-STAGING_EDGE_DEPLOY_READY: true
-EDGE_DEPLOY_EXECUTED: false
+Current phase: discography-site-owner-authz-slice-a-edge-post-deploy-verification COMPLETE
+HEAD: ee686db10e78f5c983dbf4a68b0e9c25933845db
+EDGE_POST_DEPLOY_RESPONDS: true
+OPTIONS_PASS: true
+UNAUTH_SAVE_REJECT_PASS: true
+DRY_RUN_PASS: true
+NOT_ARMED_PASS: true
+DATA_UNCHANGED: true
+ALBUMS_CURRENT: 4
+TRACKS_CURRENT: 34
+LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
+STOP_REASONS: none
+POST_DEPLOY_VERIFICATION_PASS: true
+LIVE_STAGING_FUNCTION_VERSION: 47
+EDGE_DEPLOY_EXECUTED: true
+RPC_WRITE_REACHED: false
 DISCOGRAPHY_DATA_WRITE_EXECUTED: false
 REAL_SAVE_EXECUTED: false
-STOP_REASONS: none
-SLICE_A_STAGING_APPLY_RECORDED: true
+ARMS_OFF: true
 CURRENT_POLICY_FP: fa62157c08cffc8b49c38256ad8dfe26
 CURRENT_GRANTS_FP: 88986aa562aad21b7defa89648288083
 CURRENT_RPC_FP: f4d50563f2e08abcfcded8e8ade7fb3b
-ARMS_OFF: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-edge-deploy
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-edge-deploy-preflight.md
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-planning
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-edge-post-deploy-verification.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice A Edge post-deploy verification (2026-08-15)
+
+- Live VERSION **47** on staging `kmjqppxjdnwwrtaeqjta` · OPTIONS 200 · unauth Save 401 · dryRun 200 (`didWrite/dbWrite=false`) · Save 403 `save_not_armed`
+- albums **4** / tracks **34** unchanged · RPC write not reached
+- `LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false` — arm-off probe stops before `can_write_site`; do not guess PASS
+- No arm ON / real Save / re-deploy / Secrets change / production
+- Doc: `discography-site-owner-authz-slice-a-edge-post-deploy-verification.md`
 
 ## Discography site-owner authz Slice A Edge deploy preflight (2026-08-15)
 

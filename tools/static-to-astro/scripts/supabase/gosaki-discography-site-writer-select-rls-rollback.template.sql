@@ -6,10 +6,11 @@
 --
 -- Drops ONLY the two policies added by
 --   gosaki-discography-site-writer-select-rls.template.sql
--- Does NOT drop/alter:
+-- Does NOT drop/alter existing catalog policies (current staging count = 4):
 --   discography_public_select / discography_tracks_public_select
 --   discography_admin_all / discography_tracks_admin_all
---   RESTRICTIVE slice policies
+-- Current catalog has no RESTRICTIVE slice policies; this rollback neither
+-- creates nor drops any such policy.
 -- Does NOT change grants / helpers / service_role / table data / RPC body
 -- (RPC rollback is a separate template.)
 -- =============================================================================

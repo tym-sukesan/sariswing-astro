@@ -10,6 +10,7 @@
 -- Does NOT GRANT table UPDATE/INSERT/DELETE. No service_role. No production.
 -- Does NOT add UPDATE/INSERT/DELETE RLS (Slice B/C).
 -- Rollback: gosaki-discography-operational-save-rpc-is-admin-rollback.template.sql
+-- Atomicity: function redefine + COMMENT + REVOKE + GRANT EXECUTE in one BEGIN/COMMIT.
 -- =============================================================================
 
 -- Purpose: release editable columns + tracks replace in ONE transaction.
@@ -17,6 +18,8 @@
 --   All SELECT FOR UPDATE / UPDATE / DELETE / INSERT predicates bind
 --   site_slug = btrim(p_site_slug) AND legacy_id|discography_legacy_id = btrim(p_legacy_id).
 --   Empty p_site_slug / p_legacy_id are rejected. p_site_slug must be 'gosaki-piano'.
+
+BEGIN;
 
 CREATE OR REPLACE FUNCTION public.gosaki_discography_operational_save(
   p_site_slug text,
@@ -411,6 +414,8 @@ REVOKE ALL ON FUNCTION public.gosaki_discography_operational_save(
 GRANT EXECUTE ON FUNCTION public.gosaki_discography_operational_save(
   text, text, timestamptz, text, text, date, text, text, text, text[]
 ) TO authenticated;
+
+COMMIT;
 
 -- Explicit: do not grant table write privileges here.
 -- authenticated/anon remain without table UPDATE/INSERT/DELETE from this template.

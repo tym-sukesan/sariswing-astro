@@ -162,3 +162,26 @@ Required approval form (or equivalent):
 ## 7. Next
 
 **`discography-site-owner-authz-slice-a-staging-apply`** — human-approved staging apply of Slice A RLS + RPC packets only.
+
+---
+
+## 8. Apply-packet atomicity hardening (2026-08-15)
+
+Offline template wrap + comment alignment only. **Not applied.** Policy/RPC logic unchanged.
+
+```txt
+RPC_FORWARD_ATOMIC: true
+RPC_ROLLBACK_ATOMIC: true
+RLS_SCOPE_UNCHANGED: true
+WRITE_GRANTS_UNCHANGED: true
+ROLLBACK_BASELINE_TARGET_OK: true
+STAGING_APPLY_READY: true
+COMMIT_READY: true
+STAGING_APPLY_EXECUTED: false
+```
+
+- FORWARD/ROLLBACK RPC: function redefine + `COMMENT` + `REVOKE` + `GRANT EXECUTE` in one `BEGIN`/`COMMIT`.
+- ROLLBACK RPC restores historical `is_admin()` gate; expected baseline RPC fingerprint `a04cb160099bada44a358404c9eed74c`.
+- FORWARD RLS remains two `SELECT` policies only. No table UPDATE/INSERT/DELETE grants.
+- RLS comments no longer imply RESTRICTIVE slice policies exist on current catalog (count = 4).
+- Apply still requires a separate explicit operator approval.

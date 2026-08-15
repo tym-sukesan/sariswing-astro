@@ -3,10 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **staging apply** (`discography-site-owner-authz-slice-a-staging-apply`) — writer SELECT RLS then RPC `can_write_site` redefine · **only after** explicit operator approval (`承認します。この操作を1回だけ実行してください。`) · staging `kmjqppxjdnwwrtaeqjta` only
+1. **Primary (Kit Core):** Slice A **staging apply** (`discography-site-owner-authz-slice-a-staging-apply`) — writer SELECT RLS then RPC `can_write_site` redefine · **only after** explicit operator approval (`承認します。この操作を1回だけ実行してください。`) · staging `kmjqppxjdnwwrtaeqjta` only · RPC packets are BEGIN/COMMIT atomic
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **not applied yet**.
+
+## 0. Discography site-owner authz Slice A apply-packet atomicity (2026-08-15)
+
+| Item | Value |
+| --- | --- |
+| `RPC_FORWARD_ATOMIC` | **true** |
+| `RPC_ROLLBACK_ATOMIC` | **true** |
+| `RLS_SCOPE_UNCHANGED` | **true** (SELECT policies ×2 only) |
+| `WRITE_GRANTS_UNCHANGED` | **true** |
+| `ROLLBACK_BASELINE_TARGET_OK` | **true** (`a04cb160099bada44a358404c9eed74c`) |
+| Apply | `STAGING_APPLY_READY: true` · `STAGING_APPLY_EXECUTED: false` |
 
 ## 0. Discography site-owner authz Slice A staging preflight result (2026-08-15)
 

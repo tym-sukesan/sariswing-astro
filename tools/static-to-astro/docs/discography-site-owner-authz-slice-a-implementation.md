@@ -100,3 +100,13 @@ Recommended phase: `discography-site-owner-authz-slice-a-staging-preflight`
 | RLS fwd/rb | `scripts/supabase/gosaki-discography-site-writer-select-rls*.template.sql` |
 | RPC fwd/rb | `scripts/supabase/gosaki-discography-operational-save-rpc-*.template.sql` |
 | Verifier | `scripts/verify-discography-site-owner-authz-slice-a-implementation.mjs` |
+
+---
+
+## 5. Apply-packet atomicity hardening (2026-08-15)
+
+Offline template hardening only — **not applied**. Function/policy logic unchanged.
+
+- FORWARD RPC: function redefine + `COMMENT` + `REVOKE` + `GRANT EXECUTE` wrapped in one `BEGIN` / `COMMIT`.
+- ROLLBACK RPC: same wrap. Restores historical `is_admin()` gate. Expected post-rollback RPC definition fingerprint: `a04cb160099bada44a358404c9eed74c`.
+- RLS comments: do **not** imply RESTRICTIVE slice policies exist on current staging catalog (count = 4). Still two SELECT policies only; no UPDATE/INSERT/DELETE grants.

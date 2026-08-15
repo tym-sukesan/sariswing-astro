@@ -9,6 +9,9 @@
 -- (legacy public.is_admin() gate). Use only to roll back Slice A RPC redefine.
 -- Does NOT drop RLS policies (use writer-select rollback template separately).
 -- Does NOT GRANT table UPDATE/INSERT/DELETE. No service_role.
+-- Atomicity: function redefine + COMMENT + REVOKE + GRANT EXECUTE in one BEGIN/COMMIT.
+-- After this rollback, expected RPC definition fingerprint (historical / pre-apply baseline):
+--   a04cb160099bada44a358404c9eed74c
 -- =============================================================================
 
 -- Gosaki Discography operational Save — atomic RPC (staging only)
@@ -25,6 +28,8 @@
 --   Empty p_site_slug / p_legacy_id are rejected. p_site_slug must be 'gosaki-piano'.
 --   Therefore a row with the same legacy_id under another site_slug cannot be matched
 --   or mutated (example: site_slug='other-site', legacy_id='discography-001').
+
+BEGIN;
 
 CREATE OR REPLACE FUNCTION public.gosaki_discography_operational_save(
   p_site_slug text,
@@ -378,6 +383,8 @@ REVOKE ALL ON FUNCTION public.gosaki_discography_operational_save(
 GRANT EXECUTE ON FUNCTION public.gosaki_discography_operational_save(
   text, text, timestamptz, text, text, date, text, text, text, text[]
 ) TO authenticated;
+
+COMMIT;
 
 -- Explicit: do not grant table write privileges here.
 -- authenticated/anon remain SELECT-only on discography / discography_tracks.

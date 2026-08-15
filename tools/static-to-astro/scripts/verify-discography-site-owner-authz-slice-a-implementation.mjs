@@ -165,6 +165,48 @@ assert("rpc rb DO NOT EXECUTE", /DO NOT EXECUTE/.test(rpcRb));
 assert("rpc rb prod STOP", /vsbvndwuajjhnzpohghh/.test(rpcRb));
 assert("hist rpc still is_admin (unapplied staging SoT)", /public\.is_admin\(\)/.test(histRpc));
 
+function stripDollarBodies(sql) {
+  return sql.replace(/\$\$[\s\S]*?\$\$/g, "$$BODY$$");
+}
+
+function rpcTxnWrapsDdl(sql) {
+  const outer = stripDollarBodies(sql);
+  const beginIdx = outer.search(/^\s*BEGIN\s*;/im);
+  if (beginIdx < 0) return false;
+  const afterBegin = outer.slice(beginIdx);
+  const createIdx = afterBegin.search(/CREATE\s+OR\s+REPLACE\s+FUNCTION/i);
+  const commentIdx = afterBegin.search(/COMMENT\s+ON\s+FUNCTION/i);
+  const revokeIdx = afterBegin.search(/REVOKE\s+ALL\s+ON\s+FUNCTION/i);
+  const grantIdx = afterBegin.search(/GRANT\s+EXECUTE\s+ON\s+FUNCTION/i);
+  const commitIdx = afterBegin.search(/^\s*COMMIT\s*;/im);
+  return (
+    createIdx > 0 &&
+    commentIdx > createIdx &&
+    revokeIdx > commentIdx &&
+    grantIdx > revokeIdx &&
+    commitIdx > grantIdx
+  );
+}
+
+function noTableWriteGrants(sql) {
+  return !/\bGRANT\s+(UPDATE|INSERT|DELETE)\b/i.test(sql);
+}
+
+assert("rpc fwd BEGIN/COMMIT atomic", rpcTxnWrapsDdl(rpcFwd));
+assert("rpc rb BEGIN/COMMIT atomic", rpcTxnWrapsDdl(rpcRb));
+assert(
+  "rpc rb historical is_admin gate",
+  /v_admin\s*:=\s*public\.is_admin\(\)/.test(rpcRb) &&
+    /public\.is_admin\(\) must be true/.test(rpcRb),
+);
+assert(
+  "rpc rb baseline fingerprint",
+  /a04cb160099bada44a358404c9eed74c/.test(rpcRb),
+);
+assert("rpc fwd no table write grants", noTableWriteGrants(rpcFwd));
+assert("rpc rb no table write grants", noTableWriteGrants(rpcRb));
+assert("rpc rb no service_role", !/TO\s+service_role/i.test(rpcRb));
+
 assert(
   "rls fwd discography_site_writer_select",
   /create policy discography_site_writer_select/.test(rlsFwd),
@@ -174,6 +216,26 @@ assert(
   /create policy discography_tracks_site_writer_select/.test(rlsFwd),
 );
 assert("rls fwd SELECT only cmds", /for select/.test(rlsFwd));
+assert(
+  "rls fwd create policy count 2",
+  [...rlsFwd.matchAll(/^\s*create policy\s+\S+/gim)].length === 2,
+);
+assert(
+  "rls fwd for select count 2",
+  [...rlsFwd.matchAll(/^\s*for select\b/gim)].length === 2,
+);
+assert("rls fwd no table write grants", noTableWriteGrants(rlsFwd));
+assert("rls rb no table write grants", noTableWriteGrants(rlsRb));
+assert(
+  "rls fwd no claim restrictive policies present",
+  /no RESTRICTIVE slice policies/i.test(rlsFwd) &&
+    !/^\s*--\s+RESTRICTIVE slice policies \(G-20u36e/m.test(rlsFwd),
+);
+assert(
+  "rls rb no claim restrictive policies present",
+  /no RESTRICTIVE slice policies/i.test(rlsRb) &&
+    !/^\s*--\s+RESTRICTIVE slice policies$/m.test(rlsRb),
+);
 assert(
   "rls fwd no UPDATE policy",
   !/for update/i.test(rlsFwd) && !/site_writer_update/.test(rlsFwd),

@@ -57,10 +57,11 @@ create policy discography_tracks_site_writer_select
     )
   );
 
--- Existing policies intentionally untouched:
+-- Existing policies intentionally untouched (current staging catalog count = 4):
 --   discography_public_select / discography_tracks_public_select (published)
 --   discography_admin_all / discography_tracks_admin_all (legacy is_admin)
---   RESTRICTIVE slice policies (G-20u36e / G-20u43 prep)
+-- Current catalog has no RESTRICTIVE slice policies (G-20u36e / G-20u43 prep names
+-- are historical planning labels only — do not assume they exist on staging).
 
 commit;
 

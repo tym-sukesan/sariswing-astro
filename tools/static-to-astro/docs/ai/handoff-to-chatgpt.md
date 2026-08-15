@@ -24,6 +24,11 @@ SLICE_A_SCOPE_DRIFT: false
 APPLY_PACKET_READY: true
 STAGING_APPLY_READY: true
 STAGING_APPLY_EXECUTED: false
+RPC_FORWARD_ATOMIC: true
+RPC_ROLLBACK_ATOMIC: true
+RLS_SCOPE_UNCHANGED: true
+WRITE_GRANTS_UNCHANGED: true
+ROLLBACK_BASELINE_TARGET_OK: true
 MIGRATION_APPLIED: false
 DB_WRITE_EXECUTED: false
 ARMS_OFF: true
@@ -44,6 +49,7 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 - Current RPC = historical `is_admin()` (baseline, not design-correct)
 - Writer SELECT policies **absent** (0) · apply packets ready · **not applied**
 - Apply requires separate explicit human approval
+- Apply packets: RPC FORWARD/ROLLBACK wrapped in one BEGIN/COMMIT; RLS comments aligned to catalog (no RESTRICTIVE policies present)
 - Doc: `discography-site-owner-authz-slice-a-staging-preflight-result.md`
 
 ## Discography site-owner authz Slice A staging preflight (2026-08-15 · historical packet)

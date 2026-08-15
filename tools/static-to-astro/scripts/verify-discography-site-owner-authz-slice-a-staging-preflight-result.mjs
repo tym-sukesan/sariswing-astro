@@ -28,6 +28,10 @@ const RPC_FWD = path.join(
   TOOL_ROOT,
   "scripts/supabase/gosaki-discography-operational-save-rpc-can-write-site.template.sql",
 );
+const RPC_RB = path.join(
+  TOOL_ROOT,
+  "scripts/supabase/gosaki-discography-operational-save-rpc-is-admin-rollback.template.sql",
+);
 const PKG = path.join(TOOL_ROOT, "package.json");
 const SUITE = path.join(TOOL_ROOT, "scripts/run-cms-core-v2-safety-suite.mjs");
 
@@ -47,6 +51,7 @@ const doc = fs.readFileSync(DOC, "utf8");
 const packet = fs.readFileSync(PACKET, "utf8");
 const rlsFwd = fs.readFileSync(RLS_FWD, "utf8");
 const rpcFwd = fs.readFileSync(RPC_FWD, "utf8");
+const rpcRb = fs.readFileSync(RPC_RB, "utf8");
 const pkg = fs.readFileSync(PKG, "utf8");
 const suite = fs.readFileSync(SUITE, "utf8");
 
@@ -140,7 +145,79 @@ assert("approval still required", /explicit operator approval/.test(doc));
 assert("packet doc still historical", /PREFLIGHT_PASS:\s*false/.test(packet));
 
 assert("rls fwd select-only", /for select/.test(rlsFwd) && !/for update/i.test(rlsFwd));
+assert(
+  "rls fwd create policy count 2",
+  [...rlsFwd.matchAll(/^\s*create policy\s+\S+/gim)].length === 2,
+);
+assert(
+  "rls fwd for select count 2",
+  [...rlsFwd.matchAll(/^\s*for select\b/gim)].length === 2,
+);
 assert("rpc fwd can_write_site", /can_write_site/.test(rpcFwd));
+
+function stripDollarBodies(sql) {
+  return sql.replace(/\$\$[\s\S]*?\$\$/g, "$$BODY$$");
+}
+
+function rpcTxnWrapsDdl(sql) {
+  const outer = stripDollarBodies(sql);
+  const beginIdx = outer.search(/^\s*BEGIN\s*;/im);
+  if (beginIdx < 0) return false;
+  const afterBegin = outer.slice(beginIdx);
+  const createIdx = afterBegin.search(/CREATE\s+OR\s+REPLACE\s+FUNCTION/i);
+  const commentIdx = afterBegin.search(/COMMENT\s+ON\s+FUNCTION/i);
+  const revokeIdx = afterBegin.search(/REVOKE\s+ALL\s+ON\s+FUNCTION/i);
+  const grantIdx = afterBegin.search(/GRANT\s+EXECUTE\s+ON\s+FUNCTION/i);
+  const commitIdx = afterBegin.search(/^\s*COMMIT\s*;/im);
+  return (
+    createIdx > 0 &&
+    commentIdx > createIdx &&
+    revokeIdx > commentIdx &&
+    grantIdx > revokeIdx &&
+    commitIdx > grantIdx
+  );
+}
+
+assert("rpc fwd BEGIN/COMMIT atomic", rpcTxnWrapsDdl(rpcFwd));
+assert("rpc rb BEGIN/COMMIT atomic", rpcTxnWrapsDdl(rpcRb));
+assert(
+  "rpc rb historical is_admin gate",
+  /v_admin\s*:=\s*public\.is_admin\(\)/.test(rpcRb),
+);
+assert(
+  "rpc rb baseline fingerprint",
+  /a04cb160099bada44a358404c9eed74c/.test(rpcRb),
+);
+assert(
+  "no table write grants",
+  !/\bGRANT\s+(UPDATE|INSERT|DELETE)\b/i.test(rpcFwd) &&
+    !/\bGRANT\s+(UPDATE|INSERT|DELETE)\b/i.test(rpcRb) &&
+    !/\bGRANT\s+(UPDATE|INSERT|DELETE)\b/i.test(rlsFwd),
+);
+assert(
+  "no service_role",
+  !/TO\s+service_role/i.test(rpcFwd) &&
+    !/TO\s+service_role/i.test(rpcRb) &&
+    !/TO\s+service_role/i.test(rlsFwd),
+);
+assert(
+  "production STOP on packets",
+  /vsbvndwuajjhnzpohghh/.test(rpcFwd) &&
+    /vsbvndwuajjhnzpohghh/.test(rpcRb) &&
+    /vsbvndwuajjhnzpohghh/.test(rlsFwd),
+);
+assert(
+  "rls comments no restrictive present",
+  /no RESTRICTIVE slice policies/i.test(rlsFwd),
+);
+assert("RPC_FORWARD_ATOMIC true", /RPC_FORWARD_ATOMIC:\s*true/.test(doc));
+assert("RPC_ROLLBACK_ATOMIC true", /RPC_ROLLBACK_ATOMIC:\s*true/.test(doc));
+assert("RLS_SCOPE_UNCHANGED true", /RLS_SCOPE_UNCHANGED:\s*true/.test(doc));
+assert("WRITE_GRANTS_UNCHANGED true", /WRITE_GRANTS_UNCHANGED:\s*true/.test(doc));
+assert(
+  "ROLLBACK_BASELINE_TARGET_OK true",
+  /ROLLBACK_BASELINE_TARGET_OK:\s*true/.test(doc),
+);
 
 assert(
   "package.json script",

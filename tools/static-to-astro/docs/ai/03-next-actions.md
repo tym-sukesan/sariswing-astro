@@ -3,10 +3,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **live `can_write_site` probe planning** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-planning`) — post-deploy verification **PASS** · Edge VERSION **47** · arm stays OFF until a later explicit approval · do **not** treat live Edge `can_write_site` as confirmed · no real Save
+1. **Primary (Kit Core):** Slice A **live `can_write_site` probe preflight** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight`) — planning **COMPLETE** · recommended packet = operational Save + owner JWT + absent `discography-999` → `release_read_failed` · **arm ON required** (Edge secret only) · **not executed** · no real Save
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · post-deploy probe PASS · live `can_write_site` **unconfirmed** · no real Save.
+
+## 0. Discography site-owner authz Slice A live Edge can_write_site probe planning (2026-08-15)
+
+| Item | Value |
+| --- | --- |
+| Gate | `LIVE_EDGE_AUTHZ_PROBE_POSSIBLE: true` · `READY_FOR_OPERATOR_PROBE: false` |
+| Order | arm → payload → JWT → `can_write_site` → SELECT → lock → RPC |
+| Safe stop | `release_read_failed` on absent `discography-999` |
+| Arm | Edge secret exact-true required · no redeploy · UI arm off |
+| Write | `DATA_WRITE_REACHABLE: false` (recommended packet only) |
+| Next | `discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight` |
+
+```txt
+LIVE_EDGE_AUTHZ_PROBE_POSSIBLE: true
+ARM_ON_REQUIRED: true
+RPC_REACHED: false
+DATA_WRITE_REACHABLE: false
+READY_FOR_OPERATOR_PROBE: false
+LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
+PROBE_EXECUTED: false
+DB_RPC_PROBE_IS_NOT_LIVE_EDGE_PROOF: true
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A Edge post-deploy verification (2026-08-15)
 

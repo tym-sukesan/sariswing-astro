@@ -5,35 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-edge-post-deploy-verification COMPLETE
-HEAD: ee686db10e78f5c983dbf4a68b0e9c25933845db
-EDGE_POST_DEPLOY_RESPONDS: true
-OPTIONS_PASS: true
-UNAUTH_SAVE_REJECT_PASS: true
-DRY_RUN_PASS: true
-NOT_ARMED_PASS: true
-DATA_UNCHANGED: true
+Current phase: discography-site-owner-authz-slice-a-live-can-write-site-probe-planning COMPLETE
+HEAD: cdcdff7ddf86d30e5126c697e53f2ecb12571c3a
+LIVE_EDGE_AUTHZ_PROBE_POSSIBLE: true
+ARM_ON_REQUIRED: true
+SAFE_STOP_POINT: release_read_failed after can_write_site
+RPC_REACHED: false
+DATA_WRITE_REACHABLE: false
+READY_FOR_OPERATOR_PROBE: false
+LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
+PROBE_EXECUTED: false
+ARM_CHANGED: false
+SECRETS_CHANGED: false
+DB_RPC_PROBE_IS_NOT_LIVE_EDGE_PROOF: true
+LIVE_STAGING_FUNCTION_VERSION: 47
+POST_DEPLOY_VERIFICATION_PASS: true
 ALBUMS_CURRENT: 4
 TRACKS_CURRENT: 34
-LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false
-STOP_REASONS: none
-POST_DEPLOY_VERIFICATION_PASS: true
-LIVE_STAGING_FUNCTION_VERSION: 47
-EDGE_DEPLOY_EXECUTED: true
-RPC_WRITE_REACHED: false
-DISCOGRAPHY_DATA_WRITE_EXECUTED: false
-REAL_SAVE_EXECUTED: false
 ARMS_OFF: true
-CURRENT_POLICY_FP: fa62157c08cffc8b49c38256ad8dfe26
-CURRENT_GRANTS_FP: 88986aa562aad21b7defa89648288083
-CURRENT_RPC_FP: f4d50563f2e08abcfcded8e8ade7fb3b
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-planning
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-edge-post-deploy-verification.md
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-live-can-write-site-probe-planning.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice A live Edge can_write_site probe planning (2026-08-15)
+
+- VERSION 47 order: **arm → payload validation → JWT → can_write_site → SELECT → lock/frozen/no_change → RPC**
+- Live Edge owner proof needs arm ON (Edge secret exact-true · no redeploy · UI arm off)
+- Safe stop: operational Save + owner JWT + absent `discography-999` → `release_read_failed` after `can_write_site` · RPC not called
+- Invalid format `legacy_id` stops **before** `can_write_site` and does **not** prove Edge authz
+- DB RPC owner probe is **not** live Edge proof
+- `READY_FOR_OPERATOR_PROBE: false` (planning only)
+- Doc: `discography-site-owner-authz-slice-a-live-can-write-site-probe-planning.md`
 
 ## Discography site-owner authz Slice A Edge post-deploy verification (2026-08-15)
 

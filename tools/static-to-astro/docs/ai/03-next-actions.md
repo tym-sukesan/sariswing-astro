@@ -3,10 +3,40 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **live `can_write_site` probe execution** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-execution`) — dataset regression **fixed** · Vite `getStagingAuthConfig` path · **only after** explicit one-shot operator approval · Cursor must **not** set Secrets or POST · owner fixture recheck must PASS before Secret ON · expected `release_read_failed` · then Secret unset
+1. **Primary (Kit Core):** Slice A live Edge `can_write_site` **CONFIRMED** — next `discography-site-owner-authz-slice-b-planning` (UPDATE grants / site-writer UPDATE RLS). Do **not** re-arm / re-POST. Deferred: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · post-deploy probe PASS · live `can_write_site` **unconfirmed** · no real Save.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · live `can_write_site` **confirmed** (`release_read_failed` · no RPC) · no real Save.
+
+## 0. Discography site-owner authz Slice A live Edge can_write_site probe result (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `SLICE_A_RESULT_RECORDED: true` · `LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: true` |
+| POST | exactly one · `discography-999` · HTTP **403** `release_read_failed` |
+| Write | `RPC_REACHED: false` · `DATA_WRITE: false` · post baseline 4/34/999=0 |
+| Secret | staging ON then **unset** · production unchanged |
+| UI finding | musician-basic live-read deps missing · **not fixed** |
+| Next | `discography-site-owner-authz-slice-b-planning` |
+
+```txt
+SLICE_A_RESULT_RECORDED: true
+PROBE_EXECUTED: true
+PROBE_RERUN_FORBIDDEN: true
+LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: true
+RPC_REACHED: false
+DATA_WRITE: false
+SECRET_RESET: true
+POST_ARM_OFF_CONFIRMED: true
+DATA_UNCHANGED: true
+UI_READ_WIRING_FINDING_RECORDED: true
+UI_READ_WIRING_FIXED: false
+PRODUCTION_UNCHANGED: true
+COMMIT_READY: true
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-planning
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A live Edge can_write_site probe final hardening (2026-08-16)
 

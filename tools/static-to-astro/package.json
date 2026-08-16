@@ -55,6 +55,7 @@
     "verify:discography-site-owner-authz-slice-a-live-can-write-site-probe-planning": "node scripts/verify-discography-site-owner-authz-slice-a-live-can-write-site-probe-planning.mjs",
     "verify:discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight": "node scripts/verify-discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight.mjs",
     "verify:discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening": "node scripts/verify-discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.mjs",
+    "verify:discography-site-owner-authz-slice-a-live-can-write-site-probe-result": "node scripts/verify-discography-site-owner-authz-slice-a-live-can-write-site-probe-result.mjs",
     "verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",
     "verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers": "node scripts/verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
     "verify:cms-core-v2-schedule-tbd-staging-migration-gate": "node scripts/verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",

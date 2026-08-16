@@ -2,13 +2,14 @@
 
 - **Phase:** `discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight`
 - **Date:** 2026-08-16
-- **Status:** **COMPLETE (packet locked · not executed)**
+- **Status:** **COMPLETE (packet locked · historical snapshot)**
+- **Operator execution recorded (2026-08-16):** `discography-site-owner-authz-slice-a-live-can-write-site-probe-result.md`. Gates below remain the pre-execution packet snapshot.
 - **HEAD:** `7d0434b5ffba905a70136870dbedb7ea77da5dd9`
 - **CLI:** Supabase CLI **2.102.0** (`supabase secrets set|unset --help` confirmed locally)
 - **Prior:** `discography-site-owner-authz-slice-a-live-can-write-site-probe-planning`
 - **This phase:** lock the one-shot operator packet · **no** Secrets mutate · **no** POST · **no** DB write · **no** deploy · **no** commit/push
 
-Cursor must **not** run Secret ON/OFF or the owner POST. Operator execution needs a separate explicit one-shot approval.
+Cursor must **not** run Secret ON/OFF or the owner POST. Operator one-shot is already recorded in `discography-site-owner-authz-slice-a-live-can-write-site-probe-result.md` — do **not** re-run.
 
 **Operator packet SoT (2026-08-16):** `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`. Auth path is Vite `getStagingAuthConfig()` + `getStagingSupabaseClient()` (PASS'd owner JWT probe). **Do not** use `document.body.dataset.gosakiSupabaseUrl` / `gosakiSupabaseAnonKey`. Terminal `PUBLIC_SUPABASE_*` is **not** assumed exported. Historical curl packet below is retained as history only.
 

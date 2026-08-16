@@ -2,12 +2,13 @@
 
 - **Phase:** `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening`
 - **Date:** 2026-08-16
-- **Status:** **COMPLETE (packet hardened · not executed)**
+- **Status:** **COMPLETE (packet hardened · historical snapshot)**
+- **Operator execution recorded (2026-08-16):** `discography-site-owner-authz-slice-a-live-can-write-site-probe-result.md`. Gates below remain the pre-execution packet snapshot.
 - **HEAD (baseline):** `7d0434b5ffba905a70136870dbedb7ea77da5dd9`
 - **Prior:** `discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight`
 - **This phase:** lock two execution-preflight deltas into the operator packet · **no** Secrets mutate · **no** POST · **no** DB write · **no** deploy · **no** commit/push
 
-Operator packet SoT for the future one-shot is **this file**. Probe logic / payload / `discography-999` / sentinel lock / arm ON=`set …=true` / arm OFF=`unset` are unchanged.
+This file remains the **historical** operator packet snapshot. Live one-shot result: `discography-site-owner-authz-slice-a-live-can-write-site-probe-result.md`. Do **not** re-arm or re-POST. Probe logic / payload / `discography-999` / sentinel lock / arm ON=`set …=true` / arm OFF=`unset` are unchanged.
 
 Deltas vs execution-preflight:
 
@@ -16,7 +17,7 @@ Deltas vs execution-preflight:
 
 **Dataset regression fix (2026-08-16, before operator execution):** §3 / §6 must **not** use `document.body.dataset.gosakiSupabaseUrl` / `gosakiSupabaseAnonKey`. That path failed live (`supabaseConfigFound=false`) because musician-basic login does not put URL/anon key on the DOM. Working SoT is the PASS'd owner JWT probe recorded in `discography-site-owner-authz-slice-a-staging-preflight-result.md`: Vite `getStagingAuthConfig()` + `getStagingSupabaseClient()` (same as login). Terminal `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY` are **not** assumed exported; Vite embeds them in the running `npm run dev` bundle.
 
-Cursor must **not** run Secret ON/OFF, owner POST, or the recheck IIFE. Operator execution still needs a separate explicit one-shot approval.
+Cursor must **not** run Secret ON/OFF, owner POST, or the recheck IIFE. Operator one-shot is already recorded — do **not** re-run.
 
 ---
 

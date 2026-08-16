@@ -3,10 +3,43 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B planning **COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-preflight` (existing-release operational Save packet). **No** UPDATE RLS/GRANT. Do **not** re-run Slice A probe. Deferred: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B operational Save preflight **COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-execution` (owner POST `discography-003` description-only, then separate restore). **No** UPDATE RLS/GRANT. Do **not** re-run Slice A probe. Deferred: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · no owner DATA_WRITE yet.
+
+## 0. Discography site-owner authz Slice B operational Save preflight (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `READY_FOR_OPERATOR_SAVE: true` · `SAVE_EXECUTED: false` |
+| Target | `discography-003` · description-only marker |
+| Lock | `2026-07-10T05:59:35.138671+00:00` (re-SELECT before Secret ON) |
+| Restore | required · same DEFINER RPC · separate approval |
+| Next | operational Save execution (explicit operator approval) |
+
+```txt
+TARGET_RELEASE: discography-003
+BEFORE_SNAPSHOT_READY: true
+MINIMAL_MUTATION: description_append_only
+REAL_DATA_WRITE_REQUIRED: true
+OPTIMISTIC_LOCK_READY: true
+OWNER_FIXTURE_RECHECK_READY: true
+SECRET_ON_OFF_PACKET_READY: true
+ONE_SHOT_SAVE_PACKET_READY: true
+RESTORATION_REQUIRED: true
+RESTORATION_PACKET_READY: true
+DIRECT_TABLE_WRITE_USED: false
+RLS_CHANGE_REQUIRED: false
+GRANT_CHANGE_REQUIRED: false
+RPC_CHANGE_REQUIRED: false
+PRODUCTION_BLOCKED: true
+READY_FOR_OPERATOR_SAVE: true
+SAVE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B planning (2026-08-16)
 

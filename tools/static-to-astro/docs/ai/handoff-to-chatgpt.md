@@ -5,30 +5,49 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-planning COMPLETE
-HEAD baseline: ee302fd2c949fb2c339febefea3a26a4f6e6faf5
-DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_B_PLANNING_COMPLETE: true
-SLICE_A_CLOSED: true
-CURRENT_UPDATE_AUTHZ_PATH: edge_can_write_site_then_definer_rpc
-DIRECT_TABLE_WRITE_REQUIRED: false
-RPC_CHANGE_REQUIRED: false
+Current phase: discography-site-owner-authz-slice-b-operational-save-preflight COMPLETE
+HEAD baseline: b025eac964a34b660d7894dbfff32f7990c53d6e
+TARGET_RELEASE: discography-003
+BEFORE_SNAPSHOT_READY: true
+MINIMAL_MUTATION: description_append_only
+REAL_DATA_WRITE_REQUIRED: true
+OPTIMISTIC_LOCK_READY: true
+OWNER_FIXTURE_RECHECK_READY: true
+SECRET_ON_OFF_PACKET_READY: true
+ONE_SHOT_SAVE_PACKET_READY: true
+RESTORATION_REQUIRED: true
+RESTORATION_PACKET_READY: true
+DIRECT_TABLE_WRITE_USED: false
 RLS_CHANGE_REQUIRED: false
 GRANT_CHANGE_REQUIRED: false
-REAL_SAVE_REQUIRED_FOR_PROOF: true
-READY_FOR_SLICE_B_IMPLEMENTATION: false
+RPC_CHANGE_REQUIRED: false
+PRODUCTION_BLOCKED: true
+READY_FOR_OPERATOR_SAVE: true
+SAVE_EXECUTED: false
 UI_READ_WIRING_IN_SCOPE: false
 OWNER_TO_ADMIN_USERS_FORBIDDEN: true
 COMMIT_READY: true
 STOP_REASONS: none
 ARMS_OFF: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-preflight
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-planning.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-preflight.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice B operational Save preflight (2026-08-16)
+
+- Packet locked · Cursor must **not** run Secret/POST/Save
+- Target: `discography-003` (`About Us!!`) · lock `2026-07-10T05:59:35.138671+00:00`
+- Mutation: description append `[CMS Kit staging] Slice B owner Save PoC` · tracks unchanged
+- Path: UI/browser session → Edge `can_write_site` → DEFINER RPC (no table GRANT/UPDATE RLS)
+- Restore required via same RPC after proof Save (separate approval · Secret ON/OFF again)
+- `READY_FOR_OPERATOR_SAVE: true` does not authorize this-phase Save
+- Next: `discography-site-owner-authz-slice-b-operational-save-execution`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-preflight.md`
 
 ## Discography site-owner authz Slice B planning (2026-08-16)
 

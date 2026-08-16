@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **live `can_write_site` probe execution** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-execution`) — final-hardening **PASS** · packet locked · **only after** explicit one-shot operator approval · Cursor must **not** set Secrets or POST · owner fixture recheck must PASS before Secret ON · expected `release_read_failed` · then Secret unset
+1. **Primary (Kit Core):** Slice A **live `can_write_site` probe execution** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-execution`) — dataset regression **fixed** · Vite `getStagingAuthConfig` path · **only after** explicit one-shot operator approval · Cursor must **not** set Secrets or POST · owner fixture recheck must PASS before Secret ON · expected `release_read_failed` · then Secret unset
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · post-deploy probe PASS · live `can_write_site` **unconfirmed** · no real Save.
@@ -22,6 +22,14 @@ FINAL_HARDENING_COMPLETE: true
 OWNER_FIXTURE_RECHECK_ADDED: true
 OWNER_FIXTURE_RECHECK_BEFORE_SECRET_ON: true
 ARM_OFF_HTTP_STATUS_CAPTURED: true
+KNOWN_DATASET_REGRESSION_FIXED: true
+PAST_WORKING_PROBE_REUSED: true
+OWNER_FIXTURE_RECHECK_WORKING_PATH: true
+OWNER_POST_WORKING_PATH: true
+TERMINAL_ENV_ASSUMPTION_VALID: true
+CONSOLE_PREPARATION_UNAMBIGUOUS: true
+OWNER_POST_PREPARED_BEFORE_SECRET_ON: true
+NO_POST_ARM_RESEARCH_OR_COPY: true
 TARGET_999_LOCKED: true
 REAL_LEGACY_ID_PRESENT: false
 NO_RETRY_RULE_FIXED: true

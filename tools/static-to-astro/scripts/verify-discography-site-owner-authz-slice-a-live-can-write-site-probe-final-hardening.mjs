@@ -129,16 +129,25 @@ assert(
   "no real legacyId JSON in hardening packet",
   !/"legacyId": "discography-00[1-4]"/.test(doc),
 );
-assert("arm OFF curl uses 999", /arm OFF verification[\s\S]*"legacyId": "discography-999"/.test(doc));
-assert("HTTP_STATUS -w present", doc.includes(HTTP_STATUS_W));
-assert(
-  "HTTP_STATUS on arm OFF curl",
-  /arm OFF verification[\s\S]*-w '\\nHTTP_STATUS=%\{http_code\}\\n'[\s\S]*save_not_armed/.test(
-    doc,
-  ),
-);
+assert("arm OFF uses 999", /arm OFF verification[\s\S]*legacyId: "discography-999"/.test(doc));
+assert("HTTP_STATUS captured on arm OFF", /HTTP_STATUS:\s*res\.status/.test(doc));
 assert("HTTP_STATUS=403 pass", /HTTP_STATUS=403/.test(doc));
 assert("save_not_armed pass", /reasonCode=save_not_armed/.test(doc));
+assert("KNOWN_DATASET_REGRESSION_FIXED true", /KNOWN_DATASET_REGRESSION_FIXED:\s*true/.test(doc));
+assert("PAST_WORKING_PROBE_REUSED true", /PAST_WORKING_PROBE_REUSED:\s*true/.test(doc));
+assert(
+  "OWNER_FIXTURE_RECHECK_WORKING_PATH true",
+  /OWNER_FIXTURE_RECHECK_WORKING_PATH:\s*true/.test(doc),
+);
+assert("OWNER_POST_WORKING_PATH true", /OWNER_POST_WORKING_PATH:\s*true/.test(doc));
+assert(
+  "TERMINAL_ENV_ASSUMPTION_VALID true",
+  /TERMINAL_ENV_ASSUMPTION_VALID:\s*true/.test(doc),
+);
+assert(
+  "CONSOLE_PREPARATION_UNAMBIGUOUS true",
+  /CONSOLE_PREPARATION_UNAMBIGUOUS:\s*true/.test(doc),
+);
 
 const recheckIdx = doc.indexOf("### 3. owner fixture recheck");
 const secretOnIdx = doc.indexOf("### 5. Secret ON");
@@ -146,27 +155,65 @@ const ownerPostIdx = doc.indexOf("### 6. owner browser session");
 assert("recheck section present", recheckIdx >= 0);
 assert("Secret ON after recheck", recheckIdx >= 0 && secretOnIdx > recheckIdx);
 assert("owner POST after Secret ON", secretOnIdx >= 0 && ownerPostIdx > secretOnIdx);
-assert("recheck uses can_write_site RPC", /\/rpc\/can_write_site/.test(doc));
-assert("recheck uses is_admin RPC", /\/rpc\/is_admin/.test(doc));
-assert("recheck sites select", /\/sites\?select=id,site_slug,status/.test(doc));
-assert("recheck site_slug gosaki-piano", /site_slug=eq\./.test(doc) && /gosaki-piano/.test(doc));
-assert("recheck singleton 1", /siteRowCount === 1/.test(doc));
-assert("recheck status active", /siteStatus === "active"/.test(doc));
-assert("recheck can_write_site true", /canWrite === true/.test(doc));
-assert("recheck is_admin false", /isAdmin === false/.test(doc));
+assert("working path getStagingAuthConfig", /getStagingAuthConfig\(\)/.test(doc));
+assert("working path getStagingSupabaseClient", /getStagingSupabaseClient\(url, anonKey\)/.test(doc));
+assert(
+  "vite module import auth config",
+  /import\("\/src\/lib\/admin\/staging-auth\/staging-auth-config\.ts"\)/.test(doc),
+);
+assert(
+  "vite module import auth client",
+  /import\("\/src\/lib\/admin\/staging-auth\/supabase-staging-auth-client\.ts"\)/.test(doc),
+);
+const recheckSlice = doc.slice(recheckIdx, secretOnIdx);
+const postSlice = doc.slice(ownerPostIdx, doc.indexOf("### 7. response check"));
+assert(
+  "recheck IIFE has no DOM dataset",
+  !/dataset\.gosakiSupabase/.test(recheckSlice),
+);
+assert(
+  "owner POST IIFE has no DOM dataset",
+  !/dataset\.gosakiSupabase/.test(postSlice),
+);
+assert("recheck uses can_write_site RPC", /rpc\("can_write_site"/.test(recheckSlice));
+assert("recheck uses is_admin RPC", /rpc\("is_admin"\)/.test(recheckSlice));
+assert("recheck sites select", /\.from\("sites"\)/.test(recheckSlice) && /id,site_slug,status/.test(recheckSlice));
+assert("recheck site_slug gosaki-piano", /SITE_SLUG = "gosaki-piano"/.test(recheckSlice));
+assert("recheck singleton", /siteSingletonOk/.test(recheckSlice) && /rows\.length === 1/.test(recheckSlice));
+assert("recheck can_write_site true", /out\.can_write_site === true/.test(recheckSlice));
+assert("recheck is_admin false", /out\.is_admin === false/.test(recheckSlice));
+assert("recheck ownerJwtProbePass", /ownerJwtProbePass/.test(recheckSlice));
 assert(
   "recheck fail blocks Secret ON",
   /Secret ON forbidden/.test(doc) && /owner POST forbidden/.test(doc),
 );
 assert("recheck is not functions Save", /Not\*\* a functions Save/.test(doc) || /Not a functions Save/.test(doc));
-const recheckSlice = doc.slice(recheckIdx, secretOnIdx);
 assert(
   "recheck IIFE has no functions Save URL",
   !/gosaki-discography-save-dry-run/.test(recheckSlice),
 );
 assert("recheck not live Edge proof", /not\*\* live Edge/.test(doc) || /Not\*\* live Edge/.test(doc) || /not live Edge/.test(doc));
 assert("no JWT log", /Do not log site UUID \/ JWT/.test(doc) || /Do not print JWT/.test(doc));
-assert("browser session reuse", /Browser session reuse/.test(doc));
+assert("do not paste §3 and §6 together", /do \*\*not\*\* paste §3 and §6 together/.test(doc));
+assert("§3 while Secret OFF", /Secret still OFF/.test(doc) || /while Secret is still OFF/.test(doc));
+assert(
+  "OWNER_POST_PREPARED_BEFORE_SECRET_ON true",
+  /OWNER_POST_PREPARED_BEFORE_SECRET_ON:\s*true/.test(doc),
+);
+assert(
+  "NO_POST_ARM_RESEARCH_OR_COPY true",
+  /NO_POST_ARM_RESEARCH_OR_COPY:\s*true/.test(doc),
+);
+assert(
+  "§6 prepared before Secret ON",
+  /Before Secret ON[\s\S]*exact §6 snippet/.test(doc) && /clipboard/.test(doc),
+);
+assert(
+  "after Secret ON no doc copy",
+  /do \*\*not\*\* open, search, edit, or copy from the doc/.test(doc),
+);
+assert("§6 after Secret ON no edits", /After Secret ON[\s\S]*No new code edits/.test(doc));
+assert("terminal env not assumed exported", /not\*\* assumed exported/.test(doc) || /not assumed exported/.test(doc));
 assert("no JWT copy to terminal", /no JWT copy to terminal/.test(doc) || /Do \*\*not\*\* copy JWT/.test(doc));
 assert("UI Save forbidden", /UI Save \/ Dry-run/.test(doc));
 assert("do not retry", /do not retry/.test(doc));
@@ -180,8 +227,9 @@ assert("preflight still unexecuted", /PROBE_EXECUTED:\s*false/.test(pre));
 assert("planning still unexecuted", /PROBE_EXECUTED:\s*false/.test(plan));
 assert("preflight notes hardening", /final-hardening/.test(pre));
 assert("planning notes hardening", /final-hardening/.test(plan));
-assert("preflight HTTP_STATUS", pre.includes(HTTP_STATUS_W));
-assert("preflight owner fixture recheck before ON", /owner fixture recheck/.test(pre));
+assert("preflight HTTP_STATUS historical", pre.includes(HTTP_STATUS_W));
+assert("preflight owner fixture recheck before ON", /[Oo]wner fixture recheck/.test(pre));
+assert("preflight notes dataset regression", /dataset/.test(pre) || /getStagingAuthConfig/.test(pre));
 
 if (fs.existsSync(LINKED)) {
   const linked = read(LINKED);

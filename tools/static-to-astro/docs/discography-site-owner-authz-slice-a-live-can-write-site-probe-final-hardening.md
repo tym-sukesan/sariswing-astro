@@ -12,7 +12,9 @@ Operator packet SoT for the future one-shot is **this file**. Probe logic / payl
 Deltas vs execution-preflight:
 
 1. Secret ON 直前の **owner fixture recheck**（read-only · browser session）
-2. arm OFF verification curl に **HTTP status 明示** (`-w '\nHTTP_STATUS=%{http_code}\n'`)
+2. arm OFF verification に **HTTP status 明示**
+
+**Dataset regression fix (2026-08-16, before operator execution):** §3 / §6 must **not** use `document.body.dataset.gosakiSupabaseUrl` / `gosakiSupabaseAnonKey`. That path failed live (`supabaseConfigFound=false`) because musician-basic login does not put URL/anon key on the DOM. Working SoT is the PASS'd owner JWT probe recorded in `discography-site-owner-authz-slice-a-staging-preflight-result.md`: Vite `getStagingAuthConfig()` + `getStagingSupabaseClient()` (same as login). Terminal `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY` are **not** assumed exported; Vite embeds them in the running `npm run dev` bundle.
 
 Cursor must **not** run Secret ON/OFF, owner POST, or the recheck IIFE. Operator execution still needs a separate explicit one-shot approval.
 
@@ -35,6 +37,14 @@ DATA_WRITE_REACHABLE: false
 RPC_REACHED_EXPECTED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_OPERATOR_PROBE: true
+KNOWN_DATASET_REGRESSION_FIXED: true
+PAST_WORKING_PROBE_REUSED: true
+OWNER_FIXTURE_RECHECK_WORKING_PATH: true
+OWNER_POST_WORKING_PATH: true
+TERMINAL_ENV_ASSUMPTION_VALID: true
+CONSOLE_PREPARATION_UNAMBIGUOUS: true
+OWNER_POST_PREPARED_BEFORE_SECRET_ON: true
+NO_POST_ARM_RESEARCH_OR_COPY: true
 COMMIT_READY: true
 PROBE_EXECUTED: false
 SECRETS_CHANGED: false
@@ -93,27 +103,19 @@ Do not print JWT / access_token / refresh_token / anon key / email / user id. Do
 
 ### 0. local / staging env readiness
 
-Local staging shell logged in as **pure site owner**:
+Local staging shell logged in as **pure site owner** (Vite `npm run dev` — required for Console `import("/src/lib/...")`):
 
 `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/`
 
-Do **not** click Save or Dry-run. Open DevTools Console. Paste §3 IIFE **without Enter**. Paste §6 IIFE in a second line / later paste **without Enter**.
+Do **not** click Save or Dry-run.
 
-```bash
-cd ~/sariswing-astro
-: "${PUBLIC_SUPABASE_ANON_KEY:?staging anon key missing}"
-: "${PUBLIC_SUPABASE_URL:?staging url missing}"
-python3 - <<'PY'
-import os
-u = os.environ.get("PUBLIC_SUPABASE_URL", "")
-k = os.environ.get("PUBLIC_SUPABASE_ANON_KEY", "")
-assert "kmjqppxjdnwwrtaeqjta" in u, "not staging url"
-assert "vsbvndwuajjhnzpohghh" not in u, "production url forbidden"
-assert len(k) > 20, "anon key missing"
-print("ENV_STAGING_OK")
-print("ANON_KEY_PRESENT=true")
-PY
-```
+Console preparation (do **not** paste §3 and §6 together into DevTools Console):
+
+1. Run **§3 only** while Secret is still OFF. Confirm `ownerJwtProbePass=true` (that is `OWNER_FIXTURE_RECHECK_PASS`).
+2. **Before Secret ON**, copy the exact §6 snippet into another window or clipboard so it is ready to paste. Do **not** paste it into DevTools Console yet. Do **not** embed JWT / token / secret values into the snippet.
+3. After Secret ON: do **not** open, search, edit, or copy from the doc. Terminal ON → immediately browser Console → paste the already-prepared §6 → Enter **exactly once** → confirm response → immediately terminal unset. No new code edits, no investigation.
+
+Terminal `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY` are **not** assumed exported. Staging URL/anon key for browser probes come from Vite `getStagingAuthConfig()` (same as login). Do not `source` env files. Do not print values. CLI Secret / `functions list` do not need those vars.
 
 ### 1. staging function VERSION 47
 
@@ -125,148 +127,146 @@ Require `gosaki-discography-save-dry-run` ACTIVE · VERSION **47**. Else **STOP*
 
 ### 2. SELECT-only pre baseline
 
-```bash
-STG=kmjqppxjdnwwrtaeqjta
-BASE="https://${STG}.supabase.co/rest/v1"
+Same Vite client as the PASS'd owner JWT probe. Read-only counts. Secret stays OFF.
 
-count_range () {
-  curl -sS -D - -o /dev/null \
-    -H "apikey: ${PUBLIC_SUPABASE_ANON_KEY}" \
-    -H "Authorization: Bearer ${PUBLIC_SUPABASE_ANON_KEY}" \
-    -H "Prefer: count=exact" \
-    -H "Range: 0-0" \
-    "$1" | tr -d '\r' | grep -i '^content-range:'
-}
-
-echo "ALBUMS"
-count_range "${BASE}/discography?select=id&site_slug=eq.gosaki-piano"
-
-echo "TRACKS"
-count_range "${BASE}/discography_tracks?select=id&site_slug=eq.gosaki-piano"
-
-echo "DISC-999"
-count_range "${BASE}/discography?select=id&site_slug=eq.gosaki-piano&legacy_id=eq.discography-999"
+```javascript
+(async () => {
+  const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
+  const PROD_REF = "vsbvndwuajjhnzpohghh";
+  const SITE_SLUG = "gosaki-piano";
+  const cfgMod = await import("/src/lib/admin/staging-auth/staging-auth-config.ts");
+  const clientMod = await import("/src/lib/admin/staging-auth/supabase-staging-auth-client.ts");
+  const config = cfgMod.getStagingAuthConfig();
+  const url = String(config.supabaseUrl || "").trim();
+  const anonKey = String(config.supabaseAnonKey || "").trim();
+  if (!url || !anonKey) {
+    console.log({ abort: "getStagingAuthConfig missing PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY" });
+    return;
+  }
+  if (url.includes(PROD_REF) || !url.includes(STAGING_REF)) {
+    console.log({ abort: "host_not_staging" });
+    return;
+  }
+  const client = clientMod.getStagingSupabaseClient(url, anonKey);
+  const albums = await client.from("discography").select("id", { count: "exact", head: true }).eq("site_slug", SITE_SLUG);
+  const tracks = await client.from("discography_tracks").select("id", { count: "exact", head: true }).eq("site_slug", SITE_SLUG);
+  const d999 = await client.from("discography").select("id", { count: "exact", head: true }).eq("site_slug", SITE_SLUG).eq("legacy_id", "discography-999");
+  console.log({
+    probe: "slice-a-select-only-baseline",
+    albums: albums.count,
+    tracks: tracks.count,
+    discography999: d999.count,
+    pass: albums.count === 4 && tracks.count === 34 && d999.count === 0,
+  });
+})();
 ```
 
-Require `0-0/4` · `0-0/34` · `*/0`. If 999 ≠ `*/0` → **STOP**.
+Require `albums=4` · `tracks=34` · `discography999=0`. If 999 ≠ 0 → **STOP**.
 
 ### 3. owner fixture recheck (read-only · before Secret ON)
 
-Browser session reuse (same storage key as the owner POST). **Not** a functions Save. **Not** live Edge proof.
+Working method = PASS'd corrected owner JWT probe (`discography-site-owner-authz-slice-a-staging-preflight-result.md`). Vite `getStagingAuthConfig` + `getStagingSupabaseClient`. **Not** DOM dataset. **Not** a functions Save. **Not** live Edge proof.
 
-Enter the following IIFE **once**. Expected `OWNER_FIXTURE_RECHECK_PASS: true`.
+Enter the following IIFE **once**, Secret still OFF. Expected `ownerJwtProbePass=true` (= `OWNER_FIXTURE_RECHECK_PASS`).
 
 If not PASS → **Secret ON forbidden · owner POST forbidden · no retry · STOP**.
 
 ```javascript
 (async () => {
-  const STG = "kmjqppxjdnwwrtaeqjta";
-  const PROD = "vsbvndwuajjhnzpohghh";
-  const SLUG = "gosaki-piano";
-  const rest = "https://" + STG + ".supabase.co/rest/v1";
+  const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
+  const PROD_REF = "vsbvndwuajjhnzpohghh";
+  const SITE_SLUG = "gosaki-piano";
 
-  const supabaseUrl = String(document.body?.dataset?.gosakiSupabaseUrl || "").trim();
-  const anonKey = String(document.body?.dataset?.gosakiSupabaseAnonKey || "").trim();
-  const stagingHostOk = supabaseUrl.includes(STG) && !supabaseUrl.includes(PROD) && !rest.includes(PROD);
-  if (!stagingHostOk) {
-    console.log({ OWNER_FIXTURE_RECHECK_PASS: false, abort: "host_not_staging" });
-    return;
-  }
-  if (!anonKey) {
-    console.log({ OWNER_FIXTURE_RECHECK_PASS: false, abort: "anon_key_missing_on_page" });
-    return;
-  }
-
-  let token = null;
-  try {
-    const parsed = JSON.parse(localStorage.getItem("sb-" + STG + "-auth-token") || "null");
-    token =
-      (parsed && parsed.access_token) ||
-      (parsed && parsed.currentSession && parsed.currentSession.access_token) ||
-      null;
-  } catch {
-    token = null;
-  }
-  if (!token || typeof token !== "string") {
-    console.log({ OWNER_FIXTURE_RECHECK_PASS: false, abort: "no_owner_session" });
-    return;
-  }
-
-  const headers = {
-    apikey: anonKey,
-    Authorization: "Bearer " + token,
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    Prefer: "count=exact",
+  const out = {
+    probeKind: "owner-jwt-live-select-rpc-only",
+    sessionPresent: false,
+    stagingHostOk: false,
+    productionHostBlocked: false,
+    siteSingletonOk: false,
+    siteSlug: null,
+    siteStatus: null,
+    siteRowCount: null,
+    can_write_site: null,
+    is_admin: null,
+    ownerJwtProbePass: false,
+    stopReason: null,
   };
 
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort("timeout"), 30000);
-  let pass = false;
-  let abort = null;
-  let siteRowCount = -1;
-  let siteSlug = null;
-  let siteStatus = null;
-  let canWrite = null;
-  let isAdmin = null;
-  try {
-    const sitesRes = await fetch(
-      rest + "/sites?select=id,site_slug,status&site_slug=eq." + encodeURIComponent(SLUG),
-      { method: "GET", headers: headers, signal: ac.signal },
-    );
-    const sitesJson = await sitesRes.json();
-    const rows = Array.isArray(sitesJson) ? sitesJson : [];
-    siteRowCount = rows.length;
-    const site = rows[0] || null;
-    siteSlug = site ? String(site.site_slug || "") : null;
-    siteStatus = site ? String(site.status || "") : null;
-    const siteId = site ? String(site.id || "").trim() : "";
-    const siteSingletonOk =
-      sitesRes.ok && siteRowCount === 1 && siteSlug === SLUG && siteStatus === "active" && Boolean(siteId);
-    if (!siteSingletonOk) {
-      abort = "site_fixture_failed";
-    } else {
-      const writeRes = await fetch(rest + "/rpc/can_write_site", {
-        method: "POST",
-        headers: headers,
-        signal: ac.signal,
-        body: JSON.stringify({ p_site_id: siteId }),
-      });
-      canWrite = await writeRes.json();
-      const adminRes = await fetch(rest + "/rpc/is_admin", {
-        method: "POST",
-        headers: headers,
-        signal: ac.signal,
-        body: "{}",
-      });
-      isAdmin = await adminRes.json();
-      if (canWrite === true && isAdmin === false) {
-        pass = true;
-      } else {
-        abort = "authz_fixture_failed";
-      }
-    }
-  } catch (e) {
-    abort = e === "timeout" || (e && e.name === "AbortError") ? "timeout" : "fetch_failed";
-  } finally {
-    clearTimeout(timer);
-    token = null;
-  }
+  const fail = (reason) => {
+    out.stopReason = reason;
+    console.log(out);
+    return out;
+  };
 
-  console.log({
-    probe: "slice-a-owner-fixture-recheck",
-    stagingHostOk: true,
-    productionHostBlocked: false,
-    sessionPresent: true,
-    siteSingletonOk: siteRowCount === 1 && siteSlug === SLUG && siteStatus === "active",
-    siteRowCount: siteRowCount,
-    siteSlug: siteSlug,
-    siteStatus: siteStatus,
-    can_write_site: canWrite === true,
-    is_admin: isAdmin === false ? false : isAdmin === true ? true : null,
-    OWNER_FIXTURE_RECHECK_PASS: pass,
-    abort: abort,
-  });
+  try {
+    const cfgMod = await import("/src/lib/admin/staging-auth/staging-auth-config.ts");
+    const clientMod = await import("/src/lib/admin/staging-auth/supabase-staging-auth-client.ts");
+    const config = cfgMod.getStagingAuthConfig();
+    const url = String(config.supabaseUrl || "").trim();
+    const anonKey = String(config.supabaseAnonKey || "").trim();
+
+    if (!url || !anonKey) {
+      return fail("getStagingAuthConfig missing PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY");
+    }
+
+    out.productionHostBlocked = url.includes(PROD_REF);
+    out.stagingHostOk = url.includes(STAGING_REF) && !out.productionHostBlocked;
+    if (out.productionHostBlocked) return fail("production_ref_blocked");
+    if (!out.stagingHostOk) return fail("staging_host_mismatch");
+
+    const client = clientMod.getStagingSupabaseClient(url, anonKey);
+    const { data: sessData, error: sessErr } = await client.auth.getSession();
+    out.sessionPresent = Boolean(sessData?.session) && !sessErr;
+    if (!out.sessionPresent) return fail("authenticated_session_missing");
+
+    const { data: siteRows, error: siteErr } = await client
+      .from("sites")
+      .select("id,site_slug,status")
+      .eq("site_slug", SITE_SLUG);
+
+    if (siteErr) return fail("sites_select_failed");
+    const rows = Array.isArray(siteRows) ? siteRows : [];
+    out.siteRowCount = rows.length;
+    out.siteSingletonOk = rows.length === 1;
+    if (!out.siteSingletonOk) return fail("sites_not_exact_singleton");
+
+    const site = rows[0];
+    out.siteSlug = String(site.site_slug || "");
+    out.siteStatus = String(site.status || "");
+    const siteId = String(site.id || "").trim();
+    if (!siteId) return fail("sites_id_missing");
+
+    const { data: canWrite, error: writeErr } = await client.rpc("can_write_site", {
+      p_site_id: siteId,
+    });
+    if (writeErr) return fail("can_write_site_rpc_failed");
+    out.can_write_site = canWrite === true;
+
+    const { data: isAdmin, error: adminErr } = await client.rpc("is_admin");
+    if (adminErr) return fail("is_admin_rpc_failed");
+    out.is_admin = isAdmin === true;
+
+    out.ownerJwtProbePass =
+      out.stagingHostOk &&
+      out.sessionPresent &&
+      out.siteSingletonOk &&
+      out.can_write_site === true &&
+      out.is_admin === false;
+
+    if (!out.ownerJwtProbePass) {
+      out.stopReason =
+        out.can_write_site !== true
+          ? "can_write_site_not_true"
+          : out.is_admin !== false
+            ? "is_admin_not_false"
+            : "owner_fixture_mismatch";
+    }
+
+    console.log(out);
+    return out;
+  } catch (e) {
+    return fail("probe_exception");
+  }
 })();
 ```
 
@@ -275,11 +275,10 @@ PASS requires all of:
 - staging host exact
 - `site_slug=gosaki-piano`
 - sites singleton `1`
-- site status `active`
-- `can_write_site(site_id)=true`
-- `is_admin()=false`
+- `can_write_site=true`
+- `is_admin=false`
 
-Do not log site UUID / JWT / email / user id.
+Do not log site UUID / JWT / email / user id. `OWNER_FIXTURE_RECHECK_PASS` := `ownerJwtProbePass === true`.
 
 ### 4. Secret OFF command prepared (do not run yet)
 
@@ -295,11 +294,11 @@ Treat OFF as **RESET**, not DB rollback.
 supabase secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta
 ```
 
-No Edge redeploy. UI arm stays off. Then **immediately** §6 once.
+No Edge redeploy. UI arm stays off. §6 must already be prepared (clipboard / other window). Then **immediately** paste that prepared snippet once — do not go back to the doc.
 
 ### 6. owner browser session — exactly one POST
 
-Do **not** copy JWT to terminal. Enter the following IIFE **once** (one-shot flag). Payload / target / lock unchanged.
+Same working auth path as §3 (`getStagingAuthConfig` + `getStagingSupabaseClient` + `getSession`). Do **not** copy JWT to terminal. Do **not** use DOM dataset. Do **not** embed JWT / token / secret values in this snippet. Prepare this exact snippet **before Secret ON** (clipboard / other window, not DevTools Console). After Secret ON, paste the prepared snippet and Enter **once** (one-shot flag). Payload / target / lock unchanged.
 
 ```javascript
 (async () => {
@@ -317,29 +316,24 @@ Do **not** copy JWT to terminal. Enter the following IIFE **once** (one-shot fla
   const FN =
     "https://" + STG + ".supabase.co/functions/v1/gosaki-discography-save-dry-run";
 
-  const supabaseUrl = String(document.body?.dataset?.gosakiSupabaseUrl || "").trim();
-  const anonKey = String(document.body?.dataset?.gosakiSupabaseAnonKey || "").trim();
-  if (!supabaseUrl.includes(STG) || supabaseUrl.includes(PROD) || FN.includes(PROD)) {
+  const cfgMod = await import("/src/lib/admin/staging-auth/staging-auth-config.ts");
+  const clientMod = await import("/src/lib/admin/staging-auth/supabase-staging-auth-client.ts");
+  const config = cfgMod.getStagingAuthConfig();
+  const url = String(config.supabaseUrl || "").trim();
+  const anonKey = String(config.supabaseAnonKey || "").trim();
+  if (!url || !anonKey) {
+    console.log({ abort: "getStagingAuthConfig missing PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY" });
+    return;
+  }
+  if (!url.includes(STG) || url.includes(PROD) || FN.includes(PROD)) {
     console.log({ abort: "host_not_staging" });
     return;
   }
-  if (!anonKey) {
-    console.log({ abort: "anon_key_missing_on_page" });
-    return;
-  }
 
-  const storageKey = "sb-" + STG + "-auth-token";
-  let token = null;
-  try {
-    const parsed = JSON.parse(localStorage.getItem(storageKey) || "null");
-    token =
-      (parsed && parsed.access_token) ||
-      (parsed && parsed.currentSession && parsed.currentSession.access_token) ||
-      null;
-  } catch {
-    token = null;
-  }
-  if (!token || typeof token !== "string") {
+  const client = clientMod.getStagingSupabaseClient(url, anonKey);
+  const { data: sessData, error: sessErr } = await client.auth.getSession();
+  const token = sessData?.session?.access_token;
+  if (!token || typeof token !== "string" || sessErr) {
     console.log({ abort: "no_owner_session" });
     return;
   }
@@ -392,7 +386,6 @@ Do **not** copy JWT to terminal. Enter the following IIFE **once** (one-shot fla
     kind = e === "timeout" || (e && e.name === "AbortError") ? "timeout" : "fetch_failed";
   } finally {
     clearTimeout(timer);
-    token = null;
   }
 
   const keys = json && typeof json === "object" ? Object.keys(json).sort() : [];
@@ -425,32 +418,64 @@ supabase secrets unset GOSAKI_DISCOGRAPHY_SAVE_ARMED --project-ref kmjqppxjdnwwr
 
 ### 9. arm OFF verification (anon Bearer · HTTP status captured)
 
-Payload / target / staging ref unchanged vs the locked packet. **Only** `-w` added.
+Same Vite `getStagingAuthConfig` for anon key (not owner JWT, not terminal env, not DOM dataset). Payload / target / staging ref unchanged.
 
-```bash
-STG=kmjqppxjdnwwrtaeqjta
-URL="https://${STG}.supabase.co/functions/v1/gosaki-discography-save-dry-run"
-
-curl -sS --max-time 30 -w '\nHTTP_STATUS=%{http_code}\n' -X POST "$URL" \
-  -H "apikey: ${PUBLIC_SUPABASE_ANON_KEY}" \
-  -H "Authorization: Bearer ${PUBLIC_SUPABASE_ANON_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "operation": "save",
-    "approvalId": "gosaki-discography-operational-save",
-    "siteSlug": "gosaki-piano",
-    "legacyId": "discography-999",
-    "expectedBeforeUpdatedAt": "1970-01-01T00:00:00.000Z",
-    "release": {
-      "title": "Slice A live authz probe",
-      "artist": "probe",
-      "release_date": null,
-      "label": null,
-      "purchase_url": null,
-      "description": null
+```javascript
+(async () => {
+  const STG = "kmjqppxjdnwwrtaeqjta";
+  const PROD = "vsbvndwuajjhnzpohghh";
+  const FN =
+    "https://" + STG + ".supabase.co/functions/v1/gosaki-discography-save-dry-run";
+  const cfgMod = await import("/src/lib/admin/staging-auth/staging-auth-config.ts");
+  const config = cfgMod.getStagingAuthConfig();
+  const url = String(config.supabaseUrl || "").trim();
+  const anonKey = String(config.supabaseAnonKey || "").trim();
+  if (!url || !anonKey) {
+    console.log({ abort: "getStagingAuthConfig missing PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY" });
+    return;
+  }
+  if (!url.includes(STG) || url.includes(PROD) || FN.includes(PROD)) {
+    console.log({ abort: "host_not_staging" });
+    return;
+  }
+  const res = await fetch(FN, {
+    method: "POST",
+    headers: {
+      apikey: anonKey,
+      Authorization: "Bearer " + anonKey,
+      "Content-Type": "application/json",
     },
-    "tracksText": "Slice A live authz probe track"
-  }'
+    body: JSON.stringify({
+      operation: "save",
+      approvalId: "gosaki-discography-operational-save",
+      siteSlug: "gosaki-piano",
+      legacyId: "discography-999",
+      expectedBeforeUpdatedAt: "1970-01-01T00:00:00.000Z",
+      release: {
+        title: "Slice A live authz probe",
+        artist: "probe",
+        release_date: null,
+        label: null,
+        purchase_url: null,
+        description: null,
+      },
+      tracksText: "Slice A live authz probe track",
+    }),
+  });
+  let json = null;
+  try {
+    json = JSON.parse(await res.text());
+  } catch {
+    json = null;
+  }
+  const keys = json && typeof json === "object" ? Object.keys(json).sort() : [];
+  console.log({
+    probe: "slice-a-arm-off-verification",
+    HTTP_STATUS: res.status,
+    reasonCode: json && json.reasonCode,
+    rpcKeyPresent: keys.indexOf("rpc") !== -1,
+  });
+})();
 ```
 
 PASS: `HTTP_STATUS=403` · `reasonCode=save_not_armed` · `rpc` key absent.
@@ -459,7 +484,7 @@ This POST is arm-off proof only. Do **not** treat it as owner `can_write_site` p
 
 ### 10. SELECT-only post baseline
 
-Repeat §2. Require albums `0-0/4` · tracks `0-0/34` · 999 `*/0`.
+Repeat §2. Require albums `4` · tracks `34` · `discography999=0`.
 
 ### 11. no retry
 

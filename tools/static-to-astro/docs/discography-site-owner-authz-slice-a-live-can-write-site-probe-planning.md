@@ -276,6 +276,6 @@ Operator packet SoT: `discography-site-owner-authz-slice-a-live-can-write-site-p
 
 Unchanged: payload · `discography-999` · sentinel lock · Secret ON=`set …=true --project-ref kmjqppxjdnwwrtaeqjta` · Secret OFF=`unset` · `DATA_WRITE_REACHABLE: false` · no retry.
 
-Added before Secret ON: owner fixture recheck (`can_write_site=true` · `is_admin=false` · sites singleton active). Added on arm-OFF curl: `-w '\nHTTP_STATUS=%{http_code}\n'`.
+Added before Secret ON: owner fixture recheck (`can_write_site=true` · `is_admin=false` · sites singleton). Auth path (2026-08-16 dataset regression): Vite `getStagingAuthConfig` + `getStagingSupabaseClient`, not DOM dataset. Arm-OFF captures `HTTP_STATUS`. Terminal `PUBLIC_SUPABASE_*` is not assumed exported.
 
 This planning doc's gates above are **historical** and unchanged.

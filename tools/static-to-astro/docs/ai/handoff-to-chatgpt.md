@@ -11,6 +11,14 @@ FINAL_HARDENING_COMPLETE: true
 OWNER_FIXTURE_RECHECK_ADDED: true
 OWNER_FIXTURE_RECHECK_BEFORE_SECRET_ON: true
 ARM_OFF_HTTP_STATUS_CAPTURED: true
+KNOWN_DATASET_REGRESSION_FIXED: true
+PAST_WORKING_PROBE_REUSED: true
+OWNER_FIXTURE_RECHECK_WORKING_PATH: true
+OWNER_POST_WORKING_PATH: true
+TERMINAL_ENV_ASSUMPTION_VALID: true
+CONSOLE_PREPARATION_UNAMBIGUOUS: true
+OWNER_POST_PREPARED_BEFORE_SECRET_ON: true
+NO_POST_ARM_RESEARCH_OR_COPY: true
 TARGET_999_LOCKED: true
 REAL_LEGACY_ID_PRESENT: false
 NO_RETRY_RULE_FIXED: true
@@ -39,9 +47,10 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 
 ## Discography site-owner authz Slice A live Edge can_write_site probe final hardening (2026-08-16)
 
-- Packet hardened · **not executed**
-- Added: owner fixture recheck before Secret ON (`can_write_site=true` · `is_admin=false` · sites singleton active)
-- Added: arm-OFF curl `-w '\nHTTP_STATUS=%{http_code}\n'` → expect `HTTP_STATUS=403` + `save_not_armed`
+- Packet hardened · dataset regression **fixed** · **not executed**
+- Auth: Vite `getStagingAuthConfig()` + `getStagingSupabaseClient()` (PASS'd staging-preflight owner JWT probe) · **not** DOM dataset
+- §3 recheck while Secret OFF · §6 exact snippet prepared **before** Secret ON (clipboard / other window) · after ON paste prepared snippet once (do not paste both into Console; do not open/copy the doc after ON)
+- Terminal `PUBLIC_SUPABASE_*` **not** assumed exported
 - Unchanged: `discography-999` · sentinel lock · ON=`set …=true --project-ref kmjqppxjdnwwrtaeqjta` · OFF=`unset`
 - `READY_FOR_OPERATOR_PROBE: true` · Cursor must not run Secrets/POST/recheck
 - Doc: `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`

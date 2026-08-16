@@ -10,7 +10,7 @@
 
 Cursor must **not** run Secret ON/OFF or the owner POST. Operator execution needs a separate explicit one-shot approval.
 
-**Operator packet SoT (2026-08-16):** `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md` — same payload / `discography-999` / unset OFF, plus owner fixture recheck **before** Secret ON and arm-OFF curl `-w '\nHTTP_STATUS=%{http_code}\n'`. Historical curl packet below is retained.
+**Operator packet SoT (2026-08-16):** `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`. Auth path is Vite `getStagingAuthConfig()` + `getStagingSupabaseClient()` (PASS'd owner JWT probe). **Do not** use `document.body.dataset.gosakiSupabaseUrl` / `gosakiSupabaseAnonKey`. Terminal `PUBLIC_SUPABASE_*` is **not** assumed exported. Historical curl packet below is retained as history only.
 
 ---
 
@@ -262,12 +262,13 @@ PASS: `HTTP_STATUS=403` · `reasonCode=save_not_armed` · `rpc` key absent.
 Operator SoT: `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`.
 
 1. Repeat SELECT: 4 / 34 / 999=0. Abort if 999 ≠ 0.
-2. Owner fixture recheck (browser session, read-only): staging host · `gosaki-piano` singleton · status `active` · `can_write_site=true` · `is_admin=false`. Fail → **no Secret ON**, no owner POST, no retry, STOP.
-3. Secret ON (staging `--project-ref` only) — only if fixture recheck PASS.
-4. Exactly one owner POST (`discography-999` only).
-5. Secret OFF immediately (unset), regardless of outcome.
-6. Post-baseline: `HTTP_STATUS=403` `save_not_armed` + 4/34 + 999=0.
-7. Record sanitized reasonCode only. Never log JWT/secret values.
+2. Owner fixture recheck (Vite `getStagingAuthConfig` + `getStagingSupabaseClient`, Secret OFF): staging host · `gosaki-piano` singleton · `can_write_site=true` · `is_admin=false`. Fail → **no Secret ON**, no owner POST, no retry, STOP. Do **not** paste the owner POST IIFE into Console yet.
+3. **Before Secret ON**, prepare the exact §6 snippet in another window or clipboard (no JWT/token/secret embedded). Do **not** paste it into DevTools Console yet.
+4. Secret ON (staging `--project-ref` only) — only if fixture recheck PASS. Do **not** open/search/edit/copy the doc after ON.
+5. Exactly one owner POST (`discography-999` only) — paste the already-prepared §6 → Enter once. No code edits.
+6. Secret OFF immediately (unset), regardless of outcome.
+7. Post-baseline: `HTTP_STATUS=403` `save_not_armed` + 4/34 + 999=0.
+8. Record sanitized reasonCode only. Never log JWT/secret values.
 
 ---
 

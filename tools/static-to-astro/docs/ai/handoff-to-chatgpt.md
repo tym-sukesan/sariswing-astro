@@ -5,21 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight COMPLETE
-HEAD: 7d0434b5ffba905a70136870dbedb7ea77da5dd9
-EXECUTION_PREFLIGHT_PASS: true
+Current phase: discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening COMPLETE
+HEAD baseline: 7d0434b5ffba905a70136870dbedb7ea77da5dd9
+FINAL_HARDENING_COMPLETE: true
+OWNER_FIXTURE_RECHECK_ADDED: true
+OWNER_FIXTURE_RECHECK_BEFORE_SECRET_ON: true
+ARM_OFF_HTTP_STATUS_CAPTURED: true
+TARGET_999_LOCKED: true
+REAL_LEGACY_ID_PRESENT: false
+NO_RETRY_RULE_FIXED: true
+SECRET_OFF_METHOD: unset
 STAGING_REF_HARD_FIXED: true
-VERSION_47_CONFIRMED: true
-TARGET_999_ABSENT: true
-PRE_BASELINE_PASS: true
 SECRET_ON_COMMAND: supabase secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta
 SECRET_OFF_COMMAND: supabase secrets unset GOSAKI_DISCOGRAPHY_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta
-OWNER_PROBE_PACKET_READY: true
 EXPECTED_SAFE_STOP: release_read_failed
 RPC_REACHED_EXPECTED: false
 DATA_WRITE_REACHABLE: false
-NO_RETRY_RULE_FIXED: true
-POST_BASELINE_PACKET_READY: true
 READY_FOR_OPERATOR_PROBE: true
 PROBE_EXECUTED: false
 SECRETS_CHANGED: false
@@ -29,12 +30,21 @@ ALBUMS_CURRENT: 4
 TRACKS_CURRENT: 34
 ARMS_OFF: true
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-execution
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice A live Edge can_write_site probe final hardening (2026-08-16)
+
+- Packet hardened · **not executed**
+- Added: owner fixture recheck before Secret ON (`can_write_site=true` · `is_admin=false` · sites singleton active)
+- Added: arm-OFF curl `-w '\nHTTP_STATUS=%{http_code}\n'` → expect `HTTP_STATUS=403` + `save_not_armed`
+- Unchanged: `discography-999` · sentinel lock · ON=`set …=true --project-ref kmjqppxjdnwwrtaeqjta` · OFF=`unset`
+- `READY_FOR_OPERATOR_PROBE: true` · Cursor must not run Secrets/POST/recheck
+- Doc: `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`
 
 ## Discography site-owner authz Slice A live Edge can_write_site probe execution preflight (2026-08-16)
 

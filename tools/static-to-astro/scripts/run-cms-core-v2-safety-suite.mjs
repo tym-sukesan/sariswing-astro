@@ -221,6 +221,11 @@ const STEPS = [
     script: "verify-discography-site-owner-authz-slice-a-live-can-write-site-probe-execution-preflight.mjs",
   },
   {
+    id: "discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening",
+    kind: "node",
+    script: "verify-discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

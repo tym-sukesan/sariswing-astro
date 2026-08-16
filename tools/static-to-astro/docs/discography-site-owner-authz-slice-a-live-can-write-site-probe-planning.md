@@ -267,3 +267,15 @@ ask human
 `LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: false` remains until a later execution records `release_read_failed` after owner JWT.
 
 `RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-preflight`
+
+---
+
+## 14. Final hardening note (2026-08-16 · docs only)
+
+Operator packet SoT: `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`.
+
+Unchanged: payload · `discography-999` · sentinel lock · Secret ON=`set …=true --project-ref kmjqppxjdnwwrtaeqjta` · Secret OFF=`unset` · `DATA_WRITE_REACHABLE: false` · no retry.
+
+Added before Secret ON: owner fixture recheck (`can_write_site=true` · `is_admin=false` · sites singleton active). Added on arm-OFF curl: `-w '\nHTTP_STATUS=%{http_code}\n'`.
+
+This planning doc's gates above are **historical** and unchanged.

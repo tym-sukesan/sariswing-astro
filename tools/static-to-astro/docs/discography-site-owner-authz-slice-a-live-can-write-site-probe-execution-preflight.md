@@ -10,6 +10,8 @@
 
 Cursor must **not** run Secret ON/OFF or the owner POST. Operator execution needs a separate explicit one-shot approval.
 
+**Operator packet SoT (2026-08-16):** `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md` — same payload / `discography-999` / unset OFF, plus owner fixture recheck **before** Secret ON and arm-OFF curl `-w '\nHTTP_STATUS=%{http_code}\n'`. Historical curl packet below is retained.
+
 ---
 
 ## 0. Gates
@@ -218,10 +220,38 @@ timeout / non-JSON / 5xx / unexpected reasonCode / 2xx
 
 ## 7. Post-baseline packet (after Secret OFF)
 
-1. POST `operation=save` + operational approval + **anon** Bearer (no owner JWT) → **403** `save_not_armed`
+1. POST `operation=save` + operational approval + **anon** Bearer (no owner JWT) → **403** `save_not_armed` with explicit HTTP status
 2. Anon SELECT: albums **4** · tracks **34** · `discography-999` **0**
 
 Do not print keys. Staging host only.
+
+```bash
+STG=kmjqppxjdnwwrtaeqjta
+URL="https://${STG}.supabase.co/functions/v1/gosaki-discography-save-dry-run"
+
+curl -sS --max-time 30 -w '\nHTTP_STATUS=%{http_code}\n' -X POST "$URL" \
+  -H "apikey: ${PUBLIC_SUPABASE_ANON_KEY}" \
+  -H "Authorization: Bearer ${PUBLIC_SUPABASE_ANON_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "save",
+    "approvalId": "gosaki-discography-operational-save",
+    "siteSlug": "gosaki-piano",
+    "legacyId": "discography-999",
+    "expectedBeforeUpdatedAt": "1970-01-01T00:00:00.000Z",
+    "release": {
+      "title": "Slice A live authz probe",
+      "artist": "probe",
+      "release_date": null,
+      "label": null,
+      "purchase_url": null,
+      "description": null
+    },
+    "tracksText": "Slice A live authz probe track"
+  }'
+```
+
+PASS: `HTTP_STATUS=403` · `reasonCode=save_not_armed` · `rpc` key absent.
 
 `POST_BASELINE_PACKET_READY: true`
 
@@ -229,12 +259,15 @@ Do not print keys. Staging host only.
 
 ## 8. Operator sequence (future execution · not now)
 
+Operator SoT: `discography-site-owner-authz-slice-a-live-can-write-site-probe-final-hardening.md`.
+
 1. Repeat SELECT: 4 / 34 / 999=0. Abort if 999 ≠ 0.
-2. Secret ON (staging `--project-ref` only).
-3. Exactly one owner POST (`discography-999` only).
-4. Secret OFF immediately (unset), regardless of outcome.
-5. Post-baseline: `save_not_armed` + 4/34 + 999=0.
-6. Record sanitized reasonCode only. Never log JWT/secret values.
+2. Owner fixture recheck (browser session, read-only): staging host · `gosaki-piano` singleton · status `active` · `can_write_site=true` · `is_admin=false`. Fail → **no Secret ON**, no owner POST, no retry, STOP.
+3. Secret ON (staging `--project-ref` only) — only if fixture recheck PASS.
+4. Exactly one owner POST (`discography-999` only).
+5. Secret OFF immediately (unset), regardless of outcome.
+6. Post-baseline: `HTTP_STATUS=403` `save_not_armed` + 4/34 + 999=0.
+7. Record sanitized reasonCode only. Never log JWT/secret values.
 
 ---
 

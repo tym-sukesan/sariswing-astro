@@ -1,12 +1,41 @@
-Last updated: 2026-08-15
+Last updated: 2026-08-16
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A **live `can_write_site` probe execution** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-execution`) — execution-preflight **PASS** · packet locked · **only after** explicit one-shot operator approval · Cursor must **not** set Secrets or POST · expected `release_read_failed` · then Secret unset
+1. **Primary (Kit Core):** Slice A **live `can_write_site` probe execution** (`discography-site-owner-authz-slice-a-live-can-write-site-probe-execution`) — final-hardening **PASS** · packet locked · **only after** explicit one-shot operator approval · Cursor must **not** set Secrets or POST · owner fixture recheck must PASS before Secret ON · expected `release_read_failed` · then Secret unset
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · post-deploy probe PASS · live `can_write_site` **unconfirmed** · no real Save.
+
+## 0. Discography site-owner authz Slice A live Edge can_write_site probe final hardening (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `FINAL_HARDENING_COMPLETE: true` · `READY_FOR_OPERATOR_PROBE: true` |
+| Deltas | owner fixture recheck **before** Secret ON · arm-OFF curl `HTTP_STATUS=%{http_code}` |
+| Unchanged | `discography-999` · sentinel lock · ON=`set …=true --project-ref kmjqppxjdnwwrtaeqjta` · OFF=`unset` |
+| Executed | **false** |
+
+```txt
+FINAL_HARDENING_COMPLETE: true
+OWNER_FIXTURE_RECHECK_ADDED: true
+OWNER_FIXTURE_RECHECK_BEFORE_SECRET_ON: true
+ARM_OFF_HTTP_STATUS_CAPTURED: true
+TARGET_999_LOCKED: true
+REAL_LEGACY_ID_PRESENT: false
+NO_RETRY_RULE_FIXED: true
+SECRET_OFF_METHOD: unset
+STAGING_REF_HARD_FIXED: true
+DATA_WRITE_REACHABLE: false
+RPC_REACHED_EXPECTED: false
+PRODUCTION_UNCHANGED: true
+READY_FOR_OPERATOR_PROBE: true
+PROBE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-a-live-can-write-site-probe-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A live Edge can_write_site probe execution preflight (2026-08-16)
 

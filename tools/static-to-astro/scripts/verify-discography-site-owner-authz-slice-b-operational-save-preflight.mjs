@@ -194,6 +194,10 @@ assert("do not fix Bluse", /Do \*\*not\*\* “fix” `白玉Bluse`/.test(doc) ||
 assert("白玉Bluse preserved", doc.includes("白玉Bluse"));
 assert("frozen catalog_number in payload", /catalog_number: "GSRT-0001"/.test(doc));
 assert("frozen published in payload", /published: true/.test(doc));
+assert(
+  "no markdown url literal",
+  !/\[https?:\/\/[^\]]+\]\(https?:\/\//.test(doc),
+);
 assert("one-shot flag", /__SLICE_B_OWNER_SAVE_FIRED/.test(doc));
 assert("legacy abort 003", /legacy_id_not_003/.test(doc));
 assert("lock reselect abort", /optimistic_lock_changed/.test(doc));

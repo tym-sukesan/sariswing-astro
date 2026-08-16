@@ -3,10 +3,63 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B operational Save preflight **COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-execution` (owner POST `discography-003` description-only, then separate restore). **No** UPDATE RLS/GRANT. Do **not** re-run Slice A probe. Deferred: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B Save execution **final hardening COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md`. Cursor must **not** run Secret/POST. Restoration deferred until `newLock`. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · no owner DATA_WRITE yet.
+
+## 0. Discography site-owner authz Slice B operational Save execution final hardening (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `READY_FOR_OPERATOR_SAVE: true` · `SAVE_EXECUTED: false` |
+| URLs | raw concat · no Markdown link literals |
+| Baseline | full album fields + tracks 9 · `albumFieldsOk` |
+| Restore | **deferred** until `newLock` |
+| Next | execution after `承認します。この操作を1回だけ実行してください。` |
+
+```txt
+RAW_URL_LITERALS_CONFIRMED: true
+MARKDOWN_URL_LITERAL_PRESENT: false
+FULL_ALBUM_BASELINE_GATE: true
+ALBUM_FIELDS_MATCH_REQUIRED: true
+POST_ONLY_DESCRIPTION_CHANGE_VERIFIED: true
+PROCESS_SCOPED_PAT_READINESS_ADDED: true
+AUTH_ENABLED_DEV_START_ADDED: true
+RESTORATION_DEFERRED_UNTIL_NEW_LOCK: true
+TRACK_DML_SKIPPED_ON_DESCRIPTION_ONLY: true
+READY_FOR_OPERATOR_SAVE: true
+SAVE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Discography site-owner authz Slice B operational Save execution packet review (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `READY_FOR_OPERATOR_SAVE: true` · `SAVE_EXECUTED: false` · `CURSOR_EXECUTED_PACKET: false` |
+| Track DML | `TRACK_DML_SKIPPED_ON_DESCRIPTION_ONLY: true` |
+| Restore | exact packet · **new** lock only |
+| Next | execution after `承認します。この操作を1回だけ実行してください。` |
+
+```txt
+TARGET_LOCK_RECONFIRM_PACKET_READY: true
+FULL_BEFORE_SNAPSHOT_READY: true
+TRACK_DML_SKIPPED_ON_DESCRIPTION_ONLY: true
+ONE_SHOT_SAVE_EXACT_PACKET_READY: true
+SECRET_RESET_PACKET_READY: true
+POST_WRITE_VERIFICATION_READY: true
+RESTORATION_EXACT_PACKET_READY: true
+RESTORATION_USES_NEW_LOCK: true
+DIRECT_SQL_WRITE: false
+READY_FOR_OPERATOR_SAVE: true
+SAVE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B operational Save preflight (2026-08-16)
 

@@ -5,38 +5,54 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-operational-save-preflight COMPLETE
-HEAD baseline: b025eac964a34b660d7894dbfff32f7990c53d6e
+Current phase: discography-site-owner-authz-slice-b-operational-save-execution-final-hardening COMPLETE
+HEAD baseline: 8316f26d1f423f134a0189e4f3fcd7a2fdccd8fc
 TARGET_RELEASE: discography-003
-BEFORE_SNAPSHOT_READY: true
-MINIMAL_MUTATION: description_append_only
-REAL_DATA_WRITE_REQUIRED: true
-OPTIMISTIC_LOCK_READY: true
-OWNER_FIXTURE_RECHECK_READY: true
-SECRET_ON_OFF_PACKET_READY: true
-ONE_SHOT_SAVE_PACKET_READY: true
-RESTORATION_REQUIRED: true
-RESTORATION_PACKET_READY: true
-DIRECT_TABLE_WRITE_USED: false
-RLS_CHANGE_REQUIRED: false
-GRANT_CHANGE_REQUIRED: false
-RPC_CHANGE_REQUIRED: false
-PRODUCTION_BLOCKED: true
+RAW_URL_LITERALS_CONFIRMED: true
+MARKDOWN_URL_LITERAL_PRESENT: false
+FULL_ALBUM_BASELINE_GATE: true
+ALBUM_FIELDS_MATCH_REQUIRED: true
+POST_ONLY_DESCRIPTION_CHANGE_VERIFIED: true
+PROCESS_SCOPED_PAT_READINESS_ADDED: true
+AUTH_ENABLED_DEV_START_ADDED: true
+RESTORATION_DEFERRED_UNTIL_NEW_LOCK: true
+TRACK_DML_SKIPPED_ON_DESCRIPTION_ONLY: true
 READY_FOR_OPERATOR_SAVE: true
 SAVE_EXECUTED: false
-UI_READ_WIRING_IN_SCOPE: false
-OWNER_TO_ADMIN_USERS_FORBIDDEN: true
-COMMIT_READY: true
+CURSOR_EXECUTED_PACKET: false
+RESTORATION_IN_SAVE_PACKET: false
+DIRECT_SQL_WRITE: false
 STOP_REASONS: none
 ARMS_OFF: true
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
+DEFERRED_RESTORATION: discography-site-owner-authz-slice-b-operational-save-restoration-review
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-preflight.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice B operational Save execution final hardening (2026-08-16)
+
+- Packet hardened · Cursor must **not** run Secret/POST/Save
+- Raw URL concat (`COVER_URL` from `STG`) · no Markdown link literals
+- POST abort unless full album baseline matches (`albumFieldsOk`)
+- Post-write: description + `updated_at` only · `changedFields` exactly `["description"]`
+- Process-scoped PAT (`read -s`) + Auth-enabled `npm run dev` (`PUBLIC_ADMIN_WRITE_DRY_RUN=true`)
+- Restoration **deferred** until `newLock` (separate review)
+- Next: execution after `承認します。この操作を1回だけ実行してください。`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md`
+
+## Discography site-owner authz Slice B operational Save execution packet review (2026-08-16)
+
+- Final audit · exact operator packet locked · Cursor must **not** run Secret/POST/Save
+- Target `discography-003` · lock candidate `2026-07-10T05:59:35.138671+00:00` reconfirmed SELECT-only
+- Description-only → RPC skips track DELETE/INSERT (`TRACK_DML_SKIPPED_ON_DESCRIPTION_ONLY: true`)
+- Restore is a later step using **new** `updated_at` as lock · no SQL/PostgREST
+- Next: execution after explicit `承認します。この操作を1回だけ実行してください。`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-execution-packet-review.md`
 
 ## Discography site-owner authz Slice B operational Save preflight (2026-08-16)
 

@@ -357,7 +357,7 @@ Prepare this snippet **before** Secret ON (clipboard / other window). After ON: 
       catalog_number: "GSRT-0001",
       published: true,
       cover_image_url:
-        "https://kmjqppxjdnwwrtaeqjta.supabase.co/storage/v1/object/public/site-assets/gosaki/discography/discography-003/cover.jpg",
+        "https://" + STG + ".supabase.co/storage/v1/object/public/site-assets/gosaki/discography/discography-003/cover.jpg",
       purchase_url: null,
       streaming_url: "https://www.tunecore.co.jp/artists/gosakirikakotrio?lang=ja",
       description: DESC_AFTER,

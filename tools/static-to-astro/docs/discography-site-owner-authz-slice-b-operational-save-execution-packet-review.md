@@ -5,7 +5,7 @@
 - **Status:** **COMPLETE (final audit · superseded for operator execution)**
 - **HEAD:** `8316f26d1f423f134a0189e4f3fcd7a2fdccd8fc`
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-preflight` (committed)
-- **Operator SoT (execution):** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (raw URL concat · full album baseline gate · restoration deferred).
+- **Operator SoT (execution):** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (raw URL concat · full album baseline gate · restoration deferred · **VERSION guard updated** in `discography-site-owner-authz-slice-b-operational-save-version-guard-update`: pre-arm VERSION **50** + `UPDATED_AT` pin). Historical Slice A deploy VERSION was **47**.
 - **This phase:** present the exact operator packet and audit it · **no** Secret · **no** owner POST · **no** Save · **no** DB write · **no** restoration · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor must **not** run any step below. Operator execution requires a later explicit approval:
@@ -44,7 +44,11 @@ OWNER_TO_ADMIN_USERS_FORBIDDEN: true
 NO_RETRY_RULE_FIXED: true
 SECRET_OFF_METHOD: unset
 STAGING_REF_HARD_FIXED: true
-VERSION_47_REQUIRED: true
+VERSION_47_REQUIRED: false
+PRE_ARM_VERSION_GUARD: 50
+PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+POST_ARM_VERSION_FIXED: false
+UPDATED_AT_CODE_IDENTITY_PIN: true
 PRODUCTION_BLOCKED: true
 COMMIT_READY: true
 STOP_REASONS: none
@@ -124,20 +128,23 @@ CLI: process-scoped `SUPABASE_ACCESS_TOKEN` + `npx supabase@2.114.0`. Omit `--pr
 | Staging | `kmjqppxjdnwwrtaeqjta` |
 | Production | `vsbvndwuajjhnzpohghh` **forbidden** |
 | Function | `gosaki-discography-save-dry-run` |
-| VERSION | **47** required |
+| VERSION (pre-arm) | **50** required (metadata checkpoint · not code identity) |
+| UPDATED_AT (UTC) | **2026-08-15 14:12:36** required (Slice A **code** pin) |
 | `legacyId` | `discography-003` |
 | Lock candidate | `2026-07-10T05:59:35.138671+00:00` |
 | DESC_BEFORE | `後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass` |
 | DESC_AFTER | `後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass [CMS Kit staging] Slice B owner Save PoC` |
 | approvalId | `gosaki-discography-operational-save` |
 
-### 3.1 VERSION / host
+### 3.1 Function identity / host (pre-Secret ON)
 
 ```bash
 npx supabase@2.114.0 functions list --project-ref kmjqppxjdnwwrtaeqjta
 ```
 
-Require `gosaki-discography-save-dry-run` ACTIVE · VERSION **47**. Else **STOP**.
+Require `gosaki-discography-save-dry-run` **ACTIVE** · VERSION **50** · `UPDATED_AT` **2026-08-15 14:12:36**. Else **STOP**.
+
+Do **not** require VERSION 50 after Secret ON (may become 51). If `UPDATED_AT` drifts from the pin at any point → **STOP**. Historical Slice A deploy VERSION was **47**.
 
 ### 3.2 SELECT-only baseline + lock reconfirm (Secret OFF)
 
@@ -339,6 +346,8 @@ npx supabase@2.114.0 secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-re
 ```
 
 After ON: do not open/search/copy the doc. Paste §3.7 once.
+
+Do **not** require VERSION **50** after this command (may become **51**). Re-list and require `UPDATED_AT` still **2026-08-15 14:12:36**. If `UPDATED_AT` changed → **STOP**, unset, no POST.
 
 ### 3.7 Exactly one owner POST (Save)
 
@@ -731,7 +740,7 @@ Restore fail → stop · no retry · no SQL · ask human.
 
 ## 5. Sequence (operator · later)
 
-1. §3.1 VERSION 47
+1. §3.1 ACTIVE + VERSION **50** + `UPDATED_AT` **2026-08-15 14:12:36**
 2. §3.2 lock/snapshot `pass=true`
 3. §3.3 owner fixture PASS
 4. §3.4 Secret OFF `save_not_armed`

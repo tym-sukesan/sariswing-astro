@@ -9,6 +9,8 @@
 
 Cursor must **not** run Secret ON/OFF, owner POST, UI Save, or restoration. Operator execution is a **later** phase with a separate explicit approval.
 
+**Operator execution SoT (2026-08-16):** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` after `discography-site-owner-authz-slice-b-operational-save-version-guard-update`. This preflight’s `VERSION_47_REQUIRED: true` is a **historical** lock (Slice A deploy VERSION 47). Do **not** execute this preflight packet as-is against live VERSION 50.
+
 **Forbidden:** production `vsbvndwuajjhnzpohghh` · `service_role` · owner → `admin_users` · direct PostgREST UPDATE · table GRANT · UPDATE RLS · RPC rewrite · Edge deploy · automatic retry · UI Save · mix in `discography-musician-basic-live-read-wiring-fix`.
 
 Staging only: `kmjqppxjdnwwrtaeqjta`.

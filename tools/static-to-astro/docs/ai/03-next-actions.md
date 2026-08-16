@@ -3,10 +3,56 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B Save execution **final hardening COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md`. Cursor must **not** run Secret/POST. Restoration deferred until `newLock`. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B VERSION guard update **COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (pre-arm ACTIVE + VERSION **50** + `UPDATED_AT` `2026-08-15 14:12:36`). Cursor must **not** run Secret/POST. Do **not** redeploy. Restoration deferred until `newLock`. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · no owner DATA_WRITE yet.
+
+## 0. Discography site-owner authz Slice B operational Save VERSION guard update (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Pre-arm | ACTIVE · VERSION **50** · `UPDATED_AT` `2026-08-15 14:12:36` |
+| Code pin | `UPDATED_AT` (not VERSION) |
+| Post-arm | VERSION 50 **not** required (may be 51) |
+| Next | execution after `承認します。この操作を1回だけ実行してください。` |
+
+```txt
+PRE_ARM_VERSION_GUARD: 50
+PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+POST_ARM_VERSION_FIXED: false
+UPDATED_AT_CODE_IDENTITY_PIN: true
+OLD_EXECUTION_VERSION_47_REMOVED: true
+HISTORICAL_VERSION_47_PRESERVED: true
+NO_REDEPLOY: true
+READY_FOR_OPERATOR_SAVE: true
+SAVE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Discography site-owner authz Slice B VERSION 47→50 secret-revision investigation (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Live | `gosaki-discography-save-dry-run` ACTIVE · VERSION **50** |
+| Cause | project Secret set/unset ×3 · not code deploy |
+| Code pin | `UPDATED_AT` `2026-08-15 14:12:36` |
+| Resume | **false** until VERSION guard update |
+| Next | `discography-site-owner-authz-slice-b-operational-save-version-guard-update` |
+
+```txt
+VERSION_50_CAUSED_BY_SECRET_REVISION: true
+LIVE_CODE_UNCHANGED_FROM_V47: true
+LIVE_CAN_WRITE_SITE_AUTHZ_STILL_PRESENT: true
+VERSION_GUARD_SHOULD_NOW_BE_50: true
+SAFE_TO_RESUME_SLICE_B_PREFLIGHT: false
+SAVE_EXECUTED: false
+STOP_REASONS: locked packet still requires VERSION 47; live list is VERSION 50; do not Secret ON / Save until VERSION guard + UPDATED_AT pin are updated in a later packet phase
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-version-guard-update
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B operational Save execution final hardening (2026-08-16)
 

@@ -6,6 +6,7 @@
 - **HEAD:** `8316f26d1f423f134a0189e4f3fcd7a2fdccd8fc`
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-execution-packet-review`
 - **Operator SoT:** this file (supersedes packet-review for execution)
+- **VERSION guard:** updated 2026-08-16 in `discography-site-owner-authz-slice-b-operational-save-version-guard-update` — pre-arm **ACTIVE + VERSION 50 + UPDATED_AT `2026-08-15 14:12:36`**. Historical Slice A deploy VERSION was **47** (secret revisions, not a new bundle).
 - **This phase:** harden the locked Save packet · **no** Secret · **no** POST · **no** DB write · **no** restoration · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor must **not** run Secret / POST / Save / restore / `npm run dev` / PAT export.
@@ -40,7 +41,11 @@ DIRECT_SQL_WRITE: false
 NO_RETRY_RULE_FIXED: true
 SECRET_OFF_METHOD: unset
 STAGING_REF_HARD_FIXED: true
-VERSION_47_REQUIRED: true
+VERSION_47_REQUIRED: false
+PRE_ARM_VERSION_GUARD: 50
+PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+POST_ARM_VERSION_FIXED: false
+UPDATED_AT_CODE_IDENTITY_PIN: true
 ROOT_ENV_LOCAL_EDIT_FORBIDDEN: true
 TOOL_ENV_LOCAL_SOURCE_FORBIDDEN: true
 SERVICE_ROLE_FORBIDDEN: true
@@ -130,13 +135,27 @@ Confirm Vite `getStagingAuthConfig()` host contains `kmjqppxjdnwwrtaeqjta` and n
 
 Working directory: `~/sariswing-astro`.
 
-### 3.1 VERSION
+### 3.1 Function identity (pre-Secret ON)
 
 ```bash
 npx -y supabase@2.114.0 functions list --project-ref kmjqppxjdnwwrtaeqjta
 ```
 
-Require `gosaki-discography-save-dry-run` ACTIVE · VERSION **47**. Else **STOP**.
+Require **all** of these for `gosaki-discography-save-dry-run`. Else **STOP** (no Secret ON):
+
+| Field | Required |
+| --- | --- |
+| STATUS | **ACTIVE** |
+| VERSION | **50** (pre-arm metadata checkpoint only) |
+| UPDATED_AT (UTC) | **2026-08-15 14:12:36** (Slice A **code** pin) |
+
+Do **not** treat VERSION as code identity. `UPDATED_AT` is the primary pin. Historical Slice A deploy VERSION was **47**; live 50 is secret-revision generation.
+
+`PRE_ARM_VERSION_GUARD: 50`
+
+`PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36`
+
+`UPDATED_AT_CODE_IDENTITY_PIN: true`
 
 ### 3.2 Owner fixture (Secret OFF)
 
@@ -157,6 +176,10 @@ npx -y supabase@2.114.0 secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project
 ```
 
 After ON: do not open/search/copy the doc. Paste §3.6 once.
+
+Do **not** require VERSION **50** after this command. Secret ON may increment VERSION to **51**. That is expected (`POST_ARM_VERSION_FIXED: false`).
+
+Immediately re-list (read-only). Require `UPDATED_AT` still **2026-08-15 14:12:36**. If `UPDATED_AT` changed → **STOP**, unset, no POST (possible code deploy). Do not STOP on VERSION ≠ 50 after arm.
 
 ### 3.6 Exactly one owner POST (full album baseline gate)
 
@@ -476,7 +499,13 @@ Then repeat §3.3. PASS: `save_not_armed`.
 
 PASS requires Save log `changedFieldsOk=true` **and** this `pass=true`. Record `newLock` only. Do not restore in this packet.
 
+Do **not** use function VERSION as a post-write success condition.
+
+After unset, re-list (read-only). Require `UPDATED_AT` still **2026-08-15 14:12:36**. VERSION may be 51 or 52 (Secret ON then unset). If `UPDATED_AT` drifted → **STOP** (do not treat Save as fully verified; do not restore in this packet).
+
 `POST_ONLY_DESCRIPTION_CHANGE_VERIFIED: true`
+
+`POST_ARM_VERSION_FIXED: false`
 
 ---
 
@@ -496,14 +525,14 @@ After Save PASS + `newLock` recorded, a **separate** review phase will lock the 
 
 1. §2.1 PAT + `projects list`
 2. §2.2 Auth-enabled `npm run dev` + owner login
-3. §3.1 VERSION 47
+3. §3.1 ACTIVE + VERSION **50** + `UPDATED_AT` **2026-08-15 14:12:36**
 4. §3.2 owner fixture
 5. §3.3 Secret OFF
 6. Prepare §3.6
-7. §3.5 Secret ON
+7. §3.5 Secret ON · re-list `UPDATED_AT` pin only (VERSION may be 51)
 8. §3.6 once (`albumFieldsOk` or abort + unset)
 9. §3.7 unset immediately
-10. §3.8 post-write · record `newLock`
+10. §3.8 post-write · record `newLock` · re-list `UPDATED_AT` pin (not VERSION)
 11. Restoration = later review (not now)
 
 No retry. No UI Save. No production ref. No SQL / PostgREST write.

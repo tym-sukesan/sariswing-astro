@@ -5,34 +5,51 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-operational-save-execution-final-hardening COMPLETE
-HEAD baseline: 8316f26d1f423f134a0189e4f3fcd7a2fdccd8fc
+Current phase: discography-site-owner-authz-slice-b-operational-save-version-guard-update COMPLETE
+HEAD baseline: 5d256e5dace06736b59e157492c6f3f33046681d
 TARGET_RELEASE: discography-003
-RAW_URL_LITERALS_CONFIRMED: true
-MARKDOWN_URL_LITERAL_PRESENT: false
-FULL_ALBUM_BASELINE_GATE: true
-ALBUM_FIELDS_MATCH_REQUIRED: true
-POST_ONLY_DESCRIPTION_CHANGE_VERIFIED: true
-PROCESS_SCOPED_PAT_READINESS_ADDED: true
-AUTH_ENABLED_DEV_START_ADDED: true
-RESTORATION_DEFERRED_UNTIL_NEW_LOCK: true
-TRACK_DML_SKIPPED_ON_DESCRIPTION_ONLY: true
+PRE_ARM_VERSION_GUARD: 50
+PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+POST_ARM_VERSION_FIXED: false
+UPDATED_AT_CODE_IDENTITY_PIN: true
+OLD_EXECUTION_VERSION_47_REMOVED: true
+HISTORICAL_VERSION_47_PRESERVED: true
+NO_REDEPLOY: true
 READY_FOR_OPERATOR_SAVE: true
 SAVE_EXECUTED: false
 CURSOR_EXECUTED_PACKET: false
 RESTORATION_IN_SAVE_PACKET: false
-DIRECT_SQL_WRITE: false
 STOP_REASONS: none
 ARMS_OFF: true
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
 DEFERRED_RESTORATION: discography-site-owner-authz-slice-b-operational-save-restoration-review
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-version-guard-update.md
+Operator SoT: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice B operational Save VERSION guard update (2026-08-16)
+
+- Pre-arm identity: ACTIVE + VERSION **50** + `UPDATED_AT` `2026-08-15 14:12:36`
+- `UPDATED_AT` is the Slice A code pin; VERSION 50 is pre-arm metadata only
+- After Secret ON, VERSION may be 51 — do not require 50; do not use VERSION as post-Save success
+- Historical Slice A VERSION **47** preserved; do **not** redeploy
+- Cursor must **not** run Secret/POST/Save
+- Next: execution after `承認します。この操作を1回だけ実行してください。`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-version-guard-update.md`
+
+## Discography site-owner authz Slice B VERSION 47→50 secret-revision investigation (2026-08-16)
+
+- Live `gosaki-discography-save-dry-run` ACTIVE / VERSION **50** · all functions +3 · `UPDATED_AT` unchanged
+- Cause: 3 project Secret set/unset · **not** a code deploy
+- Do **not** redeploy to restore VERSION 47
+- Do **not** Secret ON / Save on the VERSION-47 locked packet
+- Next: version-guard update (VERSION 50 + `UPDATED_AT` pin), then Save still needs explicit approval
+- Doc: `discography-site-owner-authz-slice-b-version-50-secret-revision-investigation.md`
 
 ## Discography site-owner authz Slice B operational Save execution final hardening (2026-08-16)
 

@@ -173,6 +173,33 @@ assert("npx -y secrets unset", /npx -y supabase@2\.114\.0 secrets unset/.test(do
 assert("does not authorize Cursor", /does \*\*not\*\* authorize Cursor/.test(doc));
 assert("approval form", /承認します。この操作を1回だけ実行してください。/.test(doc));
 
+assert("VERSION_47_REQUIRED false", /VERSION_47_REQUIRED:\s*false/.test(doc));
+assert("PRE_ARM_VERSION_GUARD 50", /PRE_ARM_VERSION_GUARD:\s*50/.test(doc));
+assert(
+  "PRE_ARM_UPDATED_AT_PIN",
+  /PRE_ARM_UPDATED_AT_PIN:\s*2026-08-15 14:12:36/.test(doc),
+);
+assert("POST_ARM_VERSION_FIXED false", /POST_ARM_VERSION_FIXED:\s*false/.test(doc));
+assert(
+  "UPDATED_AT_CODE_IDENTITY_PIN true",
+  /UPDATED_AT_CODE_IDENTITY_PIN:\s*true/.test(doc),
+);
+assert("pre-arm VERSION 50 required", /VERSION \| \*\*50\*\*/.test(doc));
+assert("pre-arm UPDATED_AT pin", /UPDATED_AT \(UTC\) \| \*\*2026-08-15 14:12:36\*\*/.test(doc));
+assert(
+  "no execution STOP on VERSION 47",
+  !/VERSION \*\*47\*\*\. Else \*\*STOP\*\*/.test(doc),
+);
+assert(
+  "no post-arm VERSION 50 requirement",
+  /Do \*\*not\*\* require VERSION \*\*50\*\* after this command/.test(doc),
+);
+assert(
+  "post-write VERSION not success",
+  /Do \*\*not\*\* use function VERSION as a post-write success condition/.test(doc),
+);
+assert("historical 47 preserved", /Historical Slice A deploy VERSION was \*\*47\*\*/.test(doc));
+
 assert("review points to hardening", /execution-final-hardening/.test(review));
 assert("edge tracksChanged", /tracksChanged = beforeTitles\.join/.test(edge));
 assert("rpc track DML gated", /IF v_tracks_changed THEN/.test(rpc));

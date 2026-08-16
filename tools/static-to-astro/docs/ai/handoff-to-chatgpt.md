@@ -5,32 +5,46 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-operational-save-version-guard-update COMPLETE
-HEAD baseline: 5d256e5dace06736b59e157492c6f3f33046681d
+Current phase: discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result COMPLETE
+HEAD baseline: a21b6d71d80816a7150a63c208e22ab4d7f033fe
 TARGET_RELEASE: discography-003
-PRE_ARM_VERSION_GUARD: 50
+ABORTED_ATTEMPT_NO_WRITE: true
+ABORTED_ATTEMPT_PASS: true
+POST_EXECUTED: false
+SAVE_JS_PASTED: false
+SECRET_SET_UNSET_ONCE: true
+LIVE_FUNCTION_VERSION: 52
+PRE_ARM_VERSION_GUARD: 52
 PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
-POST_ARM_VERSION_FIXED: false
-UPDATED_AT_CODE_IDENTITY_PIN: true
-OLD_EXECUTION_VERSION_47_REMOVED: true
+CONSOLE_STAGED_PASTE: true
 HISTORICAL_VERSION_47_PRESERVED: true
+HISTORICAL_VERSION_50_PRESERVED: true
 NO_REDEPLOY: true
 READY_FOR_OPERATOR_SAVE: true
 SAVE_EXECUTED: false
 CURSOR_EXECUTED_PACKET: false
-RESTORATION_IN_SAVE_PACKET: false
 STOP_REASONS: none
 ARMS_OFF: true
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
 DEFERRED_RESTORATION: discography-site-owner-authz-slice-b-operational-save-restoration-review
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-version-guard-update.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result.md
 Operator SoT: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice B operational Save aborted attempt result (2026-08-17)
+
+- Secret set→unset once · Save JS not pasted · POST none · `403 save_not_armed`
+- Live ACTIVE / VERSION **52** / `UPDATED_AT` pin unchanged · SELECT 4/34 lock unchanged
+- Re-execution: pre-arm VERSION **52** · Console staged paste · Enter once after Secret ON · unset immediately
+- Historical VERSION **47** / **50** preserved · do **not** redeploy
+- Cursor must **not** run Secret/POST/Save
+- Next: execution after `承認します。この操作を1回だけ実行してください。`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result.md`
 
 ## Discography site-owner authz Slice B operational Save VERSION guard update (2026-08-16)
 

@@ -122,7 +122,7 @@ assert("target 003 unchanged", /target `discography-003`/.test(doc));
 assert("description-only unchanged", /description-only mutation/.test(doc));
 
 assert("hardening VERSION_47_REQUIRED false", /VERSION_47_REQUIRED:\s*false/.test(harden));
-assert("hardening PRE_ARM_VERSION_GUARD 50", /PRE_ARM_VERSION_GUARD:\s*50/.test(harden));
+assert("doc historical PRE_ARM 50", /PRE_ARM_VERSION_GUARD:\s*50/.test(doc));
 assert("hardening UPDATED_AT pin", harden.includes(PIN));
 assert("hardening POST_ARM_VERSION_FIXED false", /POST_ARM_VERSION_FIXED:\s*false/.test(harden));
 assert(
@@ -130,10 +130,6 @@ assert(
   /UPDATED_AT_CODE_IDENTITY_PIN:\s*true/.test(harden),
 );
 assert("hardening no exec STOP 47", !EXEC_STOP_47.test(harden));
-assert(
-  "hardening no post-arm VERSION 50 req",
-  /Do \*\*not\*\* require VERSION \*\*50\*\* after this command/.test(harden),
-);
 assert(
   "hardening post-write VERSION not success",
   /Do \*\*not\*\* use function VERSION as a post-write success condition/.test(

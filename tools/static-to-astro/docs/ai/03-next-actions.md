@@ -3,10 +3,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B VERSION guard update **COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (pre-arm ACTIVE + VERSION **50** + `UPDATED_AT` `2026-08-15 14:12:36`). Cursor must **not** run Secret/POST. Do **not** redeploy. Restoration deferred until `newLock`. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B aborted attempt **NO_WRITE / PASS** — next `discography-site-owner-authz-slice-b-operational-save-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (pre-arm ACTIVE + VERSION **52** + `UPDATED_AT` `2026-08-15 14:12:36` · Console staged paste). Cursor must **not** run Secret/POST. Do **not** redeploy. Restoration deferred until `newLock`. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · no owner DATA_WRITE yet.
+
+## 0. Discography site-owner authz Slice B operational Save aborted attempt result (2026-08-17)
+
+| Item | Value |
+| --- | --- |
+| Outcome | Secret set→unset once · POST **none** · NO_WRITE / PASS |
+| Live | ACTIVE · VERSION **52** · `UPDATED_AT` `2026-08-15 14:12:36` |
+| Paste | Console staged (no Enter until after Secret ON) |
+| Next | execution after `承認します。この操作を1回だけ実行してください。` |
+
+```txt
+ABORTED_ATTEMPT_NO_WRITE: true
+ABORTED_ATTEMPT_PASS: true
+POST_EXECUTED: false
+PRE_ARM_VERSION_GUARD: 52
+PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+CONSOLE_STAGED_PASTE: true
+READY_FOR_OPERATOR_SAVE: true
+SAVE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B operational Save VERSION guard update (2026-08-16)
 

@@ -3,10 +3,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice A live Edge `can_write_site` **CONFIRMED** — next `discography-site-owner-authz-slice-b-planning` (UPDATE grants / site-writer UPDATE RLS). Do **not** re-arm / re-POST. Deferred: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B planning **COMPLETE** — next `discography-site-owner-authz-slice-b-operational-save-preflight` (existing-release operational Save packet). **No** UPDATE RLS/GRANT. Do **not** re-run Slice A probe. Deferred: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A RLS+RPC **applied** · Edge **deployed** (v47) · live `can_write_site` **confirmed** (`release_read_failed` · no RPC) · no real Save.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · no owner DATA_WRITE yet.
+
+## 0. Discography site-owner authz Slice B planning (2026-08-16)
+
+| Item | Value |
+| --- | --- |
+| Gate | `DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_B_PLANNING_COMPLETE: true` |
+| Path | Edge `can_write_site` → DEFINER `gosaki_discography_operational_save` |
+| SQL | RPC/RLS/GRANT change **not required** |
+| Next | operational Save preflight (real `discography-00N`, not 999) |
+
+```txt
+DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_B_PLANNING_COMPLETE: true
+DIRECT_TABLE_WRITE_REQUIRED: false
+RPC_CHANGE_REQUIRED: false
+RLS_CHANGE_REQUIRED: false
+GRANT_CHANGE_REQUIRED: false
+REAL_SAVE_REQUIRED_FOR_PROOF: true
+READY_FOR_SLICE_B_IMPLEMENTATION: false
+UI_READ_WIRING_IN_SCOPE: false
+COMMIT_READY: true
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-preflight
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice A live Edge can_write_site probe result (2026-08-16)
 

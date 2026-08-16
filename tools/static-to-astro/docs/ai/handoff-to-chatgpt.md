@@ -5,35 +5,39 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-a-live-can-write-site-probe-result COMPLETE
-HEAD baseline: c7841fb001a560322e409ac831aabd2406423efd
-SLICE_A_RESULT_RECORDED: true
-PROBE_EXECUTED: true
-PROBE_RERUN_FORBIDDEN: true
-LIVE_EDGE_CAN_WRITE_SITE_CONFIRMED: true
-RPC_REACHED: false
-DATA_WRITE: false
-SECRET_RESET: true
-POST_ARM_OFF_CONFIRMED: true
-DATA_UNCHANGED: true
-ALBUMS_CURRENT: 4
-TRACKS_CURRENT: 34
-DISCOGRAPHY_999_COUNT: 0
-UI_READ_WIRING_FINDING_RECORDED: true
-UI_READ_WIRING_FIXED: false
-PRODUCTION_UNCHANGED: true
-OWNER_ADDED_TO_ADMIN_USERS: false
+Current phase: discography-site-owner-authz-slice-b-planning COMPLETE
+HEAD baseline: ee302fd2c949fb2c339febefea3a26a4f6e6faf5
+DISCOGRAPHY_SITE_OWNER_AUTHZ_SLICE_B_PLANNING_COMPLETE: true
+SLICE_A_CLOSED: true
+CURRENT_UPDATE_AUTHZ_PATH: edge_can_write_site_then_definer_rpc
+DIRECT_TABLE_WRITE_REQUIRED: false
+RPC_CHANGE_REQUIRED: false
+RLS_CHANGE_REQUIRED: false
+GRANT_CHANGE_REQUIRED: false
+REAL_SAVE_REQUIRED_FOR_PROOF: true
+READY_FOR_SLICE_B_IMPLEMENTATION: false
+UI_READ_WIRING_IN_SCOPE: false
+OWNER_TO_ADMIN_USERS_FORBIDDEN: true
 COMMIT_READY: true
 STOP_REASONS: none
 ARMS_OFF: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-planning
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-preflight
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-a-live-can-write-site-probe-result.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-planning.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice B planning (2026-08-16)
+
+- Owner existing-release UPDATE = operational DEFINER RPC (not Schedule INSERT RLS)
+- Slice A already: Edge + RPC `can_write_site` + writer SELECT · table UPDATE GRANT **0**
+- `RPC/RLS/GRANT_CHANGE_REQUIRED: false` · do **not** add site-writer UPDATE policies in Slice B
+- PostgREST `.update()` owner path deferred · UI live-read wiring deferred
+- Next: operational Save preflight on a real `discography-00N` (not 999)
+- Doc: `discography-site-owner-authz-slice-b-planning.md`
 
 ## Discography site-owner authz Slice A live Edge can_write_site probe result (2026-08-16)
 

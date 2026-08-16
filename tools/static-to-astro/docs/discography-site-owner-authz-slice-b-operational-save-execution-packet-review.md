@@ -5,7 +5,7 @@
 - **Status:** **COMPLETE (final audit · superseded for operator execution)**
 - **HEAD:** `8316f26d1f423f134a0189e4f3fcd7a2fdccd8fc`
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-preflight` (committed)
-- **Operator SoT (execution):** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` after `discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result` (pre-arm VERSION **52** · Console staged paste). This review’s `PRE_ARM_VERSION_GUARD: 50` is **historical**. Historical Slice A deploy VERSION was **47**.
+- **Operator SoT (execution):** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` after `discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result` (pre-arm VERSION **54** · flag reset gate). This review’s `PRE_ARM_VERSION_GUARD: 50` is **historical**. Historical Slice A deploy VERSION was **47**.
 - **This phase:** present the exact operator packet and audit it · **no** Secret · **no** owner POST · **no** Save · **no** DB write · **no** restoration · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor must **not** run any step below. Operator execution requires a later explicit approval:

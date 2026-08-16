@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Offline verifier — Slice B operational Save aborted attempt result.
- * npm: verify:discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result
+ * Offline verifier — Slice B operational Save aborted attempt 2 result.
+ * npm: verify:discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result
  *
  * No network / SQL / DB write / arm / Save / Edge deploy / Secrets mutate.
  */
@@ -15,11 +15,15 @@ const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 
 const DOC = path.join(
   TOOL_ROOT,
-  "docs/discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result.md",
+  "docs/discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result.md",
 );
 const HARDEN = path.join(
   TOOL_ROOT,
   "docs/discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md",
+);
+const ABORT1 = path.join(
+  TOOL_ROOT,
+  "docs/discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result.md",
 );
 const GUARD = path.join(
   TOOL_ROOT,
@@ -31,9 +35,8 @@ const LINKED = path.join(REPO_ROOT, "supabase/.temp/linked-project.json");
 
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
-const HEAD = "a21b6d71d80816a7150a63c208e22ab4d7f033fe";
+const HEAD = "282586a6bbcebd9c734eabfad971bf6453a9c828";
 const PIN = "2026-08-15 14:12:36";
-const LOCK = "2026-07-10T05:59:35.138671+00:00";
 
 let passed = 0;
 let failed = 0;
@@ -54,6 +57,7 @@ function read(p) {
 for (const [label, p] of [
   ["doc", DOC],
   ["hardening", HARDEN],
+  ["abort-1", ABORT1],
   ["version-guard-update", GUARD],
   ["package.json", PKG],
   ["safety suite", SUITE],
@@ -63,35 +67,39 @@ for (const [label, p] of [
 
 const doc = read(DOC);
 const harden = read(HARDEN);
+const abort1 = read(ABORT1);
 const guard = read(GUARD);
 const pkg = read(PKG);
 const suite = read(SUITE);
 
 assert(
   "phase id",
-  /discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result/.test(
+  /discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result/.test(
     doc,
   ),
 );
 assert("HEAD recorded", doc.includes(HEAD));
 assert("staging ref", doc.includes(STAGING_REF));
 assert("production STOP", doc.includes(PROD_REF));
-assert("ABORTED_ATTEMPT_NO_WRITE true", /ABORTED_ATTEMPT_NO_WRITE:\s*true/.test(doc));
-assert("ABORTED_ATTEMPT_PASS true", /ABORTED_ATTEMPT_PASS:\s*true/.test(doc));
-assert("POST_EXECUTED false", /POST_EXECUTED:\s*false/.test(doc));
-assert("SAVE_JS_PASTED false", /SAVE_JS_PASTED:\s*false/.test(doc));
-assert("SECRET_SET_UNSET_ONCE true", /SECRET_SET_UNSET_ONCE:\s*true/.test(doc));
-assert("SECRET_OFF_RECONFIRM", /SECRET_OFF_RECONFIRM:\s*save_not_armed/.test(doc));
-assert("LIVE_FUNCTION_VERSION 52", /LIVE_FUNCTION_VERSION:\s*52/.test(doc));
-assert("PRE_ARM_VERSION_GUARD 52", /PRE_ARM_VERSION_GUARD:\s*52/.test(doc));
+assert("ABORTED_ATTEMPT_2_NO_WRITE true", /ABORTED_ATTEMPT_2_NO_WRITE:\s*true/.test(doc));
+assert("ABORTED_ATTEMPT_2_PASS true", /ABORTED_ATTEMPT_2_PASS:\s*true/.test(doc));
+assert("PRE_ARM_WAS_52_PASS true", /PRE_ARM_WAS_52_PASS:\s*true/.test(doc));
+assert("save_not_armed accidental", /save_not_armed/.test(doc));
+assert("already_fired", /already_fired_no_retry/.test(doc));
+assert("RPC_REACHED false", /RPC_REACHED:\s*false/.test(doc));
+assert("DATA_WRITE false", /DATA_WRITE:\s*false/.test(doc));
+assert("LIVE_FUNCTION_VERSION 54", /LIVE_FUNCTION_VERSION:\s*54/.test(doc));
+assert("PRE_ARM_VERSION_GUARD 54", /PRE_ARM_VERSION_GUARD:\s*54/.test(doc));
 assert("UPDATED_AT pin", doc.includes(PIN));
-assert("UPDATED_AT_UNCHANGED true", /UPDATED_AT_UNCHANGED:\s*true/.test(doc));
-assert("SELECT_ONLY_PASS true", /SELECT_ONLY_PASS:\s*true/.test(doc));
-assert("lock recorded", doc.includes(LOCK));
-assert("CONSOLE_STAGED_PASTE true", /CONSOLE_STAGED_PASTE:\s*true/.test(doc));
+assert("FLAG_RESET_GATE true", /FLAG_RESET_GATE:\s*true/.test(doc));
+assert(
+  "flag typeof undefined",
+  /typeof window\.__SLICE_B_OWNER_SAVE_FIRED === "undefined"/.test(doc),
+);
 assert("SAVE_EXECUTED false", /SAVE_EXECUTED:\s*false/.test(doc));
 assert("HISTORICAL_VERSION_47_PRESERVED true", /HISTORICAL_VERSION_47_PRESERVED:\s*true/.test(doc));
 assert("HISTORICAL_VERSION_50_PRESERVED true", /HISTORICAL_VERSION_50_PRESERVED:\s*true/.test(doc));
+assert("HISTORICAL_VERSION_52_PRESERVED true", /HISTORICAL_VERSION_52_PRESERVED:\s*true/.test(doc));
 assert("NO_REDEPLOY true", /NO_REDEPLOY:\s*true/.test(doc));
 assert("READY_FOR_OPERATOR_SAVE true", /READY_FOR_OPERATOR_SAVE:\s*true/.test(doc));
 assert("STOP_REASONS none", /STOP_REASONS:\s*none/.test(doc));
@@ -102,18 +110,19 @@ assert(
   ),
 );
 assert("does not authorize Cursor", /does \*\*not\*\* authorize Cursor/.test(doc));
-assert("HTTP 403 save_not_armed", /HTTP \*\*403\*\*/.test(doc) && /save_not_armed/.test(doc));
-assert("albums 4", /albums \| \*\*4\*\*/.test(doc));
-assert("tracks 34", /tracks \| \*\*34\*\*/.test(doc));
 
-assert("hardening UPDATED_AT pin", harden.includes(PIN));
-assert("hardening CONSOLE_STAGED_PASTE", /CONSOLE_STAGED_PASTE:\s*true/.test(harden));
-assert("hardening no Enter before arm", /Do \*\*not\*\* press Enter/.test(harden));
-assert("hardening Enter once", /press \*\*Enter once\*\*/.test(harden));
+assert("hardening PRE_ARM 54", /PRE_ARM_VERSION_GUARD:\s*54/.test(harden));
+assert("hardening FLAG_RESET_GATE", /FLAG_RESET_GATE:\s*true/.test(harden));
+assert(
+  "hardening flag typeof undefined",
+  /typeof window\.__SLICE_B_OWNER_SAVE_FIRED === "undefined"/.test(harden),
+);
+assert("hardening flagUndefined true", /flagUndefined === true/.test(harden));
 assert("hardening SAVE_EXECUTED false", /SAVE_EXECUTED:\s*false/.test(harden));
-assert("historical 47 in hardening", /Historical Slice A deploy VERSION was \*\*47\*\*/.test(harden));
-assert("abort-1 doc historical PRE_ARM 52", /PRE_ARM_VERSION_GUARD:\s*52/.test(doc));
+assert("hardening historical 47", /Historical Slice A deploy VERSION was \*\*47\*\*/.test(harden));
+assert("hardening historical 50/52", /\*\*50\*\* \/ \*\*52\*\*/.test(harden));
 
+assert("abort-1 historical PRE_ARM 52", /PRE_ARM_VERSION_GUARD:\s*52/.test(abort1));
 assert("guard-update historical PRE_ARM 50", /PRE_ARM_VERSION_GUARD:\s*50/.test(guard));
 
 if (fs.existsSync(LINKED)) {
@@ -126,16 +135,16 @@ if (fs.existsSync(LINKED)) {
 
 assert(
   "npm script",
-  /"verify:discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result"/.test(
+  /"verify:discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result"/.test(
     pkg,
   ),
 );
 assert(
   "safety suite step",
-  /discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result/.test(
+  /discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result/.test(
     suite,
   ) &&
-    /verify-discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result\.mjs/.test(
+    /verify-discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result\.mjs/.test(
       suite,
     ),
 );

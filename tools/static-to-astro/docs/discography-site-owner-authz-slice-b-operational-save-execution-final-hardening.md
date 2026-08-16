@@ -6,8 +6,8 @@
 - **HEAD:** `8316f26d1f423f134a0189e4f3fcd7a2fdccd8fc`
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-execution-packet-review`
 - **Operator SoT:** this file (supersedes packet-review for execution)
-- **VERSION guard:** pre-arm **ACTIVE + VERSION 52 + UPDATED_AT `2026-08-15 14:12:36`** (2026-08-17 abort result). Historical: Slice A deploy **47** · prior checkpoint **50** (secret revisions, not a new bundle).
-- **Paste method:** Console staged paste (Secret OFF · no Enter) → Secret ON → Enter once. Not clipboard-after-arm.
+- **VERSION guard:** pre-arm **ACTIVE + VERSION 54 + UPDATED_AT `2026-08-15 14:12:36`** (2026-08-17 abort-2). Historical: Slice A deploy **47** · checkpoints **50** / **52** (secret revisions, not a new bundle).
+- **Paste method:** reload → flag reset gate → Console staged paste (Secret OFF · no Enter) → Secret ON → Enter once.
 - **This phase:** harden the locked Save packet · **no** Secret · **no** POST · **no** DB write · **no** restoration · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor must **not** run Secret / POST / Save / restore / `npm run dev` / PAT export.
@@ -43,11 +43,12 @@ NO_RETRY_RULE_FIXED: true
 SECRET_OFF_METHOD: unset
 STAGING_REF_HARD_FIXED: true
 VERSION_47_REQUIRED: false
-PRE_ARM_VERSION_GUARD: 52
+PRE_ARM_VERSION_GUARD: 54
 PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
 POST_ARM_VERSION_FIXED: false
 UPDATED_AT_CODE_IDENTITY_PIN: true
 CONSOLE_STAGED_PASTE: true
+FLAG_RESET_GATE: true
 ROOT_ENV_LOCAL_EDIT_FORBIDDEN: true
 TOOL_ENV_LOCAL_SOURCE_FORBIDDEN: true
 SERVICE_ROLE_FORBIDDEN: true
@@ -148,12 +149,12 @@ Require **all** of these for `gosaki-discography-save-dry-run`. Else **STOP** (n
 | Field | Required |
 | --- | --- |
 | STATUS | **ACTIVE** |
-| VERSION | **52** (pre-arm metadata checkpoint only) |
+| VERSION | **54** (pre-arm metadata checkpoint only) |
 | UPDATED_AT (UTC) | **2026-08-15 14:12:36** (Slice A **code** pin) |
 
-Do **not** treat VERSION as code identity. `UPDATED_AT` is the primary pin. Historical Slice A deploy VERSION was **47**; prior checkpoint was **50**; live **52** is secret-revision generation after the aborted set/unset.
+Do **not** treat VERSION as code identity. `UPDATED_AT` is the primary pin. Historical Slice A deploy VERSION was **47**; prior checkpoints **50** / **52**; live **54** is secret-revision generation after abort-2 set/unset.
 
-`PRE_ARM_VERSION_GUARD: 52`
+`PRE_ARM_VERSION_GUARD: 54`
 
 `PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36`
 
@@ -167,13 +168,28 @@ Same IIFE as packet-review §3.3. Require `ownerJwtProbePass=true` (`sessionPres
 
 Same IIFE as packet-review §3.4. PASS: HTTP **403** `save_not_armed`. Do **not** use `discography-003` for this check.
 
-### 3.4 Stage §3.6 in DevTools Console (Secret still OFF)
+### 3.3b Flag reset gate (Secret OFF · after Discography page reload)
+
+Reload `/__admin-staging-shell/musician-basic/admin/discography/` (or the current Discography tab). Stay Secret **OFF**. Do **not** assign `window.__SLICE_B_OWNER_SAVE_FIRED`.
+
+```javascript
+console.log({
+  probe: "slice-b-flag-reset",
+  flagUndefined: typeof window.__SLICE_B_OWNER_SAVE_FIRED === "undefined",
+});
+```
+
+Require `flagUndefined === true`. Else **STOP** (reload again; do not paste §3.6; do not Secret ON).
+
+`FLAG_RESET_GATE: true`
+
+### 3.4 Stage §3.6 in DevTools Console (Secret still OFF · only after §3.3b PASS)
 
 Paste §3.6 into the DevTools Console **input field**. Do **not** press Enter. Do **not** leave the snippet only on the clipboard.
 
 `CONSOLE_STAGED_PASTE: true`
 
-### 3.5 Secret ON (staging only · after 2.1–3.3 and §3.6 staged in Console)
+### 3.5 Secret ON (staging only · after 2.1–3.3b and §3.6 staged in Console)
 
 ```bash
 npx -y supabase@2.114.0 secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta
@@ -181,9 +197,9 @@ npx -y supabase@2.114.0 secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project
 
 After ON: do not open/search/copy the doc. Return to Console and press **Enter once** on the already-pasted §3.6. Do not re-paste. No retry.
 
-Do **not** require VERSION **52** after this command. Secret ON may increment VERSION to **53**. That is expected (`POST_ARM_VERSION_FIXED: false`).
+Do **not** require VERSION **54** after this command. Secret ON may increment VERSION to **55**. That is expected (`POST_ARM_VERSION_FIXED: false`).
 
-Immediately re-list (read-only). Require `UPDATED_AT` still **2026-08-15 14:12:36**. If `UPDATED_AT` changed → **STOP**, unset, no Enter / no POST (possible code deploy). Do not STOP on VERSION ≠ 52 after arm.
+Immediately re-list (read-only). Require `UPDATED_AT` still **2026-08-15 14:12:36**. If `UPDATED_AT` changed → **STOP**, unset, no Enter / no POST (possible code deploy). Do not STOP on VERSION ≠ 54 after arm.
 
 ### 3.6 Exactly one owner POST (full album baseline gate)
 
@@ -505,7 +521,7 @@ PASS requires Save log `changedFieldsOk=true` **and** this `pass=true`. Record `
 
 Do **not** use function VERSION as a post-write success condition.
 
-After unset, re-list (read-only). Require `UPDATED_AT` still **2026-08-15 14:12:36**. VERSION may be 53 or 54 (Secret ON then unset). If `UPDATED_AT` drifted → **STOP** (do not treat Save as fully verified; do not restore in this packet).
+After unset, re-list (read-only). Require `UPDATED_AT` still **2026-08-15 14:12:36**. VERSION may be 55 or 56 (Secret ON then unset). If `UPDATED_AT` drifted → **STOP** (do not treat Save as fully verified; do not restore in this packet).
 
 `POST_ONLY_DESCRIPTION_CHANGE_VERIFIED: true`
 
@@ -529,15 +545,16 @@ After Save PASS + `newLock` recorded, a **separate** review phase will lock the 
 
 1. §2.1 PAT + `projects list`
 2. §2.2 Auth-enabled `npm run dev` + owner login
-3. §3.1 ACTIVE + VERSION **52** + `UPDATED_AT` **2026-08-15 14:12:36**
+3. §3.1 ACTIVE + VERSION **54** + `UPDATED_AT` **2026-08-15 14:12:36**
 4. §3.2 owner fixture
 5. §3.3 Secret OFF
-6. §3.4 paste §3.6 into Console input · **no Enter**
-7. §3.5 Secret ON · re-list `UPDATED_AT` pin only (VERSION may be 53)
-8. Console Enter **once** (`albumFieldsOk` or abort + unset)
-9. §3.7 unset immediately
-10. §3.8 post-write · record `newLock` · re-list `UPDATED_AT` pin (not VERSION)
-11. Restoration = later review (not now)
+6. Reload Discography page · §3.3b `flagUndefined === true` else **STOP**
+7. §3.4 paste §3.6 into Console input · **no Enter**
+8. §3.5 Secret ON · re-list `UPDATED_AT` pin only (VERSION may be 55)
+9. Console Enter **once** (`albumFieldsOk` or abort + unset)
+10. §3.7 unset immediately
+11. §3.8 post-write · record `newLock` · re-list `UPDATED_AT` pin (not VERSION)
+12. Restoration = later review (not now)
 
 No retry. No UI Save. No production ref. No SQL / PostgREST write.
 

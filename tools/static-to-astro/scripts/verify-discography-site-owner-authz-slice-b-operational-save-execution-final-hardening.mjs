@@ -174,7 +174,7 @@ assert("does not authorize Cursor", /does \*\*not\*\* authorize Cursor/.test(doc
 assert("approval form", /承認します。この操作を1回だけ実行してください。/.test(doc));
 
 assert("VERSION_47_REQUIRED false", /VERSION_47_REQUIRED:\s*false/.test(doc));
-assert("PRE_ARM_VERSION_GUARD 52", /PRE_ARM_VERSION_GUARD:\s*52/.test(doc));
+assert("PRE_ARM_VERSION_GUARD 54", /PRE_ARM_VERSION_GUARD:\s*54/.test(doc));
 assert(
   "PRE_ARM_UPDATED_AT_PIN",
   /PRE_ARM_UPDATED_AT_PIN:\s*2026-08-15 14:12:36/.test(doc),
@@ -185,25 +185,31 @@ assert(
   /UPDATED_AT_CODE_IDENTITY_PIN:\s*true/.test(doc),
 );
 assert("CONSOLE_STAGED_PASTE true", /CONSOLE_STAGED_PASTE:\s*true/.test(doc));
-assert("pre-arm VERSION 52 required", /VERSION \| \*\*52\*\*/.test(doc));
+assert("FLAG_RESET_GATE true", /FLAG_RESET_GATE:\s*true/.test(doc));
+assert("pre-arm VERSION 54 required", /VERSION \| \*\*54\*\*/.test(doc));
 assert("pre-arm UPDATED_AT pin", /UPDATED_AT \(UTC\) \| \*\*2026-08-15 14:12:36\*\*/.test(doc));
 assert(
   "no execution STOP on VERSION 47",
   !/VERSION \*\*47\*\*\. Else \*\*STOP\*\*/.test(doc),
 );
 assert(
-  "no post-arm VERSION 52 requirement",
-  /Do \*\*not\*\* require VERSION \*\*52\*\* after this command/.test(doc),
+  "no post-arm VERSION 54 requirement",
+  /Do \*\*not\*\* require VERSION \*\*54\*\* after this command/.test(doc),
 );
 assert(
   "post-write VERSION not success",
   /Do \*\*not\*\* use function VERSION as a post-write success condition/.test(doc),
 );
 assert("historical 47 preserved", /Historical Slice A deploy VERSION was \*\*47\*\*/.test(doc));
-assert("historical 50 preserved", /prior checkpoint was \*\*50\*\*/.test(doc));
+assert("historical 50 and 52 preserved", /\*\*50\*\* \/ \*\*52\*\*/.test(doc));
 assert("console staged paste", /Paste §3\.6 into the DevTools Console/.test(doc));
 assert("no Enter before Secret ON", /Do \*\*not\*\* press Enter/.test(doc));
 assert("Enter once after Secret ON", /press \*\*Enter once\*\*/.test(doc));
+assert(
+  "flag reset typeof undefined",
+  /typeof window\.__SLICE_B_OWNER_SAVE_FIRED === "undefined"/.test(doc),
+);
+assert("flagUndefined required", /flagUndefined === true/.test(doc));
 
 assert("review points to hardening", /execution-final-hardening/.test(review));
 assert("edge tracksChanged", /tracksChanged = beforeTitles\.join/.test(edge));

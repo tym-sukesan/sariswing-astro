@@ -5,7 +5,7 @@
 - **Status:** **COMPLETE (NO_WRITE / PASS · Save not executed)**
 - **HEAD:** `a21b6d71d80816a7150a63c208e22ab4d7f033fe`
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-version-guard-update`
-- **Operator SoT:** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (pre-arm VERSION **52** · Console staged paste)
+- **Operator SoT:** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` after `discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result` (pre-arm VERSION **54**). This recording’s `PRE_ARM_VERSION_GUARD: 52` is **historical**.
 - **This phase:** record the aborted Secret ON/OFF with **no** owner POST · retarget pre-arm VERSION 50→**52** · change paste method · **no** real Save · **no** DB write · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor did **not** run Secret / POST / Save this recording phase.

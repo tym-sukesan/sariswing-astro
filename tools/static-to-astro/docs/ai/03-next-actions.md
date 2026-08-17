@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B real Save **SUCCESS** recorded — next `discography-site-owner-authz-slice-b-operational-save-restoration-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md` (pre-arm ACTIVE + VERSION **56** + `UPDATED_AT` `2026-08-15 14:12:36` · lock `2026-08-16T16:47:01.444405+00:00` · reload → flag reset `typeof window.__SLICE_B_OWNER_RESTORE_FIRED === "undefined"` → Console staged paste · no Enter until Secret ON). Cursor must **not** run Secret/POST/restore. Do **not** redeploy. Do **not** re-click Save. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B restoration **STOP** — pre-restore `lockOk=false` was a docs transcription extra digit. Corrected lock `2026-08-16T16:47:01.44405+00:00`. Re-run §3.4 before any Secret ON. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md` (pre-arm ACTIVE + VERSION **56** + `UPDATED_AT` `2026-08-15 14:12:36`). Cursor must **not** run Secret/POST/restore. Do **not** re-click Save. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · owner DATA_WRITE **one description Save** recorded · restore **not** executed.
@@ -13,18 +13,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Item | Value |
 | --- | --- |
 | Outcome | HTTP 200 · description-only · SUCCESS |
-| newLock | `2026-08-16T16:47:01.444405+00:00` |
+| newLock | `2026-08-16T16:47:01.44405+00:00` (live from first Save; docs extra digit corrected) |
 | Live | ACTIVE · VERSION **56** · `UPDATED_AT` `2026-08-15 14:12:36` |
-| Next | restoration after `承認します。この操作を1回だけ実行してください。` |
+| Next | restoration **STOP** until §3.4 `lockOk=true` |
 
 ```txt
 SAVE_EXECUTED: true
 SAVE_SUCCESS: true
-NEW_LOCK: 2026-08-16T16:47:01.444405+00:00
+NEW_LOCK: 2026-08-16T16:47:01.44405+00:00
+LOCK_TRANSCRIPTION_CORRECTED: true
 LIVE_FUNCTION_VERSION: 56
 RESTORE_EXECUTED: false
-READY_FOR_OPERATOR_RESTORE: true
-STOP_REASONS: none
+READY_FOR_OPERATOR_RESTORE: false
+STOP_REASONS: restoration pre-restore lockOk=false; newLock transcription extra digit; restore not executed
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
@@ -33,20 +34,20 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 
 | Item | Value |
 | --- | --- |
-| Lock | `expectedBeforeUpdatedAt` = Save `newLock` |
-| Mutation | description-only · tracks/other album fields unchanged |
-| Gate | reload · `typeof window.__SLICE_B_OWNER_RESTORE_FIRED === "undefined"` else STOP |
-| Paste | Console staged (no Enter until after Secret ON) |
-| Next | restoration execution after explicit approval |
+| Outcome | §3.4 `lockOk=false` / `pass=false` · transcription extra digit |
+| Corrected lock | `2026-08-16T16:47:01.44405+00:00` |
+| Unchanged | description marker · albums 4 · tracks 34 · othersOk · tracksOk |
+| Next | re-run §3.4 · **STOP** Secret ON until `lockOk=true` |
 
 ```txt
-EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.444405+00:00
+EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.44405+00:00
 PRE_ARM_VERSION_GUARD: 56
 PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
-FLAG_RESET_GATE: true
-READY_FOR_OPERATOR_RESTORE: true
+PRE_RESTORE_LOCK_MISMATCH_STOP: true
+LOCK_TRANSCRIPTION_CORRECTED: true
+READY_FOR_OPERATOR_RESTORE: false
 RESTORE_EXECUTED: false
-STOP_REASONS: none
+STOP_REASONS: pre-restore lockOk=false; packet lock had extra digit; Secret OFF; restore not executed
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```

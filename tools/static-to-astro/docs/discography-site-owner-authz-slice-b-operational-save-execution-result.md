@@ -7,7 +7,7 @@
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result`
 - **Operator Save SoT (historical):** `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md`
 - **Operator restore SoT:** `discography-site-owner-authz-slice-b-operational-save-restoration-review.md`
-- **This phase:** record operator real Save SUCCESS · lock restoration packet to `newLock` · **no** restore · **no** Secret · **no** DB write by Cursor · **no** deploy · **no** production · **no** commit/push by Cursor
+- **This phase:** record operator real Save SUCCESS · correct transcribed `newLock` · **no** restore · **no** Secret · **no** DB write by Cursor · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor did **not** click Save / Secret / restore this recording phase.
 
@@ -34,7 +34,8 @@ ALBUM_FIELDS_OK: true
 POST_WRITE_PASS: true
 ALBUMS: 4
 TRACKS: 34
-NEW_LOCK: 2026-08-16T16:47:01.444405+00:00
+NEW_LOCK: 2026-08-16T16:47:01.44405+00:00
+LOCK_TRANSCRIPTION_CORRECTED: true
 SECRET_UNSET_SAVE_NOT_ARMED: true
 LIVE_FUNCTION_STATUS: ACTIVE
 LIVE_FUNCTION_VERSION: 56
@@ -46,14 +47,16 @@ RESTORE_EXECUTED: false
 CURSOR_EXECUTED_PACKET: false
 DIRECT_SQL_WRITE: false
 NO_REDEPLOY: true
-READY_FOR_OPERATOR_RESTORE: true
-STOP_REASONS: none
+READY_FOR_OPERATOR_RESTORE: false
+STOP_REASONS: restoration pre-restore lockOk=false; newLock transcription extra digit; restore not executed
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-`READY_FOR_OPERATOR_RESTORE: true` means the restoration packet is locked to this `newLock`. It does **not** authorize Cursor or this-phase restore.
+`READY_FOR_OPERATOR_RESTORE: false` — restoration stays **STOP** until operator re-runs pre-restore baseline against the corrected lock. It does **not** authorize Cursor restore.
+
+The live Save response `updatedAt` and post-write SELECT `newLock` were **`2026-08-16T16:47:01.44405+00:00` from the start**. A later docs recording inserted one extra `4` in the fractional seconds. That was a transcription error only — **not** a second DB write.
 
 Required later restore approval:
 
@@ -106,7 +109,9 @@ Pure site owner:
 | `othersOk` | **true** |
 | `tracksOk` | **true** |
 | `pass` | **true** |
-| `newLock` | `2026-08-16T16:47:01.444405+00:00` |
+| `newLock` | `2026-08-16T16:47:01.44405+00:00` |
+
+Save Console `updatedAt` and this post-write `newLock` were this value **from the first recording**. The extra fractional digit in a later docs copy was transcription only.
 
 Current staging `discography-003` description:
 
@@ -151,8 +156,8 @@ Historical VERSION **47** / **50** / **52** / **54** preserved. Do **not** redep
 
 ## 6. Next
 
-**`discography-site-owner-authz-slice-b-operational-save-restoration-review`** is authored in this same recording wave.
+Restoration stays **STOP**. Re-run §3.4 with corrected lock `2026-08-16T16:47:01.44405+00:00` before any Secret ON.
 
-Operator restore execution: **`discography-site-owner-authz-slice-b-operational-save-restoration-execution`** after explicit approval.
+Operator restore execution remains **`discography-site-owner-authz-slice-b-operational-save-restoration-execution`** only after `lockOk=true` **and** explicit approval.
 
 SoT: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md`

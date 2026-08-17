@@ -28,7 +28,8 @@ const LINKED = path.join(REPO_ROOT, "supabase/.temp/linked-project.json");
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const HEAD = "4d4e3548ec95199f900280930917231d0326de64";
-const NEW_LOCK = "2026-08-16T16:47:01.444405+00:00";
+const NEW_LOCK = "2026-08-16T16:47:01.44405+00:00";
+const WRONG_LOCK = NEW_LOCK.replace("44405", "444405");
 const OLD_LOCK = "2026-07-10T05:59:35.138671+00:00";
 const PIN = "2026-08-15 14:12:36";
 const DESC_BEFORE = "後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass";
@@ -87,10 +88,16 @@ assert("PRE_ARM_UPDATED_AT_PIN", doc.includes(PIN));
 assert("POST_ARM_VERSION_FIXED false", /POST_ARM_VERSION_FIXED:\s*false/.test(doc));
 assert("FLAG_RESET_GATE true", /FLAG_RESET_GATE:\s*true/.test(doc));
 assert("CONSOLE_STAGED_PASTE true", /CONSOLE_STAGED_PASTE:\s*true/.test(doc));
-assert("READY_FOR_OPERATOR_RESTORE true", /READY_FOR_OPERATOR_RESTORE:\s*true/.test(doc));
+assert("LOCK_TRANSCRIPTION_CORRECTED true", /LOCK_TRANSCRIPTION_CORRECTED:\s*true/.test(doc));
+assert("PRE_RESTORE_LOCK_MISMATCH_STOP true", /PRE_RESTORE_LOCK_MISMATCH_STOP:\s*true/.test(doc));
+assert("READY_FOR_OPERATOR_RESTORE false", /READY_FOR_OPERATOR_RESTORE:\s*false/.test(doc));
 assert("RESTORE_EXECUTED false", /RESTORE_EXECUTED:\s*false/.test(doc));
 assert("UPDATED_AT_NOT_REVERTED_TO_JULY_10 true", /UPDATED_AT_NOT_REVERTED_TO_JULY_10:\s*true/.test(doc));
-assert("STOP_REASONS none", /STOP_REASONS:\s*none/.test(doc));
+assert("STOP_REASONS lockOk false", /STOP_REASONS:\s*pre-restore lockOk=false/.test(doc));
+assert("no wrong lock ISO in restore SoT", !doc.includes(WRONG_LOCK));
+assert("live lockOk false recorded", /`lockOk` \| \*\*false\*\*/.test(doc));
+assert("live pass false recorded", /`pass` \| \*\*false\*\*/.test(doc));
+assert("descriptionOk still true", /`descriptionOk` \| \*\*true\*\*/.test(doc));
 assert(
   "next restoration execution",
   /RECOMMENDED_NEXT_PHASE:\s*discography-site-owner-authz-slice-b-operational-save-restoration-execution/.test(
@@ -144,6 +151,7 @@ assert("COVER_URL concat STG", /"https:\/\/" \+\s*\n\s*STG/.test(doc) || /"https
 assert("execution-result SAVE_SUCCESS", /SAVE_SUCCESS:\s*true/.test(result));
 assert("execution-result NEW_LOCK", result.includes(NEW_LOCK));
 assert("execution-result RESTORE_EXECUTED false", /RESTORE_EXECUTED:\s*false/.test(result));
+assert("no wrong lock ISO in execution-result", !result.includes(WRONG_LOCK));
 
 if (fs.existsSync(LINKED)) {
   const linked = read(LINKED);

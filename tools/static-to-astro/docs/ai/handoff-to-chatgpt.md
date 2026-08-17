@@ -5,22 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-operational-save-restoration-review COMPLETE
+Current phase: discography-site-owner-authz-slice-b-operational-save-restoration-review STOP
 HEAD baseline: 4d4e3548ec95199f900280930917231d0326de64
 TARGET_RELEASE: discography-003
 SAVE_EXECUTED: true
 SAVE_SUCCESS: true
-NEW_LOCK: 2026-08-16T16:47:01.444405+00:00
+NEW_LOCK: 2026-08-16T16:47:01.44405+00:00
+LOCK_TRANSCRIPTION_CORRECTED: true
 LIVE_FUNCTION_VERSION: 56
 PRE_ARM_VERSION_GUARD: 56
 PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
-EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.444405+00:00
+EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.44405+00:00
+PRE_RESTORE_LOCK_MISMATCH_STOP: true
 FLAG_RESET_GATE: true
 CONSOLE_STAGED_PASTE: true
-READY_FOR_OPERATOR_RESTORE: true
+READY_FOR_OPERATOR_RESTORE: false
 RESTORE_EXECUTED: false
 CURSOR_EXECUTED_PACKET: false
-STOP_REASONS: none
+STOP_REASONS: pre-restore lockOk=false; packet lock had extra digit; Secret OFF; restore not executed
 ARMS_OFF: true
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
@@ -36,20 +38,17 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 
 - Owner `can_write_site=true` / `is_admin=false`
 - Real Save HTTP **200** · `didWrite=true` · `dbWrite=true` · `rpc=gosaki_discography_operational_save` · `changedFields=["description"]`
-- Post-write 4/34 `pass=true` · `newLock` `2026-08-16T16:47:01.444405+00:00`
+- Post-write 4/34 `pass=true` · live `newLock` `2026-08-16T16:47:01.44405+00:00` **from the start** (docs extra digit was transcription only)
 - Secret unset `403 save_not_armed` · live ACTIVE / VERSION **56** / `UPDATED_AT` pin unchanged
-- Do **not** re-click Save · do **not** restore until explicit approval
+- Do **not** re-click Save · restoration **STOP**
 - Doc: `discography-site-owner-authz-slice-b-operational-save-execution-result.md`
 
 ## Discography site-owner authz Slice B operational Save restoration review (2026-08-18)
 
-- Description-only restore · `expectedBeforeUpdatedAt` = Save `newLock`
-- Pre-arm ACTIVE / VERSION **56** / `UPDATED_AT` `2026-08-15 14:12:36`
-- Reload · `typeof window.__SLICE_B_OWNER_RESTORE_FIRED === "undefined"` else STOP
-- Paste restore JS (no Enter) · Secret ON · Enter once · unset immediately · no retry
-- Post-restore `updated_at` advances; do **not** expect July 10 lock
-- Cursor must **not** run Secret/POST/restore
-- Next: restoration execution after `承認します。この操作を1回だけ実行してください。`
+- Live §3.4: `lockOk=false` / `pass=false` · description/others/tracks/4/34 still true
+- Cause: packet lock extra fractional digit · DB unchanged · Secret OFF · restore not executed
+- Corrected `expectedBeforeUpdatedAt` = `2026-08-16T16:47:01.44405+00:00`
+- Re-run §3.4 before Secret ON · Cursor must **not** run Secret/POST/restore
 - Doc: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md`
 
 ## Discography site-owner authz Slice B operational Save aborted attempt 2 result (2026-08-17)

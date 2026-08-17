@@ -2,13 +2,13 @@
 
 - **Phase:** `discography-site-owner-authz-slice-b-operational-save-restoration-review`
 - **Date:** 2026-08-18
-- **Status:** **COMPLETE (packet locked · restore not executed)**
+- **Status:** **STOP (pre-restore lock mismatch · transcription corrected · restore not executed)**
 - **HEAD:** `4d4e3548ec95199f900280930917231d0326de64`
 - **Prior:** `discography-site-owner-authz-slice-b-operational-save-execution-result`
 - **Operator SoT:** this file (supersedes packet-review §4 placeholder lock)
 - **VERSION guard:** pre-arm **ACTIVE + VERSION 56 + UPDATED_AT `2026-08-15 14:12:36`**
-- **Lock:** `expectedBeforeUpdatedAt` **must** be `2026-08-16T16:47:01.444405+00:00` (`newLock` from Save SUCCESS)
-- **This phase:** lock the description-only restore packet · **no** Secret · **no** restore POST · **no** DB write · **no** deploy · **no** production · **no** commit/push by Cursor
+- **Lock:** `expectedBeforeUpdatedAt` **must** be `2026-08-16T16:47:01.44405+00:00` (`newLock` from Save SUCCESS)
+- **This phase:** correct transcribed lock · keep restore **STOP** · **no** Secret · **no** restore POST · **no** DB write · **no** deploy · **no** production · **no** commit/push by Cursor
 
 Cursor must **not** run Secret / POST / restore / `npm run dev` / PAT export.
 
@@ -22,7 +22,9 @@ Staging only: `kmjqppxjdnwwrtaeqjta`. Production `vsbvndwuajjhnzpohghh` **forbid
 phase: discography-site-owner-authz-slice-b-operational-save-restoration-review
 TARGET_RELEASE: discography-003
 RESTORE_DESCRIPTION_ONLY: true
-EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.444405+00:00
+EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.44405+00:00
+LOCK_TRANSCRIPTION_CORRECTED: true
+PRE_RESTORE_LOCK_MISMATCH_STOP: true
 OLD_SAVE_LOCK_FORBIDDEN: true
 FULL_ALBUM_BASELINE_GATE: true
 TRACKS_UNCHANGED_REQUIRED: true
@@ -35,7 +37,7 @@ FLAG_RESET_GATE: true
 CONSOLE_STAGED_PASTE: true
 NO_RETRY_RULE_FIXED: true
 SECRET_OFF_METHOD: unset
-READY_FOR_OPERATOR_RESTORE: true
+READY_FOR_OPERATOR_RESTORE: false
 RESTORE_EXECUTED: false
 SAVE_EXECUTED: true
 CURSOR_EXECUTED_PACKET: false
@@ -46,13 +48,35 @@ TOOL_ENV_LOCAL_SOURCE_FORBIDDEN: true
 SERVICE_ROLE_FORBIDDEN: true
 UI_SAVE_FORBIDDEN: true
 PRODUCTION_BLOCKED: true
-STOP_REASONS: none
+STOP_REASONS: pre-restore lockOk=false; packet lock had extra digit; corrected to 2026-08-16T16:47:01.44405+00:00; Secret OFF; restore not executed
 RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-`READY_FOR_OPERATOR_RESTORE: true` means this restore packet is locked. It does **not** authorize Cursor or this-phase restore.
+`READY_FOR_OPERATOR_RESTORE: false` — restore stays **STOP**. Re-run §3.4 against the corrected lock before any Secret ON. It does **not** authorize Cursor restore.
+
+### 0.1 Pre-restore STOP (operator · recorded)
+
+Live §3.4 SELECT (Secret **OFF** · restore **not** executed):
+
+| Field | Value |
+| --- | --- |
+| `updated_at` | `2026-08-16T16:47:01.44405+00:00` |
+| `descriptionOk` | **true** |
+| `othersOk` | **true** |
+| `tracksOk` | **true** |
+| albums | **4** |
+| tracks | **34** |
+| `notOldLock` | **true** |
+| `lockOk` | **false** |
+| `pass` | **false** |
+
+Cause: packet compared `updated_at` to a mistyped lock (extra `4` in fractional seconds). Live row was unchanged. Secret remained OFF.
+
+`PRE_RESTORE_LOCK_MISMATCH_STOP: true`
+
+`LOCK_TRANSCRIPTION_CORRECTED: true`
 
 Required later approval:
 
@@ -71,7 +95,7 @@ Required later approval:
 | Function | `gosaki-discography-save-dry-run` |
 | Path | browser session POST → Edge → DEFINER RPC `gosaki_discography_operational_save` |
 | `legacyId` | `discography-003` |
-| `expectedBeforeUpdatedAt` | `2026-08-16T16:47:01.444405+00:00` |
+| `expectedBeforeUpdatedAt` | `2026-08-16T16:47:01.44405+00:00` |
 | Current description | `後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass [CMS Kit staging] Slice B owner Save PoC` |
 | Restore description | `後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass` |
 | Tracks | 9 titles unchanged (`白玉Bluse` spelling preserved) |
@@ -157,7 +181,7 @@ Same IIFE as packet-review §3.4. PASS: HTTP **403** `save_not_armed`. Do **not*
 (async () => {
   const STG = "kmjqppxjdnwwrtaeqjta";
   const PROD = "vsbvndwuajjhnzpohghh";
-  const LOCK = "2026-08-16T16:47:01.444405+00:00";
+  const LOCK = "2026-08-16T16:47:01.44405+00:00";
   const OLD_LOCK = "2026-07-10T05:59:35.138671+00:00";
   const DESC_BEFORE = "後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass";
   const DESC_AFTER = DESC_BEFORE + " [CMS Kit staging] Slice B owner Save PoC";
@@ -290,7 +314,7 @@ Paste §3.7 into the DevTools Console **input field**. Do **not** press Enter. D
   const STG = "kmjqppxjdnwwrtaeqjta";
   const PROD = "vsbvndwuajjhnzpohghh";
   const LEGACY = "discography-003";
-  const LOCK = "2026-08-16T16:47:01.444405+00:00";
+  const LOCK = "2026-08-16T16:47:01.44405+00:00";
   const OLD_LOCK = "2026-07-10T05:59:35.138671+00:00";
   const DESC_BEFORE = "後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass";
   const DESC_AFTER = DESC_BEFORE + " [CMS Kit staging] Slice B owner Save PoC";
@@ -421,7 +445,7 @@ Paste §3.7 into the DevTools Console **input field**. Do **not** press Enter. D
     console.log({ abort: "legacy_id_not_003" });
     return;
   }
-  if (body.expectedBeforeUpdatedAt !== "2026-08-16T16:47:01.444405+00:00") {
+  if (body.expectedBeforeUpdatedAt !== "2026-08-16T16:47:01.44405+00:00") {
     console.log({ abort: "restore_lock_not_newlock" });
     return;
   }
@@ -521,7 +545,7 @@ Then repeat §3.3. PASS: `save_not_armed`.
 (async () => {
   const STG = "kmjqppxjdnwwrtaeqjta";
   const PROD = "vsbvndwuajjhnzpohghh";
-  const LOCK = "2026-08-16T16:47:01.444405+00:00";
+  const LOCK = "2026-08-16T16:47:01.44405+00:00";
   const OLD_LOCK = "2026-07-10T05:59:35.138671+00:00";
   const DESC_BEFORE = "後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass";
   const COVER_URL =
@@ -651,4 +675,6 @@ No retry. No UI Save. No production ref. No SQL / PostgREST write.
 
 ## 6. Next
 
-**`discography-site-owner-authz-slice-b-operational-save-restoration-execution`** after explicit approval.
+**STOP.** Re-run §3.4 with corrected lock `2026-08-16T16:47:01.44405+00:00`. Do **not** Secret ON until `lockOk=true` and `pass=true`.
+
+**`discography-site-owner-authz-slice-b-operational-save-restoration-execution`** only after that reconfirm **and** explicit approval.

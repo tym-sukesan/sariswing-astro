@@ -28,7 +28,8 @@ const LINKED = path.join(REPO_ROOT, "supabase/.temp/linked-project.json");
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const HEAD = "4d4e3548ec95199f900280930917231d0326de64";
-const NEW_LOCK = "2026-08-16T16:47:01.444405+00:00";
+const NEW_LOCK = "2026-08-16T16:47:01.44405+00:00";
+const WRONG_LOCK = NEW_LOCK.replace("44405", "444405");
 const PIN = "2026-08-15 14:12:36";
 const DESC_BEFORE = "後藤沙紀 / piano 鈴木梨花子 / drums 寺尾陽介 / bass";
 const DESC_MARKER = "[CMS Kit staging] Slice B owner Save PoC";
@@ -87,14 +88,17 @@ assert("POST_WRITE_PASS true", /POST_WRITE_PASS:\s*true/.test(doc));
 assert("albums 4", /ALBUMS:\s*4/.test(doc));
 assert("tracks 34", /TRACKS:\s*34/.test(doc));
 assert("NEW_LOCK", doc.includes(NEW_LOCK));
+assert("LOCK_TRANSCRIPTION_CORRECTED true", /LOCK_TRANSCRIPTION_CORRECTED:\s*true/.test(doc));
 assert("SECRET_UNSET_SAVE_NOT_ARMED true", /SECRET_UNSET_SAVE_NOT_ARMED:\s*true/.test(doc));
 assert("LIVE_FUNCTION_VERSION 56", /LIVE_FUNCTION_VERSION:\s*56/.test(doc));
 assert("UPDATED_AT pin", doc.includes(PIN));
 assert("VERSION_54_TO_56_SECRET_REVISION true", /VERSION_54_TO_56_SECRET_REVISION:\s*true/.test(doc));
 assert("PRODUCTION_UNTOUCHED true", /PRODUCTION_UNTOUCHED:\s*true/.test(doc));
 assert("RESTORE_EXECUTED false", /RESTORE_EXECUTED:\s*false/.test(doc));
-assert("READY_FOR_OPERATOR_RESTORE true", /READY_FOR_OPERATOR_RESTORE:\s*true/.test(doc));
-assert("STOP_REASONS none", /STOP_REASONS:\s*none/.test(doc));
+assert("READY_FOR_OPERATOR_RESTORE false", /READY_FOR_OPERATOR_RESTORE:\s*false/.test(doc));
+assert("STOP_REASONS lock transcription", /STOP_REASONS:\s*restoration pre-restore lockOk=false/.test(doc));
+assert("no wrong lock ISO in result", !doc.includes(WRONG_LOCK));
+assert("transcription from the start", /from the start/.test(doc));
 assert(
   "next restoration execution",
   /RECOMMENDED_NEXT_PHASE:\s*discography-site-owner-authz-slice-b-operational-save-restoration-execution/.test(
@@ -111,6 +115,8 @@ assert("restoration SoT", /restoration-review/.test(doc));
 
 assert("restore packet exists lock", restore.includes(NEW_LOCK));
 assert("restore packet RESTORE_EXECUTED false", /RESTORE_EXECUTED:\s*false/.test(restore));
+assert("restore packet READY false", /READY_FOR_OPERATOR_RESTORE:\s*false/.test(restore));
+assert("no wrong lock ISO in restore packet", !restore.includes(WRONG_LOCK));
 
 if (fs.existsSync(LINKED)) {
   const linked = read(LINKED);

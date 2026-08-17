@@ -64,6 +64,8 @@
     "verify:discography-site-owner-authz-slice-b-operational-save-version-guard-update": "node scripts/verify-discography-site-owner-authz-slice-b-operational-save-version-guard-update.mjs",
     "verify:discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result": "node scripts/verify-discography-site-owner-authz-slice-b-operational-save-aborted-attempt-result.mjs",
     "verify:discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result": "node scripts/verify-discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result.mjs",
+    "verify:discography-site-owner-authz-slice-b-operational-save-execution-result": "node scripts/verify-discography-site-owner-authz-slice-b-operational-save-execution-result.mjs",
+    "verify:discography-site-owner-authz-slice-b-operational-save-restoration-review": "node scripts/verify-discography-site-owner-authz-slice-b-operational-save-restoration-review.mjs",
     "verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",
     "verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers": "node scripts/verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
     "verify:cms-core-v2-schedule-tbd-staging-migration-gate": "node scripts/verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",

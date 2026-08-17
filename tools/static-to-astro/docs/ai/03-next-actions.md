@@ -3,10 +3,53 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B abort-2 **NO_WRITE / PASS** — next `discography-site-owner-authz-slice-b-operational-save-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md` (pre-arm ACTIVE + VERSION **54** + `UPDATED_AT` `2026-08-15 14:12:36` · reload → flag reset `typeof window.__SLICE_B_OWNER_SAVE_FIRED === "undefined"` → Console staged paste · no Enter until Secret ON). Cursor must **not** run Secret/POST. Do **not** redeploy. Restoration deferred until `newLock`. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** Slice B real Save **SUCCESS** recorded — next `discography-site-owner-authz-slice-b-operational-save-restoration-execution` after explicit approval. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md` (pre-arm ACTIVE + VERSION **56** + `UPDATED_AT` `2026-08-15 14:12:36` · lock `2026-08-16T16:47:01.444405+00:00` · reload → flag reset `typeof window.__SLICE_B_OWNER_RESTORE_FIRED === "undefined"` → Console staged paste · no Enter until Secret ON). Cursor must **not** run Secret/POST/restore. Do **not** redeploy. Do **not** re-click Save. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · no owner DATA_WRITE yet.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · owner DATA_WRITE **one description Save** recorded · restore **not** executed.
+
+## 0. Discography site-owner authz Slice B operational Save execution result (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | HTTP 200 · description-only · SUCCESS |
+| newLock | `2026-08-16T16:47:01.444405+00:00` |
+| Live | ACTIVE · VERSION **56** · `UPDATED_AT` `2026-08-15 14:12:36` |
+| Next | restoration after `承認します。この操作を1回だけ実行してください。` |
+
+```txt
+SAVE_EXECUTED: true
+SAVE_SUCCESS: true
+NEW_LOCK: 2026-08-16T16:47:01.444405+00:00
+LIVE_FUNCTION_VERSION: 56
+RESTORE_EXECUTED: false
+READY_FOR_OPERATOR_RESTORE: true
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Discography site-owner authz Slice B operational Save restoration review (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Lock | `expectedBeforeUpdatedAt` = Save `newLock` |
+| Mutation | description-only · tracks/other album fields unchanged |
+| Gate | reload · `typeof window.__SLICE_B_OWNER_RESTORE_FIRED === "undefined"` else STOP |
+| Paste | Console staged (no Enter until after Secret ON) |
+| Next | restoration execution after explicit approval |
+
+```txt
+EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.444405+00:00
+PRE_ARM_VERSION_GUARD: 56
+PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+FLAG_RESET_GATE: true
+READY_FOR_OPERATOR_RESTORE: true
+RESTORE_EXECUTED: false
+STOP_REASONS: none
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B operational Save aborted attempt 2 result (2026-08-17)
 

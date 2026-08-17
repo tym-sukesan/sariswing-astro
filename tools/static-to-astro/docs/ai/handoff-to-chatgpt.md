@@ -5,37 +5,52 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result COMPLETE
-HEAD baseline: 282586a6bbcebd9c734eabfad971bf6453a9c828
+Current phase: discography-site-owner-authz-slice-b-operational-save-restoration-review COMPLETE
+HEAD baseline: 4d4e3548ec95199f900280930917231d0326de64
 TARGET_RELEASE: discography-003
-ABORTED_ATTEMPT_2_NO_WRITE: true
-ABORTED_ATTEMPT_2_PASS: true
-RPC_REACHED: false
-DATA_WRITE: false
-LIVE_FUNCTION_VERSION: 54
-PRE_ARM_VERSION_GUARD: 54
+SAVE_EXECUTED: true
+SAVE_SUCCESS: true
+NEW_LOCK: 2026-08-16T16:47:01.444405+00:00
+LIVE_FUNCTION_VERSION: 56
+PRE_ARM_VERSION_GUARD: 56
 PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
+EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.444405+00:00
 FLAG_RESET_GATE: true
 CONSOLE_STAGED_PASTE: true
-HISTORICAL_VERSION_47_PRESERVED: true
-HISTORICAL_VERSION_50_PRESERVED: true
-HISTORICAL_VERSION_52_PRESERVED: true
-NO_REDEPLOY: true
-READY_FOR_OPERATOR_SAVE: true
-SAVE_EXECUTED: false
+READY_FOR_OPERATOR_RESTORE: true
+RESTORE_EXECUTED: false
 CURSOR_EXECUTED_PACKET: false
 STOP_REASONS: none
 ARMS_OFF: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-execution
-DEFERRED_RESTORATION: discography-site-owner-authz-slice-b-operational-save-restoration-review
+RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
 DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-aborted-attempt-2-result.md
-Operator SoT: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-final-hardening.md
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-restoration-review.md
+Save result: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-result.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## Discography site-owner authz Slice B operational Save execution result (2026-08-18)
+
+- Owner `can_write_site=true` / `is_admin=false`
+- Real Save HTTP **200** · `didWrite=true` · `dbWrite=true` · `rpc=gosaki_discography_operational_save` · `changedFields=["description"]`
+- Post-write 4/34 `pass=true` · `newLock` `2026-08-16T16:47:01.444405+00:00`
+- Secret unset `403 save_not_armed` · live ACTIVE / VERSION **56** / `UPDATED_AT` pin unchanged
+- Do **not** re-click Save · do **not** restore until explicit approval
+- Doc: `discography-site-owner-authz-slice-b-operational-save-execution-result.md`
+
+## Discography site-owner authz Slice B operational Save restoration review (2026-08-18)
+
+- Description-only restore · `expectedBeforeUpdatedAt` = Save `newLock`
+- Pre-arm ACTIVE / VERSION **56** / `UPDATED_AT` `2026-08-15 14:12:36`
+- Reload · `typeof window.__SLICE_B_OWNER_RESTORE_FIRED === "undefined"` else STOP
+- Paste restore JS (no Enter) · Secret ON · Enter once · unset immediately · no retry
+- Post-restore `updated_at` advances; do **not** expect July 10 lock
+- Cursor must **not** run Secret/POST/restore
+- Next: restoration execution after `承認します。この操作を1回だけ実行してください。`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md`
 
 ## Discography site-owner authz Slice B operational Save aborted attempt 2 result (2026-08-17)
 

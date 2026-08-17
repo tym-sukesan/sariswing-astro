@@ -281,6 +281,16 @@ const STEPS = [
     script: "verify-discography-site-owner-authz-slice-b-operational-save-restoration-review.mjs",
   },
   {
+    id: "discography-site-owner-authz-slice-b-operational-save-restoration-execution-result",
+    kind: "node",
+    script: "verify-discography-site-owner-authz-slice-b-operational-save-restoration-execution-result.mjs",
+  },
+  {
+    id: "discography-site-owner-authz-slice-b-close",
+    kind: "node",
+    script: "verify-discography-site-owner-authz-slice-b-close.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

@@ -1,12 +1,55 @@
-Last updated: 2026-08-17
+Last updated: 2026-08-18
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** Slice B restoration **STOP** — pre-restore `lockOk=false` was a docs transcription extra digit. Corrected lock `2026-08-16T16:47:01.44405+00:00`. Re-run §3.4 before any Secret ON. Operator SoT: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md` (pre-arm ACTIVE + VERSION **56** + `UPDATED_AT` `2026-08-15 14:12:36`). Cursor must **not** run Secret/POST/restore. Do **not** re-click Save. Deferred UI: `discography-musician-basic-live-read-wiring-fix`.
+1. **Primary (Kit Core):** **`schedule-update-site-writer-rls-planning`** — Discography Slice B **CLOSED / PASS**. Schedule UPDATE remains **LEGACY** (`is_admin` / `schedules_admin_all`). Do **not** re-arm Discography Save. Live-read wiring stays a **separate deferred slice**. Contents / shell stay later. `REFERENCE_IMPLEMENTATION_FREEZE_READY: false`.
 2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
 3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · live `can_write_site` **confirmed** · owner DATA_WRITE **one description Save** recorded · restore **not** executed.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · Slice B **CLOSED / PASS** · live `can_write_site` **confirmed** · Discography owner DATA_WRITE restored.
+
+## 0. Discography site-owner authz Slice B close (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | CLOSED / COMPLETE / PASS |
+| Save lock | `2026-08-16T16:47:01.44405+00:00` |
+| restoredLock | `2026-08-17T16:33:38.259361+00:00` |
+| Live | ACTIVE · VERSION **58** · `UPDATED_AT` `2026-08-15 14:12:36` |
+| Next Primary | `schedule-update-site-writer-rls-planning` |
+
+```txt
+SLICE_B_CLOSED: true
+SLICE_B_PASS: true
+SAVE_SUCCESS: true
+RESTORE_SUCCESS: true
+DESCRIPTION_RESTORED: true
+LIVE_FUNCTION_VERSION: 58
+RECOMMENDED_NEXT_PRIMARY: schedule-update-site-writer-rls-planning
+DEFERRED_SLICE: discography-musician-basic-live-read-wiring-fix
+REFERENCE_IMPLEMENTATION_FREEZE_READY: false
+STOP_REASONS: none
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Discography site-owner authz Slice B operational Save restoration execution result (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | HTTP 200 · description-only restore · SUCCESS |
+| restoredLock | `2026-08-17T16:33:38.259361+00:00` |
+| Secret OFF | `403 save_not_armed` |
+| Next | Slice B close (this wave) |
+
+```txt
+RESTORE_EXECUTED: true
+RESTORE_SUCCESS: true
+EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.44405+00:00
+RESTORED_LOCK: 2026-08-17T16:33:38.259361+00:00
+LIVE_FUNCTION_VERSION: 58
+STOP_REASONS: none
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B operational Save execution result (2026-08-18)
 

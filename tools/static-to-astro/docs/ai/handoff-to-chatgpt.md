@@ -5,28 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-operational-save-restoration-review STOP
-HEAD baseline: 4d4e3548ec95199f900280930917231d0326de64
+Current phase: discography-site-owner-authz-slice-b-close CLOSED / COMPLETE / PASS
+HEAD baseline: 30353d738df06c74d6b2c3bfb31d52b65f6f3d7b
 TARGET_RELEASE: discography-003
+SLICE_B_CLOSED: true
+SLICE_B_PASS: true
 SAVE_EXECUTED: true
 SAVE_SUCCESS: true
-NEW_LOCK: 2026-08-16T16:47:01.44405+00:00
-LOCK_TRANSCRIPTION_CORRECTED: true
-LIVE_FUNCTION_VERSION: 56
-PRE_ARM_VERSION_GUARD: 56
+RESTORE_EXECUTED: true
+RESTORE_SUCCESS: true
+DESCRIPTION_RESTORED: true
+CORRECTED_SAVE_LOCK: 2026-08-16T16:47:01.44405+00:00
+RESTORED_LOCK: 2026-08-17T16:33:38.259361+00:00
+LIVE_FUNCTION_VERSION: 58
 PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
-EXPECTED_BEFORE_UPDATED_AT: 2026-08-16T16:47:01.44405+00:00
-PRE_RESTORE_LOCK_MISMATCH_STOP: true
-FLAG_RESET_GATE: true
-CONSOLE_STAGED_PASTE: true
 READY_FOR_OPERATOR_RESTORE: false
-RESTORE_EXECUTED: false
-CURSOR_EXECUTED_PACKET: false
-STOP_REASONS: pre-restore lockOk=false; packet lock had extra digit; Secret OFF; restore not executed
+READY_FOR_OPERATOR_SAVE: false
+STOP_REASONS: none
 ARMS_OFF: true
-RECOMMENDED_NEXT_PHASE: discography-site-owner-authz-slice-b-operational-save-restoration-execution
-DEFERRED_FINDING: discography-musician-basic-live-read-wiring-fix
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-restoration-review.md
+RECOMMENDED_NEXT_PRIMARY: schedule-update-site-writer-rls-planning
+DEFERRED_SLICE: discography-musician-basic-live-read-wiring-fix
+LATER_ROADMAP: contents-strategy-and-shell-alignment
+REFERENCE_IMPLEMENTATION_FREEZE_READY: false
+Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-close.md
+Restore result: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-restoration-execution-result.md
 Save result: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-result.md
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
@@ -34,21 +36,38 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## Discography site-owner authz Slice B close (2026-08-18)
+
+- CLOSED / COMPLETE / PASS · owner operational UPDATE proven then restored
+- Save `newLock` `2026-08-16T16:47:01.44405+00:00` · restore `restoredLock` `2026-08-17T16:33:38.259361+00:00` (advanced, not July 10)
+- Description original text · VERSION **58** / `UPDATED_AT` pin unchanged · production untouched
+- Next Primary: `schedule-update-site-writer-rls-planning`
+- Deferred separate slice: `discography-musician-basic-live-read-wiring-fix`
+- Later: Contents strategy / shell alignment
+- Do **not** re-arm Discography Save
+- Doc: `discography-site-owner-authz-slice-b-close.md`
+
+## Discography site-owner authz Slice B operational Save restoration execution result (2026-08-18)
+
+- Pre-restore corrected baseline `pass=true` / `lockOk=true`
+- Restore HTTP **200** · `changedFields=["description"]` · Secret unset `403 save_not_armed`
+- Post-restore 4/34 `pass=true` · `restoredLock` `2026-08-17T16:33:38.259361+00:00`
+- Doc: `discography-site-owner-authz-slice-b-operational-save-restoration-execution-result.md`
+
 ## Discography site-owner authz Slice B operational Save execution result (2026-08-18)
 
 - Owner `can_write_site=true` / `is_admin=false`
 - Real Save HTTP **200** · `didWrite=true` · `dbWrite=true` · `rpc=gosaki_discography_operational_save` · `changedFields=["description"]`
 - Post-write 4/34 `pass=true` · live `newLock` `2026-08-16T16:47:01.44405+00:00` **from the start** (docs extra digit was transcription only)
-- Secret unset `403 save_not_armed` · live ACTIVE / VERSION **56** / `UPDATED_AT` pin unchanged
-- Do **not** re-click Save · restoration **STOP**
+- Secret unset `403 save_not_armed` · then-live VERSION **56** (now **58** after restore)
+- Do **not** re-click Save · restore later **SUCCESS** (see restoration execution result)
 - Doc: `discography-site-owner-authz-slice-b-operational-save-execution-result.md`
 
 ## Discography site-owner authz Slice B operational Save restoration review (2026-08-18)
 
-- Live §3.4: `lockOk=false` / `pass=false` · description/others/tracks/4/34 still true
-- Cause: packet lock extra fractional digit · DB unchanged · Secret OFF · restore not executed
+- Historical first §3.4: `lockOk=false` / `pass=false` (transcription extra digit)
 - Corrected `expectedBeforeUpdatedAt` = `2026-08-16T16:47:01.44405+00:00`
-- Re-run §3.4 before Secret ON · Cursor must **not** run Secret/POST/restore
+- Restore later **SUCCESS** — do **not** re-run this packet
 - Doc: `discography-site-owner-authz-slice-b-operational-save-restoration-review.md`
 
 ## Discography site-owner authz Slice B operational Save aborted attempt 2 result (2026-08-17)

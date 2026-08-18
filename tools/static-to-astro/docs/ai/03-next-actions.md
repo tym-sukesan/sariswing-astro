@@ -3,10 +3,130 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (after commit/push):** **`gosaki-ciao-jp-preview-package-regeneration`** from **clean HEAD**. Do **not** FileZilla the dirty-tree package at `output/manual-upload/gosaki-piano-ciao-preview/`.
-2. **This Cursor turn:** commit/push **not executed**. `READY_FOR_COMMIT_PUSH: true` · `READY_FOR_MANUAL_PREVIEW_UPLOAD: false`.
+1. **Primary:** **`gosaki-wix-assets-localization-commit-push`** — commit/push localization source + remaining dirty docs, then from **clean HEAD** regenerate ciao-preview and FileZilla-reupload. Do **not** regenerate preview on a dirty tree. Do **not** FTP from Cursor. `readyForAnyFutureFtpApply: false`.
+2. **Deferred:** `gosaki-production-cutover-docs-commit-push` / production package (`deployBase=/`) after preview confirms localized images. Do **not** upload ciao-preview as production.
 3. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+
+## 0. Gosaki Wix external assets localization (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (local source + verify) |
+| Localized files | **14** (13 images + favicon) |
+| SoT | `assets/gosaki-piano/wix-local/` |
+| `PUBLIC_WIX_CDN_MEDIA_REFS_AFTER` | **0** (rewrite unit + stale HTML map) |
+| Intentional keep | `https://gosakirikakotrio.wixsite.com/gosakirikakotrio` |
+| Package / FTP / preview QA | **not this phase** |
+| READY_FOR_COMMIT_PUSH | **true** |
+| READY_FOR_PREVIEW_REGENERATION | **false** |
+| Next Primary | `gosaki-wix-assets-localization-commit-push` |
+
+```txt
+GOSAKI_WIX_EXTERNAL_ASSETS_LOCALIZATION_COMPLETE: true
+LOCALIZATION_RESULT: PASS
+PUBLIC_WIX_CDN_MEDIA_REFS_AFTER: 0
+MISSING_LOCALIZED_ASSETS: 0
+INTENTIONAL_WIXSITE_KEPT: true
+READY_FOR_COMMIT_PUSH: true
+READY_FOR_PREVIEW_REGENERATION: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-wix-assets-localization-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki production cutover final operator gates (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only packet) |
+| Live www | still **Wix** |
+| MX observed | none (email usage **not** inferred) |
+| CLIENT_SIGNOFF_REQUIRED | true |
+| READY_FOR_PRODUCTION_PACKAGE_GENERATION | **false** |
+| READY_FOR_COMMIT_PUSH | **true** |
+| Next Primary | `gosaki-production-cutover-docs-commit-push` |
+
+```txt
+GOSAKI_PRODUCTION_CUTOVER_FINAL_OPERATOR_GATES_COMPLETE: true
+LIVE_WWW_STILL_WIX: true
+CIAO_PREVIEW_REUSE_FORBIDDEN: true
+WIX_HOTLINK_PUBLIC_CUTOVER_BLOCKER: false
+CLIENT_SIGNOFF_REQUIRED: true
+READY_FOR_PRODUCTION_PACKAGE_GENERATION: false
+READY_FOR_COMMIT_PUSH: true
+RECOMMENDED_NEXT_PRIMARY: gosaki-production-cutover-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki ciao.jp preview final QA (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE / PASS (read-only) |
+| MANUAL_UPLOAD_RECORDED | true (operator FileZilla; Failed transfers **not** stated) |
+| PREVIEW_TECHNICAL_QA | **PASS** |
+| PUBLIC_CUTOVER_READY_FROM_PREVIEW_QA | **true** |
+| Wix unique URLs | 28 (CDN images + favicon + 1 wixsite link) |
+| Wix class | `POST_LAUNCH_CLEANUP` (not PUBLIC_CUTOVER_BLOCKER) |
+| Next Primary | `gosaki-production-cutover-final-operator-gates` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_FINAL_QA_COMPLETE: true
+PREVIEW_TECHNICAL_QA: PASS
+PUBLIC_CUTOVER_READY_FROM_PREVIEW_QA: true
+WIX_CDN_DNS_CUTOVER_BREAKS_IMAGES: false
+WIX_ACCOUNT_DELETE_BREAKS_HOTLINKS: true
+THIS_PACKAGE_IS_NOT_PRODUCTION_HTML: true
+CURSOR_FTP_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-production-cutover-final-operator-gates
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki ciao.jp preview manual upload preflight (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (packet · Cursor FTP **not** executed) |
+| sourceCommit | `0f84b2d1bf1e26da57a7ae6676751aa873931fc7` |
+| LOCAL_UPLOAD_SOURCE | `tools/static-to-astro/output/manual-upload/gosaki-piano-ciao-preview/public-dist/` |
+| REMOTE_TARGET | `/gosaki-piano/` |
+| UPLOAD_CONTENTS_RULE | **contents** of `public-dist/` |
+| fileCount | 30 |
+| Next Primary | `gosaki-ciao-jp-preview-manual-upload-execution` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_MANUAL_UPLOAD_PREFLIGHT_COMPLETE: true
+READY_FOR_OPERATOR_MANUAL_UPLOAD: true
+CURSOR_FTP_EXECUTED: false
+COMMIT_BEFORE_UPLOAD: forbidden
+DELETE: never
+FTPACCESS: do not touch
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-manual-upload-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki ciao.jp preview package regeneration (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (clean HEAD regen · FTP **not** executed) |
+| sourceCommit | `0f84b2d1bf1e26da57a7ae6676751aa873931fc7` |
+| Preview URL | `https://gotosaki.ciao.jp/gosaki-piano/` |
+| deployBase | `/gosaki-piano/` |
+| LOCAL_UPLOAD_SOURCE | `tools/static-to-astro/output/manual-upload/gosaki-piano-ciao-preview/public-dist/` |
+| REMOTE_TARGET | `/gosaki-piano/` |
+| UPLOAD_CONTENTS_RULE | **contents** of `public-dist/` (not the folder itself) |
+| Next Primary | `gosaki-ciao-jp-preview-manual-upload-preflight` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_PACKAGE_REGENERATION_COMPLETE: true
+sourceCommit: 0f84b2d1bf1e26da57a7ae6676751aa873931fc7
+READY_FOR_MANUAL_PREVIEW_UPLOAD: true
+DIRTY_PACKAGE_UPLOAD_FORBIDDEN: true
+FTP_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-manual-upload-preflight
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki ciao.jp preview dirty-source resolution (2026-08-18)
 

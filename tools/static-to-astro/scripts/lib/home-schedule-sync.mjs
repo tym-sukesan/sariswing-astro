@@ -343,7 +343,7 @@ import HomeSchedule from "../components/HomeSchedule.astro";
     <!-- VISUAL_ASSET: ASSET_MAP_MATCHED -->
     <img
       class="hero-image"
-      src="https://static.wixstatic.com/media/26e086_0cea05e5141a49b99220e7383f218a99~mv2.jpg/v1/fill/w_1340,h_620,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/250428_0179re.jpg"
+      src={import.meta.env.BASE_URL + "images/wix-local/home-kv-250428-0179re.jpg"}
       alt="後藤沙紀 ピアノ演奏（Home main visual）"
       width="1340"
       height="620"

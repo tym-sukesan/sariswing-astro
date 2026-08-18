@@ -5,23 +5,72 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-ciao-jp-preview-dirty-source-resolution COMPLETE
-HEAD baseline: c16af124dfea7e4bce8b3bc2bca9df82192464ab
-ORIGIN_MAIN: c16af124dfea7e4bce8b3bc2bca9df82192464ab
-PRIOR_PHASE: gosaki-ciao-jp-preview-package-generation COMPLETE
-FIX_REQUIRED: true
-DIRTY_PACKAGE_UPLOAD_FORBIDDEN: true
-READY_FOR_MANUAL_PREVIEW_UPLOAD: false
+Current phase: gosaki-wix-external-assets-localization COMPLETE
+HEAD baseline: 0f84b2d1bf1e26da57a7ae6676751aa873931fc7
+ORIGIN_MAIN: 0f84b2d1bf1e26da57a7ae6676751aa873931fc7
+PRIOR_PHASE: gosaki-production-cutover-final-operator-gates COMPLETE (docs still uncommitted)
+LOCALIZATION_RESULT: PASS
+PUBLIC_WIX_CDN_MEDIA_REFS_AFTER: 0
+INTENTIONAL_WIXSITE_KEPT: true
 READY_FOR_COMMIT_PUSH: true
-PACKAGE_REGENERATED: false
-FTP_EXECUTED: false
-PUBLICATION_DATA_CLEANUP_REQUIRED: false
-STAGING_REF: kmjqppxjdnwwrtaeqjta
-RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-package-regeneration
+READY_FOR_PREVIEW_REGENERATION: false
+CIAO_PREVIEW_REMOTE_STALE: true
+CURSOR_FTP_EXECUTED: false
+DNS_CHANGE_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-wix-assets-localization-commit-push
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-ciao-jp-preview-dirty-source-resolution.md
+Doc: tools/static-to-astro/docs/gosaki-wix-external-assets-localization.md
 ```
+
+## Gosaki Wix external assets localization (2026-08-18)
+
+- Localized 14 public Wix CDN assets (13 media IDs + favicon) to `assets/gosaki-piano/wix-local/`
+- Convert rewrites via gosaki `applyPostGenerate` using `import.meta.env.BASE_URL` (preview `/gosaki-piano/` and production `/`)
+- Kept `https://gosakirikakotrio.wixsite.com/gosakirikakotrio`
+- Fail-closed package check: public Wix CDN media dependency = 0
+- Did **not** regen ciao-preview, FTP, or commit
+- Next: `gosaki-wix-assets-localization-commit-push` then clean-HEAD preview regen + FileZilla
+- Doc: `gosaki-wix-external-assets-localization.md`
+
+## Gosaki production cutover final operator gates (2026-08-18)
+
+- Read-only DNS: www still Wix; rollback = restore Wix NS/A/CNAME; never remote-delete `/gosaki-piano/`
+- Mapping www → `/gosaki-piano/` and Lolipop SSL = operator panel (not guessed)
+- MX none observed; do not infer email unused; prefer web-record-only cutover
+- Client production signoff required (separated from technical QA PASS)
+- Next: commit/push docs → clean HEAD → production package (`deployBase=/`)
+- Doc: `gosaki-production-cutover-final-operator-gates.md`
+
+## Gosaki ciao.jp preview final QA (2026-08-18)
+
+- Operator FileZilla upload recorded; Cursor did not FTP
+- Live required routes HTTP 200 · CSS/nav/noindex/robots/canonical PASS · Admin 404
+- Wix unique URLs 28; DNS cutover alone does not drop `wixstatic` images; Wix account delete would
+- `PREVIEW_TECHNICAL_QA: PASS` · `PUBLIC_CUTOVER_READY_FROM_PREVIEW_QA: true`
+- Do **not** ship this preview tree as production (`deployBase=/gosaki-piano/`)
+- Next: `gosaki-production-cutover-final-operator-gates`
+- Doc: `gosaki-ciao-jp-preview-final-qa.md`
+
+## Gosaki ciao.jp preview manual upload preflight (2026-08-18)
+
+- Operator FileZilla packet only · Cursor must not FTP
+- Upload **contents** of `public-dist/` (30 files) → remote `/gosaki-piano/` already created
+- Do not upload to `/` or `/cms-kit-staging/` · no delete · no `.ftpaccess` · no `welcome.html`
+- Do **not** commit/push before upload (would stale freshness)
+- After upload QA URLs: `https://gotosaki.ciao.jp/gosaki-piano/` + about/schedule/discography/contact (QA not run this phase)
+- Next: `gosaki-ciao-jp-preview-manual-upload-execution`
+- Doc: `gosaki-ciao-jp-preview-manual-upload-preflight.md`
+
+## Gosaki ciao.jp preview package regeneration (2026-08-18)
+
+- Regenerated from **clean HEAD** `0f84b2d1` via official `npm run build:gosaki:ciao-preview`
+- Dirty `c16af124` package relocated to `_stale-backup` (not an upload source)
+- `--verify-build` PASS · `save-arm-utils.ts` present in astro-out
+- freshness / preflight PASS · Admin HTML off · ciao.jp canonical · `/gosaki-piano/` prefix
+- FileZilla: **contents** of `public-dist/` → remote `/gosaki-piano/`
+- FTP **not** executed · Next: `gosaki-ciao-jp-preview-manual-upload-preflight`
+- Doc: `gosaki-ciao-jp-preview-package-regeneration.md`
 
 ## Gosaki ciao.jp preview dirty-source resolution (2026-08-18)
 

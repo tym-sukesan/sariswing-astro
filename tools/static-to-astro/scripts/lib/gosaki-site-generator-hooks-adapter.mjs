@@ -18,6 +18,7 @@ import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
+import { applyGosakiWixLocalAssets } from "./gosaki-wix-local-assets.mjs";
 import {
   cmsKitScheduleMonthRoute,
   LIVE_CRAWL_MONTH_FILENAME,
@@ -248,6 +249,9 @@ export function createGosakiPianoHookMethods() {
           path.join(outDir, gosakiReadOnlyAdminSummary.discographyEditorPath),
         );
       }
+
+      // After HTML injects: copy committed Wix media and rewrite CDN URLs.
+      applyGosakiWixLocalAssets(outDir, toolRoot);
 
       return {
         gosakiBandProfilesSummary,

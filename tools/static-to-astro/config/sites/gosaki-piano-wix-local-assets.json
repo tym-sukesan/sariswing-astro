@@ -1,0 +1,120 @@
+{
+  "$comment": "Gosaki public Wix CDN media → local files. One file per media id (largest referenced fill). Do not map intentional wixsite.com links.",
+  "publicDir": "images/wix-local",
+  "sourceDir": "assets/gosaki-piano/wix-local",
+  "keepExternalHosts": ["wixsite.com"],
+  "assets": [
+    {
+      "id": "26e086_0cea05e5141a49b99220e7383f218a99",
+      "file": "home-kv-250428-0179re.jpg",
+      "kind": "image",
+      "role": "home-kv",
+      "pages": ["index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_0cea05e5141a49b99220e7383f218a99~mv2.jpg/v1/fill/w_2680,h_1240,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/250428_0179re.jpg"
+    },
+    {
+      "id": "26e086_88579f851b0349159d305bf067c7e2c7",
+      "file": "home-flyer-20260327.png",
+      "kind": "image",
+      "role": "home-flyer",
+      "pages": ["index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_88579f851b0349159d305bf067c7e2c7~mv2.png/v1/fill/w_518,h_518,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/20260327.png"
+    },
+    {
+      "id": "26e086_4175ba4f8d7d48f1ab73aa37cfef092b",
+      "file": "home-flyer-20260327-shop.png",
+      "kind": "image",
+      "role": "home-flyer",
+      "pages": ["index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_4175ba4f8d7d48f1ab73aa37cfef092b~mv2.png/v1/fill/w_518,h_518,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/20260327"
+    },
+    {
+      "id": "26e086_d05d239c448a4a1faddf07338bdeea11",
+      "file": "home-flyer-no-photo.png",
+      "kind": "image",
+      "role": "home-flyer-placeholder",
+      "pages": ["index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_d05d239c448a4a1faddf07338bdeea11~mv2.png/v1/fill/w_518,h_518,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/NO%20PHOTO.png"
+    },
+    {
+      "id": "26e086_5ceeb19a61c746a2a1f034fe1ef2bb64",
+      "file": "about-portrait-250428-1002.jpg",
+      "kind": "image",
+      "role": "about-portrait",
+      "pages": ["about/index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_5ceeb19a61c746a2a1f034fe1ef2bb64~mv2.jpg/v1/crop/x_232,y_315,w_2596,h_3889/fill/w_524,h_788,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/250428_1002.jpg"
+    },
+    {
+      "id": "26e086_4b20b9f6cf5147e6921c8b5faa9e3bc7",
+      "file": "contact-photo-250428-0280.jpg",
+      "kind": "image",
+      "role": "contact-photo",
+      "pages": ["contact/index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_4b20b9f6cf5147e6921c8b5faa9e3bc7~mv2.jpg/v1/crop/x_0,y_260,w_2828,h_3721/fill/w_418,h_550,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/250428_0280.jpg"
+    },
+    {
+      "id": "26e086_3b3d02790d654bebb1ddca8f52af7926",
+      "file": "discography-continuous.png",
+      "kind": "image",
+      "role": "discography-jacket",
+      "pages": ["discography/index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_3b3d02790d654bebb1ddca8f52af7926~mv2.png/v1/fill/w_520,h_520,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/jacket-l.png"
+    },
+    {
+      "id": "26e086_48d2ee5d238c41e5b6fa3560e74cec16",
+      "file": "discography-skylark.jpg",
+      "kind": "image",
+      "role": "discography-jacket",
+      "pages": ["discography/index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_48d2ee5d238c41e5b6fa3560e74cec16~mv2.jpg/v1/fill/w_520,h_520,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/0301_skylark_126_page-0001.jpg"
+    },
+    {
+      "id": "26e086_87f0b67145d24fe9861771e27844f601",
+      "file": "discography-about-us.jpg",
+      "kind": "image",
+      "role": "discography-jacket",
+      "pages": ["discography/index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_87f0b67145d24fe9861771e27844f601~mv2.jpg/v1/fill/w_520,h_520,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/IMG-1979_JPG.jpg"
+    },
+    {
+      "id": "26e086_646cc6a5c8534055932f9c2931681f35",
+      "file": "discography-ja-jaaaaan.jpg",
+      "kind": "image",
+      "role": "discography-jacket",
+      "pages": ["discography/index.html"],
+      "downloadUrl": "https://static.wixstatic.com/media/26e086_646cc6a5c8534055932f9c2931681f35~mv2.jpg/v1/fill/w_315,h_315,al_c,lg_1,q_80,enc_avif,quality_auto/%E3%82%AA%E3%83%8E%E3%83%9E%E3%83%88%E3%83%9A%E3%80%80CD%E3%82%B8%E3%83%A3%E3%82%B1.jpg"
+    },
+    {
+      "id": "11062b_0bec1cadb27b4d4a9898a740648fc5a9",
+      "file": "footer-sns-facebook.png",
+      "kind": "image",
+      "role": "footer-sns-icon",
+      "pages": ["*"],
+      "downloadUrl": "https://static.wixstatic.com/media/11062b_0bec1cadb27b4d4a9898a740648fc5a9~mv2.png/v1/fill/w_92,h_92,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/11062b_0bec1cadb27b4d4a9898a740648fc5a9~mv2.png"
+    },
+    {
+      "id": "11062b_d742af69cba743b295169b702fd597a1",
+      "file": "footer-sns-x.png",
+      "kind": "image",
+      "role": "footer-sns-icon",
+      "pages": ["*"],
+      "downloadUrl": "https://static.wixstatic.com/media/11062b_d742af69cba743b295169b702fd597a1~mv2.png/v1/fill/w_92,h_92,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/11062b_d742af69cba743b295169b702fd597a1~mv2.png"
+    },
+    {
+      "id": "11062b_94a6580a67244d17a4dc923b54b99fb4",
+      "file": "footer-sns-instagram.png",
+      "kind": "image",
+      "role": "footer-sns-icon",
+      "pages": ["*"],
+      "downloadUrl": "https://static.wixstatic.com/media/11062b_94a6580a67244d17a4dc923b54b99fb4~mv2.png/v1/fill/w_92,h_92,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/11062b_94a6580a67244d17a4dc923b54b99fb4~mv2.png"
+    },
+    {
+      "id": "pfavico",
+      "file": "favicon.ico",
+      "kind": "favicon",
+      "role": "favicon",
+      "pages": ["head"],
+      "downloadUrl": "https://static.parastorage.com/client/pfavico.ico"
+    }
+  ]
+}

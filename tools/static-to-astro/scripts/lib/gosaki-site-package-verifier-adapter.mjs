@@ -13,6 +13,7 @@ import {
   validateGosakiAboutAdminPathPackageArtifacts,
   validatePackageRunMarker,
 } from "./package-run-marker.mjs";
+import { verifyPublicDistWixCdnMediaAbsent } from "./gosaki-wix-local-assets.mjs";
 import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
 import {
   verifyGosakiCiaoPreviewContentExtensions,
@@ -99,6 +100,8 @@ export function verifyGosakiSitePackageExtensions(ctx) {
   } else if (profileName === "ciao-preview") {
     errors.push(...verifyGosakiCiaoPreviewContentExtensions(packageDir, meta.deployBase ?? ""));
   }
+
+  errors.push(...verifyPublicDistWixCdnMediaAbsent(publicDist));
 
   return errors;
 }

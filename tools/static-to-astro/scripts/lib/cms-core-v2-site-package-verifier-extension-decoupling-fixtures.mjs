@@ -6,6 +6,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { copyGosakiWixLocalAssetsIntoDir } from "./gosaki-wix-local-assets.mjs";
+
+const TOOL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 /**
  * @param {string} prefix
@@ -133,6 +137,7 @@ export function writeGosakiStagingExtensionHappyPublicDist(packageDir, deployBas
     <div id="SITE_FOOTERinlineContent-gridContainer"></div>
     </body></html>`,
   );
+  copyGosakiWixLocalAssetsIntoDir(publicDist, TOOL_ROOT);
   fs.writeFileSync(
     path.join(publicDist, "sitemap-0.xml"),
     `<?xml version="1.0"?><urlset>

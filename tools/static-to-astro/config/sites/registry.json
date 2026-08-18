@@ -65,6 +65,22 @@
             "script": "scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
             "argsMode": "none"
           }
+        },
+        "ciao-preview": {
+          "profileName": "ciao-preview",
+          "packageKey": "gosaki-piano-ciao-preview",
+          "targetEnvironment": "ciao-preview",
+          "publicBaseUrl": "https://gotosaki.ciao.jp/gosaki-piano/",
+          "stagingBaseUrl": null,
+          "deployBase": "/gosaki-piano/",
+          "intendedRemotePath": "/gosaki-piano/",
+          "includesAdmin": false,
+          "includeReadOnlyAdmin": false,
+          "includeGosakiReadOnlyAdmin": false,
+          "postBuildVerifier": {
+            "script": "scripts/verify-site-package.mjs",
+            "argsMode": "site-package"
+          }
         }
       }
     },

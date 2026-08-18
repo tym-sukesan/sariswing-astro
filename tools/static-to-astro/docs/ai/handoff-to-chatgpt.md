@@ -5,29 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-publication-data-live-readonly-check COMPLETE / PASS
-HEAD baseline: dcb9e012cd825b7c748ec30f51a4e489f941ef5d
-ORIGIN_MAIN: dcb9e012cd825b7c748ec30f51a4e489f941ef5d
-PRIOR_PHASE: gosaki-production-package-preflight-at-current-head COMPLETE
-PUBLICATION_DATA_LIVE_CHECK: PASS
-schedule_2026_07_010_restored: true
-published_schedule_marker_count: 0
-unpublished_test_rows_safe: true
-deleted_tbd_absent: true
-discography_marker_count: 0
+Current phase: gosaki-ciao-jp-preview-profile-implementation COMPLETE
+HEAD baseline: 818b80d2da3a02f3f2845a7004c87be251b639c8
+ORIGIN_MAIN: 818b80d2da3a02f3f2845a7004c87be251b639c8
+PRIOR_PHASE: gosaki-production-publication-data-live-readonly-check COMPLETE / PASS
+PROFILE_NAME: ciao-preview
+PREVIEW_URL: https://gotosaki.ciao.jp/gosaki-piano/
+deployBase: /gosaki-piano/
+remotePath: /gosaki-piano/
+ADMIN_EXCLUDED: true
+NOINDEX: true
+ROBOTS_DISALLOW_ALL: true
+PREVIEW_PACKAGE_GENERATED: false
+READY_FOR_PREVIEW_PACKAGE_GENERATION: true
 PUBLICATION_DATA_CLEANUP_REQUIRED: false
-QUERY_COUNT: 6
 STAGING_REF: kmjqppxjdnwwrtaeqjta
 PRODUCTION_REF_TOUCHED: false
-LINKED_CLI_USED: false
 SERVICE_ROLE_USED: false
-PREVIEW_PROFILE_EXISTS: false
-PREVIEW_PACKAGE_READY: BLOCKED_BY_CONFIG
-RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-profile-implementation
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-package-generation
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-production-publication-data-live-readonly-check.md
+Doc: tools/static-to-astro/docs/gosaki-ciao-jp-preview-profile-implementation.md
 ```
+
+## Gosaki ciao.jp preview profile implementation (2026-08-18)
+
+- Third deploy profile `ciao-preview` — DNS-前 preview only, not final production
+- `deployBase=/gosaki-piano/` · canonical/og:url `https://gotosaki.ciao.jp/gosaki-piano/...`
+- Admin off · noindex · robots Disallow · distinct output tree
+- Staging / production profile values unchanged · dry-run still PASS
+- Preview **package not generated** this phase
+- Next: `gosaki-ciao-jp-preview-package-generation` (no FTP / DNS)
+- Doc: `gosaki-ciao-jp-preview-profile-implementation.md`
 
 ## Gosaki production publication data live read-only check (2026-08-18)
 

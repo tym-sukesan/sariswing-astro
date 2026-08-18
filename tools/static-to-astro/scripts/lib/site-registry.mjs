@@ -18,7 +18,17 @@ export const GOSAKI_SITE_KEY = "gosaki-piano";
 export const PILOT_SAMPLE_STATIC_SITE_KEY = "pilot-sample-static";
 export const MIO_KISARAGI_JAZZ_SITE_KEY = "mio-kisaragi-jazz";
 export const GOSAKI_DEPLOY_PROFILES_REL = "config/sites/gosaki-piano.deploy-profiles.json";
-export const ALLOWED_PROFILE_NAMES = /** @type {const} */ (["staging", "production"]);
+export const CIAO_PREVIEW_PROFILE_NAME = "ciao-preview";
+export const ALLOWED_PROFILE_NAMES = /** @type {const} */ ([
+  "staging",
+  "production",
+  CIAO_PREVIEW_PROFILE_NAME,
+]);
+export const GOSAKI_CIAO_PREVIEW_MANUAL_UPLOAD_OUT = "output/manual-upload/gosaki-piano-ciao-preview";
+export const GOSAKI_CIAO_PREVIEW_ORIGIN = "https://gotosaki.ciao.jp";
+export const GOSAKI_CIAO_PREVIEW_BASE_URL = "https://gotosaki.ciao.jp/gosaki-piano";
+export const GOSAKI_CIAO_PREVIEW_PUBLIC_URL = "https://gotosaki.ciao.jp/gosaki-piano/";
+export const GOSAKI_CIAO_PREVIEW_DEPLOY_BASE = "/gosaki-piano/";
 export const STAGING_KIT_SUPABASE_REF = "kmjqppxjdnwwrtaeqjta";
 export const SARISWING_PRODUCTION_SUPABASE_REF = "vsbvndwuajjhnzpohghh";
 
@@ -202,7 +212,7 @@ function validateDeployProfileShape(profile, name) {
     throw new Error(`Profile "${name}" root deploy requires seo.productionIndexable=true`);
   }
 
-  if (name === "production") {
+  if (name === "production" || name === CIAO_PREVIEW_PROFILE_NAME) {
     const adminOff =
       p.includeReadOnlyAdmin === false || p.includeGosakiReadOnlyAdmin === false;
     if (!adminOff) {
@@ -224,6 +234,11 @@ function assertGosakiLegacyPathGuards(siteKey, profileName, manualUploadOut) {
   }
   if (profileName === "production" && manualUploadOut !== "output/manual-upload/gosaki-piano-production") {
     throw new Error("production manualUploadOut must be output/manual-upload/gosaki-piano-production");
+  }
+  if (profileName === CIAO_PREVIEW_PROFILE_NAME && manualUploadOut !== GOSAKI_CIAO_PREVIEW_MANUAL_UPLOAD_OUT) {
+    throw new Error(
+      `${CIAO_PREVIEW_PROFILE_NAME} manualUploadOut must be ${GOSAKI_CIAO_PREVIEW_MANUAL_UPLOAD_OUT}`,
+    );
   }
 }
 

@@ -10,6 +10,7 @@ import { normalizeDeployBase, verifyPublicDistCssPresence } from "./deploy-base.
 import {
   GOSAKI_SITE_KEY,
   PILOT_SAMPLE_STATIC_SITE_KEY,
+  CIAO_PREVIEW_PROFILE_NAME,
 } from "./site-registry.mjs";
 import {
   detectGosakiReadOnlyAdminInPublicDir,
@@ -23,9 +24,9 @@ import { isUnsafeIntendedRemotePath, resolveSourceCommit, sanitizeProductionPubl
  */
 export function resolvePreflightNpmCommand(siteKey, profileName) {
   if (siteKey === GOSAKI_SITE_KEY) {
-    return profileName === "production"
-      ? "npm run preflight:gosaki:production"
-      : "npm run preflight:gosaki:staging";
+    if (profileName === "production") return "npm run preflight:gosaki:production";
+    if (profileName === CIAO_PREVIEW_PROFILE_NAME) return "npm run preflight:gosaki:ciao-preview";
+    return "npm run preflight:gosaki:staging";
   }
   if (siteKey === PILOT_SAMPLE_STATIC_SITE_KEY && profileName === "staging") {
     return "npm run preflight:pilot:staging";
@@ -44,9 +45,9 @@ export function resolvePreflightNpmCommand(siteKey, profileName) {
  */
 export function resolveBuildNpmCommand(siteKey, profileName) {
   if (siteKey === GOSAKI_SITE_KEY) {
-    return profileName === "production"
-      ? "npm run build:gosaki:production"
-      : "npm run build:gosaki:staging";
+    if (profileName === "production") return "npm run build:gosaki:production";
+    if (profileName === CIAO_PREVIEW_PROFILE_NAME) return "npm run build:gosaki:ciao-preview";
+    return "npm run build:gosaki:staging";
   }
   if (siteKey === PILOT_SAMPLE_STATIC_SITE_KEY && profileName === "staging") {
     return "npm run build:pilot:staging";
@@ -106,10 +107,14 @@ export function validatePublicDistForManualUpload(publicDistDir, opts = {}) {
   }
 
   const adminPresent = fs.existsSync(path.join(abs, "admin"));
-  if (targetEnvironment === "production") {
-    if (adminPresent) errors.push("admin/ must not exist in production public-dist");
+  if (targetEnvironment === "production" || targetEnvironment === CIAO_PREVIEW_PROFILE_NAME) {
+    if (adminPresent) {
+      errors.push(
+        `admin/ must not exist in ${targetEnvironment} public-dist`,
+      );
+    }
     if (fs.existsSync(path.join(abs, "__admin-staging-shell"))) {
-      errors.push("__admin-staging-shell/ must not exist in production public-dist");
+      errors.push(`__admin-staging-shell/ must not exist in ${targetEnvironment} public-dist`);
     }
   } else if (adminPresent) {
     if (!detectGosakiReadOnlyAdminInPublicDir(abs)) {
@@ -166,12 +171,13 @@ export function buildManualUploadManifest(meta) {
   const publicBaseUrl = (meta.publicBaseUrl ?? meta.stagingUrl ?? "").replace(/\/$/, "") + "/";
   const intendedRemotePath = meta.intendedRemotePath ?? deployBase;
   const targetEnvironment = meta.targetEnvironment ?? "staging";
-  const packageProfileName =
-    meta.packageProfileName ?? (targetEnvironment === "production" ? "production" : "staging");
+  const packageProfileName = meta.packageProfileName ?? targetEnvironment;
+  const adminExcluded =
+    targetEnvironment === "production" || targetEnvironment === CIAO_PREVIEW_PROFILE_NAME;
   const includesAdmin =
     meta.includesAdmin === true ||
-    (meta.includeReadOnlyAdmin === true && targetEnvironment !== "production") ||
-    (meta.includeGosakiReadOnlyAdmin === true && targetEnvironment !== "production");
+    (meta.includeReadOnlyAdmin === true && !adminExcluded) ||
+    (meta.includeGosakiReadOnlyAdmin === true && !adminExcluded);
 
   const manifest = {
     phase: "G-20t3-package-upload-safety-hardening",
@@ -228,11 +234,18 @@ export function formatReadmeUpload(opts) {
   const includesAdmin = opts.includesAdmin === true;
   const zipName = opts.zipName ?? `${opts.siteSlug}-manual-upload.zip`;
   const isProduction = targetEnvironment === "production";
+  const isCiaoPreview =
+    targetEnvironment === CIAO_PREVIEW_PROFILE_NAME ||
+    packageProfileName === CIAO_PREVIEW_PROFILE_NAME;
   const siteKey = opts.siteKey ?? null;
   const preflightCommand = resolvePreflightNpmCommand(siteKey, packageProfileName);
   const buildCommand = resolveBuildNpmCommand(siteKey, packageProfileName);
 
-  const environmentLabel = isProduction ? "production" : "staging";
+  const environmentLabel = isProduction
+    ? "production"
+    : isCiaoPreview
+      ? CIAO_PREVIEW_PROFILE_NAME
+      : "staging";
   const adminLine = includesAdmin
     ? `${base}admin/          (G-11b read-only CMS — staging only)`
     : `${base}admin/          (must NOT exist in this package)`;
@@ -246,6 +259,14 @@ export function formatReadmeUpload(opts) {
 - ${url}sitemap-index.xml
 
 Check: HTTP 200, **no** noindex on public pages, canonical / og:url use **www.gosaki-piano.com**.`
+    : isCiaoPreview
+      ? `- ${url}
+- ${url}about/
+- ${url}contact/
+- ${url}schedule/
+- ${url}robots.txt
+
+Check: HTTP 200, **noindex**, canonical / og:url use **gotosaki.ciao.jp/gosaki-piano/** (not weblike.jp, not www.gosaki-piano.com). Assets / nav under /gosaki-piano/.`
     : `- ${url}
 - ${url}about/
 - ${url}contact/
@@ -257,7 +278,9 @@ Check: HTTP 200, noindex, canonical / og:url use staging host, Nav Home → stag
 
   const profileWarning = isProduction
     ? `**PRODUCTION package** (\`${packageProfileName}\`) — do **not** upload to staging path \`/cms-kit-staging/\`.`
-    : `**STAGING package** (\`${packageProfileName}\`) — do **not** upload to production root \`/\` or www.gosaki-piano.com document root until cutover is approved.`;
+    : isCiaoPreview
+      ? `**CIAO PREVIEW package** (\`${packageProfileName}\`) — DNS切替前確認用. Same remote folder \`/gosaki-piano/\` as final, but **deployBase=/gosaki-piano/** HTML. Do **not** use as www.gosaki-piano.com root HTML. Do **not** upload to \`/cms-kit-staging/\`.`
+      : `**STAGING package** (\`${packageProfileName}\`) — do **not** upload to production root \`/\` or www.gosaki-piano.com document root until cutover is approved.`;
 
   return `# Manual ${environmentLabel} upload — ${opts.siteSlug}
 
@@ -298,6 +321,7 @@ Named shortcuts:
 | --- | --- | --- |
 | \`gosaki-piano\` | staging | \`npm run preflight:gosaki:staging\` |
 | \`gosaki-piano\` | production | \`npm run preflight:gosaki:production\` |
+| \`gosaki-piano\` | ciao-preview | \`npm run preflight:gosaki:ciao-preview\` |
 | \`pilot-sample-static\` | staging | \`npm run preflight:pilot:staging\` |
 
 ### Freshness STOP — upload forbidden when stale
@@ -406,15 +430,18 @@ export function formatUploadChecklist(opts) {
   const intendedRemotePath = opts.intendedRemotePath ?? base;
   const includesAdmin = opts.includesAdmin === true;
   const isProduction = targetEnvironment === "production";
+  const isCiaoPreview =
+    targetEnvironment === CIAO_PREVIEW_PROFILE_NAME ||
+    packageProfileName === CIAO_PREVIEW_PROFILE_NAME;
   const remotePathUnsafe = isUnsafeIntendedRemotePath(intendedRemotePath);
   const siteKey = opts.siteKey ?? null;
   const preflightCommand = resolvePreflightNpmCommand(siteKey, packageProfileName);
   const buildCommand = resolveBuildNpmCommand(siteKey, packageProfileName);
 
   const manifestChecks = `- [ ] Open \`MANIFEST.json\`
-- [ ] \`targetEnvironment\` is **${targetEnvironment}** (not ${isProduction ? "staging" : "production"})
+- [ ] \`targetEnvironment\` is **${targetEnvironment}** (not ${isProduction ? "staging" : isCiaoPreview ? "staging or production" : "production"})
 - [ ] \`packageProfileName\` is **${packageProfileName}**
-- [ ] \`includesAdmin\` is **${includesAdmin}**${isProduction ? " — production must be false" : ""}
+- [ ] \`includesAdmin\` is **${includesAdmin}**${isProduction || isCiaoPreview ? " — must be false" : ""}
 - [ ] \`generatedAt\` is **${opts.generatedAt ?? "(check MANIFEST)"}** — recent enough for this release
 - [ ] \`sourceCommit\` is **${opts.sourceCommit ?? "(check MANIFEST)"}**
 - [ ] Run site-aware preflight: \`${preflightCommand}\` → **PASS**
@@ -429,7 +456,7 @@ export function formatUploadChecklist(opts) {
     ? `- [ ] **STOP** — \`intendedRemotePath\` is \`${intendedRemotePath}\` (unsafe / TBD). Do not upload until path is confirmed.`
     : `- [ ] Navigate to remote path: \`${intendedRemotePath}\`
 - [ ] Confirm you are **NOT** at the wrong environment path
-- [ ] ${isProduction ? "Confirm this is the approved production document root — not staging" : "Confirm path is under `/cms-kit-staging/` — not production root"}`;
+- [ ] ${isProduction ? "Confirm this is the approved production document root — not staging" : isCiaoPreview ? "Confirm path is `/gosaki-piano/` on ciao.jp preview host — HTML is deployBase=/gosaki-piano/, not www root HTML" : "Confirm path is under `/cms-kit-staging/` — not production root"}`;
 
   const afterUpload = isProduction
     ? `- [ ] Top page HTTP 200 — ${url}
@@ -439,6 +466,15 @@ export function formatUploadChecklist(opts) {
 - [ ] HTML pages have **no** noindex
 - [ ] canonical / og:url use **www.gosaki-piano.com** (not staging host)
 - [ ] \`/admin/\` returns 404 (production must not expose admin)`
+    : isCiaoPreview
+      ? `- [ ] Top page HTTP 200 — ${url}
+- [ ] \`/gosaki-piano/about/\` HTTP 200
+- [ ] \`/gosaki-piano/schedule/\` HTTP 200
+- [ ] \`robots.txt\` Disallow: /
+- [ ] noindex meta present on HTML pages
+- [ ] canonical / og:url use **gotosaki.ciao.jp/gosaki-piano/** (not weblike.jp, not www.gosaki-piano.com)
+- [ ] assets / nav under \`/gosaki-piano/\` (not host root \`/_astro/\`)
+- [ ] \`/admin/\` must not exist`
     : `- [ ] Top page HTTP 200 — staging URL root
 - [ ] \`/about/\` HTTP 200
 - [ ] \`/contact/\` HTTP 200
@@ -457,7 +493,7 @@ ${manifestChecks}
 ## Before upload — remote path & package mix-up prevention
 
 ${remoteChecks}
-- [ ] This folder is the **${targetEnvironment}** package — not ${isProduction ? "staging `gosaki-piano/`" : "production `gosaki-piano-production/`"}
+- [ ] This folder is the **${targetEnvironment}** package — not ${isProduction ? "staging `gosaki-piano/`" : isCiaoPreview ? "staging `gosaki-piano/` or production `gosaki-piano-production/`" : "production `gosaki-piano-production/`"}
 - [ ] Select **contents** of local \`public-dist/\` (not the \`public-dist\` folder itself)
 - [ ] Confirm remote path before upload — **not** account root \`/\` unless approved production cutover
 - [ ] Do **not** use mirror / sync / delete-remote-extras / CLI FTP
@@ -522,6 +558,9 @@ export function resolvePackageZipName(siteSlug, packageProfileName) {
   if (packageProfileName === "production") {
     return `${siteSlug}-production-manual-upload.zip`;
   }
+  if (packageProfileName === CIAO_PREVIEW_PROFILE_NAME) {
+    return `${siteSlug}-ciao-preview-manual-upload.zip`;
+  }
   return `${siteSlug}-manual-upload.zip`;
 }
 
@@ -554,8 +593,7 @@ export function createManualUploadPackage(opts) {
     beforePackageDirMutation,
   } = opts;
 
-  const profileName =
-    packageProfileName ?? (targetEnvironment === "production" ? "production" : "staging");
+  const profileName = packageProfileName ?? targetEnvironment;
 
   const validation = validatePublicDistForManualUpload(publicDistDir, { targetEnvironment });
   if (!validation.ok) {
@@ -563,7 +601,7 @@ export function createManualUploadPackage(opts) {
   }
 
   const includesAdmin =
-    targetEnvironment === "production"
+    targetEnvironment === "production" || targetEnvironment === CIAO_PREVIEW_PROFILE_NAME
       ? false
       : opts.includeReadOnlyAdmin === true ||
         opts.includeGosakiReadOnlyAdmin === true ||

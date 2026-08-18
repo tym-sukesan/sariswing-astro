@@ -30,7 +30,7 @@ Upload preflight — STOP if MANIFEST sourceCommit !== current git HEAD.
 
 Options:
   --site SITE_KEY      Registry site key (e.g. gosaki-piano, pilot-sample-static)
-  --profile NAME       staging | production (default: staging)
+  --profile NAME       ${ALLOWED_PROFILE_NAMES.join(" | ")} (default: staging)
   --package-dir PATH   Override package directory (wins over --site/--profile)
   --help, -h
 

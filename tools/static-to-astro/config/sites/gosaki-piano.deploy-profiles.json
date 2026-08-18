@@ -1,5 +1,5 @@
 {
-  "$comment": "G-20h1 — Gosaki deploy profiles for staging vs production package builds. No secrets.",
+  "$comment": "Gosaki deploy profiles: staging, production, ciao-preview. No secrets.",
   "siteSlug": "gosaki-piano",
   "fixtureDir": "fixtures/gosaki-piano",
   "profiles": {
@@ -37,6 +37,25 @@
         "stagingNoindex": false,
         "robotsDisallowAll": false,
         "productionIndexable": true
+      }
+    },
+    "ciao-preview": {
+      "origin": "https://gotosaki.ciao.jp",
+      "baseUrl": "https://gotosaki.ciao.jp/gosaki-piano",
+      "publicUrl": "https://gotosaki.ciao.jp/gosaki-piano/",
+      "deployBase": "/gosaki-piano/",
+      "outputName": "gosaki-piano-ciao-preview",
+      "astroOut": "output/gosaki-piano-astro-ciao-preview",
+      "staticPublicOut": "output/static-public/gosaki-piano-ciao-preview",
+      "manualUploadOut": "output/manual-upload/gosaki-piano-ciao-preview",
+      "remotePath": "/gosaki-piano/",
+      "supabaseProjectRef": "kmjqppxjdnwwrtaeqjta",
+      "includeReadOnlyAdmin": false,
+      "includeGosakiReadOnlyAdmin": false,
+      "seo": {
+        "stagingNoindex": true,
+        "robotsDisallowAll": true,
+        "productionIndexable": false
       }
     }
   }

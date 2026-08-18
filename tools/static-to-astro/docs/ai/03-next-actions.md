@@ -3,10 +3,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Cursor):** **`gosaki-ciao-jp-preview-profile-implementation`** — publication data live check **PASS**. Implement third profile `deployBase=/gosaki-piano/` for `https://gotosaki.ciao.jp/gosaki-piano/`. Do **not** reuse production (`deployBase=/`) or staging (`/cms-kit-staging/gosaki-piano/`) packages. Do **not** generate until the profile exists.
+1. **Primary (Cursor):** **`gosaki-ciao-jp-preview-package-generation`** — profile `ciao-preview` **exists**. Generate preview package only (`output/manual-upload/gosaki-piano-ciao-preview`). Do **not** overwrite staging/production trees. Do **not** FTP / DNS / SSL / DB write.
 2. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
 3. **CLIENT_CMS_HANDOFF 後回し:** Schedule UPDATE = cutover **NON_BLOCKER** / handoff **CONDITIONAL_BLOCKER**.
 4. Save arm **false** · `readyForAnyFutureFtpApply: false`（**auto FTP のみ**） · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+
+## 0. Gosaki ciao.jp preview profile implementation (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (profile only · package **not** generated) |
+| Profile | `ciao-preview` |
+| Preview URL | `https://gotosaki.ciao.jp/gosaki-piano/` |
+| deployBase | `/gosaki-piano/` |
+| Admin / noindex / robots | excluded / noindex / Disallow: / |
+| Dedicated verifier | PASS |
+| Next Primary | `gosaki-ciao-jp-preview-package-generation` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_PROFILE_IMPLEMENTATION_COMPLETE: true
+PROFILE_NAME: ciao-preview
+PREVIEW_URL: https://gotosaki.ciao.jp/gosaki-piano/
+deployBase: /gosaki-piano/
+READY_FOR_PREVIEW_PACKAGE_GENERATION: true
+PREVIEW_PACKAGE_GENERATED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-package-generation
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki production publication data live read-only check (2026-08-18)
 

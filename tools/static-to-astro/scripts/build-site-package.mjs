@@ -22,7 +22,7 @@ Build manual-upload package from site registry profile. No FTP connection.
 
 Options:
   --site SITE_KEY           Registry site key (e.g. gosaki-piano)
-  --profile PROFILE         staging | production
+  --profile PROFILE         ${ALLOWED_PROFILE_NAMES.join(" | ")}
   --dry-run                 Print plan only — no convert / package / verifier execution
   --help, -h
 

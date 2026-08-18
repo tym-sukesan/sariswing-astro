@@ -15,6 +15,7 @@ import {
 } from "./package-run-marker.mjs";
 import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
 import {
+  verifyGosakiCiaoPreviewContentExtensions,
   verifyGosakiProductionContentExtensions,
   verifyGosakiStagingContentExtensions,
 } from "./verify-site-package-gosaki-extensions.mjs";
@@ -95,6 +96,8 @@ export function verifyGosakiSitePackageExtensions(ctx) {
     errors.push(...verifyGosakiStagingContentExtensions(packageDir, meta.deployBase ?? ""));
   } else if (profileName === "production") {
     errors.push(...verifyGosakiProductionContentExtensions(packageDir));
+  } else if (profileName === "ciao-preview") {
+    errors.push(...verifyGosakiCiaoPreviewContentExtensions(packageDir, meta.deployBase ?? ""));
   }
 
   return errors;

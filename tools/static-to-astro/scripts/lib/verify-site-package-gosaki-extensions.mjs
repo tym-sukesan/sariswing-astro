@@ -213,3 +213,81 @@ export function verifyGosakiProductionContentExtensions(packageDir) {
 
   return errors;
 }
+
+const CIAO_PREVIEW_HOST = "gotosaki.ciao.jp";
+
+/**
+ * DNS-前 ciao.jp preview package checks (noindex + /gosaki-piano/ prefix).
+ * @param {string} packageDir
+ * @param {string} deployBase
+ * @returns {string[]}
+ */
+export function verifyGosakiCiaoPreviewContentExtensions(packageDir, deployBase) {
+  /** @type {string[]} */
+  const errors = [];
+  const publicDist = path.join(packageDir, "public-dist");
+  const base = deployBase || "/gosaki-piano/";
+
+  if (fs.existsSync(path.join(publicDist, "admin"))) {
+    errors.push("ciao-preview must not include admin/");
+  }
+  if (fs.existsSync(path.join(publicDist, "__admin-staging-shell"))) {
+    errors.push("ciao-preview must not include __admin-staging-shell/");
+  }
+
+  const seoRoutes = [
+    "index.html",
+    "about/index.html",
+    "discography/index.html",
+    "schedule/index.html",
+    "contact/index.html",
+  ];
+  for (const rel of seoRoutes) {
+    const abs = path.join(publicDist, rel);
+    if (!fs.existsSync(abs)) continue;
+    const html = fs.readFileSync(abs, "utf8");
+    const headHtml = html.match(/<head[^>]*>[\s\S]*?<\/head>/i)?.[0] ?? html.slice(0, 8000);
+    if (!/noindex/i.test(headHtml)) errors.push(`${rel} missing noindex`);
+    if (headHtml.includes(STAGING_HOST) || headHtml.includes(STAGING_DEPLOY_BASE)) {
+      errors.push(`${rel} must not reference weblike staging host`);
+    }
+    if (!headHtml.includes(CIAO_PREVIEW_HOST)) {
+      errors.push(`${rel} missing ciao.jp preview host in head`);
+    }
+    if (/rel="canonical" href="https:\/\/www\.gosaki-piano\.com/i.test(headHtml)) {
+      errors.push(`${rel} must not use production canonical`);
+    }
+    if (/property="og:url" content="https:\/\/www\.gosaki-piano\.com/i.test(headHtml)) {
+      errors.push(`${rel} must not use production og:url`);
+    }
+  }
+
+  const indexPath = path.join(publicDist, "index.html");
+  if (fs.existsSync(indexPath)) {
+    const indexHtml = fs.readFileSync(indexPath, "utf8");
+    if (indexHtml.includes('href="/_astro/') || indexHtml.includes('href="/about/"')) {
+      errors.push("index assets/nav must not use host-root paths without /gosaki-piano/ prefix");
+    }
+  }
+
+  const scheduleHub = path.join(publicDist, "schedule/index.html");
+  if (fs.existsSync(scheduleHub)) {
+    const hubHtml = fs.readFileSync(scheduleHub, "utf8");
+    if (!hubHtml.includes(`${base}schedule/2026-`)) {
+      errors.push("schedule hub missing /gosaki-piano/ prefixed month links");
+    }
+  }
+
+  const robotsPath = path.join(publicDist, "robots.txt");
+  if (fs.existsSync(robotsPath)) {
+    const robots = fs.readFileSync(robotsPath, "utf8");
+    if (!/Disallow:\s*\/\s*$/m.test(robots)) {
+      errors.push("robots.txt must Disallow: / for ciao-preview");
+    }
+    if (robots.includes("www.gosaki-piano.com") || robots.includes(STAGING_HOST)) {
+      errors.push("robots.txt must not leak production or weblike hosts");
+    }
+  }
+
+  return errors;
+}

@@ -29,7 +29,7 @@ Stale package → step 2 fails (STOP). Rebuild at current HEAD before upload.
 
 Options:
   --site SITE_KEY      Registry site key (required)
-  --profile NAME       staging | production (default: staging)
+  --profile NAME       ${ALLOWED_PROFILE_NAMES.join(" | ")} (default: staging)
   --help, -h
 
 Registered sites: ${listSiteKeys().join(", ")}

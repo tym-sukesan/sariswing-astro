@@ -36,6 +36,9 @@ export function shouldApplyStagingNoindex(deployBase) {
 /** Production domain that must not appear in staging canonical / og:url. */
 export const STAGING_CANONICAL_LEAK_PATTERN = /www\.gosaki-piano\.com/i;
 
+/** Ciao.jp DNS-前 preview host — treated as subdir/noindex canonical mode. */
+export const CIAO_PREVIEW_HOST_PATTERN = /gotosaki\.ciao\.jp/i;
+
 /**
  * @param {string} html
  */
@@ -71,6 +74,7 @@ export function detectCanonicalModeFromHtml(html) {
   if (!canonical && !ogUrl) return "omitted";
   if (STAGING_CANONICAL_LEAK_PATTERN.test(`${canonical}${ogUrl}`)) return "production-leak";
   if (/\/cms-kit-staging\//i.test(`${canonical}${ogUrl}`)) return "staging-url";
+  if (CIAO_PREVIEW_HOST_PATTERN.test(`${canonical}${ogUrl}`)) return "staging-url";
   return canonical ? "production" : "omitted";
 }
 

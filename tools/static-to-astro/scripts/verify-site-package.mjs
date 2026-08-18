@@ -28,7 +28,7 @@ Verify manual-upload package against site registry expectations. No FTP.
 
 Options:
   --site SITE_KEY       Registry site key (e.g. gosaki-piano)
-  --profile PROFILE     staging | production
+  --profile PROFILE     ${ALLOWED_PROFILE_NAMES.join(" | ")}
   --package-dir PATH    Override package directory (default from registry)
   --expect-about-save-ui-armed
                         Gosaki staging only: expect temporary About Save UI armed bake

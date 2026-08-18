@@ -130,12 +130,27 @@ const libHits = libFiles.filter((f) => {
 const allowedLib = new Set([
   "package-run-marker.mjs",
   "gosaki-operational-save-ui-arm-mutex-gate.mjs",
+  // Client bake copy of templates/.../save-arm-utils.ts — must NOT import scripts/lib/save-arm-utils.mjs
+  "gosaki-staging-read-only-admin.mjs",
 ]);
 const unexpectedLib = libHits.filter((f) => !allowedLib.has(path.basename(f)));
 assert(
-  "helper lib wiring limited to package-run-marker + mutex package gate (+ fixtures)",
+  "helper lib wiring limited to package-run-marker + mutex package gate + admin bake copy (+ fixtures)",
   unexpectedLib.length === 0,
   unexpectedLib.map((f) => path.basename(f)).join(", "),
+);
+const bakeApplier = fs.readFileSync(
+  path.join(libDir, "gosaki-staging-read-only-admin.mjs"),
+  "utf8",
+);
+assert(
+  "admin bake copies client save-arm-utils.ts",
+  /save-arm-utils\.ts/.test(bakeApplier) && /copyFileSync\(saveArmUtilsSrc/.test(bakeApplier),
+);
+assert(
+  "admin bake does not import Node save-arm-utils.mjs",
+  !/from ["']\.\/save-arm-utils\.mjs["']/.test(bakeApplier) &&
+    !/isSaveArmExactTrue/.test(bakeApplier),
 );
 assert(
   "package-run-marker imports isSaveArmExactTrue",

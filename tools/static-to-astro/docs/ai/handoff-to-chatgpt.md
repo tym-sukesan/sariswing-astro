@@ -5,28 +5,43 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-ciao-jp-preview-profile-implementation COMPLETE
-HEAD baseline: 818b80d2da3a02f3f2845a7004c87be251b639c8
-ORIGIN_MAIN: 818b80d2da3a02f3f2845a7004c87be251b639c8
-PRIOR_PHASE: gosaki-production-publication-data-live-readonly-check COMPLETE / PASS
-PROFILE_NAME: ciao-preview
-PREVIEW_URL: https://gotosaki.ciao.jp/gosaki-piano/
-deployBase: /gosaki-piano/
-remotePath: /gosaki-piano/
-ADMIN_EXCLUDED: true
-NOINDEX: true
-ROBOTS_DISALLOW_ALL: true
-PREVIEW_PACKAGE_GENERATED: false
-READY_FOR_PREVIEW_PACKAGE_GENERATION: true
+Current phase: gosaki-ciao-jp-preview-dirty-source-resolution COMPLETE
+HEAD baseline: c16af124dfea7e4bce8b3bc2bca9df82192464ab
+ORIGIN_MAIN: c16af124dfea7e4bce8b3bc2bca9df82192464ab
+PRIOR_PHASE: gosaki-ciao-jp-preview-package-generation COMPLETE
+FIX_REQUIRED: true
+DIRTY_PACKAGE_UPLOAD_FORBIDDEN: true
+READY_FOR_MANUAL_PREVIEW_UPLOAD: false
+READY_FOR_COMMIT_PUSH: true
+PACKAGE_REGENERATED: false
+FTP_EXECUTED: false
 PUBLICATION_DATA_CLEANUP_REQUIRED: false
 STAGING_REF: kmjqppxjdnwwrtaeqjta
-PRODUCTION_REF_TOUCHED: false
-SERVICE_ROLE_USED: false
-RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-package-generation
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-package-regeneration
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-ciao-jp-preview-profile-implementation.md
+Doc: tools/static-to-astro/docs/gosaki-ciao-jp-preview-dirty-source-resolution.md
 ```
+
+## Gosaki ciao.jp preview dirty-source resolution (2026-08-18)
+
+- On-disk ciao-preview package is **not** a FileZilla source (generated while tree became dirty)
+- `sourceCommit` freshness vs HEAD can PASS without covering uncommitted bake code — upload forbidden
+- Fix: Admin bake copies `save-arm-utils.ts` (required for fresh `astro build`)
+- Staging/production dry-run unchanged · no regen / FTP this phase
+- Commit/push **not** executed here · Next: regeneration from **clean HEAD**
+- Doc: `gosaki-ciao-jp-preview-dirty-source-resolution.md`
+
+## Gosaki ciao.jp preview package generation (2026-08-18)
+
+- Local `ciao-preview` package generated · sourceCommit = HEAD `c16af124`
+- Upload: **contents** of `public-dist/` → remote `/gosaki-piano/` (do not upload the `public-dist` folder itself)
+- Admin HTML excluded · noindex · robots Disallow · ciao.jp canonical/og:url · `/gosaki-piano/` assets/nav/schedule
+- verify-site-package / freshness / preflight PASS · staging/production packages not overwritten
+- FTP / DNS / DB **not** executed
+- Convert unblock: copy `save-arm-utils.ts` in Admin bake (uncommitted; next official regen needs it)
+- Next: `gosaki-ciao-jp-preview-manual-upload-preflight`
+- Doc: `gosaki-ciao-jp-preview-package-generation.md`
 
 ## Gosaki ciao.jp preview profile implementation (2026-08-18)
 

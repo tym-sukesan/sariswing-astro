@@ -16,6 +16,7 @@ export const GOSAKI_READ_ONLY_ADMIN_PAGE_REL = "src/pages/admin/index.astro";
 export const GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL =
   "src/components/GosakiStagingReadOnlyAdminPage.astro";
 export const GOSAKI_READ_ONLY_ADMIN_LIB_REL = "src/lib/gosaki-staging-read-only-admin.ts";
+export const GOSAKI_SAVE_ARM_UTILS_REL = "src/lib/save-arm-utils.ts";
 export const GOSAKI_PACKAGE_ADMIN_PATHS_REL = "src/lib/gosaki-package-admin-paths.ts";
 export const GOSAKI_READ_ONLY_ADMIN_CSS_REL = "src/styles/gosaki-staging-read-only-admin.css";
 export const GOSAKI_ADMIN_SHELL_CHROME_CSS_REL = "src/styles/gosaki-admin-shell-chrome.css";
@@ -454,6 +455,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   );
   const componentSrc = path.join(templateRoot, "GosakiStagingReadOnlyAdminPage.astro");
   const libSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.ts");
+  const saveArmUtilsSrc = path.join(templateRoot, "save-arm-utils.ts");
   const discographyEditSrc = path.join(
     templateRoot,
     "gosaki-staging-discography-operational-edit.ts",
@@ -494,6 +496,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   for (const src of [
     componentSrc,
     libSrc,
+    saveArmUtilsSrc,
     discographyEditSrc,
     scheduleEditSrc,
     youtubeEditSrc,
@@ -529,6 +532,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.mkdirSync(chromeDirDest, { recursive: true });
 
   fs.copyFileSync(libSrc, libDest);
+  fs.copyFileSync(saveArmUtilsSrc, path.join(path.dirname(libDest), "save-arm-utils.ts"));
   fs.copyFileSync(
     discographyEditSrc,
     path.join(path.dirname(libDest), "gosaki-staging-discography-operational-edit.ts"),
@@ -637,6 +641,7 @@ import GosakiStagingReadOnlyAdminPage from "${ups}/GosakiStagingReadOnlyAdminPag
     pagePaths,
     componentPath: GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL,
     libPath: GOSAKI_READ_ONLY_ADMIN_LIB_REL,
+    saveArmUtilsPath: GOSAKI_SAVE_ARM_UTILS_REL,
     packagePathsPath: GOSAKI_PACKAGE_ADMIN_PATHS_REL,
     chromeComponentDir: GOSAKI_ADMIN_CHROME_COMPONENT_DIR_REL,
     dashboardPath: GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL,

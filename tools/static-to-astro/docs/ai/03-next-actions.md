@@ -3,10 +3,54 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Cursor):** **`gosaki-ciao-jp-preview-package-generation`** — profile `ciao-preview` **exists**. Generate preview package only (`output/manual-upload/gosaki-piano-ciao-preview`). Do **not** overwrite staging/production trees. Do **not** FTP / DNS / SSL / DB write.
-2. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
-3. **CLIENT_CMS_HANDOFF 後回し:** Schedule UPDATE = cutover **NON_BLOCKER** / handoff **CONDITIONAL_BLOCKER**.
-4. Save arm **false** · `readyForAnyFutureFtpApply: false`（**auto FTP のみ**） · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+1. **Primary (after commit/push):** **`gosaki-ciao-jp-preview-package-regeneration`** from **clean HEAD**. Do **not** FileZilla the dirty-tree package at `output/manual-upload/gosaki-piano-ciao-preview/`.
+2. **This Cursor turn:** commit/push **not executed**. `READY_FOR_COMMIT_PUSH: true` · `READY_FOR_MANUAL_PREVIEW_UPLOAD: false`.
+3. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+
+## 0. Gosaki ciao.jp preview dirty-source resolution (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (fix confirmed · commit/push **not** executed) |
+| Dirty package upload | **forbidden** |
+| Helper copy | **required** (`save-arm-utils.ts` into Admin bake) |
+| Next Primary | `gosaki-ciao-jp-preview-package-regeneration` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_DIRTY_SOURCE_RESOLUTION_COMPLETE: true
+FIX_REQUIRED: true
+READY_FOR_COMMIT_PUSH: true
+READY_FOR_MANUAL_PREVIEW_UPLOAD: false
+DO_NOT_UPLOAD_DIRTY_PACKAGE: true
+PACKAGE_REGENERATED: false
+FTP_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-package-regeneration
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki ciao.jp preview package generation (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (local package · FTP **not** executed) |
+| sourceCommit | `c16af124dfea7e4bce8b3bc2bca9df82192464ab` = HEAD |
+| Preview URL | `https://gotosaki.ciao.jp/gosaki-piano/` |
+| deployBase | `/gosaki-piano/` |
+| LOCAL_UPLOAD_SOURCE | `tools/static-to-astro/output/manual-upload/gosaki-piano-ciao-preview/public-dist/` |
+| REMOTE_TARGET | `/gosaki-piano/` |
+| UPLOAD_CONTENTS_RULE | **contents** of `public-dist/` (not the folder itself) |
+| Next Primary | `gosaki-ciao-jp-preview-manual-upload-preflight` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_PACKAGE_GENERATION_COMPLETE: true
+PREVIEW_PACKAGE_GENERATED: true
+sourceCommit: c16af124dfea7e4bce8b3bc2bca9df82192464ab
+READY_FOR_MANUAL_PREVIEW_UPLOAD: true
+FTP_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-manual-upload-preflight
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki ciao.jp preview profile implementation (2026-08-18)
 

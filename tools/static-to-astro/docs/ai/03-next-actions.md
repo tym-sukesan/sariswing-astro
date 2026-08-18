@@ -3,10 +3,95 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Kit Core):** **`schedule-update-site-writer-rls-planning`** — Discography Slice B **CLOSED / PASS**. Schedule UPDATE remains **LEGACY** (`is_admin` / `schedules_admin_all`). Do **not** re-arm Discography Save. Live-read wiring stays a **separate deferred slice**. Contents / shell stay later. `REFERENCE_IMPLEMENTATION_FREEZE_READY: false`.
-2. **並行可 (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true`）。本番 cutover はしない。
-3. **並行可 (Kit Core):** TBD CREATE oneshot PoC **CLOSED** · site-writer RLS **retained**
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · owner→`admin_users` **禁止** · Slice A **CLOSED** · Slice B **CLOSED / PASS** · live `can_write_site` **confirmed** · Discography owner DATA_WRITE restored.
+1. **Primary (Cursor):** **`gosaki-ciao-jp-preview-profile-implementation`** — publication data live check **PASS**. Implement third profile `deployBase=/gosaki-piano/` for `https://gotosaki.ciao.jp/gosaki-piano/`. Do **not** reuse production (`deployBase=/`) or staging (`/cms-kit-staging/gosaki-piano/`) packages. Do **not** generate until the profile exists.
+2. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
+3. **CLIENT_CMS_HANDOFF 後回し:** Schedule UPDATE = cutover **NON_BLOCKER** / handoff **CONDITIONAL_BLOCKER**.
+4. Save arm **false** · `readyForAnyFutureFtpApply: false`（**auto FTP のみ**） · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+
+## 0. Gosaki production publication data live read-only check (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE / **PASS** (SELECT-only) |
+| Target | `kmjqppxjdnwwrtaeqjta` · production **not queried** |
+| Event B restore | **true** (G-13c2 fields) |
+| Published schedule markers | **0** / 74 rows |
+| Unpublished sentinels | not in bake set |
+| Discography markers | **0** / 4 releases · 34 tracks |
+| Next Primary | `gosaki-ciao-jp-preview-profile-implementation` |
+
+```txt
+PUBLICATION_DATA_LIVE_CHECK: PASS
+schedule_2026_07_010_restored: true
+published_schedule_marker_count: 0
+unpublished_test_rows_safe: true
+deleted_tbd_absent: true
+discography_marker_count: 0
+PUBLICATION_DATA_CLEANUP_REQUIRED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-profile-implementation
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki production package preflight at current HEAD (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (preflight only · no package generate) |
+| HEAD | `dcb9e012` = origin/main |
+| Production dry-run | PASS · `deployBase=/` · Admin excluded |
+| Preview profile | **missing** · ciao.jp `/gosaki-piano/` = `BLOCKED_BY_CONFIG` |
+| Data | G-13c2 restored Event B in docs; live unknown · G-22 unpublished test rows |
+| Next Primary | `gosaki-production-publication-data-live-readonly-check` |
+
+```txt
+GOSAKI_PRODUCTION_PACKAGE_PREFLIGHT_AT_CURRENT_HEAD_COMPLETE: true
+PACKAGE_GENERATION_READY: LIVE_READ_ONLY_CHECK_REQUIRED
+PREVIEW_PACKAGE_READY: BLOCKED_BY_CONFIG
+PUBLICATION_DATA_CLEANUP_REQUIRED: unknown
+RECOMMENDED_NEXT_PRIMARY: gosaki-production-publication-data-live-readonly-check
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki production cutover operator gates refresh (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only) |
+| Hosting | Lolipop 本番 **利用可**（operator 2026-08-18）· 未契約 SoT **STALE** |
+| Schedule UPDATE | PUBLIC_CUTOVER **NON_BLOCKER** · CLIENT_CMS_HANDOFF **CONDITIONAL_BLOCKER** |
+| Next Primary | `gosaki-production-package-preflight-at-current-head` |
+
+```txt
+GOSAKI_PRODUCTION_CUTOVER_OPERATOR_GATES_REFRESH_COMPLETE: true
+HOSTING_CONTRACT_UNAVAILABLE_SO_T: STALE
+HOSTING_SERVER_AVAILABLE_OPERATOR_STATED: true
+AUTO_FTP_STOP_DOES_NOT_BLOCK_PUBLIC_CUTOVER: true
+PRODUCTION_UPLOAD_READY: false
+GO_LIVE_READY: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-production-package-preflight-at-current-head
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki launch critical-path repo verification (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only) |
+| HEAD | `dcb9e012` = origin/main |
+| Schedule UPDATE | **CONDITIONAL_BLOCKER** |
+| Path | `PARALLEL_WITH_GENERALIZATION` |
+| Next Primary | `gosaki-production-cutover-operator-gates-refresh` (done · hosting-uncontracted SoT superseded) |
+
+```txt
+GOSAKI_LAUNCH_CRITICAL_PATH_REPO_VERIFICATION_COMPLETE: true
+SCHEDULE_UPDATE_CLASSIFICATION: CONDITIONAL_BLOCKER
+HOSTING_READY: false
+PRODUCTION_UPLOAD_READY: false
+RECOMMENDED_PATH: PARALLEL_WITH_GENERALIZATION
+RECOMMENDED_NEXT_PRIMARY: gosaki-production-cutover-operator-gates-refresh
+LINKED_CLI_PROJECT_REF: vsbvndwuajjhnzpohghh
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Discography site-owner authz Slice B close (2026-08-18)
 

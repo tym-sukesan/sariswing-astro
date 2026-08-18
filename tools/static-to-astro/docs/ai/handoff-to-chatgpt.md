@@ -5,36 +5,68 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: discography-site-owner-authz-slice-b-close CLOSED / COMPLETE / PASS
-HEAD baseline: 30353d738df06c74d6b2c3bfb31d52b65f6f3d7b
-TARGET_RELEASE: discography-003
-SLICE_B_CLOSED: true
-SLICE_B_PASS: true
-SAVE_EXECUTED: true
-SAVE_SUCCESS: true
-RESTORE_EXECUTED: true
-RESTORE_SUCCESS: true
-DESCRIPTION_RESTORED: true
-CORRECTED_SAVE_LOCK: 2026-08-16T16:47:01.44405+00:00
-RESTORED_LOCK: 2026-08-17T16:33:38.259361+00:00
-LIVE_FUNCTION_VERSION: 58
-PRE_ARM_UPDATED_AT_PIN: 2026-08-15 14:12:36
-READY_FOR_OPERATOR_RESTORE: false
-READY_FOR_OPERATOR_SAVE: false
-STOP_REASONS: none
+Current phase: gosaki-production-publication-data-live-readonly-check COMPLETE / PASS
+HEAD baseline: dcb9e012cd825b7c748ec30f51a4e489f941ef5d
+ORIGIN_MAIN: dcb9e012cd825b7c748ec30f51a4e489f941ef5d
+PRIOR_PHASE: gosaki-production-package-preflight-at-current-head COMPLETE
+PUBLICATION_DATA_LIVE_CHECK: PASS
+schedule_2026_07_010_restored: true
+published_schedule_marker_count: 0
+unpublished_test_rows_safe: true
+deleted_tbd_absent: true
+discography_marker_count: 0
+PUBLICATION_DATA_CLEANUP_REQUIRED: false
+QUERY_COUNT: 6
+STAGING_REF: kmjqppxjdnwwrtaeqjta
+PRODUCTION_REF_TOUCHED: false
+LINKED_CLI_USED: false
+SERVICE_ROLE_USED: false
+PREVIEW_PROFILE_EXISTS: false
+PREVIEW_PACKAGE_READY: BLOCKED_BY_CONFIG
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-profile-implementation
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-RECOMMENDED_NEXT_PRIMARY: schedule-update-site-writer-rls-planning
-DEFERRED_SLICE: discography-musician-basic-live-read-wiring-fix
-LATER_ROADMAP: contents-strategy-and-shell-alignment
-REFERENCE_IMPLEMENTATION_FREEZE_READY: false
-Doc: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-close.md
-Restore result: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-restoration-execution-result.md
-Save result: tools/static-to-astro/docs/discography-site-owner-authz-slice-b-operational-save-execution-result.md
-seedAppliedStaging: true
-readyForOperatorAboutSeedApply: false
-readyForAnyFutureFtpApply: false
-STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
+Doc: tools/static-to-astro/docs/gosaki-production-publication-data-live-readonly-check.md
 ```
+
+## Gosaki production publication data live read-only check (2026-08-18)
+
+- SELECT-only on staging Kit via existing anon helper · 6 queries · no writes
+- Event B live matches G-13c2 restore (`title=<>`, null venue/times/price, `description=出演：`, published true, show_on_home false)
+- Published schedules 74 · marker count 0 · discography 4/34 marker count 0
+- G-22 sentinels not in published bake set · TBD 11-001 absent
+- About DB build-read off · YouTube live site_embeds 1 published row, no markers
+- Next: ciao.jp preview profile (`deployBase=/gosaki-piano/`) · do not generate packages yet
+- Doc: `gosaki-production-publication-data-live-readonly-check.md`
+
+## Gosaki production package preflight at current HEAD (2026-08-18)
+
+- Preflight only · no package generate · no FTP · no DB write · no live SELECT · no commit
+- Preview vs final: **same remote `/gosaki-piano/`**, different **deployBase** (`/gosaki-piano/` vs `/`) — two packages required
+- Existing profiles: staging = weblike `/cms-kit-staging/gosaki-piano/` + Admin; production = www root, Admin off — **neither is ciao.jp preview**
+- Production dry-run PASS · Do not upload production HTML to ciao.jp (host-root asset leak)
+- Schedule bake = staging `published=true` at convert time · G-13c2 restored Event B in docs · G-22 test/copy rows unpublished in docs
+- Next: live SELECT-only audit · then ciao.jp preview profile · then preview package
+- Doc: `gosaki-production-package-preflight-at-current-head.md`
+
+## Gosaki production cutover operator gates refresh (2026-08-18)
+
+- Operator: Lolipop **本番サーバー利用可・接続可** · 2026-07-15 未契約 `HOSTING_READY: false` is **STALE**
+- **PUBLIC_CUTOVER** vs **CLIENT_CMS_HANDOFF** separated
+- Schedule UPDATE: cutover **NON_BLOCKER** · handoff **CONDITIONAL_BLOCKER** (no repo contradiction)
+- Auto FTP stop ≠ 公開不能 · FileZilla manual is the method · do not resume `--apply`
+- `TBD_G-20i` / DNS / SSL / MX = **OPERATOR_GATE** · stale HEAD package + published G-6 PoC bake = **CONFIRMED_BLOCKER**
+- Next Cursor: `gosaki-production-package-preflight-at-current-head` · operator: OPERATOR_READ_ONLY_CHECKLIST
+- Doc: `gosaki-production-cutover-operator-gates-refresh.md`
+
+## Gosaki launch critical-path repo verification (2026-08-18)
+
+- Read-only audit · no SQL / Secret / Edge / FTP / production package / commit
+- Schedule UPDATE = **CONDITIONAL_BLOCKER** for mixed “publication” (superseded split: cutover NON_BLOCKER / handoff CONDITIONAL)
+- Hosting-uncontracted blockers in this audit are **STALE** — see operator gates refresh
+- Production Admin = DEV staging shell only · package excludes `/admin/`
+- Do **not** migrate staging into `vsbvndwuajjhnzpohghh` (Sariswing `sari-site`)
+- Doc: `gosaki-launch-critical-path-repo-verification.md`
 
 ## Discography site-owner authz Slice B close (2026-08-18)
 

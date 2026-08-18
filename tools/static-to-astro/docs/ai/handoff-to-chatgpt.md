@@ -5,23 +5,47 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-wix-external-assets-localization COMPLETE
-HEAD baseline: 0f84b2d1bf1e26da57a7ae6676751aa873931fc7
-ORIGIN_MAIN: 0f84b2d1bf1e26da57a7ae6676751aa873931fc7
-PRIOR_PHASE: gosaki-production-cutover-final-operator-gates COMPLETE (docs still uncommitted)
-LOCALIZATION_RESULT: PASS
-PUBLIC_WIX_CDN_MEDIA_REFS_AFTER: 0
-INTENTIONAL_WIXSITE_KEPT: true
+Current phase: gosaki-ciao-jp-preview-wix-localized-live-final-qa CLOSED / PASS
+HEAD baseline: 7de25b3550b882dbfaf40fd7b413779bb07c112d
+ORIGIN_MAIN: 7de25b3550b882dbfaf40fd7b413779bb07c112d
+PRIOR_PHASE: gosaki-ciao-jp-preview-wix-localized-regeneration COMPLETE
+LIVE_FINAL_QA_RESULT: PASS
+PUBLIC_WIXSTATIC_REFS: 0
+PUBLIC_PARASTORAGE_REFS: 0
+MISSING_ASSETS: 0
+ADMIN_EXPOSURE: 404
+NEAR_MISS_RECORDED: true
+PREVIEW_URL: https://gotosaki.ciao.jp/gosaki-piano/
+deployBase: /gosaki-piano/
 READY_FOR_COMMIT_PUSH: true
-READY_FOR_PREVIEW_REGENERATION: false
-CIAO_PREVIEW_REMOTE_STALE: true
 CURSOR_FTP_EXECUTED: false
 DNS_CHANGE_EXECUTED: false
-RECOMMENDED_NEXT_PRIMARY: gosaki-wix-assets-localization-commit-push
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-wix-localized-docs-commit-push
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-wix-external-assets-localization.md
+Doc: tools/static-to-astro/docs/gosaki-ciao-jp-preview-wix-localized-live-final-qa.md
 ```
+
+## Gosaki ciao.jp preview Wix-localized live final QA (2026-08-18)
+
+- Operator re-uploaded correct `gosaki-piano-ciao-preview/public-dist/` after staging-folder near-miss
+- Live GET: required routes 200 · 14 localized assets 200 · wixstatic 0 · parastorage 0 · Admin 404
+- Kept `https://gosakirikakotrio.wixsite.com/gosakirikakotrio`
+- Prevention: FileZilla must show folder `gosaki-piano-ciao-preview`, `images/wix-local/`, no `admin/`
+- Wix localization / ciao-preview correction **CLOSED / PASS**
+- Next: docs commit/push · Cursor did not FTP
+- Doc: `gosaki-ciao-jp-preview-wix-localized-live-final-qa.md`
+
+## Gosaki ciao.jp preview Wix-localized regeneration (2026-08-18)
+
+- Official `npm run build:gosaki:ciao-preview` from clean HEAD `7de25b35`
+- Old `0f84b2d1` package relocated to `_stale-backup` (not an upload source)
+- Public HTML: `wixstatic` 0 · parastorage favicon 0 · 14 local `/gosaki-piano/images/wix-local/` files
+- Kept `https://gosakirikakotrio.wixsite.com/gosakirikakotrio`
+- Admin off · noindex,nofollow,noarchive · robots Disallow · freshness PASS
+- FileZilla: **contents** of `public-dist/` → remote `/gosaki-piano/`
+- FTP **not** executed · Next: `gosaki-ciao-jp-preview-wix-localized-manual-upload`
+- Doc: `gosaki-ciao-jp-preview-wix-localized-regeneration.md`
 
 ## Gosaki Wix external assets localization (2026-08-18)
 

@@ -124,11 +124,23 @@ Overwrite of **same names already inside `/gosaki-piano/`**: OK (new preview fol
 
 ## 4. Operator visual check (before transfer)
 
-1. Left pane path ends at `.../gosaki-piano-ciao-preview/public-dist` — you see `index.html`, `_astro`, `about`, `schedule` (not the parent `public-dist` folder as the only selected item, and not `_stale-backup`).
+**Permanent (after 2026-08-18 near-miss).** Do not transfer until all three are true in the **local** pane:
+
+| Gate | Must see | Must not be |
+| --- | --- | --- |
+| Folder name | path contains **`gosaki-piano-ciao-preview`** then `public-dist` | `.../manual-upload/gosaki-piano/public-dist/` (staging) |
+| Localized assets | local `images/wix-local/` exists (14 files) | missing `images/wix-local/` |
+| Admin | local `admin/` **absent** | `admin/` in the upload selection |
+
+Wrong folder (`gosaki-piano` without `-ciao-preview`) is the staging package. It has **no** `images/wix-local/` and **does** include Admin HTML. Uploading it to ciao.jp preview breaks localized images and can expose Admin.
+
+Then:
+
+1. Left pane path ends at `.../gosaki-piano-ciao-preview/public-dist` — you see `index.html`, `_astro`, `about`, `schedule`, **`images/`** (not the parent `public-dist` folder as the only selected item, and not `_stale-backup`).
 2. Right pane cwd is `/gosaki-piano/` (path bar / remote site manager).
 3. Right pane is **not** `/` (must not see `welcome.html` as a sibling of the drop target).
 4. `/gosaki-piano/` has no unexpected important files you did not create; if unsure, STOP.
-5. Selection = contents listed in §2 (about 30 files when expanded).
+5. Selection = contents listed in §2.
 6. No Delete / 同期 / mirror in the pending action.
 7. `.ftpaccess` is not in the local selection and not being overwritten.
 

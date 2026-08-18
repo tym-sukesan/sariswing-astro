@@ -3,10 +3,68 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** **`gosaki-wix-assets-localization-commit-push`** — commit/push localization source + remaining dirty docs, then from **clean HEAD** regenerate ciao-preview and FileZilla-reupload. Do **not** regenerate preview on a dirty tree. Do **not** FTP from Cursor. `readyForAnyFutureFtpApply: false`.
-2. **Deferred:** `gosaki-production-cutover-docs-commit-push` / production package (`deployBase=/`) after preview confirms localized images. Do **not** upload ciao-preview as production.
+1. **Primary:** **`gosaki-ciao-jp-preview-wix-localized-docs-commit-push`** — commit/push live QA + near-miss + prevention-gate docs. Wix localization / ciao-preview correction is **CLOSED / PASS**. Cursor must **not** FTP. `readyForAnyFutureFtpApply: false`.
+2. **Deferred:** production package (`deployBase=/`) after operator decides cutover. Do **not** upload ciao-preview as production.
 3. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
 4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+
+## 0. Gosaki ciao.jp preview Wix-localized live final QA (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | **CLOSED / PASS** (read-only) |
+| LIVE_FINAL_QA_RESULT | **PASS** |
+| PUBLIC_WIXSTATIC_REFS | **0** |
+| PUBLIC_PARASTORAGE_REFS | **0** |
+| localized assets HTTP | **14/14 = 200** |
+| Admin | **404** |
+| Near-miss | staging `gosaki-piano/` vs `gosaki-piano-ciao-preview/` mix-up · corrected by re-upload |
+| Prevention | visual gates + ciao-preview verifier folder/`images/wix-local`/`admin` |
+| READY_FOR_COMMIT_PUSH | **true** |
+| Next Primary | `gosaki-ciao-jp-preview-wix-localized-docs-commit-push` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_WIX_LOCALIZED_LIVE_FINAL_QA_COMPLETE: true
+LIVE_FINAL_QA_RESULT: PASS
+PUBLIC_WIXSTATIC_REFS: 0
+PUBLIC_PARASTORAGE_REFS: 0
+MISSING_ASSETS: 0
+ADMIN_EXPOSURE: 404
+NEAR_MISS_RECORDED: true
+WIX_LOCALIZATION_CIAO_PREVIEW_CORRECTION_PHASE: CLOSED / PASS
+READY_FOR_COMMIT_PUSH: true
+CURSOR_FTP_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-wix-localized-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki ciao.jp preview Wix-localized regeneration (2026-08-18)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (local package · FTP **not** executed) |
+| HEAD / sourceCommit | `7de25b3550b882dbfaf40fd7b413779bb07c112d` |
+| freshness | **PASS** |
+| PUBLIC_WIXSTATIC_REFS | **0** |
+| PUBLIC_PARASTORAGE_REFS | **0** |
+| localized / missing | **14 / 0** |
+| fileCount | **44** |
+| LOCAL_UPLOAD_SOURCE | `output/manual-upload/gosaki-piano-ciao-preview/public-dist/` |
+| REMOTE_TARGET | `/gosaki-piano/` |
+| READY_FOR_OPERATOR_MANUAL_UPLOAD | **true** |
+| Next Primary | `gosaki-ciao-jp-preview-wix-localized-manual-upload` |
+
+```txt
+GOSAKI_CIAO_JP_PREVIEW_WIX_LOCALIZED_REGENERATION_COMPLETE: true
+REGENERATION_RESULT: PASS
+PUBLIC_WIXSTATIC_REFS: 0
+PUBLIC_PARASTORAGE_REFS: 0
+MISSING_LOCALIZED_ASSETS: 0
+READY_FOR_OPERATOR_MANUAL_UPLOAD: true
+CURSOR_FTP_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-wix-localized-manual-upload
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki Wix external assets localization (2026-08-18)
 

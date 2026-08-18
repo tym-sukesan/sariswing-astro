@@ -235,6 +235,19 @@ export function verifyGosakiCiaoPreviewContentExtensions(packageDir, deployBase)
     errors.push("ciao-preview must not include __admin-staging-shell/");
   }
 
+  // Near-miss 2026-08-18: operator opened staging `gosaki-piano/public-dist/`
+  // instead of `gosaki-piano-ciao-preview/public-dist/` → remote lacked images/wix-local.
+  const packageBasename = path.basename(packageDir);
+  if (packageBasename !== "gosaki-piano-ciao-preview") {
+    errors.push(
+      `ciao-preview package folder must be named gosaki-piano-ciao-preview (got ${packageBasename})`,
+    );
+  }
+  const wixLocalDir = path.join(publicDist, "images/wix-local");
+  if (!fs.existsSync(wixLocalDir) || !fs.statSync(wixLocalDir).isDirectory()) {
+    errors.push("ciao-preview public-dist missing images/wix-local/");
+  }
+
   const seoRoutes = [
     "index.html",
     "about/index.html",

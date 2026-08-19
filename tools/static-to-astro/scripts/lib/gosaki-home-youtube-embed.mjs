@@ -1,5 +1,8 @@
 /**
- * G-9j — Inject gosaki home YouTube embed after THIS WEEK'S LIVE SCHEDULE block.
+ * G-9j — Inject gosaki home YouTube embed on Home.
+ * Placement: after GOSAKI_HOME_SCHEDULE_SLOT (Option D hide), else after
+ * leftover `#comp-m8y53dj5`, else inside `#comp-m8y3dzb6`. Never append to
+ * the document end (that would land in/after footer).
  */
 
 import { createRequire } from "node:module";
@@ -8,6 +11,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
 import { mapSiteEmbedRowsToYoutubeConfig } from "./cms-core-v2-youtube-supabase-contract.mjs";
+import {
+  GOSAKI_HOME_SCHEDULE_SLOT,
+  GOSAKI_STALE_THIS_WEEK_REPEATER_ID,
+  GOSAKI_STALE_THIS_WEEK_SECTION_ID,
+} from "./gosaki-home-stale-this-week-hide.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(path.join(__dirname, "../../package.json"));
@@ -51,10 +59,23 @@ export function loadGosakiYoutubeEmbedConfig(toolRoot) {
 export function markYoutubeEmbedSlotInHomeBody(bodyHtml) {
   if (bodyHtml.includes(GOSAKI_YOUTUBE_EMBED_SLOT)) return bodyHtml;
 
+  if (bodyHtml.includes(GOSAKI_HOME_SCHEDULE_SLOT)) {
+    return bodyHtml.replace(
+      GOSAKI_HOME_SCHEDULE_SLOT,
+      `${GOSAKI_HOME_SCHEDULE_SLOT}\n${GOSAKI_YOUTUBE_EMBED_SLOT}`,
+    );
+  }
+
   const $ = cheerio.load(`<div id="gosaki-home-root">${bodyHtml}</div>`, { xml: false });
-  const schedule = $("#comp-m8y53dj5");
+  const schedule = $(`#${GOSAKI_STALE_THIS_WEEK_REPEATER_ID}`);
   if (schedule.length) {
     schedule.after(GOSAKI_YOUTUBE_EMBED_SLOT);
+    return $("#gosaki-home-root").html() ?? bodyHtml;
+  }
+
+  const section = $(`#${GOSAKI_STALE_THIS_WEEK_SECTION_ID}`);
+  if (section.length) {
+    section.append(GOSAKI_YOUTUBE_EMBED_SLOT);
     return $("#gosaki-home-root").html() ?? bodyHtml;
   }
 

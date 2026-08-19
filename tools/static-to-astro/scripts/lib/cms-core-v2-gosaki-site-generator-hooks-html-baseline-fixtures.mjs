@@ -206,6 +206,7 @@ export const BASELINE_POST_GENERATE_KEYS = Object.freeze([
   "gosakiAboutContentSummary",
   "gosakiBandProfilesSummary",
   "gosakiContactHubspotSummary",
+  "gosakiHomeStaleThisWeekSummary",
   "gosakiReadOnlyAdminSummary",
   "gosakiYoutubeEmbedSummary",
   "writtenPaths",
@@ -215,6 +216,7 @@ export const BASELINE_POST_GENERATE_KEYS = Object.freeze([
 export const BASELINE_POST_GENERATE_EMPTY_PROJECT = Object.freeze({
   bandApplied: false,
   aboutApplied: false,
+  homeThisWeekHideApplied: false,
   ytApplied: false,
   contactApplied: false,
   adminApplied: true,

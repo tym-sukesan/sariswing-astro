@@ -564,11 +564,13 @@ assert(
     [...BASELINE_POST_GENERATE_KEYS].sort(),
   );
   assert(
-    "postGenerate band/about/yt/contact not applied (empty pages)",
+    "postGenerate band/about/hide/yt/contact not applied (empty pages)",
     result.gosakiBandProfilesSummary.applied ===
       BASELINE_POST_GENERATE_EMPTY_PROJECT.bandApplied &&
       result.gosakiAboutContentSummary.applied ===
         BASELINE_POST_GENERATE_EMPTY_PROJECT.aboutApplied &&
+      result.gosakiHomeStaleThisWeekSummary.applied ===
+        BASELINE_POST_GENERATE_EMPTY_PROJECT.homeThisWeekHideApplied &&
       result.gosakiYoutubeEmbedSummary.applied ===
         BASELINE_POST_GENERATE_EMPTY_PROJECT.ytApplied &&
       result.gosakiContactHubspotSummary.applied ===

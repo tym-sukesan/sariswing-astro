@@ -1,7 +1,19 @@
-Last updated: 2026-08-18
+Last updated: 2026-08-19
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki Home stale THIS WEEK hide for initial cutover (2026-08-19):** **COMPLETE / PASS (Option D · no package 本生成 · no commit)** — Phase `gosaki-home-stale-this-week-hide-for-initial-cutover` · HEAD `14ab858e` · hide `#comp-m8y5bex0` / `#comp-m8y5l5fs` / `#comp-m8y53dj5` · slot for later upcoming-N · YouTube kept · Schedule hub/months unchanged · both content PUBLIC_CUTOVER_BLOCKERS **CLOSED** · `READY_FOR_COMMIT_PUSH: true` · Next Primary: `gosaki-content-blockers-closed-commit-push` · Doc: `gosaki-home-stale-this-week-hide-for-initial-cutover.md`.
+
+**Gosaki 2026-09 batch INSERT operator execution (2026-08-19):** **CLOSED / PASS** — operator one-shot on staging `kmjqppxjdnwwrtaeqjta` · `published_total=91` · `published_september=17` · `ids_002_018=17` · `test_001_unpublished=1` · `all_ok=true` · Cursor did **not** run SQL · **do not re-run / do not rollback** · Doc: `gosaki-2026-09-batch-insert-db-write-packet.md`.
+
+**Gosaki 2026-09 batch INSERT DB write packet (2026-08-19):** **CLOSED / PASS (packet + operator SUCCESS)** — Phase `gosaki-2026-09-batch-insert-db-write-packet` · HEAD `14ab858e` · 17 rows `002`–`018` · skip G-22e `001` · DO post-write 91/74 · Home **Option D** · `SQL_REEXECUTE_FORBIDDEN: true` · Doc: `gosaki-2026-09-batch-insert-db-write-packet.md`.
+
+**Gosaki 2026-09 + Home schedule content remediation planning (2026-08-19):** **COMPLETE (planning / read-only)** — Phase `gosaki-2026-09-and-home-schedule-content-remediation-planning` · HEAD `14ab858e` · Wix 17 events mapped **17/17** (NULL kept; no invented fields) · skip G-22e `schedule-2026-09-001`; planned ids `002`–`018` · import = operator SQL batch INSERT · Home stale = crawl fixture island · **RECOMMENDED_HOME_SOLUTION: Option D hide** (launch decision recorded in packet phase) · Sept INSERT ≠ Home fix · **PUBLIC_CUTOVER_BLOCKER: true** · Doc: `gosaki-2026-09-and-home-schedule-content-remediation-planning.md`.
+
+**Gosaki current Wix→Astro content parity audit (2026-08-19):** **COMPLETE (read-only · PARITY FAIL)** — Phase `gosaki-current-wix-to-astro-content-parity-audit` · HEAD `14ab858e` · Wix `/2026-09` **17** events vs staging published **0** (`CONTENT_MISSING_FROM_SOT`) · Home this-week ciao **March** vs live Wix **July** (fixture island; `show_on_home` **0**) · `/live-photo` real galleries → `CLIENT_DECISION_REQUIRED` · 90 URL reclass: archive 80 / missing 1 / client 8 / pure-redirect 1 · **PUBLIC_CUTOVER_BLOCKER: true** · redirect **deferred** · Next Primary superseded by 2026-09+Home remediation planning · Doc: `gosaki-current-wix-to-astro-content-parity-audit.md`.
+
+**Gosaki Wix→Astro URL compatibility audit (2026-08-19):** **COMPLETE (read-only · no implementation)** — Phase `gosaki-wix-to-astro-url-compatibility-audit` · HEAD `14ab858e` · Wix inventory **111** (JP 20 first-pass ERR = unencoded artifact; encoded **200**) · ciao no-slash GET: **12** 301→200 **COMPAT_PASS** (KEEP 6 + LEGACY 6) · **99** 404 · REDIRECT_REQUIRED **90** · 404_ACCEPTABLE **9** · REVIEW **0** (`/live-photo` is 404 candidate; target operator) · `.html` **out of legacy scope** (Wix 400) · no new `PUBLIC_CUTOVER_BLOCKER` · Next Primary: `gosaki-pre-cutover-dns-full-record-snapshot` · Doc: `gosaki-wix-to-astro-url-compatibility-audit.md`.
 
 **Gosaki ciao.jp preview Wix-localized live final QA (2026-08-18):** **CLOSED / PASS (read-only)** — Phase `gosaki-ciao-jp-preview-wix-localized-live-final-qa` · HEAD `7de25b35` · operator re-uploaded correct `gosaki-piano-ciao-preview/public-dist/` contents after staging-folder near-miss · live routes **200** · localized 14 assets **200** · `wixstatic` **0** · parastorage **0** · Admin **404** · noindex/robots held · wixsite kept · prevention visual gates added · `READY_FOR_COMMIT_PUSH: true` · Next Primary: `gosaki-ciao-jp-preview-wix-localized-docs-commit-push` · Doc: `gosaki-ciao-jp-preview-wix-localized-live-final-qa.md`.
 

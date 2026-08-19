@@ -90,6 +90,7 @@ export const DEFAULT_SITE_GENERATOR_HOOKS = {
     return {
       gosakiBandProfilesSummary: { applied: false },
       gosakiAboutContentSummary: { applied: false },
+      gosakiHomeStaleThisWeekSummary: { applied: false },
       gosakiYoutubeEmbedSummary: { applied: false },
       gosakiContactHubspotSummary: { applied: false },
       gosakiReadOnlyAdminSummary: { applied: false },

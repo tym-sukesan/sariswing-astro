@@ -93,6 +93,7 @@ export function createMioKisaragiJazzHookMethods() {
       return {
         gosakiBandProfilesSummary: { applied: false, reason: "mio_adapter_skip" },
         gosakiAboutContentSummary: { applied: false, reason: "mio_adapter_skip" },
+        gosakiHomeStaleThisWeekSummary: { applied: false, reason: "mio_adapter_skip_home_this_week" },
         gosakiYoutubeEmbedSummary: { applied: false, reason: "mio_adapter_skip_home_youtube" },
         gosakiContactHubspotSummary: { applied: false, reason: "mio_adapter_skip" },
         gosakiReadOnlyAdminSummary: { applied: false, reason: "mio_adapter_skip" },

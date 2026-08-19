@@ -16,6 +16,7 @@ import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
+import { applyGosakiHomeStaleThisWeekHide } from "./gosaki-home-stale-this-week-hide.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
 import { applyGosakiWixLocalAssets } from "./gosaki-wix-local-assets.mjs";
@@ -212,6 +213,8 @@ export function createGosakiPianoHookMethods() {
         writtenPaths.push(path.join(outDir, gosakiAboutContentSummary.dataPath));
       }
 
+      const gosakiHomeStaleThisWeekSummary = applyGosakiHomeStaleThisWeekHide(outDir);
+
       const gosakiYoutubeEmbedSummary =
         siteKey && isCmsFeatureEnabled(siteKey, "youtube", toolRoot)
           ? applyGosakiHomeYouTubeEmbed(outDir, toolRoot, {
@@ -256,6 +259,7 @@ export function createGosakiPianoHookMethods() {
       return {
         gosakiBandProfilesSummary,
         gosakiAboutContentSummary,
+        gosakiHomeStaleThisWeekSummary,
         gosakiYoutubeEmbedSummary,
         gosakiContactHubspotSummary,
         gosakiReadOnlyAdminSummary,

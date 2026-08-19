@@ -1,12 +1,165 @@
-Last updated: 2026-08-18
+Last updated: 2026-08-19
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** **`gosaki-ciao-jp-preview-wix-localized-docs-commit-push`** — commit/push live QA + near-miss + prevention-gate docs. Wix localization / ciao-preview correction is **CLOSED / PASS**. Cursor must **not** FTP. `readyForAnyFutureFtpApply: false`.
-2. **Deferred:** production package (`deployBase=/`) after operator decides cutover. Do **not** upload ciao-preview as production.
-3. **Data:** `PUBLICATION_DATA_CLEANUP_REQUIRED: false`. Do not unpublish/restore/cleanup. Do not re-run Slice B.
-4. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+1. **Primary:** **`gosaki-content-blockers-closed-commit-push`** — commit + push Home Option D + recorded September INSERT CLOSED docs. No FTP. No package 本生成 in that commit-only step unless operator asks.
+2. **After commit:** ciao-preview / staging package regen so live preview gets `/schedule/2026-09/` + hidden Home THIS WEEK. Operator upload. Still `readyForAnyFutureFtpApply: false`.
+3. **Deferred:** URL redirect implementation. **`READY_FOR_REDIRECT_IMPLEMENTATION: false`** until operator re-prioritizes (content blockers of Sept + Home THIS WEEK are CLOSED).
+4. **Deferred:** `gosaki-pre-cutover-dns-full-record-snapshot` until operator explicitly re-prioritizes.
+5. **Deferred:** production package (`deployBase=/`) until preview reflects the content-blocker fixes.
+6. **Data:** September INSERT **CLOSED**. Do not re-run forward SQL. Do not rollback. Do not unpublish/restore/cleanup. Do not re-run Slice B. `001` stays unpublished.
+7. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+
+## 0. Gosaki Home stale THIS WEEK hide for initial cutover (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE / PASS |
+| Product | Option D |
+| Hide | heading + rule + repeater; slot left; YouTube kept |
+| Profiles | staging / ciao-preview / production (same convert hook) |
+| Package 本生成 | **false** |
+| Next Primary | `gosaki-content-blockers-closed-commit-push` |
+
+```txt
+HOME_REMEDIATION_RESULT: PASS
+INITIAL_PUBLIC_CUTOVER_HOME_SCHEDULE: Option D
+PUBLIC_CUTOVER_BLOCKER_SEPTEMBER_MISSING: CLOSED
+PUBLIC_CUTOVER_BLOCKER_HOME_STALE_THIS_WEEK: CLOSED
+SQL_REEXECUTE_FORBIDDEN: true
+PACKAGE_GENERATE_EXECUTED: false
+READY_FOR_COMMIT_PUSH: true
+RECOMMENDED_NEXT_PRIMARY: gosaki-content-blockers-closed-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki 2026-09 batch INSERT DB write packet (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | CLOSED / PASS (operator one-shot SUCCESS) |
+| Target | staging `kmjqppxjdnwwrtaeqjta` · `gosaki-piano` |
+| IDs | `schedule-2026-09-002` … `018` (skip `001`) |
+| Result | published_total **91** · published_september **17** · ids_002_018 **17** · test_001_unpublished **1** · all_ok **true** |
+| Forward SQL | `scripts/supabase/gosaki-schedule-2026-09-batch-insert.packet.sql` |
+| Rollback SQL | **not executed** · do not run |
+| SQL re-execute | **forbidden** |
+| Home | Option D implemented in hide phase |
+
+```txt
+GOSAKI_2026_09_BATCH_INSERT_DB_WRITE_PACKET_COMPLETE: true
+DB_WRITE_PACKET_RESULT: CLOSED
+OPERATOR_DB_WRITE_RESULT: SUCCESS
+READY_FOR_OPERATOR_DB_WRITE: false
+SQL_EXECUTED: true
+SQL_REEXECUTE_FORBIDDEN: true
+CURSOR_DB_WRITE_EXECUTED: false
+INITIAL_PUBLIC_CUTOVER_HOME_SCHEDULE: Option D
+PUBLIC_CUTOVER_BLOCKER_SEPTEMBER_MISSING: CLOSED
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki 2026-09 + Home schedule content remediation planning (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (planning / read-only) |
+| September mapping | **17/17** (NULL kept) |
+| Published September now | **0** |
+| Test row | skip `schedule-2026-09-001`; planned `002`–`018` |
+| Import | operator SQL batch INSERT (not executed) |
+| Home root cause | crawl fixture island (`#comp-m8y53dj5`); not `show_on_home` |
+| Recommended Home | **Option D hide** |
+| PRODUCT_DECISION_REQUIRED | THIS WEEK semantics |
+| Sept ↔ Home | **independent** |
+| READY_FOR_DB_WRITE_PACKET | **true** |
+| READY_FOR_HOME_IMPLEMENTATION | **false** |
+| PUBLIC_CUTOVER_BLOCKER | **true** |
+| Next Primary | `gosaki-2026-09-batch-insert-db-write-packet` |
+
+```txt
+GOSAKI_2026_09_AND_HOME_SCHEDULE_CONTENT_REMEDIATION_PLANNING_COMPLETE: true
+REMEDIATION_PLANNING_RESULT: COMPLETE
+SEPTEMBER_17_MAPPING_COMPLETE: 17/17
+RECOMMENDED_IMPORT: operator_sql_batch_insert_skip_001
+RECOMMENDED_HOME_SOLUTION: Option D
+PRODUCT_DECISION_REQUIRED: true
+READY_FOR_DB_WRITE_PACKET: true
+READY_FOR_HOME_IMPLEMENTATION: false
+SQL_EXECUTED: false
+SOURCE_CHANGED: false
+PUBLIC_CUTOVER_BLOCKER: true
+RECOMMENDED_NEXT_PRIMARY: gosaki-2026-09-batch-insert-db-write-packet
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki current Wix→Astro content parity audit (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only) · **PARITY FAIL** |
+| Wix 2026.09 events | **17** |
+| Staging published 2026-09 | **0** |
+| 2026.09 class | `CONTENT_MISSING_FROM_SOT` |
+| Home | Wix July 15–22 vs ciao **March 25–31** |
+| Home stale | crawl fixture island; `show_on_home` **0** |
+| `/live-photo` | `CLIENT_DECISION_REQUIRED` (real galleries) |
+| 90 reclass | archive 80 / missing 1 / client 8 / pure-redirect 1 |
+| PUBLIC_CUTOVER_BLOCKER | **true** |
+| READY_FOR_REDIRECT_IMPLEMENTATION | **false** |
+| Next Primary | `gosaki-2026-09-and-home-schedule-content-remediation-planning` |
+
+```txt
+GOSAKI_CURRENT_WIX_TO_ASTRO_CONTENT_PARITY_AUDIT_COMPLETE: true
+CONTENT_PARITY_AUDIT_RESULT: FAIL
+WIX_2026_09_EVENT_COUNT: 17
+ASTRO_SOT_2026_09_PUBLISHED: 0
+2026_09_CLASSIFICATION: CONTENT_MISSING_FROM_SOT
+HOME_SCHEDULE_PARITY: FAIL
+LIVE_PHOTO_CLASSIFICATION: CLIENT_DECISION_REQUIRED
+PUBLIC_CUTOVER_BLOCKER: true
+READY_FOR_REDIRECT_IMPLEMENTATION: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-2026-09-and-home-schedule-content-remediation-planning
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki Wix→Astro URL compatibility audit (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only · no implementation) |
+| HEAD | `14ab858e46252a91503f9bfb12f58498481304bf` |
+| Live Wix | `https://www.gosaki-piano.com/` still Wix |
+| OLD_WIX_URL_COUNT | **111** (`.html` excluded) |
+| ciao no-slash GET | **12** 301→200 PASS · **99** 404 |
+| KEEP / LEGACY / REDIRECT / 404_OK / REVIEW | **6 / 6 / 90 / 9 / 0** |
+| JP slug first-pass ERR | artifact; encoded Wix **200** |
+| Highest URL gap | `/2026-09` (nav + sitemap; ciao 404) |
+| NEW_PUBLIC_CUTOVER_BLOCKER | **none** |
+| Redirect needed | **true** (90 ciao-404 preserve URLs) |
+| Next Primary | `gosaki-pre-cutover-dns-full-record-snapshot` |
+
+```txt
+GOSAKI_WIX_TO_ASTRO_URL_COMPATIBILITY_AUDIT_COMPLETE: true
+URL_COMPATIBILITY_AUDIT_RESULT: PASS
+OLD_WIX_URL_COUNT: 111
+COMPAT_PASS: 12
+KEEP: 6
+LEGACY_ROUTE_ALREADY_SUPPORTED: 6
+REDIRECT_REQUIRED: 90
+404_ACCEPTABLE: 9
+REVIEW_REQUIRED: 0
+HTML_EXTENSION_IN_LEGACY_SCOPE: false
+NEW_PUBLIC_CUTOVER_BLOCKER: none
+REDIRECT_IMPLEMENTATION_NEEDED: true
+READY_FOR_REDIRECT_IMPLEMENTATION: true
+READY_TO_MOVE_TO_NEXT_AUDIT: true
+RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-dns-full-record-snapshot
+INDEX_STATUS: UNKNOWN
+CURSOR_FTP_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki ciao.jp preview Wix-localized live final QA (2026-08-18)
 

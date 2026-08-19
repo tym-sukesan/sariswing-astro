@@ -5,26 +5,89 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-ciao-jp-preview-wix-localized-live-final-qa CLOSED / PASS
-HEAD baseline: 7de25b3550b882dbfaf40fd7b413779bb07c112d
-ORIGIN_MAIN: 7de25b3550b882dbfaf40fd7b413779bb07c112d
-PRIOR_PHASE: gosaki-ciao-jp-preview-wix-localized-regeneration COMPLETE
-LIVE_FINAL_QA_RESULT: PASS
-PUBLIC_WIXSTATIC_REFS: 0
-PUBLIC_PARASTORAGE_REFS: 0
-MISSING_ASSETS: 0
-ADMIN_EXPOSURE: 404
-NEAR_MISS_RECORDED: true
-PREVIEW_URL: https://gotosaki.ciao.jp/gosaki-piano/
-deployBase: /gosaki-piano/
+Current phase: gosaki-home-stale-this-week-hide-for-initial-cutover COMPLETE
+HEAD baseline: 14ab858e46252a91503f9bfb12f58498481304bf
+ORIGIN_MAIN: 14ab858e46252a91503f9bfb12f58498481304bf
+PRIOR_PHASE: gosaki-2026-09-batch-insert-db-write-packet CLOSED / PASS
+HOME_REMEDIATION_RESULT: PASS
+INITIAL_PUBLIC_CUTOVER_HOME_SCHEDULE: Option D
+OPERATOR_DB_WRITE_RESULT: SUCCESS
+SQL_EXECUTED: true
+SQL_REEXECUTE_FORBIDDEN: true
+ROLLBACK_EXECUTED: false
+CURSOR_DB_WRITE_EXECUTED: false
+PUBLIC_CUTOVER_BLOCKER_SEPTEMBER_MISSING: CLOSED
+PUBLIC_CUTOVER_BLOCKER_HOME_STALE_THIS_WEEK: CLOSED
+READY_FOR_REDIRECT_IMPLEMENTATION: false
 READY_FOR_COMMIT_PUSH: true
+RECOMMENDED_NEXT_PRIMARY: gosaki-content-blockers-closed-commit-push
 CURSOR_FTP_EXECUTED: false
 DNS_CHANGE_EXECUTED: false
-RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-preview-wix-localized-docs-commit-push
+PACKAGE_GENERATE_EXECUTED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-ciao-jp-preview-wix-localized-live-final-qa.md
+Doc: tools/static-to-astro/docs/gosaki-home-stale-this-week-hide-for-initial-cutover.md
+DB write record: tools/static-to-astro/docs/gosaki-2026-09-batch-insert-db-write-packet.md
 ```
+
+## Gosaki Home stale THIS WEEK hide for initial cutover (2026-08-19)
+
+- Option D: hide stale Wix Home THIS WEEK (heading + rule + March repeater)
+- Slot `<!--GOSAKI_HOME_SCHEDULE_SLOT-->` left for later upcoming-N
+- YouTube stays; nav / footer / other Home sections kept
+- Gosaki adapter only; Kit core not hacked
+- Schedule hub / month pages unchanged
+- Same hide for staging / ciao-preview / production convert
+- Package 本生成 / FTP / DNS / commit not this phase
+- Next: commit/push then preview package regen
+
+## Gosaki 2026-09 batch INSERT DB write packet (2026-08-19)
+
+- Operator one-shot **SUCCESS** on staging `kmjqppxjdnwwrtaeqjta`
+- Cursor did **not** execute SQL. **Do not re-run. Do not rollback.**
+- published_total **91** · published_september **17** · ids_002_018 **17** · test_001_unpublished **1** · all_ok **true**
+- 17 rows `schedule-2026-09-002` … `018`; skip G-22e `001`
+- Home launch: **Option D hide** (implemented in hide phase)
+- Doc: `gosaki-2026-09-batch-insert-db-write-packet.md`
+
+## Gosaki 2026-09 + Home schedule content remediation planning (2026-08-19)
+
+- Planning / read-only only. No SQL execute, source change, FTP, package, DNS, commit
+- Wix `/2026-09` 17 events mapped 17/17 via existing extractor; unspecified times/price stay NULL
+- Skip G-22e test `schedule-2026-09-001`; planned `legacy_id` `002`–`018`; `sort_order` 80–96
+- Staging published September still **0** (anon); `001` hidden by RLS
+- Import: operator SQL batch INSERT (G-20r3 pattern). Not 17× CMS CREATE. Not UPDATE/publish `001`
+- Home stale root cause: fixture `index.html` repeater `#comp-m8y53dj5` (March). YouTube inject does not replace cards. `home-schedule-sync` not wired. `show_on_home` = 0
+- Recrawl Wix Home = Option A = reject (Wix itself is July-stale)
+- Recommended Home: **Option D hide** at launch. Option B later after THIS WEEK product decision
+- Sept INSERT and Home fix are **independent**; SQL does not clear Home BLOCKER
+- Next: `gosaki-2026-09-batch-insert-db-write-packet` (author packet, do not execute)
+- Doc: `gosaki-2026-09-and-home-schedule-content-remediation-planning.md`
+
+## Gosaki current Wix→Astro content parity audit (2026-08-19)
+
+- Wix `/2026-09`: **17** public events. Staging published September: **0**. Class `CONTENT_MISSING_FROM_SOT`. Hub/month/legacy missing because G-20t2 discovers months from published rows only. Production bake now would match.
+- Do **not** publish G-22 test `schedule-2026-09-001` as a stand-in
+- Home this-week: live Wix **July 15–22** vs ciao/fixture **March 25–31**. SoT = crawl HTML island, not `show_on_home` (count 0)
+- `/live-photo`: real 2018/2020 galleries, sitemap, not in nav, not migrated → `CLIENT_DECISION_REQUIRED`
+- 90 URL reclass: ARCHIVED 80 · MISSING 1 (`/2026-09`) · CLIENT 8 · PURE_REDIRECT 1 (`/home`)
+- PUBLIC_CUTOVER_BLOCKERS: missing upcoming 09 + Home would ship March as “this week”
+- Redirect **not** next. Next: `gosaki-2026-09-and-home-schedule-content-remediation-planning`
+- Doc: `gosaki-current-wix-to-astro-content-parity-audit.md`
+
+## Gosaki Wix→Astro URL compatibility audit (2026-08-19)
+
+- Read-only inventory of live Wix `https://www.gosaki-piano.com/` vs ciao-preview **no-slash GET** of the same 111 canonicals
+- JP 20 first-pass ERR = unencoded artifact; encoded Wix **200**
+- ciao: **12** 301→200 COMPAT_PASS (KEEP 6 + LEGACY `/2026-03`…`/08`) · **99** 404
+- REDIRECT_REQUIRED **90** (ciao 404 preserve) · 404_ACCEPTABLE **9** · REVIEW **0**
+- `.html` Wix 400 — **out of legacy scope**
+- Highest gap: `/2026-09` nav + ciao 404
+- DirectorySlash proven: no-slash → slash 200 when the Astro directory exists
+- External SNS / wixsite are **not** redirect targets
+- No source / `.htaccess` / FTP / DNS / package / commit
+- Next: `gosaki-pre-cutover-dns-full-record-snapshot` then redirect implementation
+- Doc: `gosaki-wix-to-astro-url-compatibility-audit.md`
 
 ## Gosaki ciao.jp preview Wix-localized live final QA (2026-08-18)
 

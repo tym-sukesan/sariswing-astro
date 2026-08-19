@@ -455,6 +455,24 @@ body.wix-static-export #SITE_HEADER .global-nav a.is-current {
     box-sizing: border-box;
   }
 
+  /* Option D: stale THIS WEEK DOM is removed; collapse leftover Wix mesh. */
+  body.wix-static-export #comp-m8y3dzb6.gosaki-home-this-week-hidden {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-top: 0.75rem !important;
+    margin-top: 0 !important;
+  }
+
+  body.wix-static-export #comp-m8y3dzb6.gosaki-home-this-week-hidden [data-mesh-id$="inlineContent"],
+  body.wix-static-export #comp-m8y3dzb6.gosaki-home-this-week-hidden [data-mesh-id$="inlineContent-gridContainer"] {
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-rows: none !important;
+    padding-block: 0 !important;
+  }
+
   body.wix-static-export [id^="comp-m8y53djd__"]:not([id$="inlineContent"]):not([id$="gridContainer"]) {
     width: 100% !important;
     max-width: 100% !important;

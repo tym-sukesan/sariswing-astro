@@ -3,13 +3,75 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** **`gosaki-pre-cutover-audits-docs-commit-push`** — commit uncommitted audit docs + AI SoT. Then operator panel wait (Lolipop / HubSpot / client). No package regen in that commit phase unless separately requested.
-2. **Residual audit:** COMPLETE. `NO_MORE_LOCAL_PRE_CUTOVER_WORK: true`. No new PUBLIC_CUTOVER_BLOCKER.
-3. **Deferred package:** ciao-preview regen (Sept + Home hide) **after** clean HEAD commit — `READY_FOR_FINAL_PREVIEW_REGENERATION: true` but **not** this Primary.
-4. **Operator (known):** Lolipop mapping/SSL/DNS/EMAIL · HubSpot www allow + thank-you · client signoff.
-5. **Redirect:** planning COMPLETE. **`READY_FOR_REDIRECT_IMPLEMENTATION: false`**.
-6. **Data:** September INSERT **CLOSED**. Do not re-run SQL. `001` unpublished. After cutover treat `kmjqppxjdnwwrtaeqjta` as public bake SoT.
-7. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** **`gosaki-ciao-jp-final-precutover-preview-docs-commit-push`** — commit regen + live QA docs + AI SoT. No FTP. No production package.
+2. **Live preview:** PASS / CLOSED. `https://gotosaki.ciao.jp/gosaki-piano/` reflects HEAD `be2d64d` package (Sept 17 + Home hide).
+3. **Operator (known):** Lolipop mapping/SSL/DNS/EMAIL · HubSpot www allow + thank-you · client signoff (preview ready to show).
+4. **Redirect:** planning COMPLETE. **`READY_FOR_REDIRECT_IMPLEMENTATION: false`**.
+5. **Data:** September INSERT **CLOSED**. Do not re-run SQL. `001` unpublished.
+6. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki ciao.jp final pre-cutover preview live QA (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | PASS / CLOSED (read-only) |
+| PREVIEW_URL | `https://gotosaki.ciao.jp/gosaki-piano/` |
+| Home THIS WEEK | **0** · YouTube + local KV **200** |
+| `/schedule/` + `/schedule/2026-09/` | **200** · **17** cards · hub has 2026.09 |
+| `/2026-09/` | **200** stub · link `/gosaki-piano/schedule/2026-09/` **200** |
+| wixstatic / parastorage / missing assets | **0** / **0** / **0** |
+| Admin | **404** |
+| HubSpot embed | present |
+| PUBLIC_CUTOVER_BLOCKERS_FROM_PREVIEW | **none** |
+| READY_FOR_CLIENT_SIGNOFF | **true** |
+| READY_TO_WAIT_FOR_LOLIPOP_ADMIN | **true** |
+| READY_FOR_DOCS_COMMIT_PUSH | **true** |
+| Next Primary | `gosaki-ciao-jp-final-precutover-preview-docs-commit-push` |
+
+```txt
+FINAL_PREVIEW_LIVE_QA_RESULT: PASS / CLOSED
+PUBLIC_CUTOVER_BLOCKERS_FROM_PREVIEW: none
+READY_FOR_CLIENT_SIGNOFF: true
+READY_TO_WAIT_FOR_LOLIPOP_ADMIN: true
+READY_FOR_DOCS_COMMIT_PUSH: true
+CURSOR_FTP_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-final-precutover-preview-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki ciao.jp final pre-cutover preview regeneration (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE / PASS (local package · FTP not executed) |
+| HEAD / sourceCommit | `be2d64d029f251c1a7ab92c767cdf518b56252af` |
+| Official build | `npm run build:gosaki:ciao-preview` **PASS** |
+| published total / September | **91** / **17** (`002`–`018`; `001` excluded) |
+| `/schedule/2026-09/` | present · 17 cards |
+| `/2026-09/` | present (legacy stub) |
+| Home THIS WEEK | **0** |
+| wixstatic / parastorage | **0** / **0** |
+| wix-local | **14** · missing **0** |
+| fileCount | **46** |
+| freshness / preflight | **PASS** |
+| LOCAL_UPLOAD_SOURCE | `output/manual-upload/gosaki-piano-ciao-preview/public-dist/` |
+| READY_FOR_OPERATOR_FINAL_PREVIEW_UPLOAD | **true** |
+| Next Primary | `gosaki-ciao-jp-final-precutover-preview-manual-upload` |
+
+```txt
+FINAL_PREVIEW_REGENERATION_RESULT: PASS
+sourceCommit: be2d64d029f251c1a7ab92c767cdf518b56252af
+PUBLISHED_TOTAL: 91
+PUBLISHED_SEPTEMBER: 17
+fileCount: 46
+PACKAGE_FRESHNESS: PASS
+READY_FOR_OPERATOR_FINAL_PREVIEW_UPLOAD: true
+FTP_EXECUTED: false
+SQL_REEXECUTE_FORBIDDEN: true
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-final-precutover-preview-manual-upload
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki pre-cutover residual final audit (2026-08-19)
 

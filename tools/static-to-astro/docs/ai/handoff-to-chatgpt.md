@@ -5,30 +5,63 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-pre-cutover-residual-final-audit COMPLETE
-HEAD baseline: fb6c567e2bf24a3f1b512edb12c02410a0d35f4f
-ORIGIN_MAIN: fb6c567e2bf24a3f1b512edb12c02410a0d35f4f
-PRIOR_PHASE: gosaki-contact-hubspot-production-domain-readiness-audit COMPLETE
-RESIDUAL_FINAL_AUDIT_RESULT: COMPLETE
-NEW_PUBLIC_CUTOVER_BLOCKERS: none
-NOW_ACTIONABLE_BEFORE_ADMIN: 0
-NO_MORE_LOCAL_PRE_CUTOVER_WORK: true
+Current phase: gosaki-ciao-jp-final-precutover-preview-live-qa PASS / CLOSED
+HEAD baseline: be2d64d029f251c1a7ab92c767cdf518b56252af
+ORIGIN_MAIN: be2d64d029f251c1a7ab92c767cdf518b56252af
+PRIOR_PHASE: gosaki-ciao-jp-final-precutover-preview-regeneration COMPLETE / PASS
+FINAL_PREVIEW_LIVE_QA_RESULT: PASS / CLOSED
+PREVIEW_URL: https://gotosaki.ciao.jp/gosaki-piano/
+sourceCommit: be2d64d029f251c1a7ab92c767cdf518b56252af
+HOME_THIS_WEEK_REFS: 0
+SEPTEMBER_EVENT_CARDS: 17
+LEGACY_2026_09: stub PASS
+PUBLIC_WIXSTATIC_REFS: 0
+ADMIN_EXPOSURE: 404
+PUBLIC_CUTOVER_BLOCKERS_FROM_PREVIEW: none
+READY_FOR_CLIENT_SIGNOFF: true
+READY_TO_WAIT_FOR_LOLIPOP_ADMIN: true
 READY_FOR_DOCS_COMMIT_PUSH: true
-READY_FOR_FINAL_PREVIEW_REGENERATION: true
-PUBLIC_CUTOVER_BLOCKER_FROM_HUBSPOT: false
-PUBLIC_CUTOVER_BLOCKER_FROM_DNS_SNAPSHOT: false
-PUBLIC_CUTOVER_BLOCKER_FROM_REDIRECT_GAPS: false
 PUBLIC_CUTOVER_BLOCKER_SEPTEMBER_MISSING: CLOSED
 PUBLIC_CUTOVER_BLOCKER_HOME_STALE_THIS_WEEK: CLOSED
-RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-audits-docs-commit-push
+RECOMMENDED_NEXT_PRIMARY: gosaki-ciao-jp-final-precutover-preview-docs-commit-push
 CURSOR_FTP_EXECUTED: false
-DNS_CHANGE_EXECUTED: false
-PACKAGE_GENERATE_EXECUTED: false
+DB_WRITE_EXECUTED: false
+SQL_REEXECUTE_FORBIDDEN: true
+PACKAGE_GENERATE_EXECUTED: false (this phase)
 CONTACT_SUBMISSION_EXECUTED: false
+DNS_CHANGE_EXECUTED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-pre-cutover-residual-final-audit.md
+Doc: tools/static-to-astro/docs/gosaki-ciao-jp-final-precutover-preview-live-qa.md
 ```
+
+## Gosaki ciao.jp final pre-cutover preview live QA (2026-08-19)
+
+- Read-only live GET of `https://gotosaki.ciao.jp/gosaki-piano/`. No FTP, package, source, DB, DNS, HubSpot, commit
+- Operator already overwrote `/gosaki-piano/` from `gosaki-piano-ciao-preview/public-dist/` (not staging `gosaki-piano/public-dist/`)
+- Home: THIS WEEK **0** · March cards **0** · YouTube nocookie + local KV **200**. Operator visual: KV then YouTube
+- Hub `/schedule/` **200** lists 2026.09. Month `/schedule/2026-09/` **200** · **17** cards · `001` absent
+- Legacy `/2026-09/` **200** stub “Schedule page moved” · link `/gosaki-piano/schedule/2026-09/` **200**
+- wixstatic **0** · parastorage **0** · 14 local assets **200** · Admin **404** · noindex + robots Disallow · HubSpot kept
+- `PUBLIC_CUTOVER_BLOCKERS_FROM_PREVIEW: none`
+- Next: docs commit/push of regen + QA. Then wait Lolipop / HubSpot / client. No production package in commit phase
+- Doc: `gosaki-ciao-jp-final-precutover-preview-live-qa.md`
+
+## Gosaki ciao.jp final pre-cutover preview regeneration (2026-08-19)
+
+- Official `npm run build:gosaki:ciao-preview` from clean HEAD `be2d64d` · **PASS**
+- Old 44-file package (`7de25b35`) relocated to `_stale-backup/…/2026-08-19T13-41-17-607Z-be2d64d` (folder name = current HEAD; contents = old package). Not an upload source
+- Build-read: published **91** / September **17** (`002`–`018`) · `001` unpublished / not baked
+- `/schedule/2026-09/` 17 cards · hub lists 2026.09 · legacy `/2026-09/` stub present
+- Home: no THIS WEEK heading · no March 25/27/31 cards · slot is HTML comment · YouTube / header / KV / footer kept
+- wixstatic **0** · parastorage **0** · `images/wix-local/` **14** · wixsite kept
+- freshness PASS · Admin off · noindex · robots Disallow · ciao canonical/og · HubSpot embed kept
+- LOCAL_UPLOAD_SOURCE: `output/manual-upload/gosaki-piano-ciao-preview/public-dist/` **contents** → remote `/gosaki-piano/`
+- **Never** upload `output/manual-upload/gosaki-piano/public-dist/` (staging)
+- Staging/production on-disk packages untouched (July generatedAt)
+- FTP / DB / SQL / DNS / HubSpot / production package / commit **not** executed
+- Next: operator FileZilla overwrite. **Cursor must not FTP**
+- Doc: `gosaki-ciao-jp-final-precutover-preview-regeneration.md`
 
 ## Gosaki pre-cutover residual final audit (2026-08-19)
 

@@ -3,13 +3,120 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** **`gosaki-content-blockers-closed-commit-push`** — commit + push Home Option D + recorded September INSERT CLOSED docs. No FTP. No package 本生成 in that commit-only step unless operator asks.
-2. **After commit:** ciao-preview / staging package regen so live preview gets `/schedule/2026-09/` + hidden Home THIS WEEK. Operator upload. Still `readyForAnyFutureFtpApply: false`.
-3. **Deferred:** URL redirect implementation. **`READY_FOR_REDIRECT_IMPLEMENTATION: false`** until operator re-prioritizes (content blockers of Sept + Home THIS WEEK are CLOSED).
-4. **Deferred:** `gosaki-pre-cutover-dns-full-record-snapshot` until operator explicitly re-prioritizes.
-5. **Deferred:** production package (`deployBase=/`) until preview reflects the content-blocker fixes.
-6. **Data:** September INSERT **CLOSED**. Do not re-run forward SQL. Do not rollback. Do not unpublish/restore/cleanup. Do not re-run Slice B. `001` stays unpublished.
-7. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP · Discography Slice B **CLOSED**.
+1. **Primary:** **`gosaki-pre-cutover-audits-docs-commit-push`** — commit uncommitted audit docs + AI SoT. Then operator panel wait (Lolipop / HubSpot / client). No package regen in that commit phase unless separately requested.
+2. **Residual audit:** COMPLETE. `NO_MORE_LOCAL_PRE_CUTOVER_WORK: true`. No new PUBLIC_CUTOVER_BLOCKER.
+3. **Deferred package:** ciao-preview regen (Sept + Home hide) **after** clean HEAD commit — `READY_FOR_FINAL_PREVIEW_REGENERATION: true` but **not** this Primary.
+4. **Operator (known):** Lolipop mapping/SSL/DNS/EMAIL · HubSpot www allow + thank-you · client signoff.
+5. **Redirect:** planning COMPLETE. **`READY_FOR_REDIRECT_IMPLEMENTATION: false`**.
+6. **Data:** September INSERT **CLOSED**. Do not re-run SQL. `001` unpublished. After cutover treat `kmjqppxjdnwwrtaeqjta` as public bake SoT.
+7. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki pre-cutover residual final audit (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only) |
+| NEW_PUBLIC_CUTOVER_BLOCKERS | **none** |
+| NOW_ACTIONABLE_BEFORE_ADMIN | **0** |
+| NO_MORE_LOCAL_PRE_CUTOVER_WORK | **true** |
+| READY_FOR_DOCS_COMMIT_PUSH | **true** |
+| READY_FOR_FINAL_PREVIEW_REGENERATION | **true** (after commit) |
+| Next Primary | `gosaki-pre-cutover-audits-docs-commit-push` |
+
+```txt
+RESIDUAL_FINAL_AUDIT_RESULT: COMPLETE
+NEW_PUBLIC_CUTOVER_BLOCKERS: none
+NOW_ACTIONABLE_BEFORE_ADMIN: 0
+NO_MORE_LOCAL_PRE_CUTOVER_WORK: true
+READY_FOR_DOCS_COMMIT_PUSH: true
+READY_FOR_FINAL_PREVIEW_REGENERATION: true
+PACKAGE_GENERATE_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-audits-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki Contact HubSpot production-domain readiness audit (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only · no submit) |
+| Implementation | HubSpot embed v3 · `.hs-form-frame` · no Kit `form action` |
+| portalId / formId | `21392032` / `57909d0c-9b9f-470a-8a18-e176d1d1a459` |
+| Domain dependency (markup) | DOMAIN_INDEPENDENT |
+| Domain allowlist | UNKNOWN_REQUIRES_HUBSPOT_PANEL |
+| SOURCE_FIX_REQUIRED | **false** |
+| PUBLIC_CUTOVER_BLOCKER_FROM_HUBSPOT | **false** |
+| READY_TO_WAIT_FOR_LOLIPOP_ADMIN | **true** |
+| Next Primary | superseded; current Primary is docs commit-push |
+
+```txt
+HUBSPOT_READINESS_AUDIT_RESULT: COMPLETE
+PUBLIC_CUTOVER_BLOCKER_FROM_HUBSPOT: false
+SOURCE_FIX_REQUIRED: false
+READY_TO_WAIT_FOR_LOLIPOP_ADMIN: true
+CONTACT_SUBMISSION_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-audits-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki pre-cutover DNS full record snapshot (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (read-only) |
+| NS | `ns12.wixdns.net.` `ns13.wixdns.net.` |
+| SOA serial | `2020010211` |
+| Apex A | `185.230.63.107` `185.230.63.186` `185.230.63.171` |
+| www | CNAME `cdn1.wixdns.net.` → A `34.149.87.45` |
+| MX / TXT / CAA / SPF / DMARC | none observed |
+| DKIM | selector UNKNOWN; `_domainkey` NXDOMAIN |
+| vs 2026-08-18 | NO_MATERIAL_CHANGE |
+| PUBLIC_CUTOVER_BLOCKER_FROM_DNS_SNAPSHOT | **false** |
+| DNS change this phase | **false** |
+| Next Primary | superseded; current Primary is docs commit-push |
+
+```txt
+DNS_SNAPSHOT_RESULT: COMPLETE
+PUBLIC_CUTOVER_BLOCKER_FROM_DNS_SNAPSHOT: false
+NON_WEB_RECORDS_OBSERVED: none
+NS_CHANGE_STOP_UNTIL_ZONE_TRANSPLANT: true
+DNS_CHANGE_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-audits-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. Gosaki Wix legacy redirect remediation planning (2026-08-19)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE (planning / read-only) |
+| Inventory | **111** |
+| KEEP_AS_STATIC_ROUTE | **13** (6 primary + 6 legacy 03–08 + `/2026-09`) |
+| REDIRECT_301 | **81** (`/home` + 80 archive months) |
+| CLIENT_DECISION_REQUIRED | **8** |
+| 404_ACCEPTABLE | **9** |
+| `/home` | **301 → `/`** (recommended; Apache; production-scoped) |
+| `/2026-09` | **KEEP** via existing stub after package regen — extra 301 not required |
+| Archives | target `/schedule/YYYY-MM/` **not hub**; implement **POST_LAUNCH** |
+| Implementation | Option C hybrid |
+| READY_FOR_REDIRECT_IMPLEMENTATION | **false** |
+| Next Primary (this planning phase) | superseded; current Primary is docs commit-push |
+
+```txt
+GOSAKI_WIX_LEGACY_REDIRECT_REMEDIATION_PLANNING_COMPLETE: true
+REDIRECT_PLANNING_RESULT: COMPLETE
+KEEP_AS_STATIC_ROUTE: 13
+REDIRECT_301: 81
+CLIENT_DECISION_REQUIRED: 8
+404_ACCEPTABLE: 9
+READY_FOR_REDIRECT_IMPLEMENTATION: false
+PUBLIC_CUTOVER_BLOCKER_FROM_REDIRECT_GAPS: false
+RECOMMENDED_IMPLEMENTATION: Option C hybrid
+RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-audits-docs-commit-push
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. Gosaki Home stale THIS WEEK hide for initial cutover (2026-08-19)
 

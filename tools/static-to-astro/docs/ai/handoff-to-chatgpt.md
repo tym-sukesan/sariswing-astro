@@ -5,30 +5,80 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-home-stale-this-week-hide-for-initial-cutover COMPLETE
-HEAD baseline: 14ab858e46252a91503f9bfb12f58498481304bf
-ORIGIN_MAIN: 14ab858e46252a91503f9bfb12f58498481304bf
-PRIOR_PHASE: gosaki-2026-09-batch-insert-db-write-packet CLOSED / PASS
-HOME_REMEDIATION_RESULT: PASS
-INITIAL_PUBLIC_CUTOVER_HOME_SCHEDULE: Option D
-OPERATOR_DB_WRITE_RESULT: SUCCESS
-SQL_EXECUTED: true
-SQL_REEXECUTE_FORBIDDEN: true
-ROLLBACK_EXECUTED: false
-CURSOR_DB_WRITE_EXECUTED: false
+Current phase: gosaki-pre-cutover-residual-final-audit COMPLETE
+HEAD baseline: fb6c567e2bf24a3f1b512edb12c02410a0d35f4f
+ORIGIN_MAIN: fb6c567e2bf24a3f1b512edb12c02410a0d35f4f
+PRIOR_PHASE: gosaki-contact-hubspot-production-domain-readiness-audit COMPLETE
+RESIDUAL_FINAL_AUDIT_RESULT: COMPLETE
+NEW_PUBLIC_CUTOVER_BLOCKERS: none
+NOW_ACTIONABLE_BEFORE_ADMIN: 0
+NO_MORE_LOCAL_PRE_CUTOVER_WORK: true
+READY_FOR_DOCS_COMMIT_PUSH: true
+READY_FOR_FINAL_PREVIEW_REGENERATION: true
+PUBLIC_CUTOVER_BLOCKER_FROM_HUBSPOT: false
+PUBLIC_CUTOVER_BLOCKER_FROM_DNS_SNAPSHOT: false
+PUBLIC_CUTOVER_BLOCKER_FROM_REDIRECT_GAPS: false
 PUBLIC_CUTOVER_BLOCKER_SEPTEMBER_MISSING: CLOSED
 PUBLIC_CUTOVER_BLOCKER_HOME_STALE_THIS_WEEK: CLOSED
-READY_FOR_REDIRECT_IMPLEMENTATION: false
-READY_FOR_COMMIT_PUSH: true
-RECOMMENDED_NEXT_PRIMARY: gosaki-content-blockers-closed-commit-push
+RECOMMENDED_NEXT_PRIMARY: gosaki-pre-cutover-audits-docs-commit-push
 CURSOR_FTP_EXECUTED: false
 DNS_CHANGE_EXECUTED: false
 PACKAGE_GENERATE_EXECUTED: false
+CONTACT_SUBMISSION_EXECUTED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ARMS_OFF: true
-Doc: tools/static-to-astro/docs/gosaki-home-stale-this-week-hide-for-initial-cutover.md
-DB write record: tools/static-to-astro/docs/gosaki-2026-09-batch-insert-db-write-packet.md
+Doc: tools/static-to-astro/docs/gosaki-pre-cutover-residual-final-audit.md
 ```
+
+## Gosaki pre-cutover residual final audit (2026-08-19)
+
+- Read-only residual sweep. No source, package, FTP, DNS, DB, HubSpot mutation, commit
+- No **new** PUBLIC_CUTOVER_BLOCKER. `NOW_ACTIONABLE_BEFORE_ADMIN: 0`
+- Production dry-run PASS (`origin=www.gosaki-piano.com`, `deployBase=/`, Admin off)
+- Hide-verifier 69: published 91 / Sept 17 / `/schedule/2026-09/` + `/2026-09/` generateable; Home Option D in source
+- og:image absent = POST_LAUNCH. Stale on-disk production package is not HEAD (still has wixstatic)
+- Known operator/client gates unchanged. Then: docs commit → panel wait
+- Preview regen allowed **after** commit; not this next Primary
+- Doc: `gosaki-pre-cutover-residual-final-audit.md`
+
+## Gosaki Contact HubSpot production-domain readiness audit (2026-08-19)
+
+- Read-only. No form submit, HubSpot mutation, source, package, FTP, DNS, commit
+- Kit injects HubSpot embed v3 (`js.hsforms.net/forms/embed/21392032.js` + `.hs-form-frame`). No Kit `form action`
+- portalId `21392032` · formId `57909d0c-9b9f-470a-8a18-e176d1d1a459` · region `na1`
+- Markup identical for staging/production env; no weblike/production host in embed
+- Staging E2E (weblike) submit PASS does **not** prove www
+- Domain allowlist / thank-you redirect: HubSpot panel only (2 items before DNS cutover)
+- ciao GET 200 embed present; production dry-run origin `https://www.gosaki-piano.com` deployBase `/`
+- `SOURCE_FIX_REQUIRED: false` · `READY_TO_WAIT_FOR_LOLIPOP_ADMIN: true`
+- Next (this HubSpot phase): superseded; current Primary is docs commit-push
+- Doc: `gosaki-contact-hubspot-production-domain-readiness-audit.md`
+
+## Gosaki pre-cutover DNS full record snapshot (2026-08-19)
+
+- Read-only `dig` / `nslookup` / `whois` / HTTP HEAD. No DNS/NS change, no panel, no package, no FTP, no commit
+- Public zone is Wix web only: NS + SOA + apex A×3 + www CNAME. MX/TXT/CAA empty (NODATA). `_dmarc` / `mail` / `_domainkey` NXDOMAIN
+- vs 2026-08-18 operator-gates snapshot: **NO_MATERIAL_CHANGE**
+- Keep-list from public DNS is empty; still screenshot Wix DNS editor before any NS move (panel-only records unknown)
+- Option A: keep Wix NS, change A/CNAME only if Wix allows off-Wix targets (OPERATOR_GATE)
+- Option B: **STOP** — transplant required records onto new DNS and re-verify before NS change (NS TTL 86400)
+- EMAIL_USAGE still OPERATOR_CONFIRMATION_REQUIRED
+- Next (this snapshot phase): superseded; current Primary is residual final audit. Package regen remains deferred
+- Doc: `gosaki-pre-cutover-dns-full-record-snapshot.md`
+
+## Gosaki Wix legacy redirect remediation planning (2026-08-19)
+
+- Planning / read-only only. No `.htaccess`, FTP, package, source, DB, commit
+- Reclass 111 URLs against HEAD `fb6c567e` + published September 17
+- `/2026-09` is **KEEP** (stub after regen), not MISSING_CONTENT
+- `/home` → `/` **301** recommended (Apache; production-scoped RewriteBase)
+- 80 archive months → `/schedule/YYYY-MM/` **not hub**; do not 301 into 404; **POST_LAUNCH**
+- 8 client URLs: options listed; **not** cutover-blocking; do not lock targets
+- 9 dummy leftovers: keep 404 (no soft-404 301)
+- Implementation: **Option C hybrid**. `.htaccess` ≠ `.ftpaccess`
+- `READY_FOR_REDIRECT_IMPLEMENTATION: false`
+- Next (this planning phase): superseded; current Primary is residual final audit. Package regen remains deferred
+- Doc: `gosaki-wix-legacy-redirect-remediation-planning.md`
 
 ## Gosaki Home stale THIS WEEK hide for initial cutover (2026-08-19)
 

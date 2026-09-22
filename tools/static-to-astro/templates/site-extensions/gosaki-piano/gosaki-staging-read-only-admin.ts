@@ -9,6 +9,18 @@ import { isSaveArmExactTrue } from "./save-arm-utils";
 
 export const GOSAKI_READ_ONLY_ADMIN_MARKER = "gosaki-read-only-admin";
 export const GOSAKI_STAGING_SITE_SLUG = "gosaki-piano";
+/** Baked by package profile: production | staging. Unset → staging copy. */
+export const GOSAKI_ADMIN_SURFACE_ENV = "PUBLIC_GOSAKI_ADMIN_SURFACE";
+export const GOSAKI_ADMIN_SAFETY_CHIP_STAGING =
+  "テスト環境｜公開サイトには自動反映されません";
+export const GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION =
+  "本番CMS｜保存内容は公開ページへ自動反映されません";
+
+export function isGosakiProductionAdminSurface(
+  env: Record<string, unknown> = import.meta.env as Record<string, unknown>,
+): boolean {
+  return String(env[GOSAKI_ADMIN_SURFACE_ENV] ?? "").trim() === "production";
+}
 export const GOSAKI_STAGING_PREVIEW_URL =
   "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
 

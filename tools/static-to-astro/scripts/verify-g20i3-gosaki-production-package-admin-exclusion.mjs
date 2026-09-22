@@ -202,12 +202,22 @@ if (genericVerify.ok) {
 
 assert("admin index present", exists(path.join(publicDistRel, "admin/index.html")));
 assert("admin dir present", exists(path.join(publicDistRel, "admin")));
+const kitSupabaseUrl = `https://${STAGING_KIT_SUPABASE_REF}.supabase.co`;
+const sariswingProductionSupabaseUrl = `https://${SARISWING_PRODUCTION_SUPABASE_REF}.supabase.co`;
+const adminHtmlBodies = [];
 for (const rel of ADMIN_ROUTES) {
   assert(`admin route ${rel}`, exists(path.join(packageRel, rel)));
   const adminHtml = read(path.join(packageRel, rel));
+  adminHtmlBodies.push(adminHtml);
   const adminHead = adminHtml.match(/<head[^>]*>[\s\S]*?<\/head>/i)?.[0] ?? adminHtml.slice(0, 4000);
   assert(`${rel} noindex,nofollow,noarchive`, /noindex,nofollow,noarchive/i.test(adminHead));
   assert(`${rel} read-only admin marker`, adminHtml.includes('data-gosaki-read-only-admin="true"'));
+  assert(`${rel} kit supabase ref in HTML`, adminHtml.includes(STAGING_KIT_SUPABASE_REF));
+  assert(`${rel} kit supabase backend URL`, adminHtml.includes(kitSupabaseUrl));
+  assert(
+    `${rel} no sariswing production backend URL`,
+    !adminHtml.includes(sariswingProductionSupabaseUrl),
+  );
 }
 assert(
   "__admin-staging-shell absent",
@@ -333,7 +343,11 @@ if (publicDistSafetyErrors.length === 0) {
 
 const packageTree = walkRelativeFiles(packageAbs).join("\n");
 assert("no sariswing production ref", !packageTree.includes(SARISWING_PRODUCTION_SUPABASE_REF));
-assert("admin uses kit supabase ref", packageTree.includes(STAGING_KIT_SUPABASE_REF));
+assert(
+  "admin uses kit supabase ref",
+  adminHtmlBodies.length === ADMIN_ROUTES.length &&
+    adminHtmlBodies.every((html) => html.includes(STAGING_KIT_SUPABASE_REF)),
+);
 
 assert("no FTP upload evidence", !doc.includes("ftpUploadExecuted: true"));
 assert("no DNS change evidence", !doc.includes("dnsChangeExecuted: true"));

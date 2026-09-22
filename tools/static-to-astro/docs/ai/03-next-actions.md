@@ -3,11 +3,50 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** Operator **commit** worktree `gosaki-production-admin-minimum-implementation`, then official `build:gosaki:production` + verify/freshness/preflight at **clean HEAD**. Cursor did not commit.
-2. **Upload:** after clean package PASS — operator FileZilla of `gosaki-piano-production/public-dist/` contents. No FTP `--apply`.
-3. **Save:** still disarmed. Schedule owner Save still `is_admin`. Do not arm this phase.
+1. **Primary:** Operator **commit** worktree (Save-completion + G-20i3 HTML-body kit-ref verifier fix). Cursor did not commit.
+2. **Then:** official `build:gosaki:production` at clean HEAD (banner bake). FileZilla `public-dist/` contents. No FTP `--apply`.
+3. **Save activation later (separate approvals):** apply `schedules_site_writer_update` on kmjq → deploy `gosaki-schedule-save-dry-run` from root (not linked CLI) → arm one module. Save arm **false** now.
 4. **Original repo:** leave dirty CMS Kit diffs untouched.
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+5. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki production verifier false-fail fix (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | COMPLETE / PASS |
+| Worktree | `~/sariswing-astro-gosaki-prestage` HEAD `078fa734` + uncommitted |
+| G-20i3 | **113 passed, 0 failed** (was 97/1 false fail) |
+| save-completion | **42 passed, 0 failed** |
+| production dry-run | PASS |
+| Save arm | **false** |
+| Next | operator commit → official production package |
+
+```txt
+VERIFIER_FALSE_FAIL_FIX_RESULT: PASS
+G20I3: 113 passed, 0 failed
+SAVE_ARM: false
+```
+
+## 0. Gosaki production CMS Save completion (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | CODE COMPLETE · Save not armed · official package STOP git-clean |
+| Worktree | `~/sariswing-astro-gosaki-prestage` HEAD `078fa734` + uncommitted |
+| Production banner | `PUBLIC_GOSAKI_ADMIN_SURFACE=production` |
+| Schedule Edge source | `can_write_site` (live Edge not deployed) |
+| UPDATE RLS | template only · not applied |
+| Save arm | **false** |
+| Verifier | 42 PASS |
+| READY_FOR_SAVE_ACTIVATION | **false** |
+| Next | operator commit → official production package |
+
+```txt
+PRODUCTION_CMS_SAVE_IMPLEMENTATION_RESULT: CODE_COMPLETE
+READY_FOR_SAVE_ACTIVATION: false
+SAVE_ARM: false
+OFFICIAL_PRODUCTION_PACKAGE: STOP git-clean
+```
 
 ## 0. Gosaki production admin minimum implementation (2026-09-22)
 

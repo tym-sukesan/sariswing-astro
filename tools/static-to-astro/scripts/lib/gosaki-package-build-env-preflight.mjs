@@ -82,17 +82,21 @@ export function createGosakiResolveBuildEnv(siteKey) {
     }
 
     const base = ctx.env ?? process.env;
-    const productionAdminPathEnv =
-      ctx.profileName === "production"
-        ? {
+    const isProductionProfile = ctx.profileName === "production";
+    const productionAdminPathEnv = isProductionProfile
+      ? {
             PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED: "true",
             PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED: "true",
           }
-        : {};
-    if (ctx.profileName === "production") {
+      : {};
+    const adminSurface = isProductionProfile ? "production" : "staging";
+    if (isProductionProfile) {
       console.log("PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED: true (production bake)");
       console.log("PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED: true (production bake)");
+      console.log("PUBLIC_GOSAKI_ADMIN_SURFACE: production");
       console.log("Save arms: not set (must remain false)");
+    } else {
+      console.log(`PUBLIC_GOSAKI_ADMIN_SURFACE: ${adminSurface}`);
     }
 
     return {
@@ -101,6 +105,7 @@ export function createGosakiResolveBuildEnv(siteKey) {
         PUBLIC_SUPABASE_URL: env.PUBLIC_SUPABASE_URL,
         PUBLIC_SUPABASE_ANON_KEY: env.PUBLIC_SUPABASE_ANON_KEY,
         PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT: env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT,
+        PUBLIC_GOSAKI_ADMIN_SURFACE: adminSurface,
         ...productionAdminPathEnv,
       },
     };

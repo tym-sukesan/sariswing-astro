@@ -5,6 +5,58 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-production-verifier-false-fail-fix COMPLETE / PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 078fa7343e776b6da5b4acca0f6c04cc738002a2 (uncommitted: Save-completion + G-20i3 verifier fix)
+BRANCH: hotfix/gosaki-disable-test-youtube
+VERIFIER_FALSE_FAIL_FIX_RESULT: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+PRODUCTION_DRY_RUN: PASS
+SAVE_ARM: false
+BACKEND_REF: kmjqppxjdnwwrtaeqjta
+OFFICIAL_BUILD: STOP git-clean
+ORIGINAL_REPO_DIRTY_UNTOUCHED: true
+RECOMMENDED_NEXT: operator commit then official build:gosaki:production
+Doc: tools/static-to-astro/docs/gosaki-production-verifier-false-fail-fix.md
+```
+
+## Gosaki production verifier false-fail fix (2026-09-22)
+
+- G-20i3 now reads five admin HTML bodies for `kmjqppxjdnwwrtaeqjta` (not filename join).
+- Confirms `vsbvndwuajjhnzpohghh` is not a backend URL on those pages.
+- Production CMS implementation unchanged. Save arm false. No commit/push.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-production-cms-save-completion CODE COMPLETE / SAVE NOT ARMED / PACKAGE STOP
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 078fa7343e776b6da5b4acca0f6c04cc738002a2 (uncommitted implementation)
+BRANCH: hotfix/gosaki-disable-test-youtube
+SAVE_ARM: false
+BACKEND_REF: kmjqppxjdnwwrtaeqjta
+SCHEDULE_EDGE_SOURCE: can_write_site (not deployed)
+UPDATE_RLS_APPLIED: false
+PRODUCTION_DRY_RUN: PASS
+OFFICIAL_BUILD: STOP git-clean
+READY_FOR_SAVE_ACTIVATION: false
+ORIGINAL_REPO_DIRTY_UNTOUCHED: true
+RECOMMENDED_NEXT: operator commit then official build:gosaki:production
+Doc: tools/static-to-astro/docs/gosaki-production-cms-save-completion.md
+```
+
+## Gosaki production CMS Save completion (2026-09-22)
+
+- Production admin chip/footer/title: `PUBLIC_GOSAKI_ADMIN_SURFACE` (staging copy retained).
+- Schedule Edge source now `can_write_site` + site_slug scope. Live Edge still `is_admin` until deploy.
+- `schedules_site_writer_update` template only — not applied. `schedules_admin_all` kept.
+- YouTube/About production bake PATH_ENABLED supabase. Contents code retained. Save arms false.
+- Official package not generated (dirty tree).
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-production-admin-minimum-implementation CODE COMPLETE / PACKAGE BLOCKED BY GIT CLEAN
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD start: 55898a5520393a9114ab40cefbc8e12aab748dd1

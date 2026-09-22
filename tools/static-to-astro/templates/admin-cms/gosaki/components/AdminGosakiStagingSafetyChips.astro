@@ -1,12 +1,19 @@
 ---
 /**
- * Compact staging notice for Gosaki operator shell.
+ * Compact notice for Gosaki operator shell.
  * Client-facing: one clear line — no "閲覧のみ" / "Save disabled".
+ * Surface copy is baked from PUBLIC_GOSAKI_ADMIN_SURFACE
+ * (production vs staging). Default is staging when unset.
  */
+const isProductionAdmin =
+  String(import.meta.env.PUBLIC_GOSAKI_ADMIN_SURFACE ?? "").trim() === "production";
+const chipText = isProductionAdmin
+  ? "本番CMS｜保存内容は公開ページへ自動反映されません"
+  : "テスト環境｜公開サイトには自動反映されません";
 ---
 
 <div class="admin-gosaki-safety-chips" role="status" aria-label="管理画面の状態">
   <span class="admin-gosaki-safety-chip admin-gosaki-safety-chip--staging">
-    テスト環境｜公開サイトには自動反映されません
+    {chipText}
   </span>
 </div>

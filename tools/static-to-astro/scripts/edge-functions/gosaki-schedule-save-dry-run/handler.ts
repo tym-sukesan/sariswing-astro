@@ -2,7 +2,7 @@
  * Gosaki Schedule Edge dry-run + Save (edit UPDATE · create INSERT).
  * Endpoint: gosaki-schedule-save-dry-run
  * Staging only: kmjqppxjdnwwrtaeqjta · production STOP: vsbvndwuajjhnzpohghh
- * Auth: user JWT + anon key · rpc('is_admin') · no service_role
+ * Auth: user JWT + anon key · sites resolve + rpc('can_write_site') · no service_role
  * Contracts: edit safe fields include published (not date) · create published=false + legacy_id allocation
  *
  * Keep allowlists in sync with tools/static-to-astro/scripts/lib/gosaki-schedule-dry-run-edge-core.mjs
@@ -146,21 +146,63 @@ export function createUserJwtSupabaseClient(input: {
   });
 }
 
-export async function assertOperatorIsAdmin(
+export async function assertCanWriteSiteForSiteSlug(
   client: SupabaseClient,
-): Promise<{ ok: true } | { ok: false; status: number; errors: string[] }> {
-  const { data, error } = await client.rpc("is_admin");
+  siteSlug: string,
+): Promise<
+  | { ok: true; siteId: string }
+  | { ok: false; status: number; errors: string[] }
+> {
+  const slug = String(siteSlug ?? "").trim();
+  if (!slug || slug !== SITE_SLUG) {
+    return { ok: false, status: 400, errors: [`siteSlug must be "${SITE_SLUG}"`] };
+  }
+
+  const { data: siteRows, error: siteError } = await client
+    .from("sites")
+    .select("id,site_slug,status")
+    .eq("site_slug", slug);
+
+  if (siteError) {
+    const msg = String(siteError.message ?? "");
+    if (/jwt|token|auth/i.test(msg)) {
+      return { ok: false, status: 401, errors: ["Invalid or expired Authorization"] };
+    }
+    return { ok: false, status: 503, errors: ["sites resolve failed"] };
+  }
+
+  const rows = Array.isArray(siteRows) ? siteRows : [];
+  if (rows.length === 0) {
+    return { ok: false, status: 403, errors: ["can_write_site denied — site not visible"] };
+  }
+  if (rows.length > 1) {
+    return { ok: false, status: 409, errors: ["sites.site_slug must resolve to exactly one row"] };
+  }
+
+  const siteRow = rows[0] as { id?: unknown; site_slug?: unknown; status?: unknown };
+  const siteId = String(siteRow.id ?? "").trim();
+  if (!siteId) {
+    return { ok: false, status: 503, errors: ["sites.id missing after resolve"] };
+  }
+  if (String(siteRow.site_slug ?? "").trim() !== SITE_SLUG) {
+    return { ok: false, status: 409, errors: ["sites.site_slug does not match expected gosaki-piano"] };
+  }
+  if (String(siteRow.status ?? "").trim() !== "active") {
+    return { ok: false, status: 403, errors: ["site is not active"] };
+  }
+
+  const { data, error } = await client.rpc("can_write_site", { p_site_id: siteId });
   if (error) {
     const msg = String(error.message ?? "");
     if (/jwt|token|auth/i.test(msg)) {
       return { ok: false, status: 401, errors: ["Invalid or expired Authorization"] };
     }
-    return { ok: false, status: 403, errors: ["Admin probe failed"] };
+    return { ok: false, status: 403, errors: ["can_write_site probe failed"] };
   }
   if (data !== true) {
-    return { ok: false, status: 403, errors: ["public.is_admin() must be true"] };
+    return { ok: false, status: 403, errors: ["can_write_site(site_id) must be true"] };
   }
-  return { ok: true };
+  return { ok: true, siteId };
 }
 
 function norm(value: unknown): string {
@@ -605,9 +647,9 @@ export async function handleScheduleEdgeDryRunHttpAsync(
   }
 
   if (!deps.skipAdminProbe) {
-    const admin = await assertOperatorIsAdmin(client);
-    if (!admin.ok) {
-      return errorResult({ status: admin.status, errors: admin.errors });
+    const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+    if (!writeAuthz.ok) {
+      return errorResult({ status: writeAuthz.status, errors: writeAuthz.errors });
     }
   }
 

@@ -52,6 +52,9 @@ import {
   resolveG20u41DiscographySaveEndpoint,
   assertG20u41DiscographySaveEndpointSafe,
   GOSAKI_STAGING_PREVIEW_URL,
+  isGosakiProductionAdminSurface,
+  GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION,
+  GOSAKI_ADMIN_SAFETY_CHIP_STAGING,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
   isG11c6aSaveEnabled,
@@ -166,14 +169,26 @@ const publicContactUrl = new URL("contact/", stagingSiteBase).href;
 const publicLinkUrl = new URL("link/", stagingSiteBase).href;
 const publicAboutUrl = new URL("about/", stagingSiteBase).href;
 const robotsContent = "noindex,nofollow,noarchive";
-const pageTitleByRoute = {
-  portal: "Gosaki Piano CMS（テスト環境）",
-  schedule: "スケジュール管理（テスト環境）",
-  discography: "ディスコグラフィ管理（テスト環境）",
-  youtube: "YouTube管理（テスト環境）",
-  about: "プロフィール管理（テスト環境）",
-} as const;
+const isProductionAdmin = isGosakiProductionAdminSurface(import.meta.env);
+const pageTitleByRoute = isProductionAdmin
+  ? {
+      portal: "Gosaki Piano CMS",
+      schedule: "スケジュール管理",
+      discography: "ディスコグラフィ管理",
+      youtube: "YouTube管理",
+      about: "プロフィール管理",
+    }
+  : {
+      portal: "Gosaki Piano CMS（テスト環境）",
+      schedule: "スケジュール管理（テスト環境）",
+      discography: "ディスコグラフィ管理（テスト環境）",
+      youtube: "YouTube管理（テスト環境）",
+      about: "プロフィール管理（テスト環境）",
+    };
 const pageTitle = pageTitleByRoute[page];
+const adminFooterText = isProductionAdmin
+  ? `Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION}`
+  : `Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_STAGING}`;
 const navCurrent = page === "portal" ? "home" : page;
 /** Auth script on every admin route (including portal) so logout works everywhere. */
 const showClientScript = true;
@@ -320,7 +335,7 @@ const showClientScript = true;
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano CMS — テスト環境｜公開サイトには自動反映されません
+        {adminFooterText}
       </footer>
     </div>
     {showClientScript ? (

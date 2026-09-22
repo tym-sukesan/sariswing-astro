@@ -988,7 +988,10 @@ assert(
       edgeHandler.includes("buildCreateInsertRow") &&
       edgeHandler.includes("createDefaultUpdateAdapter") &&
       edgeHandler.includes("createDefaultInsertAdapter") &&
-      edgeHandler.includes('rpc("is_admin")') &&
+      edgeHandler.includes("assertCanWriteSiteForSiteSlug") &&
+      edgeHandler.includes('rpc("can_write_site"') &&
+      !edgeHandler.includes("assertOperatorIsAdmin") &&
+      !edgeHandler.includes('rpc("is_admin")') &&
       edgeIndex.includes("handleScheduleEdgeDryRunHttpAsync") &&
       !edgeIndex.includes("skipAdminProbe") &&
       supabaseEdge.includes('ENDPOINT_NAME = "gosaki-schedule-save-dry-run"') &&

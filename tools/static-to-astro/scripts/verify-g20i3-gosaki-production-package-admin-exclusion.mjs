@@ -1,5 +1,6 @@
 /**
- * G-20i3 — Gosaki production package admin exclusion verifier.
+ * G-20i3 / gosaki-production-admin-minimum-implementation —
+ * Gosaki production package admin inclusion verifier.
  * Run: node tools/static-to-astro/scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs
  */
 
@@ -41,6 +42,14 @@ const TEST_A = "Like a Lover（テスト）";
 const TEST_B = "Mary Ann（テスト）";
 const AFTER_A = "Like a Lover";
 const AFTER_B = "Mary Ann";
+
+const ADMIN_ROUTES = [
+  "public-dist/admin/index.html",
+  "public-dist/admin/schedule/index.html",
+  "public-dist/admin/discography/index.html",
+  "public-dist/admin/youtube/index.html",
+  "public-dist/admin/about/index.html",
+];
 
 const KEY_ROUTES = [
   "public-dist/index.html",
@@ -146,12 +155,12 @@ if (origin.stdout.trim() === BASE_COMMIT) {
 assert("staging build script unchanged", stagingDiff.stdout.length === 0);
 
 const profiles = JSON.parse(read(PROFILES_REL));
-assert("production profile admin exclusion", profiles.profiles.production.includeReadOnlyAdmin === false);
-assert("production profile legacy admin exclusion", profiles.profiles.production.includeGosakiReadOnlyAdmin === false);
+assert("production profile admin inclusion", profiles.profiles.production.includeReadOnlyAdmin === true);
+assert("production profile legacy admin inclusion", profiles.profiles.production.includeGosakiReadOnlyAdmin === true);
 
 const profile = resolveGosakiPackageBuildProfile("production");
-assert("profile includeReadOnlyAdmin false", profile.includeReadOnlyAdmin === false);
-assert("profile includeGosakiReadOnlyAdmin false", profile.includeGosakiReadOnlyAdmin === false);
+assert("profile includeReadOnlyAdmin true", profile.includeReadOnlyAdmin === true);
+assert("profile includeGosakiReadOnlyAdmin true", profile.includeGosakiReadOnlyAdmin === true);
 
 const packageRel = path.join("tools/static-to-astro", profile.manualUploadOut);
 const packageAbs = path.join(REPO_ROOT, packageRel);
@@ -164,7 +173,7 @@ assert("G-20i2 prior doc exists", exists(G20I2_REL));
 const doc = read(DOC_REL);
 assert("doc phase G-20i3", doc.includes("G-20i3-gosaki-production-package-admin-exclusion"));
 assert("doc exclusion gate", doc.includes("gosakiProductionPackageAdminExclusionComplete: true"));
-assert("doc admin excluded", doc.includes("adminExcludedFromPackage: true"));
+assert("doc historical exclusion recorded", doc.includes("adminExcludedFromPackage: true"));
 if (doc.includes("uploadFileCount: 26")) {
   console.log("PASS doc upload 26 (G-20i3 historical)");
   passed += 1;
@@ -191,8 +200,19 @@ if (genericVerify.ok) {
   }
 }
 
-assert("admin index absent", !exists(path.join(publicDistRel, "admin/index.html")));
-assert("admin dir absent", !exists(path.join(publicDistRel, "admin")));
+assert("admin index present", exists(path.join(publicDistRel, "admin/index.html")));
+assert("admin dir present", exists(path.join(publicDistRel, "admin")));
+for (const rel of ADMIN_ROUTES) {
+  assert(`admin route ${rel}`, exists(path.join(packageRel, rel)));
+  const adminHtml = read(path.join(packageRel, rel));
+  const adminHead = adminHtml.match(/<head[^>]*>[\s\S]*?<\/head>/i)?.[0] ?? adminHtml.slice(0, 4000);
+  assert(`${rel} noindex,nofollow,noarchive`, /noindex,nofollow,noarchive/i.test(adminHead));
+  assert(`${rel} read-only admin marker`, adminHtml.includes('data-gosaki-read-only-admin="true"'));
+}
+assert(
+  "__admin-staging-shell absent",
+  !exists(path.join(publicDistRel, "__admin-staging-shell")),
+);
 
 const publicFiles = walkRelativeFiles(publicDistAbs);
 assert(
@@ -210,7 +230,7 @@ if (publicFiles.length === DOCUMENTED_PRODUCTION_PUBLIC_DIST_FILE_COUNT) {
     `NOTE public-dist file count ${publicFiles.length} (baseline ${DOCUMENTED_PRODUCTION_PUBLIC_DIST_FILE_COUNT}) — allowed if manifest matches`,
   );
 }
-assert("no admin in file list", !publicFiles.some((f) => f.startsWith("admin/")));
+assert("no musician-basic shell in file list", !publicFiles.some((f) => f.includes("__admin-staging-shell")));
 
 for (const rel of KEY_ROUTES) {
   assert(`key route ${rel}`, exists(path.join(packageRel, rel)));
@@ -229,10 +249,16 @@ for (const rel of SEO_SAMPLE_ROUTES) {
   );
   assert(`${rel} canonical production`, /rel="canonical" href="https:\/\/www\.gosaki-piano\.com/i.test(headHtml));
   assert(`${rel} og:url production`, /property="og:url" content="https:\/\/www\.gosaki-piano\.com/i.test(headHtml));
+  assert(
+    `${rel} public nav has no /admin/`,
+    !/href=["'][^"']*\/admin\//i.test(html),
+  );
 }
 
 const robots = read(path.join(packageRel, "public-dist/robots.txt"));
 assert("robots sitemap production", robots.includes(`${PRODUCTION_URL}/sitemap-index.xml`));
+assert("robots Disallow /admin/", /Disallow:\s*\/admin\//m.test(robots));
+assert("robots Allow /", /Allow:\s*\/\s*$/m.test(robots));
 
 const sitemapIndex = read(path.join(packageRel, "public-dist/sitemap-index.xml"));
 assert("sitemap-index production URLs", sitemapIndex.includes(PRODUCTION_URL));
@@ -255,14 +281,14 @@ assert(
   manifest.fileCount >= MIN_PRODUCTION_PUBLIC_DIST_FILE_COUNT,
   String(manifest.fileCount),
 );
-assert("manifest adminExcludedFromPackage", manifest.adminExcludedFromPackage === true);
-assert("manifest includeGosakiReadOnlyAdmin false", manifest.includeGosakiReadOnlyAdmin === false);
-assert("manifest includesAdmin false", manifest.includesAdmin === false);
+assert("manifest adminExcludedFromPackage false", manifest.adminExcludedFromPackage === false);
+assert("manifest includeGosakiReadOnlyAdmin true", manifest.includeGosakiReadOnlyAdmin === true);
+assert("manifest includesAdmin true", manifest.includesAdmin === true);
 if (manifest.includeReadOnlyAdmin !== undefined) {
-  assert("manifest includeReadOnlyAdmin false if present", manifest.includeReadOnlyAdmin === false);
+  assert("manifest includeReadOnlyAdmin true if present", manifest.includeReadOnlyAdmin === true);
 } else {
   console.log(
-    "NOTE manifest omit includeReadOnlyAdmin — canonical: includesAdmin=false adminExcludedFromPackage=true",
+    "NOTE manifest omit includeReadOnlyAdmin — canonical: includesAdmin=true adminExcludedFromPackage=false",
   );
 }
 assert("manifest targetEnvironment production", manifest.targetEnvironment === "production");
@@ -286,6 +312,7 @@ assert(
 );
 
 const sitemap0 = read(path.join(packageRel, "public-dist/sitemap-0.xml"));
+assert("sitemap-0 has no /admin/", !sitemap0.includes("/admin/"));
 const sitemapViolations = findSitemapSafetyViolations(sitemap0);
 if (sitemapViolations.length === 0) {
   assert("sitemap excludes admin/api/preview/draft/legacy root", true);
@@ -306,11 +333,12 @@ if (publicDistSafetyErrors.length === 0) {
 
 const packageTree = walkRelativeFiles(packageAbs).join("\n");
 assert("no sariswing production ref", !packageTree.includes(SARISWING_PRODUCTION_SUPABASE_REF));
+assert("admin uses kit supabase ref", packageTree.includes(STAGING_KIT_SUPABASE_REF));
 
 assert("no FTP upload evidence", !doc.includes("ftpUploadExecuted: true"));
 assert("no DNS change evidence", !doc.includes("dnsChangeExecuted: true"));
 assert("no DB write evidence", !doc.includes("cursorDbWriteExecuted: true"));
 
-console.log(`\nG-20i3 production package admin exclusion verifier: ${passed} passed, ${failed} failed`);
+console.log(`\nG-20i3 production package admin inclusion verifier: ${passed} passed, ${failed} failed`);
 console.log(`public-dist files: ${publicFiles.length}`);
 process.exit(failed > 0 ? 1 : 0);

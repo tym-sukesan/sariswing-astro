@@ -99,8 +99,8 @@ const pilotStaging = registry.sites[PILOT_SAMPLE_STATIC_SITE_KEY].packageProfile
 assert("gosaki staging includeReadOnlyAdmin true", gosakiStaging.includeReadOnlyAdmin === true);
 assert("gosaki staging includesAdmin true", gosakiStaging.includesAdmin === true);
 assert("gosaki staging legacy alias true", gosakiStaging.includeGosakiReadOnlyAdmin === true);
-assert("gosaki production includeReadOnlyAdmin false", gosakiProduction.includeReadOnlyAdmin === false);
-assert("gosaki production includesAdmin false", gosakiProduction.includesAdmin === false);
+assert("gosaki production includeReadOnlyAdmin true", gosakiProduction.includeReadOnlyAdmin === true);
+assert("gosaki production includesAdmin true", gosakiProduction.includesAdmin === true);
 assert("pilot staging includeReadOnlyAdmin false", pilotStaging.includeReadOnlyAdmin === false);
 assert("pilot staging includesAdmin false", pilotStaging.includesAdmin === false);
 assert("gosaki cmsFeatures readOnlyAdmin true", registry.sites[GOSAKI_SITE_KEY].cmsFeatures?.readOnlyAdmin === true);
@@ -113,15 +113,15 @@ const pilotStagingProfile = resolveSitePackageBuildProfile(PILOT_SAMPLE_STATIC_S
 assert("resolve staging includeReadOnlyAdmin true", gosakiStagingProfile.includeReadOnlyAdmin === true);
 assert("resolve staging includesAdmin true", gosakiStagingProfile.includesAdmin === true);
 assert("resolve staging legacy alias mirrors generic", gosakiStagingProfile.includeGosakiReadOnlyAdmin === gosakiStagingProfile.includeReadOnlyAdmin);
-assert("resolve production includeReadOnlyAdmin false", gosakiProductionProfile.includeReadOnlyAdmin === false);
-assert("resolve production includesAdmin false", gosakiProductionProfile.includesAdmin === false);
+assert("resolve production includeReadOnlyAdmin true", gosakiProductionProfile.includeReadOnlyAdmin === true);
+assert("resolve production includesAdmin true", gosakiProductionProfile.includesAdmin === true);
 assert("resolve pilot includeReadOnlyAdmin false", pilotStagingProfile.includeReadOnlyAdmin === false);
 assert("resolve pilot includesAdmin false", pilotStagingProfile.includesAdmin === false);
 
 const stagingMeta = resolvePackageManifestMetaFromRegistry(GOSAKI_SITE_KEY, "staging");
 const productionMeta = resolvePackageManifestMetaFromRegistry(GOSAKI_SITE_KEY, "production");
 assert("manifest meta staging includesAdmin true", stagingMeta.includesAdmin === true);
-assert("manifest meta production includesAdmin false", productionMeta.includesAdmin === false);
+assert("manifest meta production includesAdmin true", productionMeta.includesAdmin === true);
 
 const directFlags = resolvePackageAdminFlags(GOSAKI_SITE_KEY, "staging", {
   packageOverlay: gosakiStaging,
@@ -130,7 +130,7 @@ assert("resolvePackageAdminFlags staging true", directFlags.includeReadOnlyAdmin
 const prodFlags = resolvePackageAdminFlags(GOSAKI_SITE_KEY, "production", {
   packageOverlay: gosakiProduction,
 });
-assert("resolvePackageAdminFlags production forced false", prodFlags.includeReadOnlyAdmin === false && prodFlags.includesAdmin === false);
+assert("resolvePackageAdminFlags production overlay true", prodFlags.includeReadOnlyAdmin === true && prodFlags.includesAdmin === true);
 
 const gosakiCms = resolveCmsFeatures(GOSAKI_SITE_KEY);
 const pilotCms = resolveCmsFeatures(PILOT_SAMPLE_STATIC_SITE_KEY);
@@ -139,7 +139,7 @@ assert("pilot readOnlyAdmin cms feature off", pilotCms.readOnlyAdmin === false);
 assert("gosaki isCmsFeatureEnabled readOnlyAdmin", isCmsFeatureEnabled(GOSAKI_SITE_KEY, "readOnlyAdmin") === true);
 assert("pilot isCmsFeatureEnabled readOnlyAdmin off", isCmsFeatureEnabled(PILOT_SAMPLE_STATIC_SITE_KEY, "readOnlyAdmin") === false);
 
-const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
+const hooksSrc = read("tools/static-to-astro/scripts/lib/gosaki-site-generator-hooks-adapter.mjs");
 assert("hooks gated by readOnlyAdmin cms feature", hooksSrc.includes('isCmsFeatureEnabled(siteKey, "readOnlyAdmin"'));
 
 const buildCore = read("tools/static-to-astro/scripts/lib/build-site-package-core.mjs");

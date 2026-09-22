@@ -28,10 +28,12 @@
 /**
  * @param {{
  *   siteKey: string,
+ *   profileName?: string,
  *   processEnv?: NodeJS.ProcessEnv | Record<string, string | undefined>,
  *   resolveBuildEnv?: (ctx: {
  *     env: NodeJS.ProcessEnv | Record<string, string | undefined>,
  *     siteKey: string,
+ *     profileName?: string,
  *   }) => ResolveBuildEnvResult | void | null | undefined,
  *   beforeFirstFilesystemWrite?: (ctx: {
  *     env: NodeJS.ProcessEnv | Record<string, string | undefined>,
@@ -58,7 +60,11 @@ export function executeSitePackageBuildPrefights(opts) {
 
   if (typeof opts.resolveBuildEnv === "function") {
     resolveBuildEnvCalls += 1;
-    const out = opts.resolveBuildEnv({ env: { ...buildEnv }, siteKey });
+    const out = opts.resolveBuildEnv({
+      env: { ...buildEnv },
+      siteKey,
+      profileName: opts.profileName,
+    });
     if (out == null) {
       // Explicit no-op from adapter (rare) — keep prior env.
     } else if (typeof out !== "object" || out.buildEnv == null || typeof out.buildEnv !== "object") {

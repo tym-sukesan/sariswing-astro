@@ -58,9 +58,9 @@
           "stagingBaseUrl": null,
           "deployBase": "/",
           "intendedRemotePath": "TBD_G-20i",
-          "includesAdmin": false,
-          "includeReadOnlyAdmin": false,
-          "includeGosakiReadOnlyAdmin": false,
+          "includesAdmin": true,
+          "includeReadOnlyAdmin": true,
+          "includeGosakiReadOnlyAdmin": true,
           "postBuildVerifier": {
             "script": "scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
             "argsMode": "none"

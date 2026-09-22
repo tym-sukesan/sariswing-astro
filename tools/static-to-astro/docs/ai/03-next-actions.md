@@ -1,14 +1,31 @@
-Last updated: 2026-08-19
+Last updated: 2026-09-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** **`gosaki-ciao-jp-final-precutover-preview-docs-commit-push`** — commit regen + live QA docs + AI SoT. No FTP. No production package.
-2. **Live preview:** PASS / CLOSED. `https://gotosaki.ciao.jp/gosaki-piano/` reflects HEAD `be2d64d` package (Sept 17 + Home hide).
-3. **Operator (known):** Lolipop mapping/SSL/DNS/EMAIL · HubSpot www allow + thank-you · client signoff (preview ready to show).
-4. **Redirect:** planning COMPLETE. **`READY_FOR_REDIRECT_IMPLEMENTATION: false`**.
-5. **Data:** September INSERT **CLOSED**. Do not re-run SQL. `001` unpublished.
-6. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** Operator **commit** worktree `gosaki-production-admin-minimum-implementation`, then official `build:gosaki:production` + verify/freshness/preflight at **clean HEAD**. Cursor did not commit.
+2. **Upload:** after clean package PASS — operator FileZilla of `gosaki-piano-production/public-dist/` contents. No FTP `--apply`.
+3. **Save:** still disarmed. Schedule owner Save still `is_admin`. Do not arm this phase.
+4. **Original repo:** leave dirty CMS Kit diffs untouched.
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki production admin minimum implementation (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | CODE COMPLETE · package blocked by git-clean |
+| Worktree | `~/sariswing-astro-gosaki-prestage` |
+| Dry-run | PASS (`includeReadOnlyAdmin: true`) |
+| Official build | STOP git-clean |
+| READY_FOR_OPERATOR_UPLOAD | **false** |
+| Next | operator commit → official production pipeline |
+
+```txt
+GOSAKI_PRODUCTION_ADMIN_MINIMUM_IMPLEMENTATION_CODE_COMPLETE: true
+READY_FOR_OPERATOR_UPLOAD: false
+BLOCKED_BY_GIT_CLEAN: true
+SAVE_ARM: false
+```
 
 ## 0. Gosaki ciao.jp final pre-cutover preview live QA (2026-08-19)
 

@@ -5,6 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-production-admin-minimum-implementation CODE COMPLETE / PACKAGE BLOCKED BY GIT CLEAN
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD start: 55898a5520393a9114ab40cefbc8e12aab748dd1
+BRANCH: hotfix/gosaki-disable-test-youtube
+PRODUCTION_INCLUDE_READONLY_ADMIN: true
+CIAO_PREVIEW_ADMIN: false
+SAVE_ARM: false
+BACKEND_REF: kmjqppxjdnwwrtaeqjta
+DRY_RUN: PASS
+OFFICIAL_BUILD: STOP git-clean (commit forbidden this phase)
+READY_FOR_OPERATOR_UPLOAD: false
+ORIGINAL_REPO_DIRTY_UNTOUCHED: true
+RECOMMENDED_NEXT: operator commit then official build:gosaki:production
+Doc: tools/static-to-astro/docs/gosaki-production-admin-minimum-implementation.md
+```
+
+## Gosaki production admin minimum implementation (2026-09-22)
+
+- Production package flags now include `/admin/` (login + read). ciao-preview still excluded.
+- robots `Disallow: /admin/`. Sitemap still excludes `/admin/`.
+- Production bake sets YouTube/About `PATH_ENABLED=true`. Save arms not set.
+- Dry-run PASS. Official generate blocked: dirty tree + no commit this phase.
+- Original `~/sariswing-astro` dirty CMS Kit diffs not modified.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-ciao-jp-final-precutover-preview-live-qa PASS / CLOSED
 HEAD baseline: be2d64d029f251c1a7ab92c767cdf518b56252af
 ORIGIN_MAIN: be2d64d029f251c1a7ab92c767cdf518b56252af

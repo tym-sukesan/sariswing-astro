@@ -178,12 +178,12 @@ assert(
 );
 assert("production deployBase /", resolvedProfile.deployBase === "/");
 assert(
-  "production includeReadOnlyAdmin false",
-  resolvedProfile.includeReadOnlyAdmin === false,
+  "production includeReadOnlyAdmin true",
+  resolvedProfile.includeReadOnlyAdmin === true,
 );
 assert(
-  "production includesAdmin false",
-  resolvedProfile.includesAdmin === false,
+  "production includesAdmin true",
+  resolvedProfile.includesAdmin === true,
 );
 assert(
   "production manualUploadOut separate",
@@ -215,12 +215,12 @@ assert(
   productionDeploy.supabaseProjectRef !== SARISWING_PRODUCTION_SUPABASE_REF,
 );
 assert(
-  "registry production includesAdmin false",
-  productionRegistry.includesAdmin === false,
+  "registry production includesAdmin true",
+  productionRegistry.includesAdmin === true,
 );
 assert(
-  "registry production includeReadOnlyAdmin false",
-  productionRegistry.includeReadOnlyAdmin === false,
+  "registry production includeReadOnlyAdmin true",
+  productionRegistry.includeReadOnlyAdmin === true,
 );
 assert(
   "manifest meta production targetEnvironment",
@@ -303,8 +303,8 @@ if (fs.existsSync(prodManifestPath)) {
     prodManifest.targetEnvironment === "production",
   );
   assert(
-    "on-disk prod manifest includesAdmin false",
-    prodManifest.includesAdmin === false,
+    "on-disk prod manifest includesAdmin true",
+    prodManifest.includesAdmin === true,
   );
   const head = headShort();
   if (prodManifest.sourceCommit?.startsWith(head)) {

@@ -45,6 +45,7 @@ export function formatGosakiPackageBuildEnvPreflightError(validation) {
  * @returns {undefined | ((ctx: {
  *   env?: NodeJS.ProcessEnv | Record<string, string | undefined>,
  *   siteKey?: string,
+ *   profileName?: string,
  * }) => { buildEnv: NodeJS.ProcessEnv })}
  */
 export function createGosakiResolveBuildEnv(siteKey) {
@@ -81,12 +82,26 @@ export function createGosakiResolveBuildEnv(siteKey) {
     }
 
     const base = ctx.env ?? process.env;
+    const productionAdminPathEnv =
+      ctx.profileName === "production"
+        ? {
+            PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED: "true",
+            PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED: "true",
+          }
+        : {};
+    if (ctx.profileName === "production") {
+      console.log("PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED: true (production bake)");
+      console.log("PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED: true (production bake)");
+      console.log("Save arms: not set (must remain false)");
+    }
+
     return {
       buildEnv: {
         ...base,
         PUBLIC_SUPABASE_URL: env.PUBLIC_SUPABASE_URL,
         PUBLIC_SUPABASE_ANON_KEY: env.PUBLIC_SUPABASE_ANON_KEY,
         PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT: env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT,
+        ...productionAdminPathEnv,
       },
     };
   };

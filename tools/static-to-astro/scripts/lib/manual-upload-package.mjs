@@ -107,7 +107,7 @@ export function validatePublicDistForManualUpload(publicDistDir, opts = {}) {
   }
 
   const adminPresent = fs.existsSync(path.join(abs, "admin"));
-  if (targetEnvironment === "production" || targetEnvironment === CIAO_PREVIEW_PROFILE_NAME) {
+  if (targetEnvironment === CIAO_PREVIEW_PROFILE_NAME) {
     if (adminPresent) {
       errors.push(
         `admin/ must not exist in ${targetEnvironment} public-dist`,
@@ -115,6 +115,15 @@ export function validatePublicDistForManualUpload(publicDistDir, opts = {}) {
     }
     if (fs.existsSync(path.join(abs, "__admin-staging-shell"))) {
       errors.push(`__admin-staging-shell/ must not exist in ${targetEnvironment} public-dist`);
+    }
+  } else if (targetEnvironment === "production") {
+    if (fs.existsSync(path.join(abs, "__admin-staging-shell"))) {
+      errors.push("__admin-staging-shell/ must not exist in production public-dist");
+    }
+    if (!adminPresent) {
+      errors.push("admin/ must exist in production public-dist");
+    } else if (!detectGosakiReadOnlyAdminInPublicDir(abs)) {
+      errors.push("production admin/ must be Gosaki read-only admin (G-11b marker)");
     }
   } else if (adminPresent) {
     if (!detectGosakiReadOnlyAdminInPublicDir(abs)) {
@@ -172,8 +181,7 @@ export function buildManualUploadManifest(meta) {
   const intendedRemotePath = meta.intendedRemotePath ?? deployBase;
   const targetEnvironment = meta.targetEnvironment ?? "staging";
   const packageProfileName = meta.packageProfileName ?? targetEnvironment;
-  const adminExcluded =
-    targetEnvironment === "production" || targetEnvironment === CIAO_PREVIEW_PROFILE_NAME;
+  const adminExcluded = targetEnvironment === CIAO_PREVIEW_PROFILE_NAME;
   const includesAdmin =
     meta.includesAdmin === true ||
     (meta.includeReadOnlyAdmin === true && !adminExcluded) ||
@@ -247,7 +255,7 @@ export function formatReadmeUpload(opts) {
       ? CIAO_PREVIEW_PROFILE_NAME
       : "staging";
   const adminLine = includesAdmin
-    ? `${base}admin/          (G-11b read-only CMS — staging only)`
+    ? `${base}admin/          (G-11b read-only CMS — login/read; Save disarmed)`
     : `${base}admin/          (must NOT exist in this package)`;
 
   const postUploadChecks = isProduction
@@ -258,7 +266,8 @@ export function formatReadmeUpload(opts) {
 - ${url}robots.txt
 - ${url}sitemap-index.xml
 
-Check: HTTP 200, **no** noindex on public pages, canonical / og:url use **www.gosaki-piano.com**.`
+Check: HTTP 200, **no** noindex on public pages, canonical / og:url use **www.gosaki-piano.com**.
+${includesAdmin ? `- ${url}admin/ (login/read CMS; noindex; not in public nav)` : ""}`
     : isCiaoPreview
       ? `- ${url}
 - ${url}about/
@@ -465,7 +474,11 @@ export function formatUploadChecklist(opts) {
 - [ ] \`robots.txt\` references production sitemap
 - [ ] HTML pages have **no** noindex
 - [ ] canonical / og:url use **www.gosaki-piano.com** (not staging host)
-- [ ] \`/admin/\` returns 404 (production must not expose admin)`
+- [ ] \`/admin/\` HTTP 200 (login/read CMS)
+- [ ] admin pages have noindex,nofollow,noarchive
+- [ ] public nav has **no** /admin/ link
+- [ ] \`robots.txt\` Disallow: /admin/
+- [ ] sitemap does **not** list /admin/`
     : isCiaoPreview
       ? `- [ ] Top page HTTP 200 — ${url}
 - [ ] \`/gosaki-piano/about/\` HTTP 200
@@ -601,7 +614,7 @@ export function createManualUploadPackage(opts) {
   }
 
   const includesAdmin =
-    targetEnvironment === "production" || targetEnvironment === CIAO_PREVIEW_PROFILE_NAME
+    targetEnvironment === CIAO_PREVIEW_PROFILE_NAME
       ? false
       : opts.includeReadOnlyAdmin === true ||
         opts.includeGosakiReadOnlyAdmin === true ||

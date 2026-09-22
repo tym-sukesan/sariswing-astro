@@ -147,8 +147,8 @@ assert(
 );
 assert("production profile deployBase /", production.deployBase === "/");
 assert(
-  "production includeReadOnlyAdmin false",
-  production.includeReadOnlyAdmin === false,
+  "production includeReadOnlyAdmin true",
+  production.includeReadOnlyAdmin === true,
 );
 assert(
   "production manualUploadOut separate",

@@ -186,12 +186,31 @@ export function verifySitePackage(options) {
   }
 
   if (meta.targetEnvironment === "production") {
-    if (fs.existsSync(path.join(publicDist, "admin"))) {
-      errors.push("production public-dist must not contain admin/");
+    if (meta.includesAdmin !== true) {
+      errors.push("production package must include admin (includesAdmin=true)");
+    }
+    const adminIndex = path.join(publicDist, "admin/index.html");
+    if (!fs.existsSync(adminIndex)) {
+      errors.push("production public-dist must contain admin/index.html");
+    } else {
+      const html = fs.readFileSync(adminIndex, "utf8");
+      if (!html.includes('data-gosaki-read-only-admin="true"')) {
+        errors.push("production admin/index.html missing read-only admin marker");
+      }
+    }
+    for (const rel of [
+      "admin/schedule/index.html",
+      "admin/discography/index.html",
+      "admin/youtube/index.html",
+      "admin/about/index.html",
+    ]) {
+      if (!fs.existsSync(path.join(publicDist, rel))) {
+        errors.push(`production public-dist must contain ${rel}`);
+      }
     }
     const files = walkRelativeFiles(publicDist);
-    if (files.some((f) => f.startsWith("admin/"))) {
-      errors.push("production public-dist contains admin files");
+    if (files.some((f) => f.includes("__admin-staging-shell"))) {
+      errors.push("production public-dist contains __admin-staging-shell");
     }
   }
 
@@ -200,6 +219,9 @@ export function verifySitePackage(options) {
     const sitemap = fs.readFileSync(sitemapPath, "utf8");
     if (meta.targetEnvironment === "staging" && sitemap.includes("/admin/")) {
       errors.push("staging sitemap must not include /admin/");
+    }
+    if (meta.targetEnvironment === "production" && sitemap.includes("/admin/")) {
+      errors.push("production sitemap must not include /admin/");
     }
     for (const violation of findSitemapSafetyViolations(sitemap)) {
       errors.push(`sitemap safety: ${violation}`);

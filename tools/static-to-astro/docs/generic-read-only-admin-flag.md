@@ -11,7 +11,7 @@ Replace Gosaki-only naming (`includeGosakiReadOnlyAdmin`) with a generic flag re
 | Profile | `includesAdmin` | `includeReadOnlyAdmin` |
 | --- | --- | --- |
 | Gosaki staging | **true** | **true** |
-| Gosaki production | **false** | **false** |
+| Gosaki production | **true** | **true** |
 | Pilot staging | **false** | **false** |
 
 ## Flag locations
@@ -46,12 +46,12 @@ Gated in `site-generator-hooks.mjs` via `isCmsFeatureEnabled(siteKey, "readOnlyA
 
 `resolvePackageAdminFlags(siteKey, profileName)`:
 
-1. `production` profile → always `{ includeReadOnlyAdmin: false, includesAdmin: false }`
+1. `ciao-preview` profile → always `{ includeReadOnlyAdmin: false, includesAdmin: false }`
 2. `packageProfiles.includeReadOnlyAdmin`
 3. `packageProfiles.includeGosakiReadOnlyAdmin` (legacy)
 4. `packageProfiles.includesAdmin`
 5. Deploy profile `includeReadOnlyAdmin` / `includeGosakiReadOnlyAdmin`
-6. Gosaki non-production default `true` (backward compat)
+6. Gosaki non-ciao-preview default `true` (backward compat)
 7. Other sites default `false`
 
 ## Pipeline integration
@@ -62,21 +62,21 @@ Gated in `site-generator-hooks.mjs` via `isCmsFeatureEnabled(siteKey, "readOnlyA
 | Static-public verify | `static-public-artifact-verifier.mjs` | `--include-read-only-admin` (legacy `--include-gosaki-read-only-admin`) |
 | Manual-upload MANIFEST | `manual-upload-package.mjs` | `includesAdmin` + `includeReadOnlyAdmin` |
 | Build log | `build-site-package-core.mjs` | `includeReadOnlyAdmin:` |
-| Production validation | `site-registry.mjs` | requires `includeReadOnlyAdmin=false` or legacy alias |
+| Production validation | `site-registry.mjs` | ciao-preview requires `includeReadOnlyAdmin=false` |
 
 ## Sitemap safety (unchanged — G-20t1)
 
 Admin HTML may exist in **staging** packages but must **never** appear in sitemaps:
 
 - `scripts/lib/sitemap-exclusions.mjs` — `/admin/` excluded
-- `verify-site-package-core.mjs` — staging sitemap must not list `/admin/`
-- Production packages omit `admin/` entirely (`includeReadOnlyAdmin: false`)
+- `verify-site-package-core.mjs` — staging/production sitemap must not list `/admin/`
+- Production packages include `admin/` (`includeReadOnlyAdmin: true`) with noindex + robots `Disallow: /admin/`
 
 ## Adding a new site
 
 1. Set `cmsFeatures.readOnlyAdmin` — `true` if site uses read-only admin inject hooks; else `false`.
 2. Set `packageProfiles.staging.includeReadOnlyAdmin` — usually `true` for musician CMS Kit staging previews; `false` for static-only pilots.
-3. Set `packageProfiles.production.includeReadOnlyAdmin` — **always `false`** for public production uploads.
+3. Set `packageProfiles.production.includeReadOnlyAdmin` — `true` for Gosaki hosted `/admin/`; keep `false` for sites without production CMS.
 4. Optional legacy alias `includeGosakiReadOnlyAdmin` — same value as generic flag if needed for old scripts.
 
 ## Upload rules (unchanged)
@@ -106,6 +106,6 @@ npm run verify:current-active-regression
 ```txt
 genericReadOnlyAdminFlagComplete: true
 gosakiStagingIncludesAdmin: true
-gosakiProductionExcludesAdmin: true
+gosakiProductionIncludesAdmin: true
 pilotStagingExcludesAdmin: true
 ```

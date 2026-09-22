@@ -1,7 +1,9 @@
-Last updated: 2026-08-19
+Last updated: 2026-09-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki production admin minimum implementation (2026-09-22):** **CODE COMPLETE / PACKAGE BLOCKED** — Phase `gosaki-production-admin-minimum-implementation` · worktree `sariswing-astro-gosaki-prestage` HEAD start `55898a55` · production `includeReadOnlyAdmin: true` · ciao-preview still excluded · robots `Disallow: /admin/` · YouTube/About production bake PATH_ENABLED true · Save arm **false** · dry-run **PASS** · official `build:gosaki:production` **STOP git-clean** (commit forbidden this phase) · original repo dirty diffs **untouched** · backend `kmjqppxjdnwwrtaeqjta` · Doc: `gosaki-production-admin-minimum-implementation.md`.
 
 **Gosaki ciao.jp final pre-cutover preview live QA (2026-08-19):** **PASS / CLOSED (read-only)** — Phase `gosaki-ciao-jp-final-precutover-preview-live-qa` · HEAD `be2d64d` · operator FileZilla overwrite recorded · live Home THIS WEEK **0** · Sept hub/month **200** / **17** cards · legacy stub **200** · wixstatic **0** · Admin **404** · HubSpot kept · `PUBLIC_CUTOVER_BLOCKERS_FROM_PREVIEW: none` · `READY_FOR_CLIENT_SIGNOFF: true` · `READY_TO_WAIT_FOR_LOLIPOP_ADMIN: true` · Next Primary: `gosaki-ciao-jp-final-precutover-preview-docs-commit-push` · Doc: `gosaki-ciao-jp-final-precutover-preview-live-qa.md`.
 

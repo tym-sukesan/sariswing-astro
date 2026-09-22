@@ -30,12 +30,12 @@ function isExplicitFalse(value) {
  * Resolve read-only admin inclusion for a site package profile.
  *
  * Priority:
- * 1. production / ciao-preview → always false
+ * 1. ciao-preview → always false
  * 2. packageProfiles.includeReadOnlyAdmin (generic)
  * 3. packageProfiles.includeGosakiReadOnlyAdmin (legacy)
  * 4. packageProfiles.includesAdmin (manifest-oriented)
  * 5. deploy profile includeReadOnlyAdmin / includeGosakiReadOnlyAdmin
- * 6. Gosaki non-production default true (backward compat)
+ * 6. Gosaki non-ciao-preview default true (backward compat)
  *
  * @param {string} siteKey
  * @param {string} profileName
@@ -43,7 +43,7 @@ function isExplicitFalse(value) {
  * @returns {PackageAdminFlags}
  */
 export function resolvePackageAdminFlags(siteKey, profileName, sources = {}) {
-  if (profileName === "production" || profileName === "ciao-preview") {
+  if (profileName === "ciao-preview") {
     return { includeReadOnlyAdmin: false, includesAdmin: false };
   }
 

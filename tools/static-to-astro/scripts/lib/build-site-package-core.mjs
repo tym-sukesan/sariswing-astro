@@ -123,6 +123,7 @@ export function buildConvertCliArgs(siteKey, profileName, options = {}) {
  *   resolveBuildEnv?: (ctx: {
  *     env: NodeJS.ProcessEnv,
  *     siteKey: string,
+ *     profileName?: string,
  *   }) => { buildEnv: NodeJS.ProcessEnv } | void | null | undefined,
  *   beforeFirstFilesystemWrite?: (ctx: {
  *     env: NodeJS.ProcessEnv,
@@ -184,6 +185,7 @@ export function runSitePackageBuild(options) {
   try {
     const pref = executeSitePackageBuildPrefights({
       siteKey,
+      profileName,
       processEnv: process.env,
       resolveBuildEnv,
       beforeFirstFilesystemWrite,
@@ -243,9 +245,10 @@ export function runSitePackageBuild(options) {
     "--report",
     path.join("tools/static-to-astro", profile.staticPublicReportRel),
   ];
-  if (profile.includeReadOnlyAdmin === false) {
-    verifyArgs.push("--include-read-only-admin", "false");
-  }
+  verifyArgs.push(
+    "--include-read-only-admin",
+    profile.includeReadOnlyAdmin === true ? "true" : "false",
+  );
   verifyArgs.push("--site", siteKey);
   run("node", verifyArgs, buildEnv);
 

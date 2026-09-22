@@ -139,9 +139,9 @@ assert("production siteSlug", productionProfile.siteSlug === "gosaki-piano");
 assert("production publicBaseUrl", productionProfile.publicBaseUrl === PRODUCTION_PUBLIC_BASE);
 assert("production deployBase root", productionProfile.deployBase === "/");
 assert("production intendedRemotePath TBD", productionProfile.intendedRemotePath === "TBD_G-20i");
-assert("production includesAdmin false", productionProfile.includesAdmin === false);
-assert("production includeReadOnlyAdmin false", productionProfile.includeReadOnlyAdmin === false);
-assert("production includeGosakiReadOnlyAdmin false", productionProfile.includeGosakiReadOnlyAdmin === false);
+assert("production includesAdmin true", productionProfile.includesAdmin === true);
+assert("production includeReadOnlyAdmin true", productionProfile.includeReadOnlyAdmin === true);
+assert("production includeGosakiReadOnlyAdmin true", productionProfile.includeGosakiReadOnlyAdmin === true);
 assert("production manualUploadOut", productionProfile.manualUploadOut === "output/manual-upload/gosaki-piano-production");
 
 assert("gosaki wrapper matches registry staging baseUrl", stagingProfile.baseUrl === stagingViaRegistry.baseUrl);
@@ -155,7 +155,7 @@ assert("manifest meta staging targetEnvironment", stagingManifestMeta.targetEnvi
 assert("manifest meta staging packageProfileName", stagingManifestMeta.packageProfileName === "staging");
 assert("manifest meta staging publicBaseUrl", stagingManifestMeta.publicBaseUrl === STAGING_PUBLIC_BASE);
 assert("manifest meta production intendedRemotePath", productionManifestMeta.intendedRemotePath === "TBD_G-20i");
-assert("manifest meta production includesAdmin false", productionManifestMeta.includesAdmin === false);
+assert("manifest meta production includesAdmin true", productionManifestMeta.includesAdmin === true);
 
 const mockManifest = buildManualUploadManifest({
   siteSlug: stagingManifestMeta.siteSlug,

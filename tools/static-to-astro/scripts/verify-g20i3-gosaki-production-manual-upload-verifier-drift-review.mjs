@@ -96,9 +96,9 @@ assert(
   g20i3Script.includes("manifest fileCount matches public-dist"),
 );
 assert(
-  "G-20i3 manifest admin flags flexible",
+  "G-20i3 manifest admin flags included",
   g20i3Script.includes("adminExcludedFromPackage") &&
-    g20i3Script.includes("includeReadOnlyAdmin false if present"),
+    g20i3Script.includes("includeReadOnlyAdmin true if present"),
 );
 
 assert(

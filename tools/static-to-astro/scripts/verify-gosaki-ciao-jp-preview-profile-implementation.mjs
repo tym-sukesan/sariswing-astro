@@ -75,7 +75,7 @@ assert("staging deployBase unchanged", staging.deployBase === "/cms-kit-staging/
 assert("staging Admin still included", staging.includeReadOnlyAdmin === true);
 assert("staging publicBaseUrl weblike", staging.publicBaseUrl === "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/");
 assert("production deployBase /", production.deployBase === "/");
-assert("production Admin excluded", production.includeReadOnlyAdmin === false);
+assert("production Admin included", production.includeReadOnlyAdmin === true);
 assert("production publicBaseUrl www", production.publicBaseUrl === "https://www.gosaki-piano.com/");
 assert("production remote TBD", production.intendedRemotePath === "TBD_G-20i");
 
@@ -97,10 +97,10 @@ assert(
   }).includeReadOnlyAdmin === true,
 );
 assert(
-  "resolvePackageAdminFlags production always false",
+  "resolvePackageAdminFlags production overlay true",
   resolvePackageAdminFlags(GOSAKI_SITE_KEY, "production", {
     packageOverlay: { includeReadOnlyAdmin: true },
-  }).includeReadOnlyAdmin === false,
+  }).includeReadOnlyAdmin === true,
 );
 
 const origin = buildDeployOrigin(preview.baseUrl, preview.deployBase);
@@ -127,6 +127,7 @@ assert("robots no weblike", !/weblike\.jp/i.test(robots ?? ""));
 
 const prodRobots = generateRobotsTxt(production.baseUrl, production.deployBase);
 assert("production robots still Allow", /Allow:\s*\/\s*$/m.test(prodRobots ?? ""));
+assert("production robots Disallow /admin/", /Disallow:\s*\/admin\//m.test(prodRobots ?? ""));
 assert("production robots still Sitemap www", (prodRobots ?? "").includes("www.gosaki-piano.com"));
 
 const stagingRobots = generateRobotsTxt(staging.baseUrl, staging.deployBase);
@@ -202,7 +203,7 @@ const productionDry = spawnSync(
 assert("production dry-run still PASS", productionDry.status === 0);
 assert("production dry-run still www", (productionDry.stdout ?? "").includes("https://www.gosaki-piano.com"));
 assert("production dry-run deployBase /", (productionDry.stdout ?? "").includes("deployBase: /"));
-assert("production dry-run Admin false", (productionDry.stdout ?? "").includes("includeReadOnlyAdmin: false"));
+assert("production dry-run Admin true", (productionDry.stdout ?? "").includes("includeReadOnlyAdmin: true"));
 
 const pkg = JSON.parse(fs.readFileSync(path.join(TOOL_ROOT, "package.json"), "utf8"));
 assert("npm build ciao-preview dry-run", Boolean(pkg.scripts["build:gosaki:ciao-preview:dry-run"]));

@@ -212,12 +212,12 @@ function validateDeployProfileShape(profile, name) {
     throw new Error(`Profile "${name}" root deploy requires seo.productionIndexable=true`);
   }
 
-  if (name === "production" || name === CIAO_PREVIEW_PROFILE_NAME) {
+  if (name === CIAO_PREVIEW_PROFILE_NAME) {
     const adminOff =
       p.includeReadOnlyAdmin === false || p.includeGosakiReadOnlyAdmin === false;
     if (!adminOff) {
       throw new Error(
-        `Profile "${name}" must set includeReadOnlyAdmin=false (or legacy includeGosakiReadOnlyAdmin=false, G-20i3)`,
+        `Profile "${name}" must set includeReadOnlyAdmin=false (or legacy includeGosakiReadOnlyAdmin=false)`,
       );
     }
   }

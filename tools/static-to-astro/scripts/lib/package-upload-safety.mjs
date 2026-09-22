@@ -375,7 +375,10 @@ export function validatePackageManifestSafety(manifest, expectedEnvironment) {
   if (!manifest.sourceCommit) errors.push("sourceCommit missing");
 
   if (expectedEnvironment === "production") {
-    if (manifest.includesAdmin !== false) errors.push("production includesAdmin must be false");
+    if (manifest.includesAdmin !== true) errors.push("production includesAdmin must be true");
+    if (manifest.adminExcludedFromPackage === true) {
+      errors.push("production adminExcludedFromPackage must be false");
+    }
     const intended = String(manifest.intendedRemotePath ?? "");
     const deployBase = String(manifest.deployBase ?? "");
     if (intended !== deployBase && !/^TBD/i.test(intended)) {
@@ -409,8 +412,26 @@ export function validatePublicDistAdminSafety(publicDistDir, expectedEnvironment
   const files = walkRelativeFiles(publicDistDir);
 
   if (expectedEnvironment === "production") {
-    if (fs.existsSync(path.join(publicDistDir, "admin"))) errors.push("production public-dist must not contain admin/");
-    if (files.some((f) => f.startsWith("admin/"))) errors.push("production public-dist contains admin files");
+    const adminIndex = path.join(publicDistDir, "admin/index.html");
+    if (!fs.existsSync(adminIndex)) {
+      errors.push("production public-dist must contain admin/index.html");
+    } else {
+      const html = fs.readFileSync(adminIndex, "utf8");
+      if (!html.includes('data-gosaki-read-only-admin="true"')) {
+        errors.push("production admin/index.html missing read-only admin marker");
+      }
+    }
+    const requiredAdminRoutes = [
+      "admin/schedule/index.html",
+      "admin/discography/index.html",
+      "admin/youtube/index.html",
+      "admin/about/index.html",
+    ];
+    for (const rel of requiredAdminRoutes) {
+      if (!fs.existsSync(path.join(publicDistDir, rel))) {
+        errors.push(`production public-dist must contain ${rel}`);
+      }
+    }
     if (files.some((f) => f.includes("__admin-staging-shell"))) {
       errors.push("production public-dist contains __admin-staging-shell");
     }

@@ -3,10 +3,44 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (high-risk, separate approval):** Schedule Save arm — dual-gate only. Review: `SAFE_TO_ARM: true` · **not armed**. Required form: `承認します。この操作を1回だけ実行してください。`
-2. Customer UI: `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` official production generate (mutex armedCount=1) → FileZilla `public-dist/` → then `secrets set GOSAKI_SCHEDULE_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta`.
-3. First live Save: description-only on one existing row + restore. Do not arm Discography/YouTube/About.
+1. **Primary:** Commit pending docs (git-clean) then Schedule UI-arm production rebuild. Production log `Save arms: not set` is hardcoded — trust mutex `armedCount=1`.
+2. Command: export `PUBLIC_SUPABASE_URL` + `PUBLIC_SUPABASE_ANON_KEY` from `tools/static-to-astro/.env.local`, then `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true npm run build:gosaki:production`.
+3. FileZilla `public-dist/` · then separate approval for Edge Secret. Do not arm Discography/YouTube/About.
 4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Schedule UI arm env final check (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| Correct env | `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` |
+| `Save arms: not set` | **hardcoded production log · ignore** |
+| Authoritative | `[save-arm-mutex] … armedCount=1 · gosaki-schedule` |
+| Package | **intact** · fileCount 53 · arm false |
+| READY_TO_REBUILD | **true** after docs commit |
+
+```txt
+SCHEDULE_UI_ARM_ENV_CHECK_RESULT: PASS
+READY_TO_REBUILD: true
+REBUILD_EXECUTED: false
+```
+
+## 0. Gosaki production build env resolution (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| READY_TO_REBUILD | **true** (not executed) |
+| Loader files | worktree git-root `.env` / `.env.local` (**absent**) |
+| Operator source | `tools/static-to-astro/.env.local` public keys only (kmjq) |
+| CWD vs file load | CWD does not change loader paths; npm script requires tools CWD |
+| Existing package | **intact** · fileCount 53 · Save arm false |
+
+```txt
+BUILD_ENV_RESOLUTION_RESULT: PASS
+READY_TO_REBUILD: true
+REBUILD_EXECUTED: false
+```
 
 ## 0. Gosaki Schedule Save arm final review (2026-09-22)
 

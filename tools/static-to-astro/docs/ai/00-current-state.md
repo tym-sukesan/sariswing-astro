@@ -3,6 +3,10 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki Schedule UI arm env final check (2026-09-22):** **READ-ONLY PASS** — Phase `gosaki-schedule-ui-arm-env-final-check` · env `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` **correct** · production log `Save arms: not set (must remain false)` is **hardcoded** (does not mean unarmed) · trust mutex `armedCount=1` / `gosaki-schedule` · git-clean needs docs commit · existing package **intact** · Doc: `gosaki-schedule-ui-arm-env-final-check.md`.
+
+**Gosaki production build env resolution (2026-09-22):** **READ-ONLY PASS / READY_TO_REBUILD true / NOT REBUILT** — Phase `gosaki-production-build-env-resolution` · preflight STOP = worktree git-root `.env`/`.env.local` absent · loader does not read `tools/static-to-astro/.env.local` · prior generate used inherited `process.env` · export `PUBLIC_SUPABASE_URL` + `PUBLIC_SUPABASE_ANON_KEY` from tools `.env.local` (kmjq · not whole-file source) · existing production package **intact** (`generatedAt` 2026-09-22T07:25:32Z · fileCount 53 · Save arm false) · Doc: `gosaki-production-build-env-resolution.md`.
+
 **Gosaki Schedule Save arm final review (2026-09-22):** **READ-ONLY PASS / SAFE_TO_ARM true / NOT ARMED** — Phase `gosaki-schedule-save-arm-final-review` · client `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` · Edge `GOSAKI_SCHEDULE_SAVE_ARMED=true` · dual-gate · mutex Schedule only · UI needs production rebuild+FileZilla · public HTML does **not** auto-reflect · Doc: `gosaki-schedule-save-arm-final-review.md`.
 
 **Gosaki Schedule Edge deploy final review (2026-09-22):** **READ-ONLY PASS / SAFE_TO_DEPLOY true / NOT DEPLOYED** — Phase `gosaki-schedule-edge-deploy-final-review` · function `gosaki-schedule-save-dry-run` from repo-root `supabase/functions/` · root↔tools **byte-eq** · HEAD `can_write_site` vs live `is_admin` · Save arm **must stay unset** · linked CLI is `vsbvnd` so `--project-ref kmjqppxjdnwwrtaeqjta` is mandatory · Doc: `gosaki-schedule-edge-deploy-final-review.md`.

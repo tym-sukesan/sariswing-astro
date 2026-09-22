@@ -5,6 +5,58 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-schedule-ui-arm-env-final-check READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 7cc2f724 + uncommitted docs
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_UI_ARM_ENV_CHECK_RESULT: PASS
+CORRECT_ENV: PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED
+HARDCODED_LOG: Save arms: not set (must remain false) — ignore
+AUTHORITATIVE: [save-arm-mutex] armedCount=1 gosaki-schedule
+EXISTING_PACKAGE_INTACT: true
+READY_TO_REBUILD: true (after docs commit)
+REBUILD_EXECUTED: false
+RECOMMENDED_NEXT: commit pending docs then PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true production generate
+Doc: tools/static-to-astro/docs/gosaki-schedule-ui-arm-env-final-check.md
+```
+
+## Gosaki Schedule UI arm env final check (2026-09-22)
+
+- READ-ONLY. Rebuild not executed.
+- Env name is correct. Production adapter **always** logs `Save arms: not set (must remain false)` and does not hardcode arms; operator flag passes via `process.env` → `...base`.
+- Mutex / Astro template read `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED === "true"`.
+- Git-clean currently STOP on 4 docs; commit all pending docs then rebuild.
+- Existing package intact (`b3ad1ebd` / fileCount 53 / arms false).
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-production-build-env-resolution READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 7cc2f72447622fa0eafed0238110acbe34324857
+BRANCH: hotfix/gosaki-disable-test-youtube
+BUILD_ENV_RESOLUTION_RESULT: PASS
+READY_TO_REBUILD: true
+REBUILD_EXECUTED: false
+ENV_SOURCE: tools/static-to-astro/.env.local PUBLIC_SUPABASE_URL + PUBLIC_SUPABASE_ANON_KEY (do not source whole file)
+LOADER: git-root .env / .env.local (absent in worktree) then process.env
+EXISTING_PACKAGE_INTACT: true
+RECOMMENDED_NEXT: PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true production generate with exported public keys
+Doc: tools/static-to-astro/docs/gosaki-production-build-env-resolution.md
+```
+
+## Gosaki production build env resolution (2026-09-22)
+
+- READ-ONLY. Rebuild / Secrets not executed.
+- Previous Cursor generate inherited `process.env` (likely original `~/sariswing-astro/.env.local`, kmjq). Worktree git-root env files are absent.
+- Package preflight does **not** load `tools/static-to-astro/.env.local` even when CWD is tools.
+- Operator must export only `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` from tools `.env.local`, then `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true npm run build:gosaki:production`.
+- Do not `source` whole `.env.local` (contains `SUPABASE_SERVICE_ROLE_KEY`). Do not copy original repo `.env` (vsbvnd).
+- Existing production package intact: `generatedAt` 2026-09-22T07:25:32Z · fileCount 53 · all Save arms false.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-schedule-save-arm-final-review READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: b3ad1ebd97ebc85b5893a46ad301372021415788

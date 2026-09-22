@@ -5,6 +5,118 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-schedule-save-arm-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: b3ad1ebd97ebc85b5893a46ad301372021415788
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_SAVE_ARM_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+CLIENT_FLAG: PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true
+EDGE_SECRET: GOSAKI_SCHEDULE_SAVE_ARMED=true
+DUAL_GATE: true
+PACKAGE_REBUILD_FOR_UI: true
+FILEZILLA_FOR_UI: true
+PUBLIC_AUTO_REFLECT: false
+RECOMMENDED_NEXT: explicit dual-gate Schedule arm on kmjq (not this review)
+Doc: tools/static-to-astro/docs/gosaki-schedule-save-arm-final-review.md
+```
+
+## Gosaki Schedule Save arm final review (2026-09-22)
+
+- READ-ONLY. Secrets / Save / rebuild not executed.
+- Customer UI needs **both** bake flag and Edge secret. Current production HTML is `data-gosaki-schedule-save-armed="false"`.
+- Mutex: Schedule only. Do not arm Discography/YouTube/About.
+- Public static pages do not auto-reflect DB Save.
+- Rollback: `secrets unset GOSAKI_SCHEDULE_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta`.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-schedule-edge-deploy-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: b3ad1ebd97ebc85b5893a46ad301372021415788
+BRANCH: hotfix/gosaki-disable-test-youtube
+EDGE_DEPLOY_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_DEPLOY: true
+DEPLOY_EXECUTED: false
+FUNCTION: gosaki-schedule-save-dry-run
+DEPLOY_FROM: supabase/functions/gosaki-schedule-save-dry-run/
+LINKED_CLI: vsbvndwuajjhnzpohghh
+DEPLOY_PROJECT_REF: kmjqppxjdnwwrtaeqjta
+SAVE_ARM: false (do not set GOSAKI_SCHEDULE_SAVE_ARMED)
+RECOMMENDED_NEXT: operator one-shot deploy with --project-ref kmjqppxjdnwwrtaeqjta
+Doc: tools/static-to-astro/docs/gosaki-schedule-edge-deploy-final-review.md
+```
+
+## Gosaki Schedule Edge deploy final review (2026-09-22)
+
+- READ-ONLY. Deploy / Secrets not executed.
+- Root handler/index **byte-eq** tools mirror. CLI cwd = repo root, not tools.
+- Live old: `rpc('is_admin')`. HEAD: `sites` + `can_write_site`. `site_slug=gosaki-piano` retained.
+- Linked CLI is vsbvnd — omitting `--project-ref` is forbidden.
+- After deploy (later): owner dry-run 200 / Save 403 `save_not_armed`.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-schedule-owner-update-rls-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: b3ad1ebd97ebc85b5893a46ad301372021415788
+BRANCH: hotfix/gosaki-disable-test-youtube
+RLS_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_APPLY: true
+APPLY_EXECUTED: false
+POLICY: schedules_site_writer_update
+TARGET: kmjqppxjdnwwrtaeqjta
+STOP_PRODUCTION: vsbvndwuajjhnzpohghh
+SAVE_ARM: false
+SCHEDULE_LIVE_EDGE_DEPLOYED: false
+RECOMMENDED_NEXT: operator PRECHECK then explicit one-shot apply on kmjq
+Doc: tools/static-to-astro/docs/gosaki-schedule-owner-update-rls-final-review.md
+```
+
+## Gosaki Schedule owner UPDATE RLS final review (2026-09-22)
+
+- READ-ONLY. SQL not executed.
+- Forward: CREATE POLICY `schedules_site_writer_update` only. No DROP/DELETE/TRUNCATE/ALTER TABLE.
+- Scope: `site_slug` → `sites` → `can_write_site` (owner|editor|platform_admin). Not hardcoded `gosaki-piano`.
+- `schedules_admin_all` retained. Rollback drops the new UPDATE policy only.
+- Apply still needs `承認します。この操作を1回だけ実行してください。` on kmjq after PRECHECK.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-production-cms-save-final-package PASS / READY FOR OPERATOR UPLOAD
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: b3ad1ebd97ebc85b5893a46ad301372021415788
+BRANCH: hotfix/gosaki-disable-test-youtube
+FINAL_PRODUCTION_CMS_PACKAGE_RESULT: PASS
+sourceCommit: b3ad1ebd97ebc85b5893a46ad301372021415788
+worktreeCleanAtGenerate: true
+BACKEND_REF: kmjqppxjdnwwrtaeqjta
+SAVE_ARM: false
+SCHEDULE_LIVE_EDGE_DEPLOYED: false
+UPDATE_RLS_APPLIED: false
+G20I3: 113 passed, 0 failed
+fileCount: 53
+READY_FOR_OPERATOR_UPLOAD: true
+FTP_APPLY: false
+RECOMMENDED_NEXT: operator FileZilla public-dist contents (no FTP --apply)
+Doc: tools/static-to-astro/docs/gosaki-production-cms-save-final-package.md
+```
+
+## Gosaki production CMS Save final package (2026-09-22)
+
+- Official `build:gosaki:production` at clean HEAD `b3ad1ebd` **PASS**.
+- Production admin: no `テスト環境`; chip `本番CMS｜保存内容は公開ページへ自動反映されません`.
+- `/admin/` 5 routes · noindex · robots Disallow · sitemap exclude.
+- Save arm false. Schedule live Edge not deployed. UPDATE RLS not applied.
+- Public 106 / Sep 18 / Oct 14 · test YouTube hidden · HubSpot/CSS/images held · G-20i3 113/0.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-production-verifier-false-fail-fix COMPLETE / PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: 078fa7343e776b6da5b4acca0f6c04cc738002a2 (uncommitted: Save-completion + G-20i3 verifier fix)

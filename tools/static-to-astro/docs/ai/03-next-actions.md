@@ -3,11 +3,83 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** Operator **commit** worktree (Save-completion + G-20i3 HTML-body kit-ref verifier fix). Cursor did not commit.
-2. **Then:** official `build:gosaki:production` at clean HEAD (banner bake). FileZilla `public-dist/` contents. No FTP `--apply`.
-3. **Save activation later (separate approvals):** apply `schedules_site_writer_update` on kmjq → deploy `gosaki-schedule-save-dry-run` from root (not linked CLI) → arm one module. Save arm **false** now.
-4. **Original repo:** leave dirty CMS Kit diffs untouched.
-5. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary (high-risk, separate approval):** Schedule Save arm — dual-gate only. Review: `SAFE_TO_ARM: true` · **not armed**. Required form: `承認します。この操作を1回だけ実行してください。`
+2. Customer UI: `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` official production generate (mutex armedCount=1) → FileZilla `public-dist/` → then `secrets set GOSAKI_SCHEDULE_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta`.
+3. First live Save: description-only on one existing row + restore. Do not arm Discography/YouTube/About.
+4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Schedule Save arm final review (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| SAFE_TO_ARM | **true** (dual-gate · later explicit approval) |
+| ARM_EXECUTED | **false** |
+| Client | `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` |
+| Secret | `GOSAKI_SCHEDULE_SAVE_ARMED=true` (kmjq only) |
+| Package/upload for UI | **required** |
+| Public auto-reflect | **false** |
+
+```txt
+SCHEDULE_SAVE_ARM_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+```
+
+## 0. Gosaki Schedule Edge deploy final review (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| Function | `gosaki-schedule-save-dry-run` |
+| Target | kmjq `kmjqppxjdnwwrtaeqjta` |
+| SAFE_TO_DEPLOY | **true** (exact `--project-ref` command + later explicit approval) |
+| DEPLOY_EXECUTED | **false** |
+| Save arm | **do not set** |
+
+```txt
+EDGE_DEPLOY_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_DEPLOY: true
+DEPLOY_EXECUTED: false
+```
+
+## 0. Gosaki Schedule owner UPDATE RLS final review (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| Policy | `schedules_site_writer_update` |
+| Target | kmjq `kmjqppxjdnwwrtaeqjta` |
+| SAFE_TO_APPLY | **true** (PRECHECK + later explicit approval) |
+| APPLY_EXECUTED | **false** |
+| Next | operator PRECHECK → apply once on kmjq |
+
+```txt
+RLS_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_APPLY: true
+APPLY_EXECUTED: false
+```
+
+## 0. Gosaki production CMS Save final package (2026-09-22)
+
+| Item | Value |
+| --- | --- |
+| Outcome | PASS · official production package generated |
+| HEAD / sourceCommit | `b3ad1ebd97ebc85b5893a46ad301372021415788` |
+| Worktree at generate | clean |
+| Save arm | **false** |
+| Schedule live Edge | **not deployed** |
+| G-20i3 | **113/0** |
+| fileCount | **53** |
+| READY_FOR_OPERATOR_UPLOAD | **true** (FileZilla only) |
+| Next | operator FileZilla · no FTP `--apply` |
+
+```txt
+FINAL_PRODUCTION_CMS_PACKAGE_RESULT: PASS
+READY_FOR_OPERATOR_UPLOAD: true
+SAVE_ARM: false
+SCHEDULE_LIVE_EDGE_DEPLOYED: false
+```
 
 ## 0. Gosaki production verifier false-fail fix (2026-09-22)
 

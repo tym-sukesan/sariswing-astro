@@ -3,9 +3,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (later explicit approval):** production generate + FileZilla `/admin/` so YouTube delete success 「削除しました」 reaches the customer UI. Source-only this phase.
-2. Do **not** rebuild/upload until asked. Do not re-apply DELETE RLS, re-deploy Edge, or re-arm Secrets for this UI-only change.
-3. Never arm Contents YouTube. Schedule/Discography/About stay unarmed. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary (later explicit approval):** About Supabase Save dual-gate. Review: `SAFE_TO_ARM: true` · **not armed**. Required form: `承認します。この操作を1回だけ実行してください。`
+2. Order: PRECHECK SELECT → git-clean production generate `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true` only (build-read unset) + FileZilla → Secret set kmjq → lede append Save once → restore Save once → `secrets unset GOSAKI_ABOUT_SUPABASE_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta`.
+3. Never arm Contents About. Schedule / Discography / YouTube stay unarmed. Public `/about/` needs a **later** generate with `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` (Save arms false).
+4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki About Save rollout final review (2026-09-24)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| SAFE_TO_ARM | **true** (dual-gate · later explicit approval) |
+| ARM_EXECUTED | **false** |
+| Client | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true` |
+| Secret | `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=true` (kmjq only) |
+| Function | `gosaki-about-supabase-save-dry-run` |
+| Edge redeploy | **false** |
+| First test | `profile.lede` append then restore PRECHECK |
+
+```txt
+ABOUT_SAVE_ROLLOUT_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+```
 
 ## 0. Gosaki YouTube delete success UI feedback (2026-09-24)
 

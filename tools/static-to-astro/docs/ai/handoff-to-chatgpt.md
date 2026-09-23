@@ -5,6 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-about-save-rollout-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 7927a834
+BRANCH: hotfix/gosaki-disable-test-youtube
+ABOUT_SAVE_ROLLOUT_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+CLIENT_FLAG: PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true
+EDGE_SECRET: GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=true
+FUNCTION: gosaki-about-supabase-save-dry-run
+EDGE_REDEPLOY: false
+CONTENTS_ARM: must stay false
+MUTEX: gosaki-about-supabase only
+TARGET: kmjqppxjdnwwrtaeqjta
+FIRST_TEST: profile.lede append then restore exact PRECHECK value_text
+RECOMMENDED_NEXT: separate approvals — PRECHECK → About-only production generate+FileZilla → Secret set → Save once → restore → secrets unset
+Doc: tools/static-to-astro/docs/gosaki-about-save-rollout-final-review.md
+```
+
+## Gosaki About Save rollout final review (2026-09-24)
+
+- READ-ONLY. Secret / SQL / deploy / build / FTP / DB write / commit not executed.
+- Dual-gate: client `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true` + Edge `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=true`.
+- Function `gosaki-about-supabase-save-dry-run` already live (`can_write_site` · `operation=read` · Save roundtrip PASS). Redeploy **not** required.
+- Table `public.site_page_fields` · `about` / `profile.lede` · `value_text` only · optimistic lock.
+- Do not arm Contents About. Mutex About Supabase only.
+- Public `/about/` reflects DB only after later `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` generate (Save arms false).
+- Linked CLI is vsbvnd — always `--project-ref kmjqppxjdnwwrtaeqjta`.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-youtube-delete-success-ui-feedback LOCAL PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

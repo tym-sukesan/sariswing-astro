@@ -3,10 +3,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (high-risk, later approvals):** Live-delete `yt-ce00cf60` is **not** this phase. Order: additive RLS apply → Edge deploy `gosaki-youtube-supabase-save-dry-run` → production package + FileZilla → dual-gate YouTube Supabase Save arm → owner 削除する **once**.
-2. Each step needs `承認します。この操作を1回だけ実行してください。`
-3. Do **not** arm Contents YouTube. Mutex stays 6 arms. Secret currently **unset**.
+1. **Primary (separate approvals, one step at a time):** YouTube delete rollout. Review: `SAFE_TO_APPLY_RLS: true` · `SAFE_TO_DEPLOY_EDGE: true` · **not executed**. Required form each step: `承認します。この操作を1回だけ実行してください。`
+2. Order: kmjq PRECHECK → APPLY DELETE RLS → POSTCHECK → `functions deploy gosaki-youtube-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta` (Secret **unset**) → confirm 403 → production generate `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` + FileZilla → Secret set → delete `yt-ce00cf60` once → Secret unset.
+3. Never arm Contents YouTube. Schedule/Discography/About stay unarmed. Do not re-apply original `site-embeds-rls` template.
 4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki YouTube delete rollout final review (2026-09-23)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| SAFE_TO_APPLY_RLS | **true** (later explicit approval) |
+| SAFE_TO_DEPLOY_EDGE | **true** (later explicit approval) |
+| APPLY / DEPLOY / BUILD | **false** |
+| Target | `kmjqppxjdnwwrtaeqjta` |
+| First live delete | `yt-ce00cf60` |
+
+```txt
+YOUTUBE_DELETE_ROLLOUT_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_APPLY_RLS: true
+SAFE_TO_DEPLOY_EDGE: true
+APPLY_EXECUTED: false
+DEPLOY_EXECUTED: false
+```
 
 ## 0. Gosaki YouTube delete UI implementation (2026-09-23)
 

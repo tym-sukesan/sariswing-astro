@@ -5,6 +5,39 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-youtube-delete-rollout-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 1f701ed9
+BRANCH: hotfix/gosaki-disable-test-youtube
+YOUTUBE_DELETE_ROLLOUT_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_APPLY_RLS: true
+SAFE_TO_DEPLOY_EDGE: true
+APPLY_EXECUTED: false
+DEPLOY_EXECUTED: false
+BUILD_EXECUTED: false
+LIVE_DELETE_EXECUTED: false
+TARGET: kmjqppxjdnwwrtaeqjta
+POLICY: site_embeds_admin_delete_youtube
+FUNCTION: gosaki-youtube-supabase-save-dry-run
+CLIENT_ARM: PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true
+SECRET: GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED (unset until live delete)
+FIRST_LIVE_TARGET: yt-ce00cf60
+RECOMMENDED_NEXT: separate approvals — RLS then Edge deploy then package then one UI delete
+Doc: tools/static-to-astro/docs/gosaki-youtube-delete-rollout-final-review.md
+```
+
+## Gosaki YouTube delete rollout final review (2026-09-23)
+
+- READ-ONLY. SQL / deploy / Secret / build / FTP / DB write not executed.
+- kmjq only. Linked CLI is vsbvnd — always `--project-ref kmjqppxjdnwwrtaeqjta`.
+- First APPLY: CREATE policy + GRANT DELETE only (no DROP, no REVOKE ALL).
+- After Edge deploy with Secret unset: Save and delete both 403 `save_not_armed`.
+- Package mutex: YouTube Supabase only. Do not arm Contents YouTube / Schedule / Discography / About.
+- First UI delete: unpublished `yt-ce00cf60` once, then `secrets unset`.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-youtube-delete-ui-fix LOCAL PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

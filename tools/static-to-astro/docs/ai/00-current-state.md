@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki YouTube delete rollout final review (2026-09-23):** **READ-ONLY PASS / SAFE_TO_APPLY_RLS true / SAFE_TO_DEPLOY_EDGE true / NOTHING EXECUTED** — Phase `gosaki-youtube-delete-rollout-final-review` · kmjq only · additive DELETE policy `site_embeds_admin_delete_youtube` · Edge `gosaki-youtube-supabase-save-dry-run` · Secret unset ⇒ save/delete 403 · package mutex YouTube Supabase only · first UI delete `yt-ce00cf60` · Doc: `gosaki-youtube-delete-rollout-final-review.md`.
+
 **Gosaki YouTube delete UI (2026-09-23):** **LOCAL PASS / SAFE_TO_TEST_DELETE true / LIVE NOT EXECUTED** — Phase `gosaki-youtube-delete-ui-fix` · per-item 削除 + confirm · Edge `operation=delete` on `gosaki-youtube-supabase-save-dry-run` · `can_write_site` · exact id/site_slug/provider · mutex unchanged · Contents untouched · live needs additive RLS + Edge deploy + Save arm + package · first target `yt-ce00cf60` · Doc: `gosaki-youtube-delete-ui-implementation.md`.
 
 **Gosaki YouTube Save arm final review (2026-09-23):** **READ-ONLY PASS / SAFE_TO_ARM true / NOT ARMED** — Phase `gosaki-youtube-save-arm-final-review` · client `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` · Edge `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` · dual-gate · mutex YouTube **Supabase** only (Contents YouTube arm forbidden) · Edge redeploy **not** required · table `site_embeds` + fingerprint/`updated_at` lock · first test `yt-placeholder-01` sortOrder 10→11 restore · `published=false` held · Doc: `gosaki-youtube-save-arm-final-review.md`.

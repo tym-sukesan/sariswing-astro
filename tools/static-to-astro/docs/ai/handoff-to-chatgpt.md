@@ -5,6 +5,39 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-youtube-save-arm-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 838120076bf99465d685cb7129acfa8a322ce43f
+BRANCH: hotfix/gosaki-disable-test-youtube
+YOUTUBE_SAVE_ARM_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+CLIENT_FLAG: PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true
+EDGE_SECRET: GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true
+CONTENTS_ARM: must stay false
+EDGE_REDEPLOY: false
+PACKAGE_REBUILD_FOR_UI: true
+FILEZILLA_FOR_UI: true
+MUTEX: gosaki-youtube-supabase only (Discography UI off)
+FIRST_TEST: yt-placeholder-01 sortOrder 10→11 restore · published=false
+PUBLIC_AUTO_REFLECT: false
+RECOMMENDED_NEXT: explicit dual-gate YouTube Supabase arm on kmjq (not this review)
+Doc: tools/static-to-astro/docs/gosaki-youtube-save-arm-final-review.md
+```
+
+## Gosaki YouTube Save arm final review (2026-09-23)
+
+- READ-ONLY. Secrets / Save / rebuild / deploy not executed.
+- Production path is **Supabase** (`data-gosaki-youtube-write-backend="supabase"`). Do not arm Contents YouTube (GitHub `main`).
+- Customer UI needs **both** `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` and Edge `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true`.
+- Mutex: YouTube Supabase only. New package turns Discography UI off. Schedule/About stay unarmed.
+- Live Edge `gosaki-youtube-supabase-save-dry-run` already `can_write_site` — **no redeploy**.
+- Write: `public.site_embeds` + fingerprint / `expectedBeforeUpdatedAtById`. First test sortOrder only; keep `published=false` on `yt-placeholder-01`.
+- Rollback: `secrets unset GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta`.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-discography-save-arm-final-review READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: 85fda555787bf77f4784cf72f32659dc6ca1dc12

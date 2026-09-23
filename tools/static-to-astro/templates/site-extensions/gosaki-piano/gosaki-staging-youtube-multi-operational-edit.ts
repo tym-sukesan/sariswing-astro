@@ -27,6 +27,7 @@ import {
   GOSAKI_SAVE_DIRTY_USER_MESSAGE,
   GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
   GOSAKI_SAVE_SUCCESS_USER_MESSAGE,
+  GOSAKI_DELETE_SUCCESS_USER_MESSAGE,
   isClientSaveArmed,
   isGosakiSaveNotArmedResponse,
   userMessageForSaveFailure,
@@ -326,6 +327,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let indeterminateLocked = false;
   let saveNotArmedLocked = false;
   let saveSuccessSticky = false;
+  let deleteSuccessSticky = false;
   let liveReadState: "pending" | "ready" | "error" = "pending";
 
   function itemsFingerprint(list: YoutubeMultiDraftItem[]): string {
@@ -353,7 +355,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
       if (state === "pending") statusEl.textContent = GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE;
       else if (state === "error") {
         statusEl.textContent = error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE;
-      } else if (!saveSuccessSticky) {
+      } else if (!saveSuccessSticky && !deleteSuccessSticky) {
         statusEl.textContent = "動画の確認と編集ができます";
       }
     }
@@ -390,7 +392,11 @@ export function initGosakiYoutubeMultiOperationalEdit(
     if (!isDirty()) {
       applySaveButtonUi(
         false,
-        saveSuccessSticky ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE : "変更がありません",
+        saveSuccessSticky
+          ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE
+          : deleteSuccessSticky
+            ? GOSAKI_DELETE_SUCCESS_USER_MESSAGE
+            : "変更がありません",
       );
       return;
     }
@@ -574,6 +580,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
   function invalidateDryRunUi() {
     saveNotArmedLocked = false;
     saveSuccessSticky = false;
+    deleteSuccessSticky = false;
     if (dryRunResult instanceof HTMLElement) {
       dryRunResult.hidden = true;
       dryRunResult.innerHTML = "";
@@ -774,6 +781,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
         dryRunOk = false;
         dryRunFingerprint = null;
         saveSuccessSticky = true;
+        deleteSuccessSticky = false;
         if (statusEl) statusEl.textContent = GOSAKI_SAVE_SUCCESS_USER_MESSAGE;
         applySaveButtonUi(false, GOSAKI_SAVE_SUCCESS_USER_MESSAGE);
       } else {
@@ -807,7 +815,6 @@ export function initGosakiYoutubeMultiOperationalEdit(
     dryRunFingerprint = null;
     saveSuccessSticky = false;
     renderList();
-    void refreshSaveGate();
   }
 
   async function runYoutubeItemDelete(itemId: string): Promise<void> {
@@ -818,6 +825,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
     if (localOnly) {
       applyDeletedItemLocally(itemId);
       if (statusEl) statusEl.textContent = "未保存の追加を取り消しました";
+      void refreshSaveGate();
       return;
     }
 
@@ -906,8 +914,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
               } as YoutubeMultiDraftItem;
             })
           : undefined;
+        deleteSuccessSticky = true;
         applyDeletedItemLocally(itemId, remaining);
-        if (statusEl) statusEl.textContent = "削除しました";
+        if (statusEl) statusEl.textContent = GOSAKI_DELETE_SUCCESS_USER_MESSAGE;
+        applySaveButtonUi(false, GOSAKI_DELETE_SUCCESS_USER_MESSAGE);
       } else {
         const msg = userMessageForSaveFailure(json, res.status, "削除に失敗しました");
         if (statusEl) statusEl.textContent = msg;
@@ -1088,6 +1098,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
     if (!(t instanceof HTMLElement)) return;
     if (!t.closest("[data-youtube-item-id]")) return;
     saveSuccessSticky = false;
+    deleteSuccessSticky = false;
     // Sync DOM → items before dirty / save-gate evaluation. Preview alone must not
     // leave `items` stale (otherwise isDirty stays false → 「変更がありません」).
     syncFromDom();

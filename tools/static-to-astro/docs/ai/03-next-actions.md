@@ -1,12 +1,27 @@
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (separate approvals, one step at a time):** YouTube delete rollout. Review: `SAFE_TO_APPLY_RLS: true` · `SAFE_TO_DEPLOY_EDGE: true` · **not executed**. Required form each step: `承認します。この操作を1回だけ実行してください。`
-2. Order: kmjq PRECHECK → APPLY DELETE RLS → POSTCHECK → `functions deploy gosaki-youtube-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta` (Secret **unset**) → confirm 403 → production generate `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` + FileZilla → Secret set → delete `yt-ce00cf60` once → Secret unset.
-3. Never arm Contents YouTube. Schedule/Discography/About stay unarmed. Do not re-apply original `site-embeds-rls` template.
-4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary (later explicit approval):** production generate + FileZilla `/admin/` so YouTube delete success 「削除しました」 reaches the customer UI. Source-only this phase.
+2. Do **not** rebuild/upload until asked. Do not re-apply DELETE RLS, re-deploy Edge, or re-arm Secrets for this UI-only change.
+3. Never arm Contents YouTube. Schedule/Discography/About stay unarmed. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki YouTube delete success UI feedback (2026-09-24)
+
+| Item | Value |
+| --- | --- |
+| Outcome | LOCAL PASS |
+| Message | sticky 「削除しました」 on Save status + save-card nodes |
+| Delete logic / RLS / Edge / arm | unchanged |
+| Package rebuild this phase | **false** |
+| Package rebuild for customer UI | **true** |
+
+```txt
+YOUTUBE_DELETE_SUCCESS_UI_FEEDBACK_RESULT: PASS
+PACKAGE_REBUILT_THIS_PHASE: false
+PACKAGE_REBUILD_REQUIRED_FOR_CUSTOMER_UI: true
+```
 
 ## 0. Gosaki YouTube delete rollout final review (2026-09-23)
 

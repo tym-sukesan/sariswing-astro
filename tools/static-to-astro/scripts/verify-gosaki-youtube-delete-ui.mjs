@@ -136,6 +136,76 @@ assert("UI posts delete operation", ui.includes("buildDeleteEndpointRequest"));
 assert("UI supabase path only for persisted", ui.includes("supabaseDeleteEnabled"));
 assert("UI no contents github write", !ui.includes("gosaki-youtube-url-save"));
 
+const helper = readTools(
+  "templates/site-extensions/gosaki-piano/gosaki-staging-one-click-save.ts",
+);
+assert(
+  "helper delete success const",
+  helper.includes('export const GOSAKI_DELETE_SUCCESS_USER_MESSAGE = "削除しました"'),
+);
+assert("UI imports delete success const", ui.includes("GOSAKI_DELETE_SUCCESS_USER_MESSAGE"));
+assert("UI deleteSuccessSticky latch", ui.includes("deleteSuccessSticky"));
+assert(
+  "UI Edge success paints save-card via applySaveButtonUi",
+  /deleteSuccessSticky = true[\s\S]{0,400}applySaveButtonUi\(\s*false,\s*GOSAKI_DELETE_SUCCESS_USER_MESSAGE/.test(
+    ui,
+  ),
+);
+assert(
+  "UI Edge success paints header status",
+  /statusEl\.textContent = GOSAKI_DELETE_SUCCESS_USER_MESSAGE/.test(ui),
+);
+assert(
+  "live-read ready does not overwrite delete sticky",
+  /!saveSuccessSticky && !deleteSuccessSticky/.test(ui),
+);
+assert(
+  "refreshSaveGate keeps delete sticky when clean",
+  /deleteSuccessSticky\s*\?\s*GOSAKI_DELETE_SUCCESS_USER_MESSAGE/.test(ui),
+);
+assert("edit clears delete sticky", /invalidateDryRunUi[\s\S]{0,80}deleteSuccessSticky = false/.test(ui) || ui.includes("deleteSuccessSticky = false"));
+assert("delete failure copy kept", ui.includes("削除に失敗しました"));
+assert("local-only cancel copy kept", ui.includes("未保存の追加を取り消しました"));
+
+{
+  function resolveYoutubeGateReason(input) {
+    if (input.deleteInFlight) return "削除中…";
+    if (!input.dirty) {
+      if (input.saveSuccessSticky) return "保存しました";
+      if (input.deleteSuccessSticky) return "削除しました";
+      return "変更がありません";
+    }
+    return "未保存の変更があります";
+  }
+  assert(
+    "after Edge delete refresh keeps 削除しました",
+    resolveYoutubeGateReason({
+      dirty: false,
+      deleteInFlight: false,
+      saveSuccessSticky: false,
+      deleteSuccessSticky: true,
+    }) === "削除しました",
+  );
+  assert(
+    "after Edge delete refresh does not fall back to 変更がありません",
+    resolveYoutubeGateReason({
+      dirty: false,
+      deleteInFlight: false,
+      saveSuccessSticky: false,
+      deleteSuccessSticky: true,
+    }) !== "変更がありません",
+  );
+  assert(
+    "edit after delete shows dirty",
+    resolveYoutubeGateReason({
+      dirty: true,
+      deleteInFlight: false,
+      saveSuccessSticky: false,
+      deleteSuccessSticky: false,
+    }) === "未保存の変更があります",
+  );
+}
+
 const page = readTools(
   "templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro",
 );

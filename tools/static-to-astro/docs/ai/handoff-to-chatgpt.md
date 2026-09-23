@@ -5,6 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-youtube-delete-success-ui-feedback LOCAL PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+YOUTUBE_DELETE_SUCCESS_UI_FEEDBACK_RESULT: PASS
+DELETE_LOGIC_CHANGED: false
+RLS_CHANGED: false
+EDGE_CHANGED: false
+SAVE_ARM_CHANGED: false
+DB_WRITE: false
+DEPLOY: false
+FTP: false
+COMMIT: false
+PACKAGE_REBUILT_THIS_PHASE: false
+PACKAGE_REBUILD_REQUIRED_FOR_CUSTOMER_UI: true
+RECOMMENDED_NEXT: later explicit production generate + FileZilla /admin/ (do not rebuild this phase)
+Doc: tools/static-to-astro/docs/gosaki-youtube-delete-success-ui-feedback.md
+```
+
+## Gosaki YouTube delete success UI feedback (2026-09-24)
+
+- Edge DELETE 成功後、Save と同じ sticky 表示で 「削除しました」。
+- Nodes: `[data-gosaki-youtube-status]` + `[data-gosaki-youtube-multi-save-reason]` via `applySaveButtonUi`.
+- `deleteSuccessSticky` が `refreshSaveGate` / live-read ready の上書きを阻止。失敗時コピーは維持。
+- 削除ロジック / RLS / Edge / Save arm / 他モジュールは変更していない。
+- 顧客画面反映には later package rebuild が必要。このフェーズでは未実行。
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-youtube-delete-rollout-final-review READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: 1f701ed9

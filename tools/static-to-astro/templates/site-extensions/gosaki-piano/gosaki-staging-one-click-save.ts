@@ -6,6 +6,7 @@
  * - client arm=true  → one-click may run dry-run → Save; server arm may still reject
  * - server arm=false → Save POST still sent; UI shows stopped message; didWrite=false
  * - after Save success → sticky 「保存しました」 until the operator edits again
+ * - after YouTube item delete success → sticky 「削除しました」 (same save-card / status nodes)
  */
 
 export const GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE =
@@ -14,6 +15,8 @@ export const GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE =
 export const GOSAKI_CLIENT_SAVE_DISARMED_REASON = "保存は現在無効です";
 
 export const GOSAKI_SAVE_SUCCESS_USER_MESSAGE = "保存しました";
+
+export const GOSAKI_DELETE_SUCCESS_USER_MESSAGE = "削除しました";
 
 export const GOSAKI_SAVE_DIRTY_USER_MESSAGE = "未保存の変更があります";
 

@@ -5,6 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-discography-save-arm-final-review READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 85fda555787bf77f4784cf72f32659dc6ca1dc12
+BRANCH: hotfix/gosaki-disable-test-youtube
+DISCOGRAPHY_SAVE_ARM_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+CLIENT_FLAG: PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true
+EDGE_SECRET: GOSAKI_DISCOGRAPHY_SAVE_ARMED=true
+EDGE_REDEPLOY: false
+PACKAGE_REBUILD_FOR_UI: true
+FILEZILLA_FOR_UI: true
+MUTEX: gosaki-discography only (Schedule UI off)
+FIRST_TEST: discography-003 description-only
+PUBLIC_AUTO_REFLECT: false
+RECOMMENDED_NEXT: explicit dual-gate Discography arm on kmjq (not this review)
+Doc: tools/static-to-astro/docs/gosaki-discography-save-arm-final-review.md
+```
+
+## Gosaki Discography Save arm final review (2026-09-23)
+
+- READ-ONLY. Secrets / Save / rebuild / deploy not executed.
+- Customer UI needs **both** bake flag and Edge secret. Current package has Schedule UI `true`, Discography `false`.
+- Mutex: Discography only. New package turns Schedule UI off. Do not arm YouTube/About.
+- Live Edge `gosaki-discography-save-dry-run` already `can_write_site` — **no redeploy**.
+- Write path: RPC `gosaki_discography_operational_save` + optimistic lock. Live RPC is Slice A `can_write_site` (do not re-apply 20260721 `is_admin` SQL).
+- Public discography HTML does not auto-reflect.
+- Rollback: `secrets unset GOSAKI_DISCOGRAPHY_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta`.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-schedule-ui-arm-env-final-check READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: 7cc2f724 + uncommitted docs

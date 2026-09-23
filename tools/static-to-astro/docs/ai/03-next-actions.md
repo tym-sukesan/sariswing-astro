@@ -3,10 +3,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** Commit pending docs (git-clean) then Schedule UI-arm production rebuild. Production log `Save arms: not set` is hardcoded — trust mutex `armedCount=1`.
-2. Command: export `PUBLIC_SUPABASE_URL` + `PUBLIC_SUPABASE_ANON_KEY` from `tools/static-to-astro/.env.local`, then `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true npm run build:gosaki:production`.
-3. FileZilla `public-dist/` · then separate approval for Edge Secret. Do not arm Discography/YouTube/About.
+1. **Primary (high-risk, separate approval):** Discography Save arm — dual-gate only. Review: `SAFE_TO_ARM: true` · **not armed**. Required form: `承認します。この操作を1回だけ実行してください。`
+2. Mutex: `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true` official production generate (Schedule UI becomes false) → FileZilla → `secrets set GOSAKI_DISCOGRAPHY_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta`. No Edge redeploy.
+3. First live Save: `discography-003` description-only + restore. Keep Schedule/YouTube/About unarmed.
 4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Discography Save arm final review (2026-09-23)
+
+| Item | Value |
+| --- | --- |
+| Outcome | READ-ONLY PASS |
+| SAFE_TO_ARM | **true** (dual-gate · later explicit approval) |
+| ARM_EXECUTED | **false** |
+| Client | `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true` |
+| Secret | `GOSAKI_DISCOGRAPHY_SAVE_ARMED=true` (kmjq only) |
+| Edge redeploy | **false** |
+| Package/upload for UI | **required** |
+| First test | `discography-003` description-only |
+
+```txt
+DISCOGRAPHY_SAVE_ARM_FINAL_REVIEW_RESULT: PASS
+SAFE_TO_ARM: true
+ARM_EXECUTED: false
+```
 
 ## 0. Gosaki Schedule UI arm env final check (2026-09-22)
 

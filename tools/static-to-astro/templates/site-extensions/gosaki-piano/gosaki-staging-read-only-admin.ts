@@ -78,6 +78,9 @@ export const YOUTUBE_SUPABASE_SAVE_APPROVAL_ID =
   "G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice";
 export const YOUTUBE_SUPABASE_DRY_RUN_OPERATION = "dryRun" as const;
 export const YOUTUBE_SUPABASE_SAVE_OPERATION = "save" as const;
+export const YOUTUBE_SUPABASE_DELETE_OPERATION = "delete" as const;
+export const YOUTUBE_SUPABASE_DELETE_APPROVAL_ID =
+  "G-cms-v2-youtube-supabase-item-delete";
 
 /** CMS Core v2 — About Supabase path (parallel to Contents G-12a; default off). */
 export const ABOUT_SUPABASE_PATH_PHASE =
@@ -1326,6 +1329,27 @@ export function buildYoutubeSupabaseItemsSaveEndpointRequest(input: {
       sortOrder: Number(item.sortOrder),
       embedCode: String(item.embedCode ?? "").trim(),
     })),
+  };
+}
+
+export function buildYoutubeSupabaseItemDeleteEndpointRequest(input: {
+  id: string;
+  expectedBeforeUpdatedAt?: string;
+  requestId?: string;
+}): Record<string, unknown> {
+  const expectedBeforeUpdatedAt = String(input.expectedBeforeUpdatedAt ?? "").trim();
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: "youtube-embed",
+    field: "item",
+    operation: YOUTUBE_SUPABASE_DELETE_OPERATION,
+    dryRun: false,
+    saveEnabled: true,
+    approvalId: YOUTUBE_SUPABASE_DELETE_APPROVAL_ID,
+    provider: "youtube",
+    id: String(input.id ?? "").trim(),
+    ...(expectedBeforeUpdatedAt ? { expectedBeforeUpdatedAt } : {}),
+    requestId: String(input.requestId ?? `ui-yt-delete-${Date.now()}`).trim(),
   };
 }
 

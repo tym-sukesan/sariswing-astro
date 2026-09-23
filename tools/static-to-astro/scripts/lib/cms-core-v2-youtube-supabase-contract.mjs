@@ -29,11 +29,17 @@ export const YOUTUBE_SUPABASE_PROVIDER = "youtube";
 
 export const YOUTUBE_SUPABASE_DRY_RUN_OPERATION = "dryRun";
 export const YOUTUBE_SUPABASE_SAVE_OPERATION = "save";
+export const YOUTUBE_SUPABASE_DELETE_OPERATION = "delete";
 
 export const YOUTUBE_SUPABASE_DRY_RUN_APPROVAL_ID =
   "G-cms-v2-youtube-supabase-items-dry-run";
 export const YOUTUBE_SUPABASE_SAVE_APPROVAL_ID =
   "G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice";
+export const YOUTUBE_SUPABASE_DELETE_APPROVAL_ID =
+  "G-cms-v2-youtube-supabase-item-delete";
+
+/** legacy_item_id / UI id — exact match only (e.g. yt-ce00cf60). */
+export const YOUTUBE_SUPABASE_ITEM_ID_PATTERN = /^[a-zA-Z0-9._-]{1,80}$/;
 
 /** Client: opt into Supabase path (live-read + dry-run). Contents path remains default when unset. */
 export const YOUTUBE_SUPABASE_PATH_ENABLED_ENV =
@@ -209,4 +215,56 @@ export function planYoutubeSupabaseItemsDryRun(input) {
  */
 export function isExactTrue(value) {
   return isFeatureFlagTrimTrue(value);
+}
+
+/**
+ * Fail-closed scope check for a single YouTube site_embeds DELETE.
+ * Does not perform a write.
+ * @param {{ id?: unknown, siteSlug?: unknown, provider?: unknown }} input
+ */
+export function assertYoutubeSupabaseDeleteScope(input) {
+  const id = String(input?.id ?? "").trim();
+  const siteSlug = String(input?.siteSlug ?? "").trim();
+  const provider = String(input?.provider ?? "").trim();
+  const errors = [];
+  if (!id || !YOUTUBE_SUPABASE_ITEM_ID_PATTERN.test(id)) {
+    errors.push("id must be an exact legacy_item_id");
+  }
+  if (siteSlug !== GOSAKI_YOUTUBE_SITE_SLUG) {
+    errors.push("siteSlug must be gosaki-piano");
+  }
+  if (provider !== YOUTUBE_SUPABASE_PROVIDER) {
+    errors.push("provider must be youtube");
+  }
+  return {
+    ok: errors.length === 0,
+    errors,
+    id,
+    siteSlug,
+    provider,
+    publishedIndependent: true,
+  };
+}
+
+/**
+ * Client POST body for Edge operation=delete (same function as Save).
+ * Reuses Save arm Secret — no new mutex env.
+ * @param {{ id: string, expectedBeforeUpdatedAt?: string, requestId?: string }} input
+ */
+export function buildYoutubeSupabaseItemDeleteRequest(input) {
+  const id = String(input?.id ?? "").trim();
+  const expectedBeforeUpdatedAt = String(input?.expectedBeforeUpdatedAt ?? "").trim();
+  return {
+    siteSlug: GOSAKI_YOUTUBE_SITE_SLUG,
+    module: "youtube-embed",
+    field: "item",
+    operation: YOUTUBE_SUPABASE_DELETE_OPERATION,
+    dryRun: false,
+    saveEnabled: true,
+    approvalId: YOUTUBE_SUPABASE_DELETE_APPROVAL_ID,
+    provider: YOUTUBE_SUPABASE_PROVIDER,
+    id,
+    ...(expectedBeforeUpdatedAt ? { expectedBeforeUpdatedAt } : {}),
+    requestId: String(input?.requestId ?? `ui-yt-delete-${Date.now()}`).trim(),
+  };
 }

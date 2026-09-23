@@ -17,6 +17,7 @@
     "verify:gosaki-wix-assets-localization": "node scripts/verify-gosaki-wix-assets-localization.mjs",
     "verify:gosaki-home-stale-this-week-hide": "node scripts/verify-gosaki-home-stale-this-week-hide-for-initial-cutover.mjs",
     "verify:gosaki-youtube-public-multi": "node scripts/verify-gosaki-youtube-public-multi-item.mjs",
+    "verify:gosaki-youtube-delete-ui": "node scripts/verify-gosaki-youtube-delete-ui.mjs && node scripts/verify-gosaki-youtube-multi-dirty-state.mjs",
     "verify:cms-core-v2-admin-staging-ref": "node scripts/verify-cms-core-v2-admin-staging-ref-assert-helper.mjs",
     "verify:cms-core-v2-supabase-anon-read-env": "node scripts/verify-cms-core-v2-supabase-anon-read-env-helper.mjs",
     "verify:cms-core-v2-build-read-envelope": "node scripts/verify-cms-core-v2-build-read-envelope-helper.mjs",

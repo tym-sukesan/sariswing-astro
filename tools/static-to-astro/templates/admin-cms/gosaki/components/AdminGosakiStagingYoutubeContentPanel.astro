@@ -89,7 +89,7 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
   <section class="admin-card admin-gosaki-card">
     <h2 class="admin-gosaki-card__title">登録済みの動画</h2>
     <p class="admin-gosaki-card__lead">
-      ↑↓ で並び替え、公開チェック OFF で非表示にできます。複製は元の動画を変更しません。
+      ↑↓ で並び替え、公開チェック OFF で非表示、削除で登録から外せます。複製は元の動画を変更しません。
     </p>
     <ul
       class="admin-list gosaki-youtube-admin-list"
@@ -290,6 +290,25 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.75rem;
+  }
+
+  :global(.gosaki-admin-btn--danger) {
+    border-color: #fecaca;
+    color: #991b1b;
+    background: #fef2f2;
+  }
+
+  :global(.gosaki-youtube-admin-item__delete-confirm) {
+    padding: 0.7rem 0.8rem;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    background: #fff7ed;
+  }
+
+  :global(.gosaki-youtube-admin-item__delete-confirm-text) {
+    margin: 0 0 0.55rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
   }
 
   @media (max-width: 390px) {

@@ -38,6 +38,7 @@ export type YoutubeMultiDraftItem = {
   sortOrder: number;
   embedCode: string;
   title?: string;
+  updatedAt?: string;
 };
 
 export type YoutubeMultiLocalDryRun = {
@@ -101,8 +102,11 @@ export function cloneYoutubeDraftItems(
     id: String(item.id ?? ""),
     published: item.published === true,
     sortOrder: Number(item.sortOrder) || 0,
-    embedCode: String(item.embedCode ?? ""),
+      embedCode: String(item.embedCode ?? ""),
     ...(item.title != null ? { title: String(item.title) } : {}),
+    ...(item.updatedAt != null && String(item.updatedAt).trim()
+      ? { updatedAt: String(item.updatedAt) }
+      : {}),
   }));
 }
 
@@ -191,7 +195,7 @@ export function buildYoutubeMultiLocalDryRun(input: {
   for (const prev of input.before) {
     if (!input.after.some((i) => i.id === prev.id)) {
       changedItemIds.push(prev.id);
-      warnings.push(`削除は未実装 — ${prev.id} は非表示（published=false）で扱ってください`);
+      warnings.push(`Save 経路の欠落は削除になりません — ${prev.id} は非表示（published=false）か「削除」ボタンを使ってください`);
     }
   }
 
@@ -250,6 +254,12 @@ export type YoutubeMultiOperationalEditDeps = {
     requestId?: string;
     expectedBeforeUpdatedAtById?: Record<string, string>;
   }) => Record<string, unknown>;
+  buildDeleteEndpointRequest?: (input: {
+    id: string;
+    expectedBeforeUpdatedAt?: string;
+    requestId?: string;
+  }) => Record<string, unknown>;
+  writeBackend?: "supabase" | "contents";
   evaluateSaveGate?: (input: {
     authenticated: boolean;
     dryRunSucceeded: boolean;
@@ -295,6 +305,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let baseline = cloneYoutubeDraftItems(draftItemsFromConfig(options.config));
   let items = cloneYoutubeDraftItems(baseline);
   const saveArmed = isClientSaveArmed(options.saveArmed);
+  const writeBackend = options.writeBackend === "supabase" ? "supabase" : "contents";
+  const supabaseDeleteEnabled = writeBackend === "supabase";
   const expectedSaveApprovalId =
     options.expectedSaveApprovalId ||
     "G-11c7-gosaki-youtube-items-web-save-non-dry-run-slice";
@@ -309,6 +321,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let dryRunExpectedBeforeUpdatedAtById: Record<string, string> | null = null;
   let dryRunInFlight = false;
   let saveInFlight = false;
+  let deleteInFlight = false;
+  let pendingDeleteId: string | null = null;
   let indeterminateLocked = false;
   let saveNotArmedLocked = false;
   let saveSuccessSticky = false;
@@ -327,7 +341,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
     root.dataset.liveSource = state;
     root.dataset.liveSourceLocked = state === "ready" ? "false" : "true";
     const formControls = root.querySelectorAll(
-      "textarea, input, button[data-yt-move], button[data-yt-remove], [data-gosaki-youtube-add]",
+      "textarea, input, button[data-yt-move], button[data-yt-remove], button[data-yt-delete], button[data-yt-delete-confirm], button[data-yt-delete-cancel], [data-gosaki-youtube-add]",
     );
     formControls.forEach((el) => {
       if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
@@ -361,8 +375,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
       applySaveButtonUi(false, "結果不明のため自動では再試行しません");
       return;
     }
-    if (saveInFlight || dryRunInFlight) {
-      applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+    if (saveInFlight || dryRunInFlight || deleteInFlight) {
+      applySaveButtonUi(false, saveInFlight ? "保存中…" : deleteInFlight ? "削除中…" : "確認中…");
       return;
     }
     if (saveNotArmedLocked) {
@@ -430,8 +444,18 @@ export function initGosakiYoutubeMultiOperationalEdit(
           published: row.published === true,
           sortOrder: Number(row.sortOrder ?? row.sort_order ?? 0),
           embedCode: String(row.embedCode ?? row.embed_code ?? ""),
+          ...(row.updatedAt || row.updated_at
+            ? { updatedAt: String(row.updatedAt ?? row.updated_at) }
+            : {}),
         } as YoutubeMultiDraftItem;
       });
+      const lockRaw = json.expectedBeforeUpdatedAtById;
+      if (lockRaw && typeof lockRaw === "object" && !Array.isArray(lockRaw)) {
+        for (const item of mapped) {
+          const lock = String((lockRaw as Record<string, unknown>)[item.id] ?? "").trim();
+          if (lock) item.updatedAt = lock;
+        }
+      }
       baseline = cloneYoutubeDraftItems(mapped);
       items = cloneYoutubeDraftItems(mapped);
       dryRunOk = false;
@@ -509,8 +533,16 @@ export function initGosakiYoutubeMultiOperationalEdit(
         <span>公開する（OFF で非表示）</span>
       </label>
     </div>
-    <div class="admin-actions">
+    <div class="admin-actions gosaki-youtube-admin-item__actions">
       <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small admin-button admin-button-secondary" data-yt-duplicate data-index="${index}">複製</button>
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small gosaki-admin-btn--danger admin-button" data-yt-delete data-item-id="${escapeHtml(item.id)}" ${pendingDeleteId === item.id ? "hidden" : ""}>削除</button>
+    </div>
+    <div class="gosaki-youtube-admin-item__delete-confirm" data-yt-delete-confirm-panel data-item-id="${escapeHtml(item.id)}" ${pendingDeleteId === item.id ? "" : "hidden"}>
+      <p class="gosaki-youtube-admin-item__delete-confirm-text">この動画を削除しますか？ 公開・非公開どちらでもデータベースから消えます。この操作は取り消せません。</p>
+      <div class="admin-actions">
+        <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small admin-button" data-yt-delete-cancel data-item-id="${escapeHtml(item.id)}">キャンセル</button>
+        <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small gosaki-admin-btn--danger admin-button" data-yt-delete-confirm data-item-id="${escapeHtml(item.id)}">削除する</button>
+      </div>
     </div>
   </div>
 </li>`;
@@ -762,6 +794,141 @@ export function initGosakiYoutubeMultiOperationalEdit(
     }
   }
 
+  function applyDeletedItemLocally(itemId: string, remaining?: YoutubeMultiDraftItem[]) {
+    if (remaining) {
+      baseline = cloneYoutubeDraftItems(remaining);
+      items = cloneYoutubeDraftItems(remaining);
+    } else {
+      items = items.filter((item) => item.id !== itemId);
+      baseline = baseline.filter((item) => item.id !== itemId);
+    }
+    pendingDeleteId = null;
+    dryRunOk = false;
+    dryRunFingerprint = null;
+    saveSuccessSticky = false;
+    renderList();
+    void refreshSaveGate();
+  }
+
+  async function runYoutubeItemDelete(itemId: string): Promise<void> {
+    if (deleteInFlight || saveInFlight || dryRunInFlight || indeterminateLocked) return;
+    const persisted = baseline.some((item) => item.id === itemId);
+    const localOnly = !persisted;
+
+    if (localOnly) {
+      applyDeletedItemLocally(itemId);
+      if (statusEl) statusEl.textContent = "未保存の追加を取り消しました";
+      return;
+    }
+
+    if (!supabaseDeleteEnabled || !options.buildDeleteEndpointRequest) {
+      if (statusEl) statusEl.textContent = "この経路では削除できません";
+      pendingDeleteId = null;
+      renderList();
+      return;
+    }
+    if (!saveArmed) {
+      if (statusEl) statusEl.textContent = GOSAKI_CLIENT_SAVE_DISARMED_REASON;
+      pendingDeleteId = null;
+      renderList();
+      return;
+    }
+    const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    if (!token) {
+      if (statusEl) statusEl.textContent = "ログインが必要です";
+      return;
+    }
+    const endpoint = String(options.saveEndpoint ?? options.dryRunEndpoint ?? "").trim();
+    const endpointSafe = endpoint
+      ? options.assertSaveEndpointSafe?.(endpoint) !== false
+      : false;
+    if (!endpoint || !endpointSafe) {
+      if (statusEl) statusEl.textContent = "いまは削除できません";
+      return;
+    }
+
+    const persistedItem = baseline.find((item) => item.id === itemId);
+    deleteInFlight = true;
+    if (statusEl) statusEl.textContent = "削除中…";
+    try {
+      const fetchImpl = options.fetchImpl ?? fetch;
+      const body = options.buildDeleteEndpointRequest({
+        id: itemId,
+        expectedBeforeUpdatedAt: persistedItem?.updatedAt,
+        requestId: `ui-yt-delete-${Date.now()}`,
+      });
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 25000);
+      const res = await fetchImpl(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          apikey: String(options.anonKey ?? ""),
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      window.clearTimeout(timer);
+      const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      if (json.indeterminate === true) {
+        indeterminateLocked = true;
+        if (statusEl) statusEl.textContent = "結果不明のため自動では再試行しません";
+        return;
+      }
+      if (isGosakiSaveNotArmedResponse(json, res.status)) {
+        saveNotArmedLocked = true;
+        if (statusEl) statusEl.textContent = SAVE_STOPPED;
+        pendingDeleteId = null;
+        renderList();
+        return;
+      }
+      if (json.ok === true && res.ok && json.didWrite === true) {
+        const currentItems = Array.isArray(json.currentItems) ? json.currentItems : null;
+        const remaining = currentItems
+          ? currentItems.map((raw) => {
+              const row = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+              const lockMap =
+                json.expectedBeforeUpdatedAtById &&
+                typeof json.expectedBeforeUpdatedAtById === "object" &&
+                !Array.isArray(json.expectedBeforeUpdatedAtById)
+                  ? (json.expectedBeforeUpdatedAtById as Record<string, unknown>)
+                  : {};
+              const id = String(row.id ?? "");
+              return {
+                id,
+                published: row.published === true,
+                sortOrder: Number(row.sortOrder ?? row.sort_order ?? 0),
+                embedCode: String(row.embedCode ?? row.embed_code ?? ""),
+                ...(String(lockMap[id] ?? row.updatedAt ?? "").trim()
+                  ? { updatedAt: String(lockMap[id] ?? row.updatedAt) }
+                  : {}),
+              } as YoutubeMultiDraftItem;
+            })
+          : undefined;
+        applyDeletedItemLocally(itemId, remaining);
+        if (statusEl) statusEl.textContent = "削除しました";
+      } else {
+        const msg = userMessageForSaveFailure(json, res.status, "削除に失敗しました");
+        if (statusEl) statusEl.textContent = msg;
+        pendingDeleteId = null;
+        renderList();
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        indeterminateLocked = true;
+        if (statusEl) statusEl.textContent = "時間切れです。自動では再試行しません。";
+      } else if (statusEl) {
+        statusEl.textContent = "削除に失敗しました";
+      }
+      pendingDeleteId = null;
+      renderList();
+    } finally {
+      deleteInFlight = false;
+      void refreshSaveGate();
+    }
+  }
+
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
@@ -799,6 +966,30 @@ export function initGosakiYoutubeMultiOperationalEdit(
       items = renumberSortOrders([...items.slice(0, index + 1), copy, ...items.slice(index + 1)]);
       renderList();
       invalidateDryRunUi();
+      return;
+    }
+
+    const deleteBtn = t.closest("[data-yt-delete]");
+    if (deleteBtn instanceof HTMLElement && !deleteBtn.hasAttribute("data-yt-delete-confirm")) {
+      syncFromDom();
+      const itemId = String(deleteBtn.getAttribute("data-item-id") || "").trim();
+      if (!itemId || deleteInFlight) return;
+      pendingDeleteId = itemId;
+      renderList();
+      return;
+    }
+
+    if (t.closest("[data-yt-delete-cancel]")) {
+      pendingDeleteId = null;
+      renderList();
+      return;
+    }
+
+    const confirmBtn = t.closest("[data-yt-delete-confirm]");
+    if (confirmBtn instanceof HTMLElement) {
+      const itemId = String(confirmBtn.getAttribute("data-item-id") || "").trim();
+      if (!itemId || deleteInFlight) return;
+      void runYoutubeItemDelete(itemId);
       return;
     }
 

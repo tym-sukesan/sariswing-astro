@@ -3,10 +3,30 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (high-risk, separate approval):** YouTube **Supabase** Save arm — dual-gate only. Review: `SAFE_TO_ARM: true` · **not armed**. Required form: `承認します。この操作を1回だけ実行してください。`
-2. Mutex: `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` official production generate (Discography UI becomes false) → FileZilla → `secrets set GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta`. No Edge redeploy. **Never** arm Contents YouTube.
-3. First live Save: `yt-placeholder-01` sortOrder 10→11 then restore 10 · keep `published=false`. Keep Schedule/Discography/About unarmed.
+1. **Primary (high-risk, later approvals):** Live-delete `yt-ce00cf60` is **not** this phase. Order: additive RLS apply → Edge deploy `gosaki-youtube-supabase-save-dry-run` → production package + FileZilla → dual-gate YouTube Supabase Save arm → owner 削除する **once**.
+2. Each step needs `承認します。この操作を1回だけ実行してください。`
+3. Do **not** arm Contents YouTube. Mutex stays 6 arms. Secret currently **unset**.
 4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki YouTube delete UI implementation (2026-09-23)
+
+| Item | Value |
+| --- | --- |
+| Outcome | LOCAL PASS |
+| SAFE_TO_TEST_DELETE | **true** (later explicit live test) |
+| LIVE_DELETE_EXECUTED | **false** |
+| Endpoint | `gosaki-youtube-supabase-save-dry-run` · `operation=delete` |
+| Authz | `can_write_site` |
+| Mutex | unchanged (6) |
+| Edge deploy | **required** before live |
+| RLS apply | **required** before live (additive · not applied) |
+| Package/upload | **required** for customer UI |
+
+```txt
+YOUTUBE_DELETE_UI_IMPLEMENTATION_RESULT: PASS
+SAFE_TO_TEST_DELETE: true
+LIVE_DELETE_EXECUTED: false
+```
 
 ## 0. Gosaki YouTube Save arm final review (2026-09-23)
 

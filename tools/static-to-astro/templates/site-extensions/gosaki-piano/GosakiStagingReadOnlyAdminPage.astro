@@ -721,6 +721,7 @@ const showClientScript = true;
         buildYoutubeItemsSaveEndpointRequest,
         buildYoutubeSupabaseItemsDryRunEndpointRequest,
         buildYoutubeSupabaseItemsSaveEndpointRequest,
+        buildYoutubeSupabaseItemDeleteEndpointRequest,
         sanitizeYoutubeDryRunEndpointDisplay,
         sanitizeYoutubeSaveEndpointDisplay,
         evaluateYoutubeOperationalSaveGate,
@@ -979,6 +980,10 @@ const showClientScript = true;
             buildSaveEndpointRequest: useSupabase
               ? buildYoutubeSupabaseItemsSaveEndpointRequest
               : buildYoutubeItemsSaveEndpointRequest,
+            buildDeleteEndpointRequest: useSupabase
+              ? buildYoutubeSupabaseItemDeleteEndpointRequest
+              : undefined,
+            writeBackend: useSupabase ? "supabase" : "contents",
             evaluateSaveGate: evaluateYoutubeOperationalSaveGate,
             expectedSaveApprovalId: useSupabase
               ? (body?.dataset.gosakiYoutubeSupabaseSaveApprovalId || "").trim() ||

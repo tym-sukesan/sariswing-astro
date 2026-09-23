@@ -18,9 +18,12 @@ export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 export const PROVIDER = "youtube";
 export const DRY_RUN_OPERATION = "dryRun";
 export const SAVE_OPERATION = "save";
+export const DELETE_OPERATION = "delete";
 export const DRY_RUN_APPROVAL_ID = "G-cms-v2-youtube-supabase-items-dry-run";
 export const SAVE_APPROVAL_ID = "G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice";
+export const DELETE_APPROVAL_ID = "G-cms-v2-youtube-supabase-item-delete";
 export const SAVE_ARMED_ENV = "GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED";
+export const ITEM_ID_PATTERN = /^[a-zA-Z0-9._-]{1,80}$/;
 export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
 
 const SELECT_COLS =
@@ -180,6 +183,180 @@ async function assertCanWriteSite(
   return { ok: true };
 }
 
+async function currentYoutubeItems(
+  client: SupabaseClient,
+  siteId: string,
+): Promise<
+  | { ok: true; items: ReturnType<typeof rowToDraft>[] }
+  | { ok: false; result: HandlerResult }
+> {
+  const { data: afterRows, error } = await client
+    .from("site_embeds")
+    .select(SELECT_COLS)
+    .eq("site_id", siteId)
+    .eq("site_slug", SITE_SLUG)
+    .eq("provider", PROVIDER)
+    .order("sort_order", { ascending: true });
+  if (error) {
+    return {
+      ok: false,
+      result: {
+        status: 500,
+        ok: false,
+        error: "site_embeds read failed",
+        detail: error.message,
+        ...WRITE_FALSE,
+      },
+    };
+  }
+  return { ok: true, items: (afterRows ?? []).map((r) => rowToDraft(r as Record<string, unknown>)) };
+}
+
+async function executeYoutubeItemDelete(input: {
+  client: SupabaseClient;
+  siteId: string;
+  body: Record<string, unknown>;
+  approvalId: string;
+  getEnv?: (key: string) => string | undefined;
+}): Promise<HandlerResult> {
+  if (input.approvalId !== DELETE_APPROVAL_ID) {
+    return {
+      status: 403,
+      ok: false,
+      error: "wrong_approval_id",
+      expectedApprovalId: DELETE_APPROVAL_ID,
+      ...WRITE_FALSE,
+    };
+  }
+  if (!isYoutubeSupabaseSaveArmed(input.getEnv)) {
+    return {
+      status: 403,
+      ok: false,
+      error: "save_not_armed",
+      detail: `${SAVE_ARMED_ENV} must be exact true`,
+      ...WRITE_FALSE,
+      saveEnabled: false,
+    };
+  }
+
+  const itemId = String(input.body.id ?? input.body.legacyItemId ?? "").trim();
+  const provider = String(input.body.provider ?? PROVIDER).trim();
+  if (provider !== PROVIDER) {
+    return { status: 400, ok: false, error: "provider must be youtube", ...WRITE_FALSE };
+  }
+  if (!itemId || !ITEM_ID_PATTERN.test(itemId)) {
+    return { status: 400, ok: false, error: "id must be an exact legacy_item_id", ...WRITE_FALSE };
+  }
+
+  const expectedBeforeUpdatedAt = String(input.body.expectedBeforeUpdatedAt ?? "").trim();
+
+  let selectQuery = input.client
+    .from("site_embeds")
+    .select("id,legacy_item_id,published,updated_at,site_slug,provider")
+    .eq("site_id", input.siteId)
+    .eq("site_slug", SITE_SLUG)
+    .eq("provider", PROVIDER)
+    .eq("legacy_item_id", itemId);
+
+  const { data: matches, error: findErr } = await selectQuery;
+  if (findErr) {
+    return {
+      status: 500,
+      ok: false,
+      error: "delete_lookup_failed",
+      detail: findErr.message,
+      ...WRITE_FALSE,
+    };
+  }
+  if (!matches || matches.length === 0) {
+    return { status: 404, ok: false, error: "item_not_found", id: itemId, ...WRITE_FALSE };
+  }
+  if (matches.length !== 1) {
+    return {
+      status: 409,
+      ok: false,
+      error: "delete_scope_ambiguous",
+      detail: "exact id/site_slug/provider matched multiple rows",
+      ...WRITE_FALSE,
+    };
+  }
+
+  const row = matches[0] as Record<string, unknown>;
+  const rowUpdatedAt = row.updated_at != null ? String(row.updated_at) : "";
+  if (expectedBeforeUpdatedAt && expectedBeforeUpdatedAt !== rowUpdatedAt) {
+    return {
+      status: 409,
+      ok: false,
+      error: "optimistic_lock_failed",
+      detail: "expectedBeforeUpdatedAt mismatch",
+      ...WRITE_FALSE,
+    };
+  }
+
+  // published true/false both allowed — no published filter
+  let deleteQuery = input.client
+    .from("site_embeds")
+    .delete()
+    .eq("id", String(row.id))
+    .eq("site_id", input.siteId)
+    .eq("site_slug", SITE_SLUG)
+    .eq("provider", PROVIDER)
+    .eq("legacy_item_id", itemId);
+  if (expectedBeforeUpdatedAt) {
+    deleteQuery = deleteQuery.eq("updated_at", expectedBeforeUpdatedAt);
+  }
+  const { data: deleted, error: delErr } = await deleteQuery.select("id");
+  if (delErr) {
+    return {
+      status: 500,
+      ok: false,
+      error: "delete_failed",
+      detail: delErr.message,
+      ...WRITE_FALSE,
+    };
+  }
+  if (!deleted || deleted.length !== 1) {
+    return {
+      status: 409,
+      ok: false,
+      error: "optimistic_lock_failed",
+      detail: "zero/multi row delete",
+      ...WRITE_FALSE,
+    };
+  }
+
+  const after = await currentYoutubeItems(input.client, input.siteId);
+  if (!after.ok) return after.result;
+  const afterDraft = after.items;
+
+  return {
+    status: 200,
+    ok: true,
+    operation: DELETE_OPERATION,
+    approvalId: DELETE_APPROVAL_ID,
+    siteSlug: SITE_SLUG,
+    provider: PROVIDER,
+    deletedId: itemId,
+    deletedPublished: row.published === true,
+    rowsAffected: 1,
+    currentItems: afterDraft.map((b) => ({
+      id: b.id,
+      published: b.published,
+      sortOrder: b.sortOrder,
+      embedCode: b.embedCode,
+    })),
+    fingerprint: fingerprint(afterDraft),
+    expectedBeforeUpdatedAtById: Object.fromEntries(
+      afterDraft.filter((b) => b.id && b.updatedAt).map((b) => [b.id, b.updatedAt as string]),
+    ),
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: false,
+    writeBackend: "supabase",
+    saveEnabled: true,
+  };
+}
+
 export async function handleYoutubeSupabaseSaveDryRunHttp(input: {
   method: string;
   contentType: string;
@@ -211,7 +388,7 @@ export async function handleYoutubeSupabaseSaveDryRunHttp(input: {
   const operation = String(body.operation ?? (body.dryRun === true ? DRY_RUN_OPERATION : "")).trim();
   const approvalId = String(body.approvalId ?? "").trim();
   const itemsRaw = Array.isArray(body.items) ? body.items : null;
-  if (!itemsRaw) {
+  if (operation !== DELETE_OPERATION && !itemsRaw) {
     return { status: 400, ok: false, error: "items[] required", ...WRITE_FALSE };
   }
 
@@ -244,6 +421,20 @@ export async function handleYoutubeSupabaseSaveDryRunHttp(input: {
 
   const canWrite = await assertCanWriteSite(auth.client, String(siteRow.id));
   if (!canWrite.ok) return canWrite.result;
+
+  if (operation === DELETE_OPERATION) {
+    return await executeYoutubeItemDelete({
+      client: auth.client,
+      siteId: String(siteRow.id),
+      body,
+      approvalId,
+      getEnv: input.getEnv,
+    });
+  }
+
+  if (!itemsRaw) {
+    return { status: 400, ok: false, error: "items[] required", ...WRITE_FALSE };
+  }
 
   const { data: rows, error: readErr } = await auth.client
     .from("site_embeds")

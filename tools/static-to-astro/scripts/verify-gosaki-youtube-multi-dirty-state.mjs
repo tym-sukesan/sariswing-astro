@@ -168,6 +168,23 @@ function simulateEditor() {
     independent: baseline !== items && baseline[0] !== items[0],
   };
 
+  // Local delete of a persisted-looking id (yt-ce00cf60) removes it from both lists
+  items = cloneYoutubeDraftItems(baseline);
+  items.push({
+    id: "yt-ce00cf60",
+    published: false,
+    sortOrder: 30,
+    embedCode: "https://youtu.be/ccccccccccc",
+  });
+  baseline = cloneYoutubeDraftItems(items);
+  items = items.filter((item) => item.id !== "yt-ce00cf60");
+  baseline = baseline.filter((item) => item.id !== "yt-ce00cf60");
+  results.localDelete = {
+    dirty: isYoutubeDraftDirty(baseline, items),
+    remainingIds: items.map((i) => i.id),
+    gone: !items.some((i) => i.id === "yt-ce00cf60"),
+  };
+
   // save_not_armed latch: after Save rejection, button stays disabled while dirty
   items = cloneYoutubeDraftItems(baseline);
   items[0] = {
@@ -219,6 +236,8 @@ assert(r.duplicate.dirty === true, "duplicate → dirty");
 assert(r.reorder.dirty === true, "reorder → dirty");
 assert(r.cancel.dirty === false, "cancel → dirty false");
 assert(r.cancel.independent === true, "cancel restores independent clone");
+assert(r.localDelete.dirty === false, "local delete both lists → dirty false");
+assert(r.localDelete.gone === true, "yt-ce00cf60 gone from list");
 assert(r.saveNotArmedLatch.dirty === true, "save_not_armed keeps form dirty");
 assert(r.saveNotArmedLatch.buttonEnabled === false, "save_not_armed keeps button disabled");
 assert(

@@ -5,6 +5,36 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-youtube-delete-ui-fix LOCAL PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+YOUTUBE_DELETE_UI_IMPLEMENTATION_RESULT: PASS
+SAFE_TO_TEST_DELETE: true
+LIVE_DELETE_EXECUTED: false
+DELETE_ENDPOINT: gosaki-youtube-supabase-save-dry-run
+DELETE_OPERATION: delete
+DELETE_APPROVAL_ID: G-cms-v2-youtube-supabase-item-delete
+AUTHZ: can_write_site
+MUTEX: 6 arms unchanged
+EDGE_DEPLOY: required before live delete
+RLS_APPLY: required (additive SQL not applied)
+PACKAGE_REBUILD_FOR_UI: true
+FIRST_LIVE_TARGET: yt-ce00cf60
+RECOMMENDED_NEXT: separate approvals for RLS → Edge deploy → package → arm → one UI delete
+Doc: tools/static-to-astro/docs/gosaki-youtube-delete-ui-implementation.md
+```
+
+## Gosaki YouTube delete UI (2026-09-23)
+
+- Implementation only. No DB write / Secret / deploy / FTP / commit.
+- Empty URL Save still does not delete. New per-item 削除 + confirm posts `operation=delete` on the existing Supabase Edge function.
+- Scope: exact `legacy_item_id` + `site_slug=gosaki-piano` + `provider=youtube`. published true/false both allowed.
+- Reuses YouTube Supabase Save arm (no new mutex env). Contents path untouched.
+- Live leftover `yt-ce00cf60` can be targeted after RLS + deploy + package + arm.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-youtube-save-arm-final-review READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: 838120076bf99465d685cb7129acfa8a322ce43f

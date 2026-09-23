@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki YouTube delete UI (2026-09-23):** **LOCAL PASS / SAFE_TO_TEST_DELETE true / LIVE NOT EXECUTED** — Phase `gosaki-youtube-delete-ui-fix` · per-item 削除 + confirm · Edge `operation=delete` on `gosaki-youtube-supabase-save-dry-run` · `can_write_site` · exact id/site_slug/provider · mutex unchanged · Contents untouched · live needs additive RLS + Edge deploy + Save arm + package · first target `yt-ce00cf60` · Doc: `gosaki-youtube-delete-ui-implementation.md`.
+
 **Gosaki YouTube Save arm final review (2026-09-23):** **READ-ONLY PASS / SAFE_TO_ARM true / NOT ARMED** — Phase `gosaki-youtube-save-arm-final-review` · client `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` · Edge `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` · dual-gate · mutex YouTube **Supabase** only (Contents YouTube arm forbidden) · Edge redeploy **not** required · table `site_embeds` + fingerprint/`updated_at` lock · first test `yt-placeholder-01` sortOrder 10→11 restore · `published=false` held · Doc: `gosaki-youtube-save-arm-final-review.md`.
 
 **Gosaki Discography Save arm final review (2026-09-23):** **READ-ONLY PASS / SAFE_TO_ARM true / NOT ARMED** — Phase `gosaki-discography-save-arm-final-review` · client `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true` · Edge `GOSAKI_DISCOGRAPHY_SAVE_ARMED=true` · dual-gate · mutex Discography only (Schedule UI off in new package) · Edge redeploy **not** required · RPC `gosaki_discography_operational_save` + optimistic lock · first test `discography-003` description-only · Doc: `gosaki-discography-save-arm-final-review.md`.

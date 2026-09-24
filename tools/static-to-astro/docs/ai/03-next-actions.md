@@ -3,10 +3,18 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (later explicit approval):** About Supabase Save dual-gate. Review: `SAFE_TO_ARM: true` · **not armed**. Required form: `承認します。この操作を1回だけ実行してください。`
-2. Order: PRECHECK SELECT → git-clean production generate `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true` only (build-read unset) + FileZilla → Secret set kmjq → lede append Save once → restore Save once → `secrets unset GOSAKI_ABOUT_SUPABASE_SAVE_ARMED --project-ref kmjqppxjdnwwrtaeqjta`.
-3. Never arm Contents About. Schedule / Discography / YouTube stay unarmed. Public `/about/` needs a **later** generate with `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` (Save arms false).
-4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary (later explicit approval):** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. Audit: `SAFE_TO_UNSET_BOTH: true` · **not executed**. Form: `承認します。この操作を1回だけ実行してください。`
+2. Production Admin already uses Supabase YouTube/About path. These two Secrets are **not** required for delivery.
+3. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Contents Save Secret read-only audit (2026-09-24)
+
+```txt
+SECRET_AUDIT_RESULT: PASS
+SAFE_TO_UNSET_BOTH: true
+UNSET_EXECUTED: false
+NEEDED_FOR_DELIVERY: false
+```
 
 ## 0. Gosaki About Save rollout final review (2026-09-24)
 

@@ -5,6 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-contents-save-secret-readonly-audit READ-ONLY PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+SECRET_AUDIT_RESULT: PASS
+SAFE_TO_UNSET_BOTH: true
+UNSET_EXECUTED: false
+NEEDED_FOR_DELIVERY: false
+LEFTOVER: GOSAKI_YOUTUBE_URL_SAVE_ARMED · GOSAKI_ABOUT_CONTENT_SAVE_ARMED
+WRITE_TARGET: GitHub Contents API main
+UI_REACHABLE: false (production PATH_ENABLED supabase)
+RECOMMENDED_NEXT: explicit approval then secrets unset both on kmjq only
+Doc: tools/static-to-astro/docs/gosaki-contents-save-secret-readonly-audit.md
+```
+
+## Gosaki leftover Contents Save Secret audit (2026-09-24)
+
+- READ-ONLY. Secrets not mutated.
+- Both leftover names are **Contents / GitHub `main` write** arms, not the delivered Supabase Save arms.
+- Production Admin UI does not POST those functions (YouTube/About path baked supabase).
+- Delivery does **not** need them. Safe to unset after explicit approval.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-about-save-rollout-final-review READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 HEAD: 7927a834

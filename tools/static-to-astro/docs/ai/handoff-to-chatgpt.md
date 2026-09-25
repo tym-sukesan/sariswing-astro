@@ -5,6 +5,117 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-discography-album-title-hierarchy PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+MINIMAL_DISCOGRAPHY_TITLE_HIERARCHY_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/discography/
+TITLE: 24px / 700 (quotes stripped in render)
+ARTIST + SLASH: 18px / 400
+SLASH_GAP: margin-inline 9px
+ALIGN: minimal PC align kept
+DB_CMS: unchanged
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-discography-album-title-hierarchy.md
+```
+
+## Gosaki Discography album title hierarchy (2026-09-25)
+
+- Display wrap only. `「title」/artist` → `.gosaki-album-name` / `.gosaki-album-slash` / `.gosaki-album-artist`.
+- Convert hook + CSS. No DB / CMS / grid rebuild.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-discography-minimal-pc-align PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+MINIMAL_DISCOGRAPHY_FIX_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/discography/
+ADDED_CSS_LINES: 23
+TITLE: left 57px / width 503px / margin 44px 0 20px
+LISTS: margin-top 0
+GRID: unchanged (Wix mesh)
+SP: unchanged
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-discography-minimal-pc-align.md
+```
+
+## Gosaki Discography minimal PC align (2026-09-25)
+
+- Four property overrides on existing Wix mesh. No new grid.
+- Title left matches cover `left:57px`. Track List / Personnel `margin-top:0`.
+- Purchase / cover / HTML / other pages untouched.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-discography-layout-alignment-fix ROLLED BACK
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+ROLLBACK_RESULT: PASS
+DISCOGRAPHY_ALIGNMENT_RESULT: ROLLED_BACK
+```
+
+## Gosaki Discography layout alignment fix (2026-09-25) — rolled back
+
+- Grid-based alignment CSS removed. Visual polish kept.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-final-visual-polish-tuning PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+VISUAL_POLISH_TUNING_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+NAV: 15px / 0.06em
+LOGO: clamp(17px,1.55vw,22px) PC · clamp(16px,4.6vw,19px) SP
+BEIGE: #ead7bd → #efe4d0
+PAGE: #f6f1e8 → #faf8f4
+GREEN: #3e5c4b underline (nav) · fill on month hover/active
+KV: full-bleed unchanged
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-final-visual-polish-tuning.md
+```
+
+## Gosaki final visual polish tuning (2026-09-25)
+
+- CSS-only in the existing polish block.
+- No HTML / CMS / DB / FTP / commit.
+- Local preview rebuilt; live www unchanged.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-final-visual-polish PASS (first draft)
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+HEAD: 4c22e1cf
+BRANCH: hotfix/gosaki-disable-test-youtube
+VISUAL_POLISH_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+PACKAGE_REBUILT: false
+PRODUCTION_UPDATED: false
+CHANGED: gosaki-piano-overrides.mjs (append polish block)
+TOKENS: beige #ead7bd + sage #4f6356
+KV: PC full-bleed 2680/1240
+CMS / admin / SEO / DB / FTP: unchanged
+RECOMMENDED_NEXT: operator visual review then iterate or package regen
+Doc: tools/static-to-astro/docs/gosaki-final-visual-polish.md
+```
+
+## Gosaki final visual polish (2026-09-25)
+
+- First-pass public design only. Header / footer / home KV / site-wide tokens.
+- No CMS, admin, URL, SEO, Supabase, Edge, Save arm, RLS, DB, FTP, secrets, or new images.
+- Live www overlay used for PC/SP checks; host files not written.
+- Original `~/sariswing-astro` unrelated diffs untouched. Commit not created.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-contents-save-secret-readonly-audit READ-ONLY PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 SECRET_AUDIT_RESULT: PASS

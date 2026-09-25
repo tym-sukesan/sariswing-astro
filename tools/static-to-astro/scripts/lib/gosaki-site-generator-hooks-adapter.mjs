@@ -28,6 +28,7 @@ import {
 import { isCmsFeatureEnabled } from "./site-cms-features.mjs";
 import { matchRegistryFixtureDir } from "./site-fixture-match.mjs";
 import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
+import { wrapGosakiDiscographyAlbumTitleHtml } from "./gosaki-discography-album-title-display.mjs";
 import {
   injectDiscographyDataSourceMarker,
   patchGosakiDiscographySupabaseFields,
@@ -100,23 +101,21 @@ export function createGosakiPianoHookMethods() {
       return Boolean(ctx.useScheduleData && ctx.monthRoutes?.has(page.route));
     },
     patchDiscographyPageMainHtml(mainHtml, page, ctx) {
-      const bundle = /** @type {any} */ (ctx.discographyBundle ?? ctx.gosakiDiscographyBundle);
-      if (
-        page.route !== "/discography/" ||
-        bundle?.discographyDataSource !== "supabase" ||
-        !bundle?.releases?.length
-      ) {
+      if (page.route !== "/discography/") {
         return null;
       }
-      const patched = patchGosakiDiscographySupabaseFields(
-        mainHtml,
-        bundle.releases,
-        bundle.tracksByLegacyId,
-      );
-      const html = injectDiscographyDataSourceMarker(patched.html, "supabase");
-      return {
-        html,
-        summary: {
+      const bundle = /** @type {any} */ (ctx.discographyBundle ?? ctx.gosakiDiscographyBundle);
+      let html = mainHtml;
+      /** @type {Record<string, unknown> | null} */
+      let summary = null;
+      if (bundle?.discographyDataSource === "supabase" && bundle?.releases?.length) {
+        const patched = patchGosakiDiscographySupabaseFields(
+          html,
+          bundle.releases,
+          bundle.tracksByLegacyId,
+        );
+        html = injectDiscographyDataSourceMarker(patched.html, "supabase");
+        summary = {
           discographyDataSource: "supabase",
           rowCount: bundle.releases.length,
           patchCount: patched.patches.length,
@@ -125,8 +124,23 @@ export function createGosakiPianoHookMethods() {
           labelPatchCount: patched.labelPatches?.length ?? 0,
           trackPatchCount: patched.trackPatches?.length ?? 0,
           trackRowCount: bundle.trackRowCount ?? 0,
-        },
-      };
+        };
+      }
+      const wrapped = wrapGosakiDiscographyAlbumTitleHtml(html);
+      html = wrapped.html;
+      if (summary) {
+        if (wrapped.count > 0) {
+          summary.albumTitleDisplayWrapCount = wrapped.count;
+        }
+        return { html, summary };
+      }
+      if (wrapped.count > 0) {
+        return {
+          html,
+          summary: { albumTitleDisplayWrapCount: wrapped.count },
+        };
+      }
+      return null;
     },
     applyScheduleDataPages(ctx) {
       const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);

@@ -2047,5 +2047,353 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
     max-width: 100% !important;
   }
 }
+
+/* --- gosaki-final-visual-polish (first pass, site-specific) --- */
+/* Beige key + muted sage accent. Spacing / type / line / color — not extra decoration. */
+body.wix-static-export {
+  --gosaki-beige: #efe4d0;
+  --gosaki-beige-deep: #e4d5bc;
+  --gosaki-page: #faf8f4;
+  --gosaki-ink: #3f3732;
+  --gosaki-ink-soft: #5b4d43;
+  --gosaki-green: #3e5c4b;
+  --gosaki-green-deep: #2c4639;
+  --gosaki-green-soft: #e8eee9;
+  --gosaki-line: rgba(62, 92, 75, 0.28);
+  --gosaki-font: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--gosaki-page) !important;
+  color: var(--gosaki-ink-soft);
+}
+
+html:has(body.wix-static-export) {
+  background-color: var(--gosaki-page, #faf8f4) !important;
+}
+
+body.wix-static-export #SITE_CONTAINER,
+body.wix-static-export #main_MF,
+body.wix-static-export #PAGES_CONTAINER,
+body.wix-static-export #BACKGROUND_GROUP,
+body.wix-static-export [id^="pageBackground"] {
+  background-color: var(--gosaki-page) !important;
+}
+
+body.wix-static-export h1,
+body.wix-static-export h2,
+body.wix-static-export h3,
+body.wix-static-export .font_0,
+body.wix-static-export .font_2 {
+  color: var(--gosaki-ink);
+  letter-spacing: 0.06em;
+}
+
+body.wix-static-export .wixui-rich-text a {
+  color: var(--gosaki-green);
+  text-decoration-color: var(--gosaki-line);
+  text-underline-offset: 0.18em;
+}
+
+body.wix-static-export .wixui-rich-text a:hover {
+  color: var(--gosaki-green-deep);
+}
+
+/* Header: keep beige, drop the white nav pill, sage hairline + current state */
+body.wix-static-export #SITE_HEADER {
+  --bg-overlay-color: var(--gosaki-beige) !important;
+  background-color: var(--gosaki-beige) !important;
+  box-shadow: inset 0 -1px 0 var(--gosaki-line);
+}
+
+body.wix-static-export #SITE_HEADER .uZIV9d,
+body.wix-static-export #SITE_HEADER .LNYVZi,
+body.wix-static-export #SITE_HEADER [data-testid="colorUnderlay"] {
+  background-color: var(--gosaki-beige) !important;
+  opacity: 1 !important;
+}
+
+body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+  padding-left: clamp(1.25rem, 4vw, 3.25rem) !important;
+  padding-right: clamp(1.25rem, 4vw, 3.25rem) !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
+}
+
+body.wix-static-export #SITE_HEADER #comp-mbdw9tzc h1,
+body.wix-static-export #SITE_HEADER #comp-mbdw9tzc .wixui-rich-text__text,
+body.wix-static-export #SITE_HEADER #comp-mbdw9tzc span[style*="font-size"] {
+  font-family: var(--gosaki-font) !important;
+  font-weight: 500 !important;
+  font-size: clamp(17px, 1.55vw, 22px) !important;
+  letter-spacing: 0.12em !important;
+  color: var(--gosaki-ink) !important;
+  line-height: 1.3 !important;
+}
+
+body.wix-static-export #SITE_HEADER .nav-toggle {
+  border-color: var(--gosaki-green);
+  color: var(--gosaki-ink-soft);
+}
+
+body.wix-static-export #SITE_HEADER .nav-toggle__bar {
+  background: var(--gosaki-green);
+}
+
+body.wix-static-export #SITE_HEADER .global-nav {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+body.wix-static-export #SITE_HEADER .global-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.15rem 0.15rem;
+  margin: 0;
+  padding: 0;
+}
+
+body.wix-static-export #SITE_HEADER .global-nav a {
+  font-family: var(--gosaki-font);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--gosaki-ink-soft);
+  padding: 0.45rem 0.7rem;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+}
+
+body.wix-static-export #SITE_HEADER .global-nav a:hover,
+body.wix-static-export #SITE_HEADER .global-nav a.is-current {
+  color: var(--gosaki-green);
+  background: transparent;
+  border-bottom-color: var(--gosaki-green);
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    min-height: 72px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #SITE_HEADER .global-nav,
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav {
+    background: var(--gosaki-beige) !important;
+    border-top: 1px solid var(--gosaki-line) !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .global-nav a {
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    padding: 0.7rem 0.5rem;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc h1,
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc .wixui-rich-text__text,
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc span[style*="font-size"] {
+    font-size: clamp(16px, 4.6vw, 19px) !important;
+    letter-spacing: 0.08em !important;
+  }
+}
+
+/* Footer: same beige + sage hairline, compact SNS / copyright */
+body.wix-static-export #SITE_FOOTER {
+  background-color: var(--gosaki-beige) !important;
+  box-shadow: inset 0 1px 0 var(--gosaki-line);
+}
+
+body.wix-static-export #SITE_FOOTER .uZIV9d,
+body.wix-static-export #SITE_FOOTER .LNYVZi,
+body.wix-static-export #SITE_FOOTER [data-testid="colorUnderlay"] {
+  background-color: var(--gosaki-beige) !important;
+  opacity: 1 !important;
+}
+
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+  padding: 1.35rem 1.25rem 1.15rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a::after,
+body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links a {
+  color: var(--gosaki-ink-soft);
+  letter-spacing: 0.08em;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a:hover::after,
+body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links a:hover {
+  color: var(--gosaki-green-deep);
+  opacity: 1;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx p,
+body.wix-static-export #SITE_FOOTER #WRchTxtx .wixui-rich-text__text {
+  color: var(--gosaki-ink-soft) !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.08em;
+}
+
+/* Home KV: use viewport width; keep photo aspect on PC (no extra crop) */
+body.wix-static-export #comp-lol1i5k0 {
+  width: 100% !important;
+  max-width: 100% !important;
+  left: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: var(--gosaki-ink) !important;
+}
+
+body.wix-static-export #comp-lol1i5k0 [data-mesh-id$="inlineContent-gridContainer"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  left: 0 !important;
+}
+
+body.wix-static-export #comp-mbl1cpz3 {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  --left: 0px !important;
+  --width: 100% !important;
+  overflow: hidden !important;
+}
+
+body.wix-static-export #comp-mbl1cpz3 .apPOZK,
+body.wix-static-export #comp-mbl1cpz3 .wixui-image,
+body.wix-static-export #comp-mbl1cpz3 img,
+body.wix-static-export #comp-mbl1cpz3 #img_comp-mbl1cpz3 {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export #comp-lol1i5k0,
+  body.wix-static-export #comp-mbl1cpz3 {
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 2680 / 1240;
+  }
+
+  body.wix-static-export #comp-mbl1cpz3 .apPOZK,
+  body.wix-static-export #comp-mbl1cpz3 .wixui-image,
+  body.wix-static-export #comp-mbl1cpz3 img,
+  body.wix-static-export #comp-mbl1cpz3 #img_comp-mbl1cpz3 {
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #comp-mbl1cpz3 {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    height: clamp(220px, 52vw, 340px) !important;
+  }
+
+  body.wix-static-export #comp-mbl1cpz3 img,
+  body.wix-static-export #comp-mbl1cpz3 #img_comp-mbl1cpz3 {
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+}
+
+/* Site-wide cards / schedule links: beige fill, sage border, quiet hover */
+body.wix-static-export .gosaki-schedule-hub {
+  padding-top: 2.25rem;
+  padding-bottom: 2.75rem;
+}
+
+body.wix-static-export .gosaki-schedule-hub__title,
+body.wix-static-export .gosaki-schedule-month h2.font_2 {
+  color: var(--gosaki-ink);
+  letter-spacing: 0.08em;
+}
+
+body.wix-static-export .gosaki-schedule-month-link {
+  background: #fffefb;
+  border: 1px solid var(--gosaki-line);
+  border-radius: 2px;
+  color: var(--gosaki-ink-soft);
+}
+
+body.wix-static-export .gosaki-schedule-month-link:hover,
+body.wix-static-export .gosaki-schedule-month-link:focus-visible,
+body.wix-static-export .gosaki-schedule-month-link:active,
+body.wix-static-export .gosaki-schedule-month-link.is-current,
+body.wix-static-export .gosaki-schedule-month-link[aria-current="page"] {
+  background: var(--gosaki-green);
+  color: #faf8f4;
+  border-color: var(--gosaki-green-deep);
+}
+
+body.wix-static-export .gosaki-schedule-event,
+body.wix-static-export .gosaki-band-card {
+  border-color: var(--gosaki-line);
+}
+
+body.wix-static-export .gosaki-youtube-embed-section,
+body.wix-static-export .gosaki-youtube-list {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+/* --- gosaki-discography-minimal-pc-align --- */
+/* Keep Wix mesh. PC only: title left=cover left, gap below title, list tops=cover top. */
+@media (min-width: 769px) {
+  body.wix-static-export
+    #comp-llexymel
+    [data-mesh-id^="comp-llexymga__"]
+    > [id^="comp-lley9r5x__"] {
+    left: 57px !important;
+    width: 503px !important;
+    margin: 44px 0 20px !important;
+  }
+
+  body.wix-static-export
+    #comp-llexymel
+    [data-mesh-id^="comp-llexymga__"]
+    > [id^="comp-lley4qy2__"],
+  body.wix-static-export
+    #comp-llexymel
+    [data-mesh-id^="comp-llexymga__"]
+    > [id^="comp-lley693e__"] {
+    margin-top: 0 !important;
+  }
+}
+
+/* --- gosaki-discography-album-title-hierarchy --- */
+/* Display wrap only. Quotes stripped in markup; DB/CMS unchanged. */
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-name,
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-name .wixui-rich-text__text {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+}
+
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-slash,
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-artist,
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-slash .wixui-rich-text__text,
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-artist .wixui-rich-text__text {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+
+body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-slash {
+  display: inline-block !important;
+  margin-inline: 9px !important;
+}
+
 `;
 }

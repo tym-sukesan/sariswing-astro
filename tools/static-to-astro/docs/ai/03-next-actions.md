@@ -1,11 +1,68 @@
-Last updated: 2026-09-24
+Last updated: 2026-09-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (later explicit approval):** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. Audit: `SAFE_TO_UNSET_BOTH: true` · **not executed**. Form: `承認します。この操作を1回だけ実行してください。`
-2. Production Admin already uses Supabase YouTube/About path. These two Secrets are **not** required for delivery.
-3. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** operator review of Discography title hierarchy at `http://127.0.0.1:4321/discography/`. Live www **unchanged**. FTP `--apply` remains suspended.
+2. After review: further CSS iterate **or** later package regen — not this phase.
+3. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
+4. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Discography album title hierarchy (2026-09-25)
+
+```txt
+MINIMAL_DISCOGRAPHY_TITLE_HIERARCHY_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/discography/
+ADDED_CSS_LINES: 22
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-discography-album-title-hierarchy.md`
+
+## 0. Gosaki Discography minimal PC align (2026-09-25)
+
+```txt
+MINIMAL_DISCOGRAPHY_FIX_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/discography/
+ADDED_CSS_LINES: 23
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-discography-minimal-pc-align.md`
+
+## 0. Gosaki Discography layout alignment fix (2026-09-25) — ROLLED BACK
+
+```txt
+ROLLBACK_RESULT: PASS
+DISCOGRAPHY_ALIGNMENT_RESULT: ROLLED_BACK
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/discography/
+NEW_DISCOGRAPHY_FIX: not started
+```
+
+Alignment-fix CSS/docs removed. Visual polish (header/footer/KV/color) kept.
+
+## 0. Gosaki final visual polish tuning (2026-09-25)
+
+```txt
+VISUAL_POLISH_TUNING_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+PRODUCTION_UPDATED: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-final-visual-polish-tuning.md`
+
+## 0. Gosaki final visual polish (2026-09-25)
+
+```txt
+VISUAL_POLISH_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+PACKAGE_REBUILT: false
+PRODUCTION_UPDATED: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-final-visual-polish.md`
 
 ## 0. Gosaki Contents Save Secret read-only audit (2026-09-24)
 

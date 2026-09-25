@@ -1,7 +1,19 @@
-Last updated: 2026-09-24
+Last updated: 2026-09-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki Discography album title hierarchy (2026-09-25):** **PASS** — Phase `gosaki-discography-album-title-hierarchy` · display wrap `「title」/artist` → name 24px/700 · slash+artist 18px/400 · slash `margin-inline:9px` · quotes hidden in render only · alignment kept · local `http://127.0.0.1:4321/discography/` · Doc: `gosaki-discography-album-title-hierarchy.md`.
+
+**Gosaki Discography minimal PC align (2026-09-25):** **PASS** — Phase `gosaki-discography-minimal-pc-align` · no new grid · title `left:57px` `width:503px` `margin:44px 0 20px` · Track List/Personnel `margin-top:0` · 4 albums · SP unchanged · local `http://127.0.0.1:4321/discography/` · Doc: `gosaki-discography-minimal-pc-align.md`.
+
+**Gosaki Discography layout alignment fix (2026-09-25):** **ROLLED BACK** — Phase `gosaki-discography-layout-alignment-fix` CSS/docs removed; Discography restored to polish-tuning layout. Header/footer/KV polish kept. New Discography fix **not started**.
+
+**Gosaki final visual polish tuning (2026-09-25):** **PASS** — Phase `gosaki-final-visual-polish-tuning` · CSS-only · nav 15px · logo PC 22px / SP ~18px · beige `#ead7bd`→`#efe4d0` · page `#f6f1e8`→`#faf8f4` · green hover/current clearer, no nav fill · month buttons fill on hover/active · KV full-bleed kept · local `http://127.0.0.1:4321/` · production/FTP/DB/commit **false** · Doc: `gosaki-final-visual-polish-tuning.md`.
+
+**Gosaki final visual polish local preview (2026-09-25):** **LOCAL PREVIEW UP** — convert fixture → `output/gosaki-piano-astro-visual-polish` (no Supabase) · `astro preview` `http://127.0.0.1:4321/` · production/FTP/DB/commit **false**.
+
+**Gosaki final visual polish (2026-09-25):** **PASS (first draft · local CSS only)** — Phase `gosaki-final-visual-polish` · beige `#ead7bd` kept · sage accent `#4f6356` · header/footer/KV/site-wide tokens in `gosaki-piano-overrides.mjs` · PC KV full-bleed native 2680/1240 · no CMS/admin/SEO/DB/FTP · package **not** rebuilt · live production **unchanged** · `SAFE_TO_REVIEW_IN_BROWSER: true` · Doc: `gosaki-final-visual-polish.md`.
 
 **Gosaki Contents Save Secret read-only audit (2026-09-24):** **PASS / UNSET NOT EXECUTED** — leftover `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED` are GitHub Contents `main` write arms · production Admin UI **not reachable** (PATH_ENABLED supabase) · **not needed** for delivery · **safe_to_unset true** · Doc: `gosaki-contents-save-secret-readonly-audit.md`.
 

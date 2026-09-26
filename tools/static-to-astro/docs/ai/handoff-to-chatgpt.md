@@ -5,6 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-youtube-final-content-entry-build PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+YOUTUBE_FINAL_ENTRY_BUILD_RESULT: PASS
+COMMIT: 936cbdb59f9b1920b63bc582264bcd004ab287be
+sourceTreeClean: true
+armedCount: 1
+armedFeatureIds: ["gosaki-youtube-supabase"]
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+EDGE_SECRET_CHANGED: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-youtube-final-content-entry-build.md
+```
+
+## Gosaki YouTube final content entry build (2026-09-26)
+
+- Checkpoint `936cbdb5` then official `build:gosaki:production` with `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` only.
+- Other Save arms false. Visual polish + Home Schedule included. Edge Secret not changed.
+- Operator FileZilla `public-dist/` contents. After entry: unset Secret and rebuild arms off.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-final-visual-polish-production-build PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

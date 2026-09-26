@@ -3,10 +3,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator FileZilla overwrite of production document root with `tools/static-to-astro/output/manual-upload/gosaki-piano-production/public-dist/` **contents**. No FTP `--apply`. Live www **not yet** this package until FileZilla.
-2. After upload: visual QA on www. Later Contents Secret unset remains a separate approval.
+1. **Primary:** operator FileZilla overwrite with `tools/static-to-astro/output/manual-upload/gosaki-piano-production/public-dist/` **contents** (YouTube UI arm package). No FTP `--apply`.
+2. Live Save still needs kmjq Edge Secret `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` (not set this phase). After Gosaki registers videos: unset Secret and rebuild with Save arms off.
 3. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
 4. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki YouTube final content entry build (2026-09-26)
+
+```txt
+YOUTUBE_FINAL_ENTRY_BUILD_RESULT: PASS
+COMMIT: 936cbdb59f9b1920b63bc582264bcd004ab287be
+sourceTreeClean: true
+armedCount: 1
+armedFeatureIds: ["gosaki-youtube-supabase"]
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+EDGE_SECRET_CHANGED: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-youtube-final-content-entry-build.md`
 
 ## 0. Gosaki final visual polish production build (2026-09-26)
 

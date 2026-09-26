@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki YouTube final content entry build (2026-09-26):** **PASS** — Phase `gosaki-youtube-final-content-entry-build` · HEAD `936cbdb5` git-clean · `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` · mutex `armedCount=1` `gosaki-youtube-supabase` · other Save arms false · visual polish + Home Schedule in package · G-20i3 **113/0** · public-dist **53** · Edge Secret **unchanged** · FileZilla `output/manual-upload/gosaki-piano-production/public-dist/` · Doc: `gosaki-youtube-final-content-entry-build.md`.
+
 **Gosaki final visual polish production build (2026-09-26):** **PASS** — Phase `gosaki-final-visual-polish-production-build` · HEAD `2b4bd226` git-clean · `build:gosaki:production` · `armedCount=0` · G-20i3 **113/0** · save-completion **42/0** · public-dist **53** · FileZilla source `output/manual-upload/gosaki-piano-production/public-dist/` · FTP `--apply` **false** · Doc: `gosaki-final-visual-polish-production-build.md`.
 
 **Gosaki Home schedule today JST (2026-09-26):** **PASS** — `gosakiHomeScheduleTodayJst()` `Intl` `Asia/Tokyo` `formatToParts` → `YYYY-MM-DD` · upcoming/fallback/sort/limit unchanged · verifier **15/0** · no commit/FTP/production build · Doc: `gosaki-home-latest-schedule.md`.

@@ -1881,7 +1881,9 @@ body.wix-static-export .gosaki-youtube-embed__iframe {
 }
 
 body.wix-static-export [data-mesh-id*="inlineContent-gridContainer"]:has(.gosaki-youtube-embed),
-body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed) {
+body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed),
+body.wix-static-export [data-mesh-id*="inlineContent-gridContainer"]:has(.gosaki-home-schedule),
+body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-home-schedule) {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -2323,7 +2325,7 @@ body.wix-static-export .gosaki-schedule-month h2.font_2 {
 body.wix-static-export .gosaki-schedule-month-link {
   background: #fffefb;
   border: 1px solid var(--gosaki-line);
-  border-radius: 2px;
+  border-radius: 5px;
   color: var(--gosaki-ink-soft);
 }
 
@@ -2393,6 +2395,341 @@ body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-arti
 body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] .gosaki-album-slash {
   display: inline-block !important;
   margin-inline: 9px !important;
+}
+
+/* --- gosaki-link-page-visual-polish --- */
+/* Link page only (#comp-lol1i5hv). Typography + spacing. No cards / JS / HTML rewrite. */
+body.wix-static-export #comp-lol1i5hv #comp-juctbpem {
+  --bg: 250, 248, 244;
+  --alpha-bg: 0 !important;
+  --brd: 250, 248, 244;
+  --alpha-brd: 0 !important;
+  --rd: 0 !important;
+  --shd: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-juctbpem .jv9xi4,
+body.wix-static-export #comp-lol1i5hv #comp-juctbpem .LNYVZi,
+body.wix-static-export #comp-lol1i5hv #comp-juctbpem [data-testid="container-bg"],
+body.wix-static-export #comp-lol1i5hv #comp-juctbpem [data-testid="colorUnderlay"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  opacity: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq,
+body.wix-static-export #comp-lol1i5hv [data-mesh-id="comp-juctbpeminlineContent-gridContainer"] > #comp-jsgv2olq {
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 1.75rem !important;
+  text-align: center !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq h4,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq .font_4,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq .wixui-rich-text__text {
+  font-family: var(--gosaki-font) !important;
+  font-size: 40px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.08em !important;
+  line-height: 1.2 !important;
+  color: var(--gosaki-ink) !important;
+  text-align: center !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui,
+body.wix-static-export #comp-lol1i5hv [data-mesh-id="comp-juctbpeminlineContent-gridContainer"] > #comp-jsgv72ui {
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+  background: #efe4d0 !important;
+  background-color: #efe4d0 !important;
+  padding: 50px !important;
+  border-radius: 5px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p {
+  max-width: 40rem;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) {
+  margin: 0 !important;
+  padding-top: 32px !important;
+  line-height: 1.45 !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a):first-of-type {
+  padding-top: 0 !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a),
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) .wixui-rich-text__text,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a .wixui-rich-text__text {
+  font-size: 19px !important;
+  font-weight: 600 !important;
+  font-family: var(--gosaki-font) !important;
+  color: var(--gosaki-ink) !important;
+  letter-spacing: 0.02em !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a .wixui-rich-text__text {
+  text-decoration: none !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--gosaki-green) 28%, transparent) !important;
+  text-underline-offset: 0.22em;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a:hover,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a:hover .wixui-rich-text__text,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a:focus-visible,
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a:focus-visible .wixui-rich-text__text {
+  color: var(--gosaki-green) !important;
+  border-bottom-color: var(--gosaki-green) !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:not(:has(a)) {
+  margin: 0.4rem 0 0 !important;
+  padding: 0 !important;
+  font-size: 14.5px !important;
+  font-weight: 400 !important;
+  line-height: 1.7 !important;
+  color: color-mix(in srgb, var(--gosaki-ink-soft) 78%, var(--gosaki-page)) !important;
+  letter-spacing: 0.01em !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:not(:has(a)) .wixui-rich-text__text {
+  font-size: 14.5px !important;
+  font-weight: 400 !important;
+  color: inherit !important;
+}
+
+body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) + p + p:not(:has(a)) {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export #comp-lol1i5hv #comp-juctbpem {
+    width: min(720px, 88%) !important;
+    max-width: 720px !important;
+    left: auto !important;
+    margin: 3.5rem auto 3.25rem !important;
+    padding: 0.5rem 0.25rem 1.25rem !important;
+    box-sizing: border-box;
+  }
+
+  body.wix-static-export #comp-lol1i5hv [data-mesh-id="comp-juctbpeminlineContent"],
+  body.wix-static-export #comp-lol1i5hv [data-mesh-id="comp-juctbpeminlineContent-gridContainer"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #comp-lol1i5hv #comp-juctbpem {
+    padding: 0.25rem 0.15rem 1.5rem !important;
+    margin-top: 1.75rem !important;
+    margin-bottom: 2.25rem !important;
+  }
+
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui,
+  body.wix-static-export #comp-lol1i5hv [data-mesh-id="comp-juctbpeminlineContent-gridContainer"] > #comp-jsgv72ui {
+    padding: 36px 28px !important;
+  }
+
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq h4,
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq .font_4,
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv2olq .wixui-rich-text__text {
+    font-size: 34px !important;
+  }
+
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) {
+    padding-top: 28px !important;
+  }
+
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a):first-of-type {
+    padding-top: 0 !important;
+  }
+
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a),
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) .wixui-rich-text__text,
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a,
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:has(a) a .wixui-rich-text__text {
+    font-size: 18px !important;
+  }
+
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:not(:has(a)),
+  body.wix-static-export #comp-lol1i5hv #comp-jsgv72ui p:not(:has(a)) .wixui-rich-text__text {
+    font-size: 14px !important;
+    line-height: 1.75 !important;
+  }
+}
+
+/* --- gosaki-schedule-final-micro-adjust --- */
+/* Hub month links + month-page cards only. No HTML / other pages. */
+body.wix-static-export .gosaki-schedule-event-card {
+  border-radius: 5px !important;
+  border-color: var(--gosaki-line) !important;
+}
+
+body.wix-static-export .gosaki-schedule-event-date,
+body.wix-static-export .gosaki-schedule-event-card .gosaki-schedule-event-date {
+  color: var(--gosaki-green-deep) !important;
+  font-weight: 600 !important;
+}
+
+body.wix-static-export .gosaki-schedule-event-body a {
+  color: var(--gosaki-green);
+}
+
+body.wix-static-export .gosaki-schedule-event-body > p:first-of-type {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin-bottom: 10px !important;
+  color: var(--gosaki-ink) !important;
+  line-height: 1.4 !important;
+}
+
+/* --- gosaki-home-latest-schedule --- */
+body.wix-static-export .gosaki-home-schedule {
+  width: 100%;
+  max-width: 720px;
+  margin: 2.25rem auto 1.25rem;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
+  display: block;
+  position: relative;
+  z-index: 1;
+  float: none;
+  clear: both;
+  min-width: 0;
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+body.wix-static-export .gosaki-home-schedule__inner {
+  width: 100%;
+}
+
+body.wix-static-export .gosaki-home-schedule__title {
+  margin: 0 0 1.5rem;
+  font-family: var(--gosaki-font);
+  font-size: clamp(28px, 6vw, 40px);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--gosaki-ink);
+  line-height: 1.2;
+}
+
+body.wix-static-export .gosaki-home-schedule__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.wix-static-export .gosaki-home-schedule__item {
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--gosaki-line);
+}
+
+body.wix-static-export .gosaki-home-schedule__item:first-child {
+  padding-top: 0;
+}
+
+body.wix-static-export .gosaki-home-schedule__date {
+  margin: 0 0 0.35rem;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--gosaki-green-deep);
+  line-height: 1.35;
+}
+
+body.wix-static-export .gosaki-home-schedule__name {
+  margin: 0 0 0.3rem;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gosaki-ink);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+body.wix-static-export .gosaki-home-schedule__venue {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 400;
+  color: var(--gosaki-ink-soft);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+body.wix-static-export .gosaki-home-schedule__empty {
+  margin: 0 0 1.25rem;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--gosaki-ink-soft);
+}
+
+body.wix-static-export .gosaki-home-schedule__more {
+  margin: 1.5rem 0 0;
+  text-align: center;
+}
+
+body.wix-static-export .gosaki-home-schedule__more a {
+  color: var(--gosaki-green);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--gosaki-green) 28%, transparent);
+}
+
+body.wix-static-export .gosaki-home-schedule__more a:hover,
+body.wix-static-export .gosaki-home-schedule__more a:focus-visible {
+  color: var(--gosaki-green-deep);
+  border-bottom-color: var(--gosaki-green);
+}
+
+body.wix-static-export #comp-m8y3dzb6.gosaki-home-this-week-hidden {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+body.wix-static-export #comp-m8y3dzb6.gosaki-home-this-week-hidden [data-mesh-id$="inlineContent"],
+body.wix-static-export #comp-m8y3dzb6.gosaki-home-this-week-hidden [data-mesh-id$="inlineContent-gridContainer"] {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: 0 !important;
+  grid-template-rows: none !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-home-schedule {
+    margin-top: 1.75rem;
+    padding: 0 1rem;
+  }
+
+  body.wix-static-export .gosaki-home-schedule__name {
+    font-size: 17px;
+  }
 }
 
 `;

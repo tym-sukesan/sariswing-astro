@@ -5,6 +5,117 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-home-schedule-today-jst PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+HOME_SCHEDULE_TODAY_JST_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+JST_METHOD: Intl.DateTimeFormat timeZone Asia/Tokyo formatToParts → YYYY-MM-DD
+VERIFIER: 15 passed, 0 failed
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-home-latest-schedule.md
+```
+
+## Gosaki Home schedule today JST (2026-09-26)
+
+- Default `today` is JST calendar date. Upcoming / fallback / sort / limit / published filters unchanged.
+- No DB / FTP / production generate / commit.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-home-latest-schedule PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+HOME_LATEST_SCHEDULE_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+DISPLAY_COUNT: 4
+FIELDS: date_display, title, venue
+CTA: Scheduleを見る → /schedule/
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-home-latest-schedule.md
+```
+
+## Gosaki Home latest schedule (2026-09-26)
+
+- Home only. Fills Option D `<!--GOSAKI_HOME_SCHEDULE_SLOT-->` with 4 published events from existing `gosaki-schedules.json` (`published=true` build-read).
+- CTA Scheduleを見る → `/schedule/`. Month/hub generators unchanged. No DB / FTP / production generate / commit.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-schedule-final-micro-adjust PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_FINAL_MICRO_ADJUST_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW_HUB: http://127.0.0.1:4321/schedule/
+LOCAL_PREVIEW_MONTH: http://127.0.0.1:4321/schedule/2026-07/
+MONTH_LINK_RADIUS: 5px
+CARD_RADIUS: 5px
+CARD_BORDER: #e0be9a → rgba(62, 92, 75, 0.28)
+DATE_COLOR: #993500 → #2c4639
+TITLE: 18px / 700 / margin-bottom 10px
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-final-micro-adjust.md
+```
+
+## Gosaki Schedule final micro-adjust (2026-09-26)
+
+- CSS only. Hub month-link radius 5px (hover kept). Month cards sage border + date, first body line 18px/700.
+- No HTML / other pages / commit / FTP.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-link-list-background-box PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+LINK_LIST_BACKGROUND_BOX_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/link/
+CHANGED_SELECTOR: #comp-lol1i5hv #comp-jsgv72ui
+BACKGROUND: #efe4d0
+PADDING_PC: 50px
+PADDING_SP: 36px 28px
+BORDER_RADIUS: 5px
+BOX_SHADOW: none
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-link-page-visual-polish.md
+```
+
+## Gosaki Link list background box (2026-09-26)
+
+- List `#comp-jsgv72ui` only. Header-matching beige fill, 50px padding, 5px radius. Heading stays outside. No other pages.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-link-page-visual-polish PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+LINK_VISUAL_POLISH_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/link/
+BACKGROUND: beige panel removed
+TYPOGRAPHY: names 19px/600 · desc 14.5px/400
+SPACING: 32px PC / 28px SP
+HOVER: sage hairline
+DB_CMS: unchanged
+PRODUCTION_UPDATED: false
+Doc: tools/static-to-astro/docs/gosaki-link-page-visual-polish.md
+```
+
+## Gosaki Link page visual polish (2026-09-25)
+
+- CSS only on `#comp-lol1i5hv`. Beige box fill off. Heading stays centered; list left-aligned.
+- No HTML / JS / CMS / DB / FTP / commit.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-discography-album-title-hierarchy PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

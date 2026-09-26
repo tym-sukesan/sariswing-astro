@@ -1,0 +1,41 @@
+---
+import schedules from "../data/gosaki-schedules.json";
+import { withBase } from "../lib/with-base.ts";
+import {
+  gosakiHomeScheduleDateLabel,
+  gosakiHomeScheduleTitle,
+  selectGosakiHomeLatestSchedules,
+} from "../lib/gosaki-home-latest-schedule.ts";
+
+const events = selectGosakiHomeLatestSchedules(schedules);
+const scheduleHref = withBase("/schedule/");
+---
+
+<section class="gosaki-home-schedule" aria-labelledby="gosaki-home-schedule-heading">
+  <div class="gosaki-home-schedule__inner">
+    <h2 id="gosaki-home-schedule-heading" class="gosaki-home-schedule__title">Schedule</h2>
+    {
+      events.length > 0 ? (
+        <ul class="gosaki-home-schedule__list">
+          {events.map((ev) => {
+            const title = gosakiHomeScheduleTitle(ev.title);
+            const dateLabel = gosakiHomeScheduleDateLabel(ev);
+            const venue = String(ev.venue || "").trim();
+            return (
+              <li class="gosaki-home-schedule__item">
+                {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
+                {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
+                {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p class="gosaki-home-schedule__empty">公開中のスケジュールは Schedule ページをご覧ください。</p>
+      )
+    }
+    <p class="gosaki-home-schedule__more">
+      <a href={scheduleHref}>Scheduleを見る</a>
+    </p>
+  </div>
+</section>

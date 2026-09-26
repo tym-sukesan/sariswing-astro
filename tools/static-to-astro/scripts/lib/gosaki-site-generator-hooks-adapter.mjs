@@ -16,6 +16,7 @@ import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
+import { applyGosakiHomeLatestSchedule } from "./gosaki-home-latest-schedule.mjs";
 import { applyGosakiHomeStaleThisWeekHide } from "./gosaki-home-stale-this-week-hide.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
@@ -229,6 +230,14 @@ export function createGosakiPianoHookMethods() {
 
       const gosakiHomeStaleThisWeekSummary = applyGosakiHomeStaleThisWeekHide(outDir);
 
+      const gosakiHomeLatestScheduleSummary = applyGosakiHomeLatestSchedule(outDir, toolRoot);
+      if (gosakiHomeLatestScheduleSummary.applied) {
+        writtenPaths.push(
+          path.join(outDir, gosakiHomeLatestScheduleSummary.componentPath),
+          path.join(outDir, gosakiHomeLatestScheduleSummary.libPath),
+        );
+      }
+
       const gosakiYoutubeEmbedSummary =
         siteKey && isCmsFeatureEnabled(siteKey, "youtube", toolRoot)
           ? applyGosakiHomeYouTubeEmbed(outDir, toolRoot, {
@@ -274,6 +283,7 @@ export function createGosakiPianoHookMethods() {
         gosakiBandProfilesSummary,
         gosakiAboutContentSummary,
         gosakiHomeStaleThisWeekSummary,
+        gosakiHomeLatestScheduleSummary,
         gosakiYoutubeEmbedSummary,
         gosakiContactHubspotSummary,
         gosakiReadOnlyAdminSummary,

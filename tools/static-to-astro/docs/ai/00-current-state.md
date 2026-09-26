@@ -1,7 +1,17 @@
-Last updated: 2026-09-25
+Last updated: 2026-09-26
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki Home schedule today JST (2026-09-26):** **PASS** — `gosakiHomeScheduleTodayJst()` `Intl` `Asia/Tokyo` `formatToParts` → `YYYY-MM-DD` · upcoming/fallback/sort/limit unchanged · verifier **15/0** · no commit/FTP/production build · Doc: `gosaki-home-latest-schedule.md`.
+
+**Gosaki Home latest schedule (2026-09-26):** **PASS** — Phase `gosaki-home-latest-schedule` · Home only · 4 published events (date / title / venue) · CTA Scheduleを見る → `/schedule/` · existing `gosaki-schedules.json` (`published=true` build-read) · local `http://127.0.0.1:4321/` · production/FTP/DB/commit **false** · Doc: `gosaki-home-latest-schedule.md`.
+
+**Gosaki Schedule final micro-adjust (2026-09-26):** **PASS** — Phase `gosaki-schedule-final-micro-adjust` · month-link radius 5px · card radius 5px · card border `#e0be9a`→sage line · date `#993500`→`#2c4639` · first body `p` 18px/700 · local `http://127.0.0.1:4321/schedule/` · Doc: `gosaki-schedule-final-micro-adjust.md`.
+
+**Gosaki Link list background box (2026-09-26):** **PASS** — `#comp-jsgv72ui` fill `#efe4d0` · padding 50px PC / 36px 28px SP · radius 5px · no border/shadow · heading outside · `/link/` only · local `http://127.0.0.1:4321/link/` · Doc: `gosaki-link-page-visual-polish.md`.
+
+**Gosaki Link page visual polish (2026-09-25):** **PASS** — Phase `gosaki-link-page-visual-polish` · beige box removed · names 19px/600 · desc 14.5px · item gap 32px PC / 28px SP · hover sage hairline · `/link/` only · local `http://127.0.0.1:4321/link/` · Doc: `gosaki-link-page-visual-polish.md`.
 
 **Gosaki Discography album title hierarchy (2026-09-25):** **PASS** — Phase `gosaki-discography-album-title-hierarchy` · display wrap `「title」/artist` → name 24px/700 · slash+artist 18px/400 · slash `margin-inline:9px` · quotes hidden in render only · alignment kept · local `http://127.0.0.1:4321/discography/` · Doc: `gosaki-discography-album-title-hierarchy.md`.
 

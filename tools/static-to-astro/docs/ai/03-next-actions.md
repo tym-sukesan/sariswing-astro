@@ -1,12 +1,83 @@
-Last updated: 2026-09-25
+Last updated: 2026-09-26
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator review of Discography title hierarchy at `http://127.0.0.1:4321/discography/`. Live www **unchanged**. FTP `--apply` remains suspended.
-2. After review: further CSS iterate **or** later package regen — not this phase.
+1. **Primary:** operator review of Home latest schedule at `http://127.0.0.1:4321/` (today = JST). Live www **unchanged**. FTP `--apply` remains suspended.
+2. After review: further Home CSS iterate **or** later package regen so production build bakes kmjq `published=true` rows — not this phase.
 3. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
 4. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Home schedule today JST (2026-09-26)
+
+```txt
+HOME_SCHEDULE_TODAY_JST_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+JST_METHOD: Intl.DateTimeFormat Asia/Tokyo formatToParts → YYYY-MM-DD
+VERIFIER: 15 passed, 0 failed
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-home-latest-schedule.md`
+
+## 0. Gosaki Home latest schedule (2026-09-26)
+
+```txt
+HOME_LATEST_SCHEDULE_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+DISPLAY_COUNT: 4
+FIELDS: date_display, title, venue
+CTA: Scheduleを見る → /schedule/
+PRODUCTION_UPDATED: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-home-latest-schedule.md`
+
+## 0. Gosaki Schedule final micro-adjust (2026-09-26)
+
+```txt
+SCHEDULE_FINAL_MICRO_ADJUST_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW_HUB: http://127.0.0.1:4321/schedule/
+LOCAL_PREVIEW_MONTH: http://127.0.0.1:4321/schedule/2026-07/
+MONTH_LINK_RADIUS: 5px
+CARD_RADIUS: 5px
+CARD_BORDER: #e0be9a → rgba(62, 92, 75, 0.28)
+DATE_COLOR: #993500 → #2c4639
+TITLE: 18px / 700 / margin-bottom 10px
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-final-micro-adjust.md`
+
+## 0. Gosaki Link list background box (2026-09-26)
+
+```txt
+LINK_LIST_BACKGROUND_BOX_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/link/
+CHANGED_SELECTOR: #comp-lol1i5hv #comp-jsgv72ui
+BACKGROUND: #efe4d0
+PADDING_PC: 50px
+PADDING_SP: 36px 28px
+BORDER_RADIUS: 5px
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-link-page-visual-polish.md`
+
+## 0. Gosaki Link page visual polish (2026-09-25)
+
+```txt
+LINK_VISUAL_POLISH_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/link/
+BACKGROUND: beige panel removed (transparent)
+TYPOGRAPHY: names 19px/600 · desc 14.5px/400
+SPACING: 32px PC / 28px SP
+HOVER: sage hairline, not a button
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-link-page-visual-polish.md`
 
 ## 0. Gosaki Discography album title hierarchy (2026-09-25)
 

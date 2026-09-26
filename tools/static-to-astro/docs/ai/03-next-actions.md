@@ -3,10 +3,28 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator review of Home latest schedule at `http://127.0.0.1:4321/` (today = JST). Live www **unchanged**. FTP `--apply` remains suspended.
-2. After review: further Home CSS iterate **or** later package regen so production build bakes kmjq `published=true` rows — not this phase.
+1. **Primary:** operator FileZilla overwrite of production document root with `tools/static-to-astro/output/manual-upload/gosaki-piano-production/public-dist/` **contents**. No FTP `--apply`. Live www **not yet** this package until FileZilla.
+2. After upload: visual QA on www. Later Contents Secret unset remains a separate approval.
 3. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
 4. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki final visual polish production build (2026-09-26)
+
+```txt
+PRODUCTION_VISUAL_POLISH_BUILD_RESULT: PASS
+COMMIT: 2b4bd226f519b77c47d2131f79befef762851a5a
+sourceTreeClean: true
+armedCount: 0
+armedFeatureIds: []
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-final-visual-polish-production-build.md`
 
 ## 0. Gosaki Home schedule today JST (2026-09-26)
 

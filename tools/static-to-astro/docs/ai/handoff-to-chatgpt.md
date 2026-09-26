@@ -5,6 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-final-visual-polish-production-build PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+PRODUCTION_VISUAL_POLISH_BUILD_RESULT: PASS
+COMMIT: 2b4bd226f519b77c47d2131f79befef762851a5a
+sourceTreeClean: true
+armedCount: 0
+armedFeatureIds: []
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-final-visual-polish-production-build.md
+```
+
+## Gosaki final visual polish production build (2026-09-26)
+
+- Checkpoint `2b4bd226` then official `build:gosaki:production`. Save arms unset. kmjq public keys only. About json fallback.
+- Operator FileZilla `public-dist/` contents. No FTP `--apply` / push / Edge / DB.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-home-schedule-today-jst PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

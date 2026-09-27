@@ -1,7 +1,13 @@
-Last updated: 2026-09-26
+Last updated: 2026-09-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki Schedule image UI + Home SP date (2026-09-28):** **PASS** — Phase `gosaki-schedule-image-ui-and-home-date` · reused existing `schedules.image_url` · admin 画像URL + month-card http(s) img · Home SP date **15px → 26px** · `home_image_url` not wired · Edge deploy **required not executed** · production/FTP/commit **false** · Doc: `gosaki-schedule-image-ui-and-home-date.md`.
+
+**Gosaki final UX fixes (2026-09-27):** **PASS** — Phase `gosaki-final-ux-fixes` · SP hamburger → × (aria-expanded / aria-label) · Home 4 events link to `/schedule/YYYY-MM/` · month-page SP date **18px → 26px** (PC 26px unchanged) · local `http://127.0.0.1:4321/` · production/FTP/commit **false** · Doc: `gosaki-final-ux-fixes.md`.
+
+**Gosaki YouTube final public build (2026-09-26):** **PASS** — Phase `gosaki-youtube-final-public-build` · HEAD `01e6b741` git-clean · Save arms all OFF · `armedCount=0` · registry `siteEmbeds: true` · `CMS_KIT_SITE_EMBEDS_BUILD_READ` unset · `embedDataSource=supabase` · published youtube **3** baked into home · visual polish + Home Schedule kept · G-20i3 **113/0** · save-completion **42/0** · public-dist **53** · FileZilla `output/manual-upload/gosaki-piano-production/public-dist/` · FTP `--apply` **false** · Doc: `gosaki-youtube-final-public-build.md`.
 
 **Gosaki YouTube final content entry build (2026-09-26):** **PASS** — Phase `gosaki-youtube-final-content-entry-build` · HEAD `936cbdb5` git-clean · `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` · mutex `armedCount=1` `gosaki-youtube-supabase` · other Save arms false · visual polish + Home Schedule in package · G-20i3 **113/0** · public-dist **53** · Edge Secret **unchanged** · FileZilla `output/manual-upload/gosaki-piano-production/public-dist/` · Doc: `gosaki-youtube-final-content-entry-build.md`.
 

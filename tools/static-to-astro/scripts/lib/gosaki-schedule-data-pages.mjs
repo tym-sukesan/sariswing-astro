@@ -60,6 +60,20 @@ function linkifyVenueWebsiteLine(line) {
   }
   return { kind: "link", prefix, href: raw, text: raw };
 }
+
+/** Month-card flyer: empty or non-http(s) → no image. */
+function safeScheduleImageUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return null;
+  if (!/^https?:\\/\\//i.test(raw)) return null;
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+  } catch {
+    return null;
+  }
+  return raw;
+}
 ---
 
 <div class="gosaki-schedule-month-repeater">
@@ -79,11 +93,17 @@ function linkifyVenueWebsiteLine(line) {
               : null;
       const skipDesc = new Set();
       if (timeLine) skipDesc.add(\`時間：\${timeLine}\`);
+      const imageUrl = safeScheduleImageUrl(ev.image_url);
       return (
         <article class="gosaki-schedule-event-card">
           <h1 class="gosaki-schedule-event-date font_0">
             {ev.date_display || ev.date}
           </h1>
+          {imageUrl ? (
+            <p class="gosaki-schedule-event-image">
+              <img src={imageUrl} alt="" loading="lazy" decoding="async" />
+            </p>
+          ) : null}
           <div class="gosaki-schedule-event-body wixui-rich-text">
             {ev.title && <p>{ev.title}</p>}
             {ev.venue && <p>会場：{ev.venue}</p>}

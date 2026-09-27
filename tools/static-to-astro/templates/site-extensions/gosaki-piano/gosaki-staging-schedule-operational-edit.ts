@@ -33,6 +33,7 @@ export type ScheduleOperationalEvent = {
   startTime?: string | null;
   price?: string | null;
   description?: string | null;
+  imageUrl?: string | null;
   published?: boolean;
   updatedAt?: string | null;
 };
@@ -45,6 +46,7 @@ export const SCHEDULE_OPERATIONAL_SAFE_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ] as const;
 
@@ -60,6 +62,7 @@ export const SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ] as const;
 
@@ -72,7 +75,7 @@ const CREATE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 export function buildScheduleOperationalCreatePayloadPreview(
   after: Pick<
     FormSnapshot,
-    "date" | "title" | "venue" | "open_time" | "start_time" | "price" | "description"
+    "date" | "title" | "venue" | "open_time" | "start_time" | "price" | "description" | "image_url"
   >,
 ): {
   date: string;
@@ -82,6 +85,7 @@ export function buildScheduleOperationalCreatePayloadPreview(
   start_time: string;
   price: string;
   description: string;
+  image_url: string;
   published: false;
 } {
   return {
@@ -92,6 +96,7 @@ export function buildScheduleOperationalCreatePayloadPreview(
     start_time: String(after.start_time ?? "").trim(),
     price: String(after.price ?? "").trim(),
     description: String(after.description ?? "").trim(),
+    image_url: String(after.image_url ?? "").trim(),
     published: false,
   };
 }
@@ -109,6 +114,7 @@ export type ScheduleEndpointRequestInput = {
     venue?: string;
     price?: string;
     description?: string;
+    image_url?: string;
     published?: boolean;
   };
 };
@@ -212,6 +218,7 @@ type FormSnapshot = {
   venue: string;
   price: string;
   description: string;
+  image_url: string;
   published: boolean;
 };
 
@@ -345,6 +352,7 @@ function readForm(root: HTMLElement): FormSnapshot {
     venue: get("venue"),
     price: get("price"),
     description: get("description"),
+    image_url: get("image_url"),
     published: get("published") === "true",
   };
 }
@@ -358,6 +366,30 @@ function writeForm(root: HTMLElement, snap: Partial<FormSnapshot>): void {
     } else if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
       el.value = value == null ? "" : String(value);
     }
+  }
+  syncScheduleImagePreview(root);
+}
+
+function isSafeHttpUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function syncScheduleImagePreview(root: HTMLElement): void {
+  const wrap = root.querySelector("[data-gosaki-schedule-image-preview]");
+  const img = wrap?.querySelector("img");
+  if (!(wrap instanceof HTMLElement) || !(img instanceof HTMLImageElement)) return;
+  const url = String(readForm(root).image_url || "").trim();
+  if (url && isSafeHttpUrl(url)) {
+    wrap.hidden = false;
+    img.src = url;
+  } else {
+    wrap.hidden = true;
+    img.removeAttribute("src");
   }
 }
 
@@ -374,6 +406,7 @@ function eventToForm(event: ScheduleOperationalEvent, mode: Mode): FormSnapshot 
     venue: String(event.venue ?? ""),
     price: String(event.price ?? ""),
     description: String(event.description ?? ""),
+    image_url: String(event.imageUrl ?? ""),
     published: event.published !== false,
   };
 }
@@ -391,6 +424,7 @@ function emptyCreateForm(): FormSnapshot {
     venue: "",
     price: "",
     description: "",
+    image_url: "",
     published: false,
   };
 }
@@ -409,6 +443,7 @@ function duplicateToCreateForm(event: ScheduleOperationalEvent): FormSnapshot {
     venue: String(event.venue ?? ""),
     price: String(event.price ?? ""),
     description: String(event.description ?? ""),
+    image_url: String(event.imageUrl ?? ""),
     published: false,
   };
 }
@@ -422,6 +457,7 @@ function fingerprint(snap: FormSnapshot): string {
     venue: snap.venue,
     price: snap.price,
     description: snap.description,
+    image_url: snap.image_url,
     published: snap.published,
   });
 }
@@ -1097,6 +1133,7 @@ export function initGosakiScheduleOperationalEdit(
             venue: after.venue,
             price: after.price,
             description: after.description,
+            image_url: after.image_url,
             published: runMode === "create" ? false : after.published === true,
           },
         });
@@ -1393,6 +1430,7 @@ export function initGosakiScheduleOperationalEdit(
         venue: after.venue,
         price: after.price,
         description: after.description,
+        image_url: after.image_url,
         published: runMode === "create" ? false : after.published === true,
       },
     });
@@ -1518,6 +1556,7 @@ export function initGosakiScheduleOperationalEdit(
       return;
     }
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
+    syncScheduleImagePreview(root);
     onFormEdited();
   });
 
@@ -1529,6 +1568,7 @@ export function initGosakiScheduleOperationalEdit(
       return;
     }
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
+    syncScheduleImagePreview(root);
     onFormEdited();
   });
 

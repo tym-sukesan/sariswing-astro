@@ -36,6 +36,7 @@ export const EDIT_SAFE_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ] as const;
 
@@ -47,6 +48,7 @@ export const CREATE_PAYLOAD_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ] as const;
 
@@ -55,7 +57,7 @@ export const LEGACY_ID_RE = /^schedule-\d{4}-\d{2}-\d{3}$/;
 const CREATE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 const SCHEDULE_SELECT =
-  "id,legacy_id,site_slug,date,title,venue,open_time,start_time,price,description,published,updated_at,month,sort_order";
+  "id,legacy_id,site_slug,date,title,venue,open_time,start_time,price,description,image_url,published,updated_at,month,sort_order";
 
 const WRITE_FALSE = {
   didWrite: false as const,
@@ -210,6 +212,28 @@ function norm(value: unknown): string {
   return String(value).trim();
 }
 
+const SCHEDULE_IMAGE_URL_MAX = 2000;
+
+/** Empty → null. http(s) only. home_image_url is not in this contract. */
+export function normalizeScheduleImageUrl(
+  value: unknown,
+): { ok: true; value: string | null } | { ok: false; error: string } {
+  const raw = norm(value);
+  if (!raw) return { ok: true, value: null };
+  if (raw.length > SCHEDULE_IMAGE_URL_MAX) {
+    return { ok: false, error: "image_url too long" };
+  }
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return { ok: false, error: "image_url must be http(s)" };
+    }
+    return { ok: true, value: raw };
+  } catch {
+    return { ok: false, error: "image_url must be a valid URL" };
+  }
+}
+
 export function computeEditChangedFields(
   beforeRow: Record<string, unknown>,
   afterFields: Record<string, unknown>,
@@ -306,7 +330,7 @@ export function buildCreateInsertRow(input: {
     sort_order: computeSortOrderFromRows(monthRows),
     source_file: `schedule-${month}.html`,
     source_route: `/schedule/${month}/`,
-    image_url: null,
+    image_url: normalizeScheduleImageUrl(input.payload.image_url).value,
   };
 }
 
@@ -416,6 +440,11 @@ export function validateScheduleDryRunRequestBody(body: unknown): {
     else if (!CREATE_DATE_RE.test(date)) errors.push("date must be YYYY-MM-DD");
     if (p.published !== false) errors.push("create published must be false");
     if (!norm(p.title)) warnings.push("title is empty");
+  }
+
+  if (Object.prototype.hasOwnProperty.call(p, "image_url")) {
+    const parsed = normalizeScheduleImageUrl(p.image_url);
+    if (!parsed.ok) errors.push(parsed.error);
   }
 
   if (errors.length) {
@@ -840,6 +869,14 @@ export async function handleScheduleEdgeDryRunHttpAsync(
   for (const field of EDIT_SAFE_FIELDS) {
     if (field === "published") {
       afterFields.published = payload.published === true;
+      continue;
+    }
+    if (field === "image_url") {
+      const raw = Object.prototype.hasOwnProperty.call(payload, "image_url")
+        ? payload.image_url
+        : row.image_url;
+      const parsed = normalizeScheduleImageUrl(raw);
+      afterFields.image_url = parsed.ok ? parsed.value : null;
       continue;
     }
     if (Object.prototype.hasOwnProperty.call(payload, field)) {

@@ -15,7 +15,7 @@ export const GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE =
   "最新データの取得に失敗しました。編集はできません。";
 
 const SCHEDULE_SELECT =
-  "id,legacy_id,site_slug,date,month,title,venue,open_time,start_time,price,description,published,updated_at,sort_order";
+  "id,legacy_id,site_slug,date,month,title,venue,open_time,start_time,price,description,image_url,published,updated_at,sort_order";
 
 const DISCOGRAPHY_SELECT =
   "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published,release_date,description,cover_image_url,updated_at";
@@ -34,6 +34,7 @@ export type GosakiAdminLiveScheduleEvent = {
   startTime?: string | null;
   price?: string | null;
   description?: string | null;
+  imageUrl?: string | null;
   published?: boolean;
   updatedAt?: string | null;
 };
@@ -109,6 +110,7 @@ function mapScheduleRow(row: Record<string, unknown>): GosakiAdminLiveScheduleEv
     startTime: row.start_time != null ? String(row.start_time) : "",
     price: row.price != null ? String(row.price) : "",
     description: row.description != null ? String(row.description) : "",
+    imageUrl: row.image_url != null ? String(row.image_url) : "",
     published: row.published !== false,
     updatedAt: row.updated_at != null ? String(row.updated_at) : null,
   };

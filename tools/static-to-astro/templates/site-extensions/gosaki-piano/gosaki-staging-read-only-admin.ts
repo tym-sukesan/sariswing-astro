@@ -145,6 +145,7 @@ export const G20U45_SCHEDULE_EDIT_SAFE_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ] as const;
 
@@ -426,6 +427,7 @@ export type ScheduleDryRunEndpointRequestInput = {
     venue?: string;
     price?: string;
     description?: string;
+    image_url?: string;
     published?: boolean;
   };
 };
@@ -456,6 +458,7 @@ function buildScheduleEndpointPayload(input: ScheduleDryRunEndpointRequestInput)
     start_time: String(input.fields.start_time ?? "").trim(),
     price: String(input.fields.price ?? "").trim(),
     description: String(input.fields.description ?? "").trim(),
+    image_url: String(input.fields.image_url ?? "").trim(),
     published: false,
   };
 }

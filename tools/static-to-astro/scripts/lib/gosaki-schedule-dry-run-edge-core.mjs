@@ -31,6 +31,7 @@ export const SCHEDULE_EDIT_SAFE_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ];
 
@@ -43,6 +44,7 @@ export const SCHEDULE_CREATE_PAYLOAD_FIELDS = [
   "start_time",
   "price",
   "description",
+  "image_url",
   "published",
 ];
 
@@ -68,6 +70,26 @@ export function assertScheduleDryRunStagingUrl(supabaseUrl) {
 export function normalizeScheduleFieldValue(value) {
   if (value === null || value === undefined) return "";
   return String(value).trim();
+}
+
+const SCHEDULE_IMAGE_URL_MAX = 2000;
+
+/** Empty → null. http(s) only. home_image_url is not in this contract. */
+export function normalizeScheduleImageUrl(value) {
+  const raw = normalizeScheduleFieldValue(value);
+  if (!raw) return { ok: true, value: null };
+  if (raw.length > SCHEDULE_IMAGE_URL_MAX) {
+    return { ok: false, error: "image_url too long" };
+  }
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return { ok: false, error: "image_url must be http(s)" };
+    }
+    return { ok: true, value: raw };
+  } catch {
+    return { ok: false, error: "image_url must be a valid URL" };
+  }
 }
 
 export function coerceSchedulePublishedBoolean(value) {
@@ -164,7 +186,7 @@ export function buildScheduleCreateInsertRow(input) {
     sort_order: computeSortOrderFromRows(monthRows),
     source_file: `schedule-${month}.html`,
     source_route: `/schedule/${month}/`,
-    image_url: null,
+    image_url: normalizeScheduleImageUrl(input.image_url).value,
   };
 }
 
@@ -172,6 +194,11 @@ function validateModePayload(mode, payload) {
   const errors = [];
   const warnings = [];
   const keys = Object.keys(payload);
+
+  if (Object.prototype.hasOwnProperty.call(payload, "image_url")) {
+    const parsed = normalizeScheduleImageUrl(payload.image_url);
+    if (!parsed.ok) errors.push(parsed.error);
+  }
 
   if (mode === "edit") {
     const allowed = new Set([

@@ -25,6 +25,17 @@ function isIsoDate(date) {
 }
 
 /**
+ * Month hub path for a published ISO date. Null when not YYYY-MM-DD.
+ * @param {unknown} date
+ * @returns {string | null}
+ */
+export function gosakiHomeScheduleMonthPath(date) {
+  const raw = String(date || "");
+  if (!isIsoDate(raw)) return null;
+  return `/schedule/${raw.slice(0, 7)}/`;
+}
+
+/**
  * Calendar date in Asia/Tokyo (JST), YYYY-MM-DD.
  * @param {Date} [now]
  */

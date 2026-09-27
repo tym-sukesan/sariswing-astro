@@ -67,3 +67,10 @@ export function gosakiHomeScheduleTitle(title: unknown): string {
 export function gosakiHomeScheduleDateLabel(row: GosakiHomeScheduleRow): string {
   return String(row.date_display || row.dateDisplay || row.date || "").trim();
 }
+
+/** Month page path for a published ISO date. Null when not YYYY-MM-DD. */
+export function gosakiHomeScheduleMonthPath(date: unknown): string | null {
+  const raw = String(date || "");
+  if (!isIsoDate(raw)) return null;
+  return `/schedule/${raw.slice(0, 7)}/`;
+}

@@ -3,6 +3,7 @@ import schedules from "../data/gosaki-schedules.json";
 import { withBase } from "../lib/with-base.ts";
 import {
   gosakiHomeScheduleDateLabel,
+  gosakiHomeScheduleMonthPath,
   gosakiHomeScheduleTitle,
   selectGosakiHomeLatestSchedules,
 } from "../lib/gosaki-home-latest-schedule.ts";
@@ -21,11 +22,23 @@ const scheduleHref = withBase("/schedule/");
             const title = gosakiHomeScheduleTitle(ev.title);
             const dateLabel = gosakiHomeScheduleDateLabel(ev);
             const venue = String(ev.venue || "").trim();
+            const monthPath = gosakiHomeScheduleMonthPath(ev.date);
+            const monthHref = monthPath ? withBase(monthPath) : null;
             return (
               <li class="gosaki-home-schedule__item">
-                {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
-                {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
-                {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                {monthHref ? (
+                  <a class="gosaki-home-schedule__link" href={monthHref}>
+                    {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
+                    {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
+                    {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                  </a>
+                ) : (
+                  <>
+                    {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
+                    {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
+                    {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                  </>
+                )}
               </li>
             );
           })}

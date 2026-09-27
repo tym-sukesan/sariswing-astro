@@ -5,6 +5,85 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-schedule-image-ui-and-home-date PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_IMAGE_UI_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+SAFE_TO_PROCEED_TO_PRODUCTION_ROLLOUT: false
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+DB_MIGRATION_REQUIRED: false
+EDGE_DEPLOY_REQUIRED: true
+RLS_CHANGE_REQUIRED: false
+PRODUCTION_BUILD: false
+COMMIT: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-image-ui-and-home-date.md
+```
+
+## Gosaki Schedule image UI + Home SP date (2026-09-28)
+
+- Home Schedule SP date 15px → 26px. Sage / weight 600 kept. PC Home date stays 15px. No Home flyer images.
+- Reused existing `public.schedules.image_url`. Admin `/admin/schedule/` 画像URL input + preview. Month cards render http(s) flyers. Empty = no image.
+- `home_image_url` exists but is not wired (Gosaki Home has no image slot).
+- Edge `gosaki-schedule-save-dry-run` allowlist updated locally; **live Save needs kmjq redeploy** (`--project-ref kmjqppxjdnwwrtaeqjta`). Not deployed. No migration / RLS.
+- Local convert only. Production package / FileZilla still the prior YouTube bake until a later generate.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-final-ux-fixes PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+FINAL_UX_FIX_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+PRODUCTION_BUILD: false
+COMMIT: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-final-ux-fixes.md
+```
+
+## Gosaki final UX fixes (2026-09-27)
+
+- SP hamburger → × on open, hamburger on close. Existing toggle + aria-expanded / aria-label. PC header unchanged.
+- Home 4 events link to `/schedule/YYYY-MM/`. CTA Scheduleを見る kept. Selection/JST/limit unchanged.
+- Month-page SP date 18px → 26px (PC 26px unchanged). Sage weight/color kept.
+- Local convert only. Production package / FileZilla still the prior YouTube bake until a later generate.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-youtube-final-public-build PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+YOUTUBE_PUBLIC_BUILD_RESULT: PASS
+COMMIT: 01e6b74143dc9e69b70e9bf7ef4dcf7ef04eac35
+sourceTreeClean: true
+armedCount: 0
+armedFeatureIds: []
+embedDataSource: supabase
+publishedYoutubeRows: 3
+videosBakedIntoPublicSite: 3
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-youtube-final-public-build.md
+```
+
+## Gosaki YouTube final public build (2026-09-26)
+
+- Checkpoint `01e6b741` then official `build:gosaki:production` with **all Save arms unset**.
+- Registry `siteEmbeds: true`; `CMS_KIT_SITE_EMBEDS_BUILD_READ` unset. Convert `embedDataSource=supabase`. 3 published videos baked into home.
+- Visual polish + Home Schedule kept. Operator FileZilla `public-dist/` contents. No FTP `--apply` / push / DB write.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-youtube-final-content-entry-build PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

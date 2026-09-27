@@ -17,6 +17,7 @@ import {
 import {
   GOSAKI_HOME_LATEST_SCHEDULE_LIMIT,
   applyGosakiHomeLatestSchedule,
+  gosakiHomeScheduleMonthPath,
   gosakiHomeScheduleTodayJst,
   injectGosakiHomeLatestScheduleIntoHomePage,
   selectGosakiHomeLatestSchedules,
@@ -88,6 +89,13 @@ const pastOnly = selectGosakiHomeLatestSchedules(
 );
 assert("past fallback latest-first", pastOnly.map((r) => r.title).join(",") === "jul-30,jul-28");
 
+assert(
+  "month path from ISO date",
+  gosakiHomeScheduleMonthPath("2026-09-26") === "/schedule/2026-09/" &&
+    gosakiHomeScheduleMonthPath("2026-10-01") === "/schedule/2026-10/",
+);
+assert("month path rejects non-ISO", gosakiHomeScheduleMonthPath("tbd") === null && gosakiHomeScheduleMonthPath("") === null);
+
 const slotted = `---\nimport BaseLayout from "../layouts/BaseLayout.astro";\n---\n\n<BaseLayout>\n${GOSAKI_HOME_SCHEDULE_SLOT}\n</BaseLayout>\n`;
 const injected = injectGosakiHomeLatestScheduleIntoHomePage(slotted);
 assert("inject adds import + component", injected.includes("GosakiHomeLatestSchedule.astro") && injected.includes("<GosakiHomeLatestSchedule />"));
@@ -125,6 +133,14 @@ applyGosakiScheduleDataPages(
 );
 const applied = applyGosakiHomeLatestSchedule(tmp, TOOL_ROOT);
 assert("apply writes component + lib", applied.applied === true && applied.count === 1);
+const homeTpl = fs.readFileSync(path.join(tmp, "src/components/GosakiHomeLatestSchedule.astro"), "utf8");
+assert(
+  "home items link to month pages and keep hub CTA",
+  homeTpl.includes("gosakiHomeScheduleMonthPath") &&
+    homeTpl.includes("gosaki-home-schedule__link") &&
+    homeTpl.includes("Scheduleを見る") &&
+    homeTpl.includes('withBase("/schedule/")'),
+);
 assert(
   "month generator still GosakiScheduleList",
   fs.readFileSync(path.join(tmp, "src/pages/schedule/2026-10/index.astro"), "utf8").includes("GosakiScheduleList"),

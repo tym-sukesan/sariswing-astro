@@ -1,12 +1,71 @@
-Last updated: 2026-09-26
+Last updated: 2026-09-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator FileZilla overwrite with `tools/static-to-astro/output/manual-upload/gosaki-piano-production/public-dist/` **contents** (YouTube UI arm package). No FTP `--apply`.
-2. Live Save still needs kmjq Edge Secret `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` (not set this phase). After Gosaki registers videos: unset Secret and rebuild with Save arms off.
-3. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
-4. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** browser review of `gosaki-schedule-image-ui-and-home-date` at `http://127.0.0.1:4321/` (Home SP date 26px, month-card image on `schedule-2026-09-002` fixture, other cards unchanged). Admin 画像URL needs login.
+2. **Later explicit approval only:** deploy Edge `gosaki-schedule-save-dry-run` to kmjq (`--project-ref kmjqppxjdnwwrtaeqjta`) so live Save can persist `image_url`. Not executed this phase.
+3. After image-UI + UX sign-off: official `build:gosaki:production` (Save arms OFF) then FileZilla `public-dist/` contents. Current on-disk production package does **not** include UX fixes or this phase.
+4. YouTube Save UI stays OFF. Edge Secret `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` remains operator-owned.
+5. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
+6. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Schedule image UI + Home SP date (2026-09-28)
+
+```txt
+SCHEDULE_IMAGE_UI_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+SAFE_TO_PROCEED_TO_PRODUCTION_ROLLOUT: false
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+IMAGE_UI_VERIFIER: 27 passed, 0 failed
+UX_VERIFIER: 12 passed, 0 failed
+HOME_SCHEDULE_VERIFIER: 18 passed, 0 failed
+URL_STAGING_VERIFIER: 809 passed, 0 failed
+DB_MIGRATION_REQUIRED: false
+EDGE_DEPLOY_REQUIRED: true
+RLS_CHANGE_REQUIRED: false
+PRODUCTION_BUILD: false
+COMMIT: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-image-ui-and-home-date.md`
+
+## 0. Gosaki final UX fixes (2026-09-27)
+
+```txt
+FINAL_UX_FIX_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+LOCAL_PREVIEW: http://127.0.0.1:4321/
+UX_VERIFIER: 12 passed, 0 failed
+HOME_SCHEDULE_VERIFIER: 18 passed, 0 failed
+URL_STAGING_VERIFIER: 809 passed, 0 failed
+PRODUCTION_BUILD: false
+COMMIT: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-final-ux-fixes.md`
+
+## 0. Gosaki YouTube final public build (2026-09-26)
+
+```txt
+YOUTUBE_PUBLIC_BUILD_RESULT: PASS
+COMMIT: 01e6b74143dc9e69b70e9bf7ef4dcf7ef04eac35
+sourceTreeClean: true
+armedCount: 0
+armedFeatureIds: []
+embedDataSource: supabase
+publishedYoutubeRows: 3
+videosBakedIntoPublicSite: 3
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-youtube-final-public-build.md`
 
 ## 0. Gosaki YouTube final content entry build (2026-09-26)
 

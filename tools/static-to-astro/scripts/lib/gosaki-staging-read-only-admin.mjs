@@ -160,6 +160,7 @@ export function buildScheduleAdminEventsSnapshot(scheduleBundle = null) {
         startTime: r.start_time ?? "",
         price: r.price ?? "",
         description: r.description ?? "",
+        imageUrl: r.image_url ?? "",
         published: r.published !== false,
         updatedAt: r.updated_at ?? null,
       };

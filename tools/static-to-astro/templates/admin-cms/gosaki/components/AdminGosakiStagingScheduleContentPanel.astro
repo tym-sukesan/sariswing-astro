@@ -2,8 +2,8 @@
 /**
  * Shared Schedule content panel (local shell + STG package).
  * G-20u45 — view list → edit / create · local dry-run preview · Save default disabled.
- * Schema fields only: date, open_time, start_time, title, venue, price, description, published.
- * No end_time / address / URL (not in public.schedules authoring set).
+ * Schema fields: date, open_time, start_time, title, venue, price, description, image_url, published.
+ * No end_time / address / URL (not in public.schedules authoring set). home_image_url unused on Gosaki Home.
  */
 import AdminGosakiStagingEditToolbar from "./AdminGosakiStagingEditToolbar.astro";
 
@@ -18,6 +18,7 @@ export interface ScheduleEventRow {
   startTime?: string | null;
   price?: string | null;
   description?: string | null;
+  imageUrl?: string | null;
   published?: boolean;
   updatedAt?: string | null;
 }
@@ -315,6 +316,23 @@ const eventsJson = JSON.stringify(events);
         <textarea data-field="description" rows="4"></textarea>
       </label>
 
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">画像URL</span>
+        <input
+          type="url"
+          data-field="image_url"
+          placeholder="https://..."
+          autocomplete="off"
+        />
+      </label>
+      <div
+        class="gosaki-schedule-content-panel__image-preview admin-form__field--full"
+        data-gosaki-schedule-image-preview
+        hidden
+      >
+        <img alt="画像プレビュー" />
+      </div>
+
       <label class="admin-form__field admin-form__field--checkbox admin-form__field--full">
         <input type="checkbox" data-field="published" />
         <span data-gosaki-schedule-published-label>公開する</span>
@@ -442,6 +460,19 @@ const eventsJson = JSON.stringify(events);
 
   .gosaki-schedule-content-panel__form .admin-form__field--full {
     grid-column: 1 / -1;
+  }
+
+  .gosaki-schedule-content-panel__image-preview {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gosaki-schedule-content-panel__image-preview img {
+    display: block;
+    max-width: min(280px, 100%);
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
   }
 
   .gosaki-schedule-content-panel__form .admin-form__label {

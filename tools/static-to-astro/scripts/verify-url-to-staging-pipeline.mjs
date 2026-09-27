@@ -548,6 +548,11 @@ assert(
   gosakiNavHeader.content.includes('aria-expanded="false"'),
 );
 assert(
+  "header nav toggle aria-label follows open state",
+  gosakiNavHeader.content.includes('aria-label="Open menu"') &&
+    gosakiNavHeader.content.includes('aria-label", open ? "Close menu" : "Open menu"'),
+);
+assert(
   "gosaki header uses nav-toggle rewrite mode",
   gosakiNavHeader.navMode === "nav-toggle-rewrite",
 );

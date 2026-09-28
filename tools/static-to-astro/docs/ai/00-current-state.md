@@ -3,7 +3,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**Gosaki Schedule image UI + Home SP date (2026-09-28):** **PASS** — Phase `gosaki-schedule-image-ui-and-home-date` · reused existing `schedules.image_url` · admin 画像URL + month-card http(s) img · Home SP date **15px → 26px** · `home_image_url` not wired · Edge deploy **required not executed** · production/FTP/commit **false** · Doc: `gosaki-schedule-image-ui-and-home-date.md`.
+**Gosaki Schedule image upload implementation (2026-09-28):** **PASS** — Phase `gosaki-schedule-image-upload-implementation` · Sariswing processImageForUpload + JWT `site-assets` POST · path `gosaki-piano/schedule/{legacyId\|new}/{random}.ext` · upsert false · `image_url` field + Save unchanged · live Storage/Save **not** executed · production/FTP/commit **false** · Doc: `gosaki-schedule-image-upload-implementation.md`.
+
+**Gosaki Schedule Storage upload policy review (2026-09-28):** **PASS / SAFE_TO_APPLY true / NOT APPLIED** — Phase `gosaki-schedule-storage-upload-policy-review` · kmjq `site-assets` additive INSERT `site_assets_gosaki_piano_schedule_insert` · path `gosaki-piano/schedule/` · `can_write_site` after `sites.site_slug=gosaki-piano` · UPDATE/DELETE/GRANT/DROP-in-forward **none** · live dump not executed · Doc: `gosaki-schedule-storage-upload-policy-review.md`.
+
+**Gosaki Schedule image upload (2026-09-28):** **STOP** — Phase `gosaki-schedule-image-upload` · READ-ONLY audit of Sariswing `image-upload.ts` / `mount-image-upload-field.ts` / `schedule-image-fields.ts` · kmjq `site-assets` documented as **public SELECT only** (no authenticated INSERT) · cannot reuse as-is without Storage policy · no alternate upload architecture · no UI/Edge/SQL/package change · Doc: `gosaki-schedule-image-upload.md`.
+
+**Gosaki Schedule image production test build (2026-09-28):** **PASS** — Phase `gosaki-schedule-image-production-test-build` · HEAD `b573086d` git-clean · `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` · mutex `armedCount=1` `gosaki-schedule` · other Save arms false · admin 画像URL + payload `image_url` baked · visual polish + Home Schedule + YouTube 3 kept · G-20i3 **113/0** · save-completion **42/0** · public-dist **53** · FileZilla `output/manual-upload/gosaki-piano-production/public-dist/` · FTP `--apply` **false** · Doc: `gosaki-schedule-image-production-test-build.md`.
+
+**Gosaki Schedule image UI + Home SP date (2026-09-28):** **PASS** — Phase `gosaki-schedule-image-ui-and-home-date` · reused existing `schedules.image_url` · admin 画像URL + month-card http(s) img · Home SP date **15px → 26px** · `home_image_url` not wired · Edge deploy **required not executed** (operator later said kmjq redeployed) · production/FTP/commit **false** at implementation · checkpoint `b573086d` · Doc: `gosaki-schedule-image-ui-and-home-date.md`.
 
 **Gosaki final UX fixes (2026-09-27):** **PASS** — Phase `gosaki-final-ux-fixes` · SP hamburger → × (aria-expanded / aria-label) · Home 4 events link to `/schedule/YYYY-MM/` · month-page SP date **18px → 26px** (PC 26px unchanged) · local `http://127.0.0.1:4321/` · production/FTP/commit **false** · Doc: `gosaki-final-ux-fixes.md`.
 

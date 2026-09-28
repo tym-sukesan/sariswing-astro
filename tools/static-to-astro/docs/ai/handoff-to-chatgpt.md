@@ -5,6 +5,116 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-schedule-image-upload-implementation PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_IMAGE_UPLOAD_IMPLEMENTATION_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+SAFE_TO_PROCEED_TO_PRODUCTION_TEST: true
+LIVE_STORAGE_UPLOAD_EXECUTED: false
+BUCKET: site-assets
+PATH: gosaki-piano/schedule/{legacyId|new}/{random}.ext
+IMAGE_UPLOAD_VERIFIER: 28 passed, 0 failed
+PRODUCTION_BUILD: false
+COMMIT: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-image-upload-implementation.md
+```
+
+## Gosaki Schedule image upload implementation (2026-09-28)
+
+- Ported Sariswing `processImageForUpload` (JPEG/PNG/WebP, 1600px, 2MB, WebP prefer) into `gosaki-schedule-image-upload.ts`.
+- Browser JWT POST to kmjq `site-assets` with `x-upsert: false`. Path `gosaki-piano/schedule/{legacyId|new}/{16-hex}{ext}`. No `images` bucket, no service_role.
+- Admin `/admin/schedule/` form: file select, アップロード, 画像URL, preview. Select does not write Storage/DB. Upload fills `image_url`. Existing Save persists it.
+- Live upload/Save not executed. Production generate/FTP/commit not this phase.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-schedule-storage-upload-policy-review PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+STORAGE_UPLOAD_POLICY_REVIEW_RESULT: PASS
+SAFE_TO_APPLY: true
+APPLY_EXECUTED: false
+POLICY: site_assets_gosaki_piano_schedule_insert
+PATH_SCOPE: gosaki-piano/schedule/
+AUTHZ: can_write_site(sites.id) after site_slug=gosaki-piano
+INSERT: required · UPDATE: no · DELETE: no
+LIVE_POLICY_DUMP: not executed
+COMMIT: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-storage-upload-policy-review.md
+```
+
+## Gosaki Schedule Storage upload policy review (2026-09-28)
+
+- READ-ONLY design of one additive `storage.objects` INSERT policy on kmjq `site-assets`.
+- Path locked to `gosaki-piano/schedule/`. Existing G-4 `gosaki/discography/` not writable via this policy.
+- Authz: exact `sites` resolve `gosaki-piano` → `can_write_site(uuid)`. Anon / whole-bucket authenticated write / service_role / production `images` excluded.
+- APPLY = `CREATE POLICY` only (no DROP/GRANT). Rollback = drop that policy only. Not executed.
+- Uploader implementation waits for operator PRECHECK + explicit apply + POSTCHECK.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-schedule-image-upload STOP
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_IMAGE_UPLOAD_RESULT: STOP
+REASON: Sariswing Storage upload cannot be reused as-is — kmjq site-assets has no authenticated INSERT policy; bucket/path/client differ; no alternate architecture
+Edge deploy required: false
+Storage policy change required: true
+RLS change required: false
+SAFE_TO_REVIEW_IN_BROWSER: false
+SAFE_TO_PROCEED_TO_PRODUCTION_ROLLOUT: false
+IMPLEMENTATION: none
+COMMIT: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-image-upload.md
+```
+
+## Gosaki Schedule image upload (2026-09-28)
+
+- READ-ONLY audit of Sariswing `src/lib/admin/image-upload.ts` (client `storage.upload` to bucket `images`, path `schedule/YYYY-MM/{random}.ext`, upsert false, JPEG/PNG/WebP, 1600px, 2MB, WebP encode).
+- Schedule UI is multi `image_urls`; Gosaki is single `image_url`. Closest reuse is `mount-image-upload-field.ts`, not the multi list.
+- kmjq documented SQL `staging-site-assets-bucket.sql`: public SELECT only; writes via service_role. Authenticated admin upload would fail without a new Storage policy (not applied).
+- Kit scaffold `AdminImageUploader.astro` is disabled — not the live Sariswing path.
+- Stopped. No UI, no Edge, no SQL, no package.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-schedule-image-production-test-build PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_IMAGE_TEST_BUILD_RESULT: PASS
+COMMIT: b573086d640376760896b421a887ef7b800ec23f
+sourceTreeClean: true
+armedCount: 1
+armedFeatureIds: ["gosaki-schedule"]
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+admin image input present: true
+image_url payload present: true
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-image-production-test-build.md
+```
+
+## Gosaki Schedule image production test build (2026-09-28)
+
+- Checkpoint `b573086d` then official `build:gosaki:production` with **Schedule UI arm only** (`PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true`).
+- Mutex `armedCount=1` `gosaki-schedule`. YouTube / Discography / About Save `"false"`.
+- Admin `/admin/schedule/` has 画像URL. Baked payload includes `image_url`.
+- Visual polish + Home 4 events + YouTube 3 published kept. FileZilla `public-dist/` contents. No FTP `--apply` / push / DB / Secret / Edge.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-schedule-image-ui-and-home-date PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

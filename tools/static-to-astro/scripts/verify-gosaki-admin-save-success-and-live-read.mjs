@@ -118,6 +118,7 @@ const applySrc = fs.readFileSync(
   "utf8",
 );
 assert(applySrc.includes("gosaki-staging-admin-live-read.ts"), "apply copies live-read");
+assert(applySrc.includes("gosaki-schedule-image-upload.ts"), "apply copies schedule image upload");
 
 const discPanelSrc = fs.readFileSync(
   path.join(

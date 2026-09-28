@@ -21,6 +21,7 @@ import {
   resolveSaveGateDisplayReason,
   userMessageForSaveFailure,
 } from "./gosaki-staging-one-click-save";
+import { uploadGosakiScheduleImage } from "./gosaki-schedule-image-upload";
 
 export type ScheduleOperationalEvent = {
   id?: string | null;
@@ -638,6 +639,24 @@ export function initGosakiScheduleOperationalEdit(
   const SAVE_LABEL_ENABLED = "保存";
   const SAVE_LABEL_DISABLED = "保存";
   let pendingOneClickSave = false;
+  let imageUploadInFlight = false;
+
+  function setImageUploadStatus(message: string) {
+    const el = root.querySelector("[data-gosaki-schedule-image-upload-status]");
+    if (el instanceof HTMLElement) el.textContent = message;
+  }
+
+  function setImageUploadBusy(busy: boolean) {
+    imageUploadInFlight = busy;
+    const btn = root.querySelector("[data-gosaki-schedule-image-upload]");
+    if (btn instanceof HTMLButtonElement) {
+      btn.disabled = busy;
+      btn.setAttribute("aria-disabled", busy ? "true" : "false");
+      btn.textContent = busy ? "アップロード中…" : "アップロード";
+    }
+    const fileInput = root.querySelector("[data-gosaki-schedule-image-file]");
+    if (fileInput instanceof HTMLInputElement) fileInput.disabled = busy;
+  }
 
   function setUserSaveMessage(message: string) {
     if (saveReasonEl instanceof HTMLElement) {
@@ -908,6 +927,12 @@ export function initGosakiScheduleOperationalEdit(
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
+
+    if (t.closest("[data-gosaki-schedule-image-upload]")) {
+      ev.preventDefault();
+      void runScheduleImageUpload();
+      return;
+    }
 
     const editEventBtn = t.closest("[data-gosaki-schedule-edit-event]");
     if (editEventBtn instanceof HTMLElement) {
@@ -1548,6 +1573,49 @@ export function initGosakiScheduleOperationalEdit(
     void refreshSaveGate();
   };
 
+  async function runScheduleImageUpload(): Promise<void> {
+    if (mode === "view" || imageUploadInFlight) return;
+    const fileInput = root.querySelector("[data-gosaki-schedule-image-file]");
+    if (!(fileInput instanceof HTMLInputElement)) return;
+    const file = fileInput.files?.[0];
+    if (!file) {
+      setImageUploadStatus("ファイルを選択してください。");
+      return;
+    }
+
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
+    const anonKey = String(deps.anonKey ?? "").trim();
+    if (!token || !supabaseUrl || !anonKey) {
+      setImageUploadStatus("ログインが必要です。");
+      return;
+    }
+
+    setImageUploadBusy(true);
+    setImageUploadStatus("画像を処理中...");
+    try {
+      const publicUrl = await uploadGosakiScheduleImage({
+        file,
+        supabaseUrl,
+        anonKey,
+        accessToken: token,
+        legacyId: readForm(root).legacy_id,
+        productionProjectRefStop: productionStop,
+        fetchImpl,
+      });
+      writeForm(root, { image_url: publicUrl });
+      fileInput.value = "";
+      setImageUploadStatus("アップロードしました。保存を押すと予定に反映されます。");
+      onFormEdited();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "画像のアップロードに失敗しました。";
+      setImageUploadStatus(message);
+    } finally {
+      setImageUploadBusy(false);
+    }
+  }
+
   root.addEventListener("input", (ev) => {
     const t = ev.target;
     if (!(t instanceof HTMLElement)) return;
@@ -1555,6 +1623,7 @@ export function initGosakiScheduleOperationalEdit(
       applyScheduleSearch((t as HTMLInputElement).value);
       return;
     }
+    if (t.matches("[data-gosaki-schedule-image-file]")) return;
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
     syncScheduleImagePreview(root);
     onFormEdited();
@@ -1565,6 +1634,11 @@ export function initGosakiScheduleOperationalEdit(
     if (!(t instanceof HTMLElement)) return;
     if (t.matches("[data-gosaki-schedule-search-input]")) {
       applyScheduleSearch((t as HTMLInputElement).value);
+      return;
+    }
+    if (t.matches("[data-gosaki-schedule-image-file]")) {
+      const name = t instanceof HTMLInputElement ? t.files?.[0]?.name : "";
+      setImageUploadStatus(name ? `選択中: ${name}` : "");
       return;
     }
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;

@@ -324,7 +324,35 @@ const eventsJson = JSON.stringify(events);
           placeholder="https://..."
           autocomplete="off"
         />
+        <span class="gosaki-schedule-content-panel__field-note">
+          URLを直接入力するか、下からファイルを選んでアップロード（JPG / PNG / WebP・長辺1600px・2MBまで）。アップロードだけでは公開されません。保存を押してください。
+        </span>
       </label>
+      <div
+        class="gosaki-schedule-content-panel__image-upload admin-form__field--full"
+        data-gosaki-schedule-image-upload-toolbar
+      >
+        <label class="gosaki-schedule-content-panel__image-file-label">
+          <span class="admin-form__label">画像を選択</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            data-gosaki-schedule-image-file
+          />
+        </label>
+        <button
+          type="button"
+          class="gosaki-admin-btn gosaki-admin-btn--secondary"
+          data-gosaki-schedule-image-upload
+        >
+          アップロード
+        </button>
+        <p
+          class="gosaki-schedule-content-panel__image-upload-status"
+          data-gosaki-schedule-image-upload-status
+          role="status"
+        ></p>
+      </div>
       <div
         class="gosaki-schedule-content-panel__image-preview admin-form__field--full"
         data-gosaki-schedule-image-preview
@@ -460,6 +488,42 @@ const eventsJson = JSON.stringify(events);
 
   .gosaki-schedule-content-panel__form .admin-form__field--full {
     grid-column: 1 / -1;
+  }
+
+  .gosaki-schedule-content-panel__image-upload {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem 1rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__image-file-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+    flex: 1 1 12rem;
+  }
+
+  .gosaki-schedule-content-panel__image-upload input[type="file"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font: inherit;
+    font-size: 0.92rem;
+  }
+
+  .gosaki-schedule-content-panel__image-upload .gosaki-admin-btn {
+    flex: 0 0 auto;
+  }
+
+  .gosaki-schedule-content-panel__image-upload-status {
+    flex: 1 1 100%;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #475569;
+    min-height: 1.2em;
   }
 
   .gosaki-schedule-content-panel__image-preview {
@@ -699,6 +763,12 @@ const eventsJson = JSON.stringify(events);
   .gosaki-schedule-content-panel__form .admin-form__field--checkbox > span {
     flex: 1 1 auto;
     min-width: 0;
+  }
+
+  @media (max-width: 768px) {
+    .gosaki-schedule-content-panel__image-upload .gosaki-admin-btn {
+      width: 100%;
+    }
   }
 
   @media (max-width: 375px) {

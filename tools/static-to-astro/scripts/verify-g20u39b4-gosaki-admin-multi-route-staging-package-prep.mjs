@@ -862,7 +862,8 @@ assert(
 assert(
   "apply copies schedule operational edit client",
   applySrc.includes("gosaki-staging-schedule-operational-edit.ts") &&
-    applySrc.includes("AdminGosakiStagingScheduleContentPanel.astro"),
+    applySrc.includes("AdminGosakiStagingScheduleContentPanel.astro") &&
+    applySrc.includes("gosaki-schedule-image-upload.ts"),
 );
 assert(
   "schedule operational edit client gates",
@@ -1268,6 +1269,12 @@ assert(
   "tmp schedule operational edit lib copied",
   fs.existsSync(
     path.join(tmpOut, "src/lib/gosaki-staging-schedule-operational-edit.ts"),
+  ),
+);
+assert(
+  "tmp schedule image upload lib copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/lib/gosaki-schedule-image-upload.ts"),
   ),
 );
 assert(

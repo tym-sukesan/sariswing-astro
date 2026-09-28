@@ -485,6 +485,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-staging-admin-live-read.ts",
   );
+  const scheduleImageUploadSrc = path.join(
+    templateRoot,
+    "gosaki-schedule-image-upload.ts",
+  );
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
@@ -505,6 +509,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     aboutEditSrc,
     oneClickSaveSrc,
     adminLiveReadSrc,
+    scheduleImageUploadSrc,
     packagePathsSrc,
     cssSrc,
     chromeCssSrc,
@@ -561,6 +566,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     adminLiveReadSrc,
     path.join(path.dirname(libDest), "gosaki-staging-admin-live-read.ts"),
+  );
+  fs.copyFileSync(
+    scheduleImageUploadSrc,
+    path.join(path.dirname(libDest), "gosaki-schedule-image-upload.ts"),
   );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);

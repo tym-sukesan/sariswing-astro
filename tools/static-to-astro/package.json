@@ -19,6 +19,7 @@
     "verify:gosaki-home-latest-schedule": "node scripts/verify-gosaki-home-latest-schedule.mjs",
     "verify:gosaki-final-ux-fixes": "node scripts/verify-gosaki-final-ux-fixes.mjs",
     "verify:gosaki-schedule-image-ui": "node scripts/verify-gosaki-schedule-image-ui-and-home-date.mjs",
+    "verify:gosaki-schedule-image-upload": "node scripts/verify-gosaki-schedule-image-upload.mjs",
     "verify:gosaki-youtube-public-multi": "node scripts/verify-gosaki-youtube-public-multi-item.mjs",
     "verify:gosaki-youtube-delete-ui": "node scripts/verify-gosaki-youtube-delete-ui.mjs && node scripts/verify-gosaki-youtube-multi-dirty-state.mjs",
     "verify:cms-core-v2-admin-staging-ref": "node scripts/verify-cms-core-v2-admin-staging-ref-assert-helper.mjs",

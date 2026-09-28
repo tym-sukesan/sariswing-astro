@@ -3,12 +3,87 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** browser review of `gosaki-schedule-image-ui-and-home-date` at `http://127.0.0.1:4321/` (Home SP date 26px, month-card image on `schedule-2026-09-002` fixture, other cards unchanged). Admin 画像URL needs login.
-2. **Later explicit approval only:** deploy Edge `gosaki-schedule-save-dry-run` to kmjq (`--project-ref kmjqppxjdnwwrtaeqjta`) so live Save can persist `image_url`. Not executed this phase.
-3. After image-UI + UX sign-off: official `build:gosaki:production` (Save arms OFF) then FileZilla `public-dist/` contents. Current on-disk production package does **not** include UX fixes or this phase.
-4. YouTube Save UI stays OFF. Edge Secret `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` remains operator-owned.
-5. **Later explicit approval:** unset leftover Contents arms on kmjq: `GOSAKI_YOUTUBE_URL_SAVE_ARMED` · `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`. `SAFE_TO_UNSET_BOTH: true` · **not executed**.
-6. Do not arm Contents client envs. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** Schedule file upload is **implemented in source**. Next is a later official generate + FileZilla, then owner login → select → アップロード → 保存. Do not generate/FTP this phase.
+2. Live Storage upload / Schedule Save were **not** executed here.
+3. YouTube / Discography / About Save UI stay OFF. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Schedule image upload implementation (2026-09-28)
+
+```txt
+SCHEDULE_IMAGE_UPLOAD_IMPLEMENTATION_RESULT: PASS
+SAFE_TO_REVIEW_IN_BROWSER: true
+SAFE_TO_PROCEED_TO_PRODUCTION_TEST: true
+LIVE_STORAGE_UPLOAD_EXECUTED: false
+BUCKET: site-assets
+PATH: gosaki-piano/schedule/{legacyId|new}/{random}.ext
+IMAGE_UPLOAD_VERIFIER: 28 passed, 0 failed
+G20U39B4: 278 passed, 0 failed
+PRODUCTION_BUILD: false
+COMMIT: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-image-upload-implementation.md`
+
+## 0. Gosaki Schedule Storage upload policy review (2026-09-28)
+
+```txt
+STORAGE_UPLOAD_POLICY_REVIEW_RESULT: PASS
+SAFE_TO_APPLY: true
+APPLY_EXECUTED: false
+POLICY: site_assets_gosaki_piano_schedule_insert
+PATH_SCOPE: gosaki-piano/schedule/
+AUTHZ: can_write_site after sites.site_slug=gosaki-piano
+INSERT: required
+UPDATE: not required
+DELETE: not required
+LIVE_POLICY_DUMP: not executed
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-storage-upload-policy-review.md`
+
+## 0. Gosaki Schedule image upload (2026-09-28)
+
+```txt
+SCHEDULE_IMAGE_UPLOAD_RESULT: STOP
+Sariswing source: src/lib/admin/image-upload.ts + mount-image-upload-field.ts + schedule-image-fields.ts
+reused components / functions: none (blocked)
+storage bucket / path: Sariswing images/{prefix}/{YYYY-MM}/{random}.ext ; Gosaki site-assets/{siteSlug}/schedule/{legacyId}/flyer.{ext}
+authz: logged-in JWT; kmjq site-assets SELECT-only in documented SQL
+file restrictions: jpeg/png/webp · 1600px · 2MB after encode
+changed files: docs only
+admin UI behavior: unchanged (画像URL text only)
+upload flow: not implemented
+image_url integration: existing Save path only
+Edge deploy required: false
+Storage policy change required: true
+RLS change required: false
+verifier result: not run
+SAFE_TO_REVIEW_IN_BROWSER: false
+SAFE_TO_PROCEED_TO_PRODUCTION_ROLLOUT: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-image-upload.md`
+
+## 0. Gosaki Schedule image production test build (2026-09-28)
+
+```txt
+SCHEDULE_IMAGE_TEST_BUILD_RESULT: PASS
+COMMIT: b573086d640376760896b421a887ef7b800ec23f
+sourceTreeClean: true
+armedCount: 1
+armedFeatureIds: ["gosaki-schedule"]
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+admin image input present: true
+image_url payload present: true
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-image-production-test-build.md`
 
 ## 0. Gosaki Schedule image UI + Home SP date (2026-09-28)
 

@@ -3,9 +3,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** Schedule file upload is **implemented in source**. Next is a later official generate + FileZilla, then owner login → select → アップロード → 保存. Do not generate/FTP this phase.
-2. Live Storage upload / Schedule Save were **not** executed here.
-3. YouTube / Discography / About Save UI stay OFF. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** operator FileZilla overwrite of `output/manual-upload/gosaki-piano-production/public-dist/` contents. Schedule Save UI arm is ON (file upload + image_url test).
+2. After FileZilla: owner login → `/admin/schedule/` → 画像を選択 → アップロード → 保存 once. Public pages will **not** auto-reflect until a later generate.
+3. Secret `GOSAKI_SCHEDULE_SAVE_ARMED` was not changed this phase. Live Save still needs it exact `"true"` on kmjq.
+4. YouTube / Discography / About Save UI stay OFF. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+
+## 0. Gosaki Schedule image upload production test build (2026-09-28)
+
+```txt
+SCHEDULE_IMAGE_UPLOAD_TEST_BUILD_RESULT: PASS
+COMMIT: a8f18727ded6992dade986cce16a76121e16086c
+sourceTreeClean: true
+armedCount: 1
+armedFeatureIds: ["gosaki-schedule"]
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+file input present: true
+upload button present: true
+storage bucket/path: site-assets / gosaki-piano/schedule/
+image_url payload present: true
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-image-upload-production-test-build.md`
 
 ## 0. Gosaki Schedule image upload implementation (2026-09-28)
 

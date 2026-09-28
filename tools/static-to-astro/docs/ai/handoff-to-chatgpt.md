@@ -5,6 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-schedule-image-upload-production-test-build PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+SCHEDULE_IMAGE_UPLOAD_TEST_BUILD_RESULT: PASS
+COMMIT: a8f18727ded6992dade986cce16a76121e16086c
+sourceTreeClean: true
+armedCount: 1
+armedFeatureIds: ["gosaki-schedule"]
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+file input present: true
+upload button present: true
+storage bucket/path: site-assets / gosaki-piano/schedule/
+image_url payload present: true
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-schedule-image-upload-production-test-build.md
+```
+
+## Gosaki Schedule image upload production test build (2026-09-28)
+
+- Checkpoint `a8f18727` then official `build:gosaki:production` with **Schedule UI arm only**.
+- Mutex `armedCount=1` `gosaki-schedule`. YouTube / Discography / About Save `"false"`.
+- Admin `/admin/schedule/` has file input, アップロード, 画像URL, preview. Baked JS uses `site-assets` + `gosaki-piano/schedule/` + `image_url` payload.
+- Visual polish + Home 4 events + YouTube 3 published kept. FileZilla `public-dist/` contents. No FTP `--apply` / push / DB / Storage / Secret / Edge.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-schedule-image-upload-implementation PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

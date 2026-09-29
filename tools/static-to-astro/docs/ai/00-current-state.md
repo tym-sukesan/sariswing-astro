@@ -1,7 +1,19 @@
-Last updated: 2026-09-28
+Last updated: 2026-09-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki production Deploy checkpoint (2026-09-29):** **PASS** — Phase `gosaki-production-deploy-checkpoint` · branch `hotfix/gosaki-disable-test-youtube` · local commit of A–D Deploy flow + audit/plan docs · **no** push / merge / dispatch / FTP / Secret change · leftover untracked: `gosaki-final-production-build-after-schedule-image.md` (prior package docs, not this commit).
+
+**Gosaki admin Deploy local implementation (2026-09-28):** **PASS** — Phase `gosaki-admin-deploy-local-implementation` · A–D local · workflow `gosaki-piano-production-public-dist.yml` · Edge source `gosaki-production-deploy-trigger` / `gosaki-production-deploy-status` (`can_write_site`) · `AdminGosakiProductionDeployBar` on `/admin/` portal · verifier **93/0** · Sariswing deploy files unchanged · Edge/Secret/dispatch/FTP/push **not** executed · Doc: `gosaki-admin-deploy-local-implementation.md`.
+
+**Gosaki admin Deploy implementation plan (2026-09-28):** **PASS** — Phase `gosaki-admin-deploy-implementation-plan` · workflow `gosaki-piano-production-public-dist.yml` · Edge `gosaki-production-deploy-trigger` / `gosaki-production-deploy-status` · authz `can_write_site` · UI portal Deploy bar (port AdminDeployBar) · dedicated `GOSAKI_PRODUCTION_*` secret names · no `--delete` · A–D local next · E–H operator · **no** as-is `trigger-deploy` · Doc: `gosaki-admin-deploy-implementation-plan.md`.
+
+**Gosaki admin Deploy audit phase 2 (2026-09-28):** **PASS** — `gosaki-admin-deploy-readonly-audit-phase2` · trigger-deploy / deploy-status **in repo**, **not on kmjq**, **as-is Gosaki deploy NO** · live UI = Sariswing `AdminDeployBar` only · Kit Deploy = scaffold · `deploy.yml` = Sariswing FTP `dist/` · Gosaki production CI upload **unimplemented** · restore ≠ 2 Edge deploys; need new workflow + forked Edge + kit UI + dedicated FTP secret names · Doc: `gosaki-admin-deploy-readonly-audit-phase2.md`.
+
+**Gosaki admin Deploy read-only audit (2026-09-28):** **PASS** — Phase `gosaki-admin-deploy-readonly-audit` · Gosaki `/admin/` has **no** Deploy button · `trigger-deploy` / `deploy-status` **not on kmjq** (live functions list) · `deploy.yml` is **Sariswing** (`npm run build` + `LOLIPOP_FTP_*`) · owner authz `can_write_site` vs Path B `requireAdminUser` · FTP auto-apply **suspended** (G-7f) · current public reflect = Cursor generate + FileZilla · restore = new Gosaki workflow + new kmjq Edge + kit UI; **do not** reuse Path B as-is · Doc: `gosaki-admin-deploy-readonly-audit.md`.
+
+**Gosaki final production build after schedule image (2026-09-28):** **PASS** — Phase `gosaki-final-production-build-after-schedule-image` · HEAD `14615839` git-clean · Save arms **all OFF** · mutex `armedCount=0` · kmjq bake: Schedule 106 · `schedule-2026-09-017` `image_url` in `/schedule/2026-09/` · YouTube **3** · Home **4** · UX/visual polish kept · G-20i3 **113/0** · save-completion **42/0** · public-dist **53** · FileZilla `output/manual-upload/gosaki-piano-production/public-dist/` · FTP `--apply` **false** · Doc: `gosaki-final-production-build-after-schedule-image.md`.
 
 **Gosaki Schedule image upload production test build (2026-09-28):** **PASS** — Phase `gosaki-schedule-image-upload-production-test-build` · HEAD `a8f18727` git-clean · `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true` · mutex `armedCount=1` `gosaki-schedule` · file input + アップロード + `image_url` + preview baked · `site-assets` / `gosaki-piano/schedule/` · G-20i3 **113/0** · save-completion **42/0** · public-dist **53** · FileZilla `output/manual-upload/gosaki-piano-production/public-dist/` · FTP `--apply` **false** · Doc: `gosaki-schedule-image-upload-production-test-build.md`.
 

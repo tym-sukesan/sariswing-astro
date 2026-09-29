@@ -36,3 +36,9 @@ verify_jwt = true
 
 [functions.gosaki-about-supabase-save-dry-run]
 verify_jwt = true
+
+[functions.gosaki-production-deploy-trigger]
+verify_jwt = true
+
+[functions.gosaki-production-deploy-status]
+verify_jwt = true

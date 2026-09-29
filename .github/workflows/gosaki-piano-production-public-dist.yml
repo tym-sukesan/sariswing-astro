@@ -1,0 +1,139 @@
+name: Gosaki piano production public-dist
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: gosaki-piano-production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  gosaki-production-public-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Require main ref
+        run: |
+          test "${GITHUB_REF}" = "refs/heads/main"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/static-to-astro/package-lock.json
+
+      - name: Assert kmjq public Supabase URL (log booleans only)
+        env:
+          GOSAKI_PRODUCTION_SUPABASE_URL: ${{ secrets.GOSAKI_PRODUCTION_SUPABASE_URL }}
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          url = os.environ.get("GOSAKI_PRODUCTION_SUPABASE_URL") or ""
+          kmjq = "kmjqppxjdnwwrtaeqjta" in url
+          prod_stop = "vsbvndwuajjhnzpohghh" in url
+          print("url_host_kmjq", "true" if kmjq else "false")
+          print("url_prod_stop", "true" if prod_stop else "false")
+          if prod_stop:
+              sys.exit(1)
+          if not kmjq:
+              sys.exit(1)
+          PY
+
+      - name: Install tools/static-to-astro dependencies
+        working-directory: tools/static-to-astro
+        run: npm ci
+
+      - name: Build Gosaki production package (Save arms unset)
+        working-directory: tools/static-to-astro
+        env:
+          PUBLIC_SUPABASE_URL: ${{ secrets.GOSAKI_PRODUCTION_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.GOSAKI_PRODUCTION_SUPABASE_ANON_KEY }}
+          PUBLIC_GOSAKI_PRODUCTION_DEPLOY_UI_ARMED: "true"
+        run: |
+          unset \
+            PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED \
+            PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED \
+            PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED \
+            PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED \
+            PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED \
+            PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED \
+            CMS_KIT_SITE_EMBEDS_BUILD_READ \
+            CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ \
+            SUPABASE_SERVICE_ROLE_KEY
+          npm run build:gosaki:production
+
+      - name: Assert production public-dist package
+        working-directory: tools/static-to-astro
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          from pathlib import Path
+          manifest_path = Path("output/manual-upload/gosaki-piano-production/MANIFEST.json")
+          public_dist = Path("output/manual-upload/gosaki-piano-production/public-dist")
+          print("manifest_exists", "true" if manifest_path.is_file() else "false")
+          print("public_dist_exists", "true" if public_dist.is_dir() else "false")
+          if not manifest_path.is_file() or not public_dist.is_dir():
+              sys.exit(1)
+          data = json.loads(manifest_path.read_text())
+          ok = (
+              data.get("safeForStaticFtp") is True
+              and data.get("ftpAutoDeployUsed") is False
+              and data.get("targetEnvironment") == "production"
+              and data.get("includesAdmin") is True
+          )
+          print("manifest_gates_ok", "true" if ok else "false")
+          if not ok:
+              sys.exit(1)
+          PY
+
+      - name: Guard Gosaki production FTP remote dir
+        env:
+          GOSAKI_PRODUCTION_FTP_REMOTE_DIR: ${{ secrets.GOSAKI_PRODUCTION_FTP_REMOTE_DIR }}
+        working-directory: tools/static-to-astro
+        run: node scripts/gosaki-production-ftp-remote-dir-guard.mjs
+
+      - name: Install lftp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Upload public-dist via lftp mirror -R (delete disabled)
+        env:
+          GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
+          GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}
+          GOSAKI_PRODUCTION_FTP_PASSWORD: ${{ secrets.GOSAKI_PRODUCTION_FTP_PASSWORD }}
+          GOSAKI_PRODUCTION_FTP_REMOTE_DIR: ${{ secrets.GOSAKI_PRODUCTION_FTP_REMOTE_DIR }}
+        working-directory: tools/static-to-astro
+        run: |
+          set +x
+          node scripts/gosaki-production-ftp-remote-dir-guard.mjs
+          PWD_FILE="$(mktemp)"
+          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF >"$PWD_FILE"
+          set cmd:fail-exit true
+          set ftp:ssl-allow no
+          set ftp:passive-mode on
+          set net:max-retries 5
+          set net:timeout 30
+          cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
+          pwd
+          bye
+          EOF
+          node scripts/gosaki-production-ftp-remote-dir-guard.mjs --match-pwd-file "$PWD_FILE"
+          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF
+          set cmd:fail-exit true
+          set ftp:ssl-allow no
+          set ftp:passive-mode on
+          set net:max-retries 5
+          set net:timeout 30
+          set xfer:clobber on
+          cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
+          lcd output/manual-upload/gosaki-piano-production/public-dist/
+          mirror -R --verbose --parallel=3 --exclude-glob .ftpaccess --exclude-glob welcome.html --exclude-glob .htaccess ./
+          bye
+          EOF

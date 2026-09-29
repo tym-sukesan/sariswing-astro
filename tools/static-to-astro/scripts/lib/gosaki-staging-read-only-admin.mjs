@@ -489,12 +489,14 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-schedule-image-upload.ts",
   );
+  const productionDeploySrc = path.join(templateRoot, "gosaki-production-deploy.ts");
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
     "AdminGosakiStagingNav.astro",
     "AdminGosakiStagingSafetyChips.astro",
     "AdminGosakiStagingOperatorHome.astro",
+    "AdminGosakiProductionDeployBar.astro",
     ...GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS,
   ];
 
@@ -510,6 +512,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     oneClickSaveSrc,
     adminLiveReadSrc,
     scheduleImageUploadSrc,
+    productionDeploySrc,
     packagePathsSrc,
     cssSrc,
     chromeCssSrc,
@@ -570,6 +573,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     scheduleImageUploadSrc,
     path.join(path.dirname(libDest), "gosaki-schedule-image-upload.ts"),
+  );
+  fs.copyFileSync(
+    productionDeploySrc,
+    path.join(path.dirname(libDest), "gosaki-production-deploy.ts"),
   );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);

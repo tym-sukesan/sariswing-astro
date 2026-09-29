@@ -16,6 +16,17 @@ export const GOSAKI_ADMIN_SAFETY_CHIP_STAGING =
 export const GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION =
   "本番CMS｜保存内容は公開ページへ自動反映されません";
 
+/** Client Deploy UI arm — not a Save mutex feature. Exact "true" only. */
+export const GOSAKI_PRODUCTION_DEPLOY_UI_ARMED_ENV = "PUBLIC_GOSAKI_PRODUCTION_DEPLOY_UI_ARMED";
+export const GOSAKI_PRODUCTION_DEPLOY_TRIGGER_NAME = "gosaki-production-deploy-trigger";
+export const GOSAKI_PRODUCTION_DEPLOY_STATUS_NAME = "gosaki-production-deploy-status";
+
+export function isGosakiProductionDeployUiArmed(env: ImportMetaEnv): boolean {
+  return isSaveArmExactTrue(
+    (env as Record<string, unknown>)[GOSAKI_PRODUCTION_DEPLOY_UI_ARMED_ENV],
+  );
+}
+
 export function isGosakiProductionAdminSurface(
   env: Record<string, unknown> = import.meta.env as Record<string, unknown>,
 ): boolean {

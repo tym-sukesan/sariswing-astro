@@ -1,12 +1,113 @@
-Last updated: 2026-09-28
+Last updated: 2026-09-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator FileZilla overwrite of `output/manual-upload/gosaki-piano-production/public-dist/` contents. Schedule Save UI arm is ON (file upload + image_url test).
-2. After FileZilla: owner login → `/admin/schedule/` → 画像を選択 → アップロード → 保存 once. Public pages will **not** auto-reflect until a later generate.
-3. Secret `GOSAKI_SCHEDULE_SAVE_ARMED` was not changed this phase. Live Save still needs it exact `"true"` on kmjq.
-4. YouTube / Discography / About Save UI stay OFF. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP.
+1. **Primary:** review `hotfix/gosaki-disable-test-youtube` Deploy checkpoint for a later main merge. **No push / merge this phase.**
+2. Operator-gated E–H (`gosaki-admin-deploy-operator-gated-phase`) still need **explicit** approval each (Edge deploy / Secret / dispatch / FTP).
+3. FileZilla still the live upload until H. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki production Deploy checkpoint (2026-09-29)
+
+```txt
+DEPLOY_CHECKPOINT_RESULT: PASS
+BRANCH: hotfix/gosaki-disable-test-youtube
+PUSH: false
+MERGE: false
+```
+
+## 0. Gosaki admin Deploy local implementation (2026-09-28)
+
+```txt
+DEPLOY_LOCAL_IMPLEMENTATION_RESULT: PASS
+WORKFLOW_FILE: .github/workflows/gosaki-piano-production-public-dist.yml
+EDGE_SOURCE_FILES: gosaki-production-deploy-trigger · gosaki-production-deploy-status (+ tools byte-eq)
+ADMIN_UI_COMPONENT: AdminGosakiProductionDeployBar on /admin/ portal
+VERIFIER_RESULT: 93 passed, 0 failed
+SARISWING_DEPLOY_FILES_UNCHANGED: true
+SAFE_TO_REVIEW_LOCALLY: true
+SAFE_TO_PROCEED_TO_OPERATOR_GATED_PHASE: true
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-admin-deploy-local-implementation.md`
+
+## 0. Gosaki admin Deploy implementation plan (2026-09-28)
+
+```txt
+DEPLOY_IMPLEMENTATION_PLAN_RESULT: PASS
+WORKFLOW_FILE: .github/workflows/gosaki-piano-production-public-dist.yml
+EDGE_FUNCTIONS: gosaki-production-deploy-trigger · gosaki-production-deploy-status
+ADMIN_UI_COMPONENT: AdminGosakiProductionDeployBar on /admin/ portal
+AUTHZ: can_write_site (gosaki-piano)
+SAFE_TO_START_LOCAL_IMPLEMENTATION: true (A–D only)
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-admin-deploy-implementation-plan.md`
+
+## 0. Gosaki admin Deploy audit phase 2 (2026-09-28)
+
+```txt
+DEPLOY_AUDIT_PHASE2_RESULT: PASS
+EXISTING_TRIGGER_DEPLOY: repo yes / kmjq no / as-is Gosaki: NO
+EXISTING_DEPLOY_STATUS: repo yes / kmjq no / owner: NO
+ADMIN_DEPLOY_UI: Gosaki none; live poll UI = Sariswing AdminDeployBar
+GITHUB_WORKFLOW: deploy.yml Sariswing FTP; no Gosaki production build workflow
+PRODUCTION_UPLOAD_STEP: Gosaki CI FTP UNIMPLEMENTED (FileZilla only)
+MINIMUM_RESTORE_PLAN: 1 new workflow + 2 forked Edge deploys + UI port + dedicated FTP secret names (not 2 as-is deploys)
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-admin-deploy-readonly-audit-phase2.md`
+
+## 0. Current next actions（直近）
+
+1. **Primary (optional):** `gosaki-admin-deploy-restore-planning` — plan Gosaki-only workflow + kmjq Edge + kit Deploy UI. Do **not** wire to Sariswing `deploy.yml` / `LOLIPOP_FTP_*` / `trigger-deploy` as-is.
+2. Delivery package remains FileZilla of `output/manual-upload/gosaki-piano-production/public-dist/` until that restore ships. Save arms stay OFF unless a Save test is explicitly armed.
+3. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP. No push. No workflow_dispatch.
+
+## 0. Gosaki admin Deploy read-only audit (2026-09-28)
+
+```txt
+DEPLOY_AUDIT_RESULT: PASS
+CURRENT_DEPLOY_FLOW: Save(kmjq) → Cursor build:gosaki:production → FileZilla
+CURRENT_BLOCKER: no Gosaki Deploy UI + no Gosaki production workflow + kmjq has no trigger-deploy + G-7f FTP suspend
+ADMIN_UI_STATE: absent
+EDGE_FUNCTION: trigger-deploy / deploy-status not on kmjq (live list)
+AUTHZ: requireAdminUser (not can_write_site)
+GITHUB_WORKFLOW: deploy.yml = Sariswing; Gosaki production workflow missing
+PRODUCTION_UPLOAD_MECHANISM: FileZilla public-dist
+SAFE_TO_IMPLEMENT_NEXT: true (planning only; not live dispatch/FTP)
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-admin-deploy-readonly-audit.md`
+
+## 0. Current next actions（直近・prior FileZilla）
+
+1. **Primary:** operator FileZilla overwrite of `output/manual-upload/gosaki-piano-production/public-dist/` contents. **All Save arms OFF** (`armedCount=0`). Delivery package.
+2. Do **not** re-arm Schedule / YouTube / Discography / About Save. Secret `GOSAKI_SCHEDULE_SAVE_ARMED` stays unset.
+3. Public pages bake live kmjq Schedule image + YouTube 3 + Home 4. Admin UI present but cannot Save.
+4. `readyForAnyFutureFtpApply: false` · production `vsbvndwuajjhnzpohghh` STOP. No push.
+
+## 0. Gosaki final production build after schedule image (2026-09-28)
+
+```txt
+FINAL_PRODUCTION_BUILD_RESULT: PASS
+COMMIT: 14615839af23e1820276e4d8838287fc5eec3493
+sourceTreeClean: true
+armedCount: 0
+armedFeatureIds: []
+schedule image rows baked: 1 (schedule-2026-09-017)
+YouTube videos baked: 3
+Home Schedule count: 4
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-final-production-build-after-schedule-image.md`
 
 ## 0. Gosaki Schedule image upload production test build (2026-09-28)
 

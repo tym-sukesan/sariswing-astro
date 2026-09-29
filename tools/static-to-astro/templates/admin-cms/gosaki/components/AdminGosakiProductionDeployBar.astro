@@ -1,0 +1,57 @@
+---
+/**
+ * Gosaki production Deploy bar — portal /admin/ only.
+ * Separate from operational Save arms.
+ */
+interface Props {
+  deployUiArmed?: boolean;
+}
+
+const { deployUiArmed = false } = Astro.props;
+const unarmedReason = "公開サイトの更新は現在無効です（Deploy 未武装）";
+---
+
+<aside
+  class:list={[
+    "gosaki-production-deploy-bar",
+    { "is-unarmed": !deployUiArmed },
+  ]}
+  aria-label="公開サイトの更新"
+  data-gosaki-production-deploy-bar="true"
+  data-gosaki-production-deploy-armed={deployUiArmed ? "true" : "false"}
+>
+  <p class="gosaki-production-deploy-bar__eyebrow">公開反映 · Save とは別操作</p>
+  <div class="gosaki-production-deploy-bar__inner">
+    <div class="gosaki-production-deploy-bar__text">
+      <p class="gosaki-production-deploy-bar__title">公開サイトを更新</p>
+      <p class="gosaki-production-deploy-bar__desc">
+        保存した内容を、みんなが見る公開ページに反映します。反映には数分かかることがあります。保存ボタンではありません。
+      </p>
+    </div>
+    <div class="gosaki-production-deploy-bar__actions">
+      <button
+        id="gosakiTriggerProductionDeploy"
+        class="admin-button"
+        type="button"
+        data-gosaki-production-deploy="true"
+        disabled={!deployUiArmed}
+        aria-disabled={deployUiArmed ? "false" : "true"}
+      >
+        公開サイトを更新
+      </button>
+    </div>
+  </div>
+
+  {
+    deployUiArmed ? null : (
+      <p class="gosaki-production-deploy-bar__unarmed" data-gosaki-production-deploy-unarmed-reason>
+        {unarmedReason}
+      </p>
+    )
+  }
+
+  <p id="gosakiDeployMessage" class="gosaki-production-deploy-bar__message" aria-live="polite"></p>
+  <p id="gosakiDeployStatus" class="gosaki-production-deploy-bar__status" aria-live="polite"></p>
+  <p id="gosakiDeployHint" class="gosaki-production-deploy-bar__hint"></p>
+  <p id="gosakiDeployLastRun" class="gosaki-production-deploy-bar__last-run"></p>
+</aside>

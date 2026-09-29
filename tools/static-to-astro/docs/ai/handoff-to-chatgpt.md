@@ -5,6 +5,154 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-production-deploy-checkpoint PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+PUSH: false
+MERGE: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-admin-deploy-local-implementation.md
+```
+
+## Gosaki production Deploy checkpoint (2026-09-29)
+
+- Local checkpoint commit of Gosaki production Deploy A–D (workflow, Edge source, portal UI, verifier, audit/plan docs).
+- Do not push or merge to main until operator audit.
+- E–H (Edge deploy / Secret / dispatch / FTP) remain operator-gated.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-admin-deploy-local-implementation PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+DEPLOY_LOCAL_IMPLEMENTATION_RESULT: PASS
+WORKFLOW_FILE: .github/workflows/gosaki-piano-production-public-dist.yml
+EDGE_SOURCE_FILES: gosaki-production-deploy-trigger · gosaki-production-deploy-status
+ADMIN_UI_COMPONENT: AdminGosakiProductionDeployBar on /admin/ portal
+VERIFIER_RESULT: 93 passed, 0 failed
+SARISWING_DEPLOY_FILES_UNCHANGED: true
+SAFE_TO_REVIEW_LOCALLY: true
+SAFE_TO_PROCEED_TO_OPERATOR_GATED_PHASE: true
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-admin-deploy-local-implementation.md
+```
+
+## Gosaki admin Deploy local implementation (2026-09-28)
+
+- A–D local only: workflow YAML, Edge **source**, portal Deploy bar, verifier.
+- Authz: JWT + `can_write_site` (`gosaki-piano`). Not `requireAdminUser`.
+- Hardcoded workflow `gosaki-piano-production-public-dist.yml` + `main`. No `LOLIPOP_FTP_*`, no `--delete`, remote `/` rejected.
+- Not executed: Edge deploy, Secret set, workflow_dispatch, FTP, push.
+- Next: operator-gated E–H (explicit approval each). FileZilla until H.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-admin-deploy-implementation-plan PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+DEPLOY_IMPLEMENTATION_PLAN_RESULT: PASS
+WORKFLOW_FILE: .github/workflows/gosaki-piano-production-public-dist.yml
+EDGE_FUNCTIONS: gosaki-production-deploy-trigger · gosaki-production-deploy-status
+ADMIN_UI_COMPONENT: AdminGosakiProductionDeployBar on /admin/ portal
+AUTHZ: can_write_site (gosaki-piano)
+SAFE_TO_START_LOCAL_IMPLEMENTATION: true (A–D only)
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-admin-deploy-implementation-plan.md
+```
+
+## Gosaki admin Deploy implementation plan (2026-09-28)
+
+- New Gosaki workflow (not `deploy.yml`): `build:gosaki:production`, kmjq public keys, Save arms off, lftp public-dist **no --delete**, dedicated `GOSAKI_PRODUCTION_FTP_*` names.
+- New kmjq Edge slugs (not `trigger-deploy`): hardcoded workflow file + `main`; `can_write_site`; vsbvnd STOP; Deploy arm separate from Save arms.
+- Portal `/admin/` Deploy bar ported from Sariswing `AdminDeployBar`. Do not edit `src/pages/admin`.
+- Next: slice A local YAML. E–H operator only.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-admin-deploy-readonly-audit-phase2 PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+DEPLOY_AUDIT_PHASE2_RESULT: PASS
+EXISTING_TRIGGER_DEPLOY: repo yes / kmjq no / as-is Gosaki: NO
+EXISTING_DEPLOY_STATUS: repo yes / kmjq no / owner: NO
+ADMIN_DEPLOY_UI: Gosaki none; Kit scaffold; live = Sariswing AdminDeployBar
+GITHUB_WORKFLOW: deploy.yml = Sariswing FTP dist/; Gosaki production CI upload unimplemented
+MINIMUM_RESTORE_PLAN: 1 new workflow + 2 forked Edge deploys + kit UI port + dedicated FTP secret names
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-admin-deploy-readonly-audit-phase2.md
+```
+
+## Gosaki admin Deploy audit phase 2 (2026-09-28)
+
+- `trigger-deploy` / `deploy-status` exist in repo; not on kmjq. As-is kmjq deploy would still `workflow_dispatch` `deploy.yml` (Sariswing FTP) and 403 site owner.
+- Gosaki admin has no Deploy control. Kit publish components are disabled scaffolds. Working button+poll is Sariswing `AdminDeployBar`.
+- No enabled workflow runs `build:gosaki:production`. Gosaki production upload in Actions is unimplemented (FileZilla only).
+- Restore is not “deploy 2 existing functions.” Next: `gosaki-admin-deploy-restore-planning`.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-admin-deploy-readonly-audit PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+DEPLOY_AUDIT_RESULT: PASS
+CURRENT_DEPLOY_FLOW: Save(kmjq) → Cursor build:gosaki:production → FileZilla
+CURRENT_BLOCKER: no Gosaki Deploy UI + no Gosaki production workflow + kmjq has no trigger-deploy + G-7f FTP suspend
+ADMIN_UI_STATE: absent
+EDGE_FUNCTION: trigger-deploy / deploy-status not on kmjq (live list)
+AUTHZ: requireAdminUser (not can_write_site)
+GITHUB_WORKFLOW: deploy.yml = Sariswing; Gosaki production workflow missing
+PRODUCTION_UPLOAD_MECHANISM: FileZilla public-dist
+SAFE_TO_IMPLEMENT_NEXT: true (planning only)
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-admin-deploy-readonly-audit.md
+```
+
+## Gosaki admin Deploy read-only audit (2026-09-28)
+
+- Gosaki `/admin/` has no Deploy button (disabled row was removed). Chip says public pages do not auto-reflect.
+- Existing `trigger-deploy` → `deploy.yml` → `LOLIPOP_FTP_*` deploys **Sariswing** (`npm run build` / `dist/`), not Gosaki `build:gosaki:production`.
+- Owner Save uses `can_write_site`; Path B uses `requireAdminUser` (owner would 403).
+- Auto FTP still suspended (G-7f). Restore = new Gosaki workflow + kmjq Edge fork + kit UI. Do not reuse Path B as-is.
+- No Secret/Edge/dispatch/FTP/commit this phase.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-final-production-build-after-schedule-image PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
+BRANCH: hotfix/gosaki-disable-test-youtube
+FINAL_PRODUCTION_BUILD_RESULT: PASS
+COMMIT: 14615839af23e1820276e4d8838287fc5eec3493
+sourceTreeClean: true
+armedCount: 0
+armedFeatureIds: []
+schedule image rows baked: 1 (schedule-2026-09-017)
+YouTube videos baked: 3
+Home Schedule count: 4
+BUILD: PASS
+G20I3: 113 passed, 0 failed
+SAVE_COMPLETION_VERIFIER: 42 passed, 0 failed
+public-dist fileCount: 53
+OUTPUT: tools/static-to-astro/output/manual-upload/gosaki-piano-production/
+SAFE_FOR_FILEZILLA_UPLOAD: true
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-final-production-build-after-schedule-image.md
+```
+
+## Gosaki final production build after schedule image (2026-09-28)
+
+- Checkpoint `14615839` then official `build:gosaki:production` with **all Save arms unset**.
+- Mutex `armedCount=0`. Admin datasets all `"false"`.
+- kmjq build-read: Schedule 106; `schedule-2026-09-017` `image_url` baked into `/schedule/2026-09/`; YouTube 3; Home 4 month-page links; UX/visual polish kept.
+- FileZilla `public-dist/` contents. No FTP `--apply` / push / DB / Storage / Secret / Edge.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-schedule-image-upload-production-test-build PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

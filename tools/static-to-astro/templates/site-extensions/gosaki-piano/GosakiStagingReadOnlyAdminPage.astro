@@ -73,6 +73,7 @@ import {
   evaluateScheduleOperationalSaveGate,
   isScheduleSaveConflictResponse,
   isG20u45ScheduleOperationalSaveArmed,
+  isGosakiProductionDeployUiArmed,
   G20U45_SCHEDULE_DRY_RUN_OPERATION,
   G20U45_SCHEDULE_SAVE_OPERATION,
   G20U45_SCHEDULE_SAVE_APPROVAL_ID,
@@ -123,6 +124,7 @@ const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import
 const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
 const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
 const scheduleSaveArmed = isG20u45ScheduleOperationalSaveArmed(import.meta.env);
+const productionDeployUiArmed = isGosakiProductionDeployUiArmed(import.meta.env);
 const scheduleDryRunEndpointRaw = resolveGosakiScheduleDryRunEndpoint(import.meta.env);
 const scheduleDryRunEndpoint = assertGosakiScheduleDryRunEndpointSafe(scheduleDryRunEndpointRaw)
   ? scheduleDryRunEndpointRaw
@@ -228,6 +230,7 @@ const showClientScript = true;
     data-g20u45-schedule-save-operation={G20U45_SCHEDULE_SAVE_OPERATION}
     data-g20u45-schedule-save-approval-id={G20U45_SCHEDULE_SAVE_APPROVAL_ID}
     data-gosaki-schedule-save-armed={scheduleSaveArmed ? "true" : "false"}
+    data-gosaki-production-deploy-armed={productionDeployUiArmed ? "true" : "false"}
     data-g20u41-discography-operational-save-phase={G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE}
     data-g20u41-discography-save-operation={G20U41_DISCOGRAPHY_SAVE_OPERATION}
     data-g20u41-discography-save-approval-id={G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID}
@@ -283,6 +286,7 @@ const showClientScript = true;
                 schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
                 supabaseAuthConfigured={supabaseAuthConfigured}
                 showAuthBar={false}
+                productionDeployUiArmed={productionDeployUiArmed}
               />
             ) : (
               <>
@@ -748,6 +752,7 @@ const showClientScript = true;
       import { initGosakiYoutubeOperationalEdit } from "../lib/gosaki-staging-youtube-operational-edit";
       import { initGosakiYoutubeMultiOperationalEdit } from "../lib/gosaki-staging-youtube-multi-operational-edit";
       import { initGosakiAboutOperationalEdit } from "../lib/gosaki-staging-about-operational-edit";
+      import { initGosakiProductionDeployBar } from "../lib/gosaki-production-deploy";
 
       function resolveDiscographyAccessToken() {
         const body = document.body;
@@ -1060,6 +1065,10 @@ const showClientScript = true;
           conflictMessage: G12A_ABOUT_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });
+      }
+
+      if (document.body?.dataset.gosakiAdminPage === "portal") {
+        initGosakiProductionDeployBar();
       }
     </script>
   </body>

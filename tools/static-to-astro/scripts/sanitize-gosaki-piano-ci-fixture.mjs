@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS,
   GOSAKI_PRODUCTION_CI_EXPECTED_HTML,
   GOSAKI_PRODUCTION_CI_FIXTURE_DIR,
   GOSAKI_RAW_CRAWL_FIXTURE_DIR,
@@ -55,7 +56,19 @@ for (const name of GOSAKI_PRODUCTION_CI_EXPECTED_HTML) {
   fs.writeFileSync(path.join(toDir, name), sanitized);
 }
 
+for (const rel of GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS) {
+  const src = path.join(fromDir, rel);
+  if (!fs.existsSync(src)) {
+    console.error("raw fixture missing tracked asset:", rel);
+    process.exit(1);
+  }
+  const dest = path.join(toDir, rel);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
+}
+
 const extras = rawHtml.filter((n) => !expected.has(n));
 console.log("sanitized_html_count", GOSAKI_PRODUCTION_CI_EXPECTED_HTML.length);
+console.log("copied_asset_count", GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS.length);
 console.log("raw_extra_html_ignored_count", extras.length);
 console.log("wrote", toRel);

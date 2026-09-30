@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS,
   GOSAKI_PRODUCTION_CI_EXPECTED_HTML,
   GOSAKI_PRODUCTION_CI_FIXTURE_DIR,
   GOSAKI_RAW_CRAWL_FIXTURE_DIR,
@@ -54,6 +55,16 @@ if (extra.length) {
 }
 
 if (missing.length > 0 || extra.length > 0) {
+  process.exit(1);
+}
+
+const missingAssets = GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS.filter(
+  (rel) => !fs.existsSync(path.join(fixtureDir, rel)),
+);
+console.log("expected_asset_count", GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS.length);
+console.log("missing_asset_count", missingAssets.length);
+if (missingAssets.length) {
+  console.error("missing_asset_names", missingAssets.join(","));
   process.exit(1);
 }
 

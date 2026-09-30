@@ -20,5 +20,14 @@ export const GOSAKI_PRODUCTION_CI_EXPECTED_HTML = Object.freeze([
   "2026-07.html",
 ]);
 
+/** Already-tracked About band JPEGs (not raw Wix HTML). Convert copies siteDir/assets/. */
+export const GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS = Object.freeze([
+  "assets/about/bands/careless_hornets.jpg",
+  "assets/about/bands/caribbean_function.jpg",
+  "assets/about/bands/gosakirikako_trio.jpg",
+  "assets/about/bands/kikioto.jpg",
+  "assets/about/bands/onomatopoeia.jpg",
+]);
+
 /** Basenames treated as Gosaki convert fixtures (raw crawl + sanitized CI). */
 export const GOSAKI_FIXTURE_BASENAMES = Object.freeze(["gosaki-piano", "gosaki-piano-ci"]);

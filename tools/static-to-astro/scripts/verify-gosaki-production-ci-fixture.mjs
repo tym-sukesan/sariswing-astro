@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import {
+  GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS,
   GOSAKI_PRODUCTION_CI_EXPECTED_HTML,
   GOSAKI_PRODUCTION_CI_FIXTURE_DIR,
   GOSAKI_RAW_CRAWL_FIXTURE_DIR,
@@ -64,6 +65,10 @@ assert(
 );
 assert("no manifest.json in ci dir", !fs.existsSync(path.join(fixtureAbs, "manifest.json")));
 assert("no CRAWL_REPORT in ci dir", !fs.existsSync(path.join(fixtureAbs, "CRAWL_REPORT.md")));
+assert(
+  "band assets present",
+  GOSAKI_PRODUCTION_CI_EXPECTED_ASSETS.every((rel) => fs.existsSync(path.join(fixtureAbs, rel))),
+);
 
 const staging = resolveSitePackageBuildProfile("gosaki-piano", "staging");
 const production = resolveSitePackageBuildProfile("gosaki-piano", "production");

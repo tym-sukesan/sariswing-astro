@@ -11,9 +11,9 @@ Make GitHub Actions Gosaki production convert reproducible from a tracked saniti
 ## Tracked snapshot
 
 - Path: `tools/static-to-astro/fixtures/gosaki-piano-ci/`
-- Files: 10 HTML (`index`, `about`, `discography`, `contact`, `link`, `2026-03`–`2026-07`)
-- Size: ~2.9–3.1MB after sanitization
-- README in the same directory (not mixed with raw crawl)
+- Files: 10 sanitized HTML plus 5 already-tracked About band JPEGs under `assets/about/bands/`
+- Size: ~2.9–3.1MB HTML after sanitization
+- README in the same directory (HTML is sanitized; JPEGs are existing tracked band photos, not raw Wix crawl)
 
 ## Still gitignored
 

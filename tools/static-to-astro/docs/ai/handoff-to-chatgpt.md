@@ -5,6 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-ftp-root-diagnostic-implementation PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-ftp-root-diagnostic-implementation.md
+```
+
+## Gosaki FTP root read-only diagnostic (2026-09-30)
+
+- Temporary Actions step: login `pwd` + `cls -1` only.
+- Upload step disabled (`if: ${{ false }}`).
+- Do not dispatch until operator approves a diagnostic run.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-implement-sanitized-ci-fixture PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep

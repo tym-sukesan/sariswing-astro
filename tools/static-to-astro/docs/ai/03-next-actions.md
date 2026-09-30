@@ -3,9 +3,20 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator review of sanitized CI fixture checkpoint, then a later **explicit** main push so Actions convert can see `fixtures/gosaki-piano-ci/`. **No push this phase.**
-2. Do not re-dispatch production workflow until that push is approved. Live crawl during deploy remains forbidden.
-3. Operator-gated FTP `--apply` still suspended (`readyForAnyFutureFtpApply: false`) · vsbvnd STOP.
+1. **Primary:** operator-gated push of the FTP diagnostic, then a **single** `workflow_dispatch` to read login `pwd` + `cls -1`. Upload remains disabled.
+2. After the listing is known, set `GOSAKI_PRODUCTION_FTP_REMOTE_DIR` and remove/re-enable upload in a later phase. **No dispatch this phase.**
+3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki FTP root read-only diagnostic (2026-09-30)
+
+```txt
+FTP_DIAGNOSTIC_IMPLEMENTATION_RESULT: PASS
+UPLOAD_STEP_DISABLED: true
+DISPATCH: false
+FTP_WRITE: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-ftp-root-diagnostic-implementation.md`
 
 ## 0. Gosaki sanitized CI fixture implementation (2026-09-30)
 

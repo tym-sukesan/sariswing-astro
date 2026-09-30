@@ -107,7 +107,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lftp
 
+      - name: Read-only FTP login listing (temporary diagnostic)
+        env:
+          GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
+          GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}
+          GOSAKI_PRODUCTION_FTP_PASSWORD: ${{ secrets.GOSAKI_PRODUCTION_FTP_PASSWORD }}
+        run: |
+          set +x
+          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<'EOF'
+          set cmd:fail-exit true
+          set ftp:ssl-allow no
+          set ftp:passive-mode on
+          set net:max-retries 5
+          set net:timeout 30
+          pwd
+          cls -1
+          bye
+          EOF
+
       - name: Upload public-dist via lftp mirror -R (delete disabled)
+        if: ${{ false }}
         env:
           GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
           GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}

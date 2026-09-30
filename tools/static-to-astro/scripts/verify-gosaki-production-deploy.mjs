@@ -86,6 +86,38 @@ assert("uses GOSAKI_PRODUCTION_FTP_*", workflow.includes("GOSAKI_PRODUCTION_FTP_
 assert("cd after connect", workflow.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert("pwd then match", workflow.includes("--match-pwd-file"));
 assert("remote dir guard script", workflow.includes("gosaki-production-ftp-remote-dir-guard.mjs"));
+
+const DIAG_STEP = "- name: Read-only FTP login listing (temporary diagnostic)";
+const UPLOAD_STEP = "- name: Upload public-dist via lftp mirror -R (delete disabled)";
+const diagStart = workflow.indexOf(DIAG_STEP);
+const uploadStart = workflow.indexOf(UPLOAD_STEP);
+const lftpInstall = workflow.indexOf("- name: Install lftp");
+assert("diagnostic step present", diagStart >= 0);
+assert("upload step present", uploadStart >= 0);
+assert("diagnostic after lftp install", lftpInstall >= 0 && diagStart > lftpInstall);
+assert("diagnostic before upload", diagStart >= 0 && uploadStart > diagStart);
+const diagnosticStep = workflow.slice(diagStart, uploadStart);
+assert("upload step disabled", /Upload public-dist via lftp mirror -R \(delete disabled\)\n\s+if: \$ \{\{ false \}\}/.test(workflow) || workflow.includes("if: ${{ false }}"));
+assert("diagnostic set +x", diagnosticStep.includes("set +x"));
+assert("diagnostic quoted heredoc", diagnosticStep.includes("<<'EOF'"));
+assert("diagnostic pwd", /^\s+pwd$/m.test(diagnosticStep));
+assert("diagnostic cls -1", diagnosticStep.includes("cls -1"));
+assert("diagnostic bye", /^\s+bye$/m.test(diagnosticStep));
+assert("diagnostic no REMOTE_DIR secret", !diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
+assert("diagnostic no LOLIPOP", !/LOLIPOP_FTP_/.test(diagnosticStep));
+assert("diagnostic no echo secrets", !/echo\s+["']?\$\{?GOSAKI_PRODUCTION_FTP_/.test(diagnosticStep));
+assert("diagnostic no printenv", !/printenv|env\s*\|/.test(diagnosticStep));
+assert("diagnostic no set -x", !/set -x/.test(diagnosticStep));
+assert("diagnostic no child cd", !/\bcd\b/.test(diagnosticStep));
+for (const verb of ["mirror", "put", "mput", "mkdir", "rename", "chmod"]) {
+  assert(`diagnostic no ${verb}`, !new RegExp(`\\b${verb}\\b`, "i").test(diagnosticStep));
+}
+assert("diagnostic no rm", !/\brm\b/.test(diagnosticStep));
+assert("diagnostic no delete", !/\bdelete\b/i.test(diagnosticStep));
+assert("diagnostic no mv", !/\bmv\b/.test(diagnosticStep));
+assert("diagnostic gosaki host secret name only", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_HOST"));
+assert("diagnostic gosaki user secret name only", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_USER"));
+assert("diagnostic gosaki password secret name only", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_PASSWORD"));
 assert("no service_role in workflow", !/SERVICE_ROLE/.test(workflow) || workflow.includes("unset") && workflow.includes("SUPABASE_SERVICE_ROLE_KEY"));
 assert("contents: read only", workflow.includes("contents: read"));
 assert("no Contents write permission", !/contents:\s*write/.test(workflow));

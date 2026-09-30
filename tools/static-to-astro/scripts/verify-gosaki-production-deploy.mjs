@@ -133,9 +133,37 @@ assert("guard rejects .", dotRejected.ok === false);
 assert("guard rejects ../", parentRejected.ok === false);
 assert("guard accepts nested dir", okDir.ok === true);
 assert(
-  "pwd match helper",
+  "pwd match helper nested exact",
   okDir.ok && pwdMatchesExpected(`${okDir.normalized}\n`, okDir.normalized),
 );
+assert(
+  "relative expected matches absolute pwd",
+  pwdMatchesExpected("/gosaki-piano\n", "gosaki-piano"),
+);
+assert(
+  "relative expected matches relative pwd",
+  pwdMatchesExpected("gosaki-piano\n", "gosaki-piano"),
+);
+assert("relative expected rejects root pwd", pwdMatchesExpected("/\n", "gosaki-piano") === false);
+assert("relative expected rejects dot pwd", pwdMatchesExpected(".\n", "gosaki-piano") === false);
+assert(
+  "relative expected rejects not-gosaki-piano",
+  pwdMatchesExpected("/not-gosaki-piano\n", "gosaki-piano") === false,
+);
+assert(
+  "relative expected rejects nested lookalike",
+  pwdMatchesExpected("/foo/gosaki-piano\n", "gosaki-piano") === false,
+);
+assert(
+  "multi-segment expected still exact-only",
+  pwdMatchesExpected("/home/users/2/example/web/gosaki\n", "/home/users/2/example/web/gosaki"),
+);
+assert(
+  "multi-segment expected rejects relative basename",
+  pwdMatchesExpected("gosaki\n", "/home/users/2/example/web/gosaki") === false,
+);
+assert("upload remains disabled", workflow.includes("if: ${{ false }}"));
+assert("matcher source has no suffix compare", !read("tools/static-to-astro/scripts/gosaki-production-ftp-remote-dir-guard.mjs").includes(".endsWith("));
 
 const triggerHandler = read("supabase/functions/gosaki-production-deploy-trigger/handler.ts");
 const statusHandler = read("supabase/functions/gosaki-production-deploy-status/handler.ts");
@@ -286,6 +314,12 @@ assert(
   pkg.scripts &&
     pkg.scripts["verify:gosaki-production-ci-fixture"] ===
       "node scripts/verify-gosaki-production-ci-fixture.mjs",
+);
+assert(
+  "npm verify:gosaki-production-ftp-remote-dir",
+  pkg.scripts &&
+    pkg.scripts["verify:gosaki-production-ftp-remote-dir"] ===
+      "node scripts/verify-gosaki-production-ftp-remote-dir.mjs",
 );
 
 console.log(`verify-gosaki-production-deploy: ${passes.length} passed, ${failures.length} failed`);

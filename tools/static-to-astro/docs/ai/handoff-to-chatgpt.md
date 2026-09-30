@@ -5,6 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-ftp-relative-pwd-matcher-fix PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-ftp-relative-pwd-matcher-fix.md
+```
+
+## Gosaki FTP relative pwd matcher (2026-09-30)
+
+- Single-segment secret `gosaki-piano` matches PWD `gosaki-piano` or `/gosaki-piano` only.
+- Upload remains `if: ${{ false }}`.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-ftp-root-diagnostic-implementation PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep

@@ -8,6 +8,7 @@
  */
 
 import fs from "node:fs";
+import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const BLOCKED_EXACT = new Set(["", "/", ".", "./", "~", "..", "../"]);
@@ -38,6 +39,17 @@ export function assessGosakiProductionFtpRemoteDir(raw) {
 }
 
 /**
+ * Compare lftp `pwd` output to the guarded remote-dir secret.
+ *
+ * Multi-segment expected paths keep exact equality (after trailing-slash strip).
+ * A slash-free single-segment expected (e.g. `gosaki-piano`) also matches
+ * `/gosaki-piano`, because relative `cd gosaki-piano` from FTP login root
+ * typically yields that absolute PWD. Deeper paths such as `/foo/gosaki-piano`
+ * are rejected: login-root listing is `gosaki-piano/` next to `welcome.html`,
+ * so `cd gosaki-piano` must not land in a nested lookalike.
+ *
+ * `/` and `.` never match. Suffix matching is forbidden (`/not-gosaki-piano`).
+ *
  * @param {string} pwdOutput
  * @param {string} expectedNormalized
  */
@@ -48,7 +60,14 @@ export function pwdMatchesExpected(pwdOutput, expectedNormalized) {
     .filter(Boolean);
   const pwd = (lines[lines.length - 1] ?? "").replace(/\/+$/, "");
   const expected = String(expectedNormalized ?? "").replace(/\/+$/, "");
-  return Boolean(pwd && expected && pwd === expected);
+  if (!pwd || !expected) return false;
+  if (pwd === "/" || pwd === "." || expected === "/" || expected === ".") return false;
+  if (pwd === expected) return true;
+
+  const expectedIsSingleSegment = !expected.includes("/");
+  if (!expectedIsSingleSegment) return false;
+  if (path.posix.basename(pwd) !== expected) return false;
+  return pwd === `/${expected}`;
 }
 
 function printBool(name, value) {

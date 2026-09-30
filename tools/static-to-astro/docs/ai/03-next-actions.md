@@ -1,11 +1,24 @@
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** review `hotfix/gosaki-disable-test-youtube` Deploy checkpoint for a later main merge. **No push / merge this phase.**
-2. Operator-gated E–H (`gosaki-admin-deploy-operator-gated-phase`) still need **explicit** approval each (Edge deploy / Secret / dispatch / FTP).
-3. FileZilla still the live upload until H. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+1. **Primary:** operator review of sanitized CI fixture checkpoint, then a later **explicit** main push so Actions convert can see `fixtures/gosaki-piano-ci/`. **No push this phase.**
+2. Do not re-dispatch production workflow until that push is approved. Live crawl during deploy remains forbidden.
+3. Operator-gated FTP `--apply` still suspended (`readyForAnyFutureFtpApply: false`) · vsbvnd STOP.
+
+## 0. Gosaki sanitized CI fixture implementation (2026-09-30)
+
+```txt
+SANITIZED_CI_FIXTURE_IMPLEMENTATION_RESULT: PASS
+TRACKED_FIXTURE_PATH: tools/static-to-astro/fixtures/gosaki-piano-ci/
+RAW_FIXTURE_STILL_IGNORED: true
+PRODUCTION_PROFILE_INPUT: fixtures/gosaki-piano-ci
+PUSH: false
+FTP: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-sanitized-ci-fixture-implementation.md`
 
 ## 0. Gosaki production Deploy checkpoint (2026-09-29)
 

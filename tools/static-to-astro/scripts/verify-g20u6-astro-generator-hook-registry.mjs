@@ -138,6 +138,10 @@ assert("gosaki factory present", Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GO
 assert("gosaki fixture resolves siteKey", gosakiHooks.siteKey === GOSAKI_SITE_KEY);
 assert("gosaki fixture active", gosakiHooks.active === true);
 assert("gosaki matchFixture true", gosakiHooks.matchFixture(GOSAKI_FIXTURE) === true);
+assert(
+  "gosaki-ci matchFixture true",
+  gosakiHooks.matchFixture(path.join(TOOL_ROOT, "fixtures/gosaki-piano-ci")) === true,
+);
 
 const unknownHooks = await resolveSiteGeneratorHooksAsync(UNKNOWN_FIXTURE, { toolRoot: TOOL_ROOT });
 assert("unknown fixture inactive", unknownHooks.active === false);

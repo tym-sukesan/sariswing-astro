@@ -4,6 +4,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { GOSAKI_FIXTURE_BASENAMES } from "./gosaki-production-ci-fixture.mjs";
 
 export const GOSAKI_BAND_PROFILES_CONFIG_REL = "config/sites/gosaki-piano-band-profiles.json";
 export const GOSAKI_BAND_PROFILES_TEMPLATE_REL =
@@ -40,7 +41,7 @@ export function loadGosakiBandProfilesConfig(toolRoot) {
  * @deprecated Use matchRegistryFixtureDir(siteDir, GOSAKI_SITE_KEY) from site-fixture-match.mjs
  */
 export function isGosakiPianoFixture(siteDir) {
-  return path.basename(path.resolve(siteDir)) === "gosaki-piano";
+  return GOSAKI_FIXTURE_BASENAMES.includes(path.basename(path.resolve(siteDir)));
 }
 
 /**

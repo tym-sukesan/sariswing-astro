@@ -8,6 +8,7 @@ import {
   GOSAKI_SITE_KEY,
   TOOL_ROOT,
   getSiteRegistryEntry,
+  listRegistryFixtureDirRelatives,
   resolveSiteKeyFromFixtureDir,
 } from "./site-registry.mjs";
 
@@ -20,9 +21,10 @@ import {
  */
 export function matchRegistryFixtureDir(siteDir, siteKey, toolRoot = TOOL_ROOT) {
   const entry = getSiteRegistryEntry(siteKey, toolRoot);
-  const fixtureBase = path.basename(String(entry.fixtureDir ?? ""));
   const inputBase = path.basename(path.resolve(siteDir));
-  return Boolean(fixtureBase && inputBase === fixtureBase);
+  return listRegistryFixtureDirRelatives(entry).some(
+    (rel) => path.basename(rel) === inputBase,
+  );
 }
 
 /**

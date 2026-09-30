@@ -66,6 +66,9 @@ assert("main ref required", workflow.includes('refs/heads/main'));
 assert("gosaki-only name", workflow.includes("Gosaki piano production public-dist"));
 assert("concurrency group gosaki", workflow.includes("gosaki-piano-production-deploy"));
 assert("build:gosaki:production", workflow.includes("build:gosaki:production"));
+assert("tracked fixture preflight", workflow.includes("gosaki-production-fixture-preflight.mjs"));
+assert("preflight before lftp", workflow.indexOf("gosaki-production-fixture-preflight.mjs") < workflow.indexOf("lftp"));
+assert("workflow does not crawl", !/crawl-static-site|--run-crawl/.test(workflow));
 assert("tools/static-to-astro working dir", workflow.includes("working-directory: tools/static-to-astro"));
 assert("GOSAKI_PRODUCTION_SUPABASE_URL", workflow.includes("GOSAKI_PRODUCTION_SUPABASE_URL"));
 assert("GOSAKI_PRODUCTION_SUPABASE_ANON_KEY", workflow.includes("GOSAKI_PRODUCTION_SUPABASE_ANON_KEY"));
@@ -245,6 +248,12 @@ const pkg = JSON.parse(read("tools/static-to-astro/package.json", REPO_ROOT));
 assert(
   "npm verify:gosaki-production-deploy",
   pkg.scripts && pkg.scripts["verify:gosaki-production-deploy"] === "node scripts/verify-gosaki-production-deploy.mjs",
+);
+assert(
+  "npm verify:gosaki-production-ci-fixture",
+  pkg.scripts &&
+    pkg.scripts["verify:gosaki-production-ci-fixture"] ===
+      "node scripts/verify-gosaki-production-ci-fixture.mjs",
 );
 
 console.log(`verify-gosaki-production-deploy: ${passes.length} passed, ${failures.length} failed`);

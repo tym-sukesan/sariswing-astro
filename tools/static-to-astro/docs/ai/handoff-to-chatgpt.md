@@ -5,6 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-implement-sanitized-ci-fixture PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-sanitized-ci-fixture-implementation.md
+```
+
+## Gosaki sanitized CI fixture implementation (2026-09-30)
+
+- Tracked sanitized convert snapshot: `tools/static-to-astro/fixtures/gosaki-piano-ci/` (10 HTML).
+- Raw crawl `fixtures/gosaki-piano/` remains gitignored; not staged.
+- Production package profile `fixtureDir` is `fixtures/gosaki-piano-ci`; staging/ciao-preview unchanged.
+- Workflow preflight requires the 10 files before FTP. No live crawl.
+- Do not push until operator approval.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-production-deploy-checkpoint PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-prestage
 BRANCH: hotfix/gosaki-disable-test-youtube

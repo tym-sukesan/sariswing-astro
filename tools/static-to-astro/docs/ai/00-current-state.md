@@ -1,7 +1,9 @@
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki sanitized CI fixture implementation (2026-09-30):** **PASS** — Phase `gosaki-implement-sanitized-ci-fixture` · tracked `tools/static-to-astro/fixtures/gosaki-piano-ci/` (10 sanitized HTML, ~3.0MB) · raw `fixtures/gosaki-piano/` still gitignored · production profile convert input only · workflow preflight before FTP · no crawl / push / dispatch / FTP / DB write · Doc: `gosaki-sanitized-ci-fixture-implementation.md`.
 
 **Gosaki production Deploy checkpoint (2026-09-29):** **PASS** — Phase `gosaki-production-deploy-checkpoint` · branch `hotfix/gosaki-disable-test-youtube` · local commit of A–D Deploy flow + audit/plan docs · **no** push / merge / dispatch / FTP / Secret change · leftover untracked: `gosaki-final-production-build-after-schedule-image.md` (prior package docs, not this commit).
 

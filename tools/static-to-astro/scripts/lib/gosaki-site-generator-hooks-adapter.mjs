@@ -78,6 +78,7 @@ export function createGosakiPianoHookMethods() {
     },
     resolveVisualOverrideSiteSlug(_siteDir, basename) {
       if (basename === "gosaki-static-site") return "gosaki-static-site";
+      if (basename === "gosaki-piano-ci") return "gosaki-piano";
       return basename;
     },
     transformAnalysisPages(pages, ctx) {

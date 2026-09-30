@@ -89,6 +89,25 @@ export function listSiteKeys(toolRoot = TOOL_ROOT) {
 }
 
 /**
+ * Primary fixtureDir plus optional fixtureDirAliases from a registry entry.
+ *
+ * @param {{ fixtureDir?: unknown, fixtureDirAliases?: unknown }} entry
+ * @returns {string[]}
+ */
+export function listRegistryFixtureDirRelatives(entry) {
+  /** @type {string[]} */
+  const out = [];
+  const primary = String(entry.fixtureDir ?? "").trim();
+  if (primary) out.push(primary);
+  const aliases = Array.isArray(entry.fixtureDirAliases) ? entry.fixtureDirAliases : [];
+  for (const alias of aliases) {
+    const rel = String(alias ?? "").trim();
+    if (rel && !out.includes(rel)) out.push(rel);
+  }
+  return out;
+}
+
+/**
  * Resolve registry siteKey from a fixture directory path (basename match).
  * Returns null when no registry entry matches.
  *
@@ -100,9 +119,11 @@ export function resolveSiteKeyFromFixtureDir(fixtureDir, toolRoot = TOOL_ROOT) {
   const basename = path.basename(path.resolve(fixtureDir));
   const registry = loadSiteRegistry(toolRoot);
   for (const [siteKey, entry] of Object.entries(registry.sites ?? {})) {
-    const fixtureBase = path.basename(String(entry.fixtureDir ?? ""));
-    if (fixtureBase && basename === fixtureBase) {
-      return siteKey;
+    for (const rel of listRegistryFixtureDirRelatives(entry)) {
+      const fixtureBase = path.basename(rel);
+      if (fixtureBase && basename === fixtureBase) {
+        return siteKey;
+      }
     }
   }
   return null;
@@ -311,7 +332,12 @@ export function resolveSitePackageBuildProfile(siteKey, profileName, options = {
     packageKey,
     filesystemSlug,
     fixtureDir: assertSafeRelativePath(
-      String(entry.fixtureDir ?? deployConfig.fixtureDir ?? `fixtures/${filesystemSlug}`),
+      String(
+        packageOverlay.fixtureDir ??
+          entry.fixtureDir ??
+          deployConfig.fixtureDir ??
+          `fixtures/${filesystemSlug}`,
+      ),
       "fixtureDir",
     ),
     origin: String(raw.origin).replace(/\/$/, ""),

@@ -129,6 +129,7 @@ const stagingPlan = planSitePackageBuild(GOSAKI_SITE_KEY, "staging");
 const productionPlan = planSitePackageBuild(GOSAKI_SITE_KEY, "production");
 
 assert("staging plan fixtureDir", stagingPlan.profile.fixtureDir === "fixtures/gosaki-piano");
+assert("production plan fixtureDir", productionPlan.profile.fixtureDir === "fixtures/gosaki-piano-ci");
 assert("staging plan deployBase", stagingPlan.profile.deployBase === "/cms-kit-staging/gosaki-piano/");
 assert("staging plan convertSiteProfile musician", stagingPlan.convertSiteProfile === "musician");
 assert("staging manifestMeta siteKey", stagingPlan.manifestMeta.siteKey === GOSAKI_SITE_KEY);

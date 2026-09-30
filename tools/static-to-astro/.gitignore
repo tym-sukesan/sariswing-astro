@@ -1,5 +1,6 @@
 # Local-only fixtures (optional manual copies from site-audit prototypes)
 fixtures/gosaki-static-site/
+# Raw Wix crawl — never commit. Tracked sanitized CI snapshot: fixtures/gosaki-piano-ci/
 fixtures/gosaki-piano/
 
 # Generated project artifacts (recreated by convert CLI)

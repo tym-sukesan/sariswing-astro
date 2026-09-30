@@ -134,6 +134,7 @@ assert("staging manualUploadOut", stagingProfile.manualUploadOut === "output/man
 assert("staging includeReadOnlyAdmin", stagingProfile.includeReadOnlyAdmin === true);
 assert("staging includeGosakiReadOnlyAdmin legacy alias", stagingProfile.includeGosakiReadOnlyAdmin === true);
 assert("staging fixtureDir", stagingProfile.fixtureDir === "fixtures/gosaki-piano");
+assert("production fixtureDir ci snapshot", productionProfile.fixtureDir === "fixtures/gosaki-piano-ci");
 
 assert("production siteSlug", productionProfile.siteSlug === "gosaki-piano");
 assert("production publicBaseUrl", productionProfile.publicBaseUrl === PRODUCTION_PUBLIC_BASE);

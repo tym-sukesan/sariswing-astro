@@ -1,7 +1,9 @@
-Last updated: 2026-09-30
+Last updated: 2026-10-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki FTP relative-path live read-only diagnostic (2026-10-01):** **PASS** — Phase `gosaki-ftp-relative-path-live-readonly-diagnostic` · diagnostic `cd` + `pwd` + matcher · Upload still `if: false` · no dispatch / FTP write / Secret change · Doc: `gosaki-ftp-relative-path-live-readonly-diagnostic.md`.
 
 **Gosaki FTP relative pwd matcher (2026-09-30):** **PASS** — Phase `gosaki-ftp-relative-pwd-matcher-fix` · `gosaki-piano` matches `/gosaki-piano` · `/` `.` `/not-gosaki-piano` `/foo/gosaki-piano` rejected · Upload still `if: false` · no dispatch / FTP write / Secret change · Doc: `gosaki-ftp-relative-pwd-matcher-fix.md`.
 

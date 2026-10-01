@@ -87,7 +87,7 @@ assert("cd after connect", workflow.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE
 assert("pwd then match", workflow.includes("--match-pwd-file"));
 assert("remote dir guard script", workflow.includes("gosaki-production-ftp-remote-dir-guard.mjs"));
 
-const DIAG_STEP = "- name: Read-only FTP login listing (temporary diagnostic)";
+const DIAG_STEP = "- name: Read-only FTP relative path (temporary diagnostic)";
 const UPLOAD_STEP = "- name: Upload public-dist via lftp mirror -R (delete disabled)";
 const diagStart = workflow.indexOf(DIAG_STEP);
 const uploadStart = workflow.indexOf(UPLOAD_STEP);
@@ -99,16 +99,18 @@ assert("diagnostic before upload", diagStart >= 0 && uploadStart > diagStart);
 const diagnosticStep = workflow.slice(diagStart, uploadStart);
 assert("upload step disabled", /Upload public-dist via lftp mirror -R \(delete disabled\)\n\s+if: \$ \{\{ false \}\}/.test(workflow) || workflow.includes("if: ${{ false }}"));
 assert("diagnostic set +x", diagnosticStep.includes("set +x"));
-assert("diagnostic quoted heredoc", diagnosticStep.includes("<<'EOF'"));
+assert("diagnostic unquoted heredoc for cd", diagnosticStep.includes("<<EOF") && !diagnosticStep.includes("<<'EOF'"));
+assert("diagnostic cd remote dir", diagnosticStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert("diagnostic pwd", /^\s+pwd$/m.test(diagnosticStep));
-assert("diagnostic cls -1", diagnosticStep.includes("cls -1"));
 assert("diagnostic bye", /^\s+bye$/m.test(diagnosticStep));
-assert("diagnostic no REMOTE_DIR secret", !diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
+assert("diagnostic uses REMOTE_DIR", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
+assert("diagnostic match-pwd-file", diagnosticStep.includes("--match-pwd-file"));
+assert("diagnostic no cat pwd file", !/cat\s+"?\$PWD_FILE/.test(diagnosticStep));
+assert("diagnostic no cls", !diagnosticStep.includes("cls"));
 assert("diagnostic no LOLIPOP", !/LOLIPOP_FTP_/.test(diagnosticStep));
 assert("diagnostic no echo secrets", !/echo\s+["']?\$\{?GOSAKI_PRODUCTION_FTP_/.test(diagnosticStep));
 assert("diagnostic no printenv", !/printenv|env\s*\|/.test(diagnosticStep));
 assert("diagnostic no set -x", !/set -x/.test(diagnosticStep));
-assert("diagnostic no child cd", !/\bcd\b/.test(diagnosticStep));
 for (const verb of ["mirror", "put", "mput", "mkdir", "rename", "chmod"]) {
   assert(`diagnostic no ${verb}`, !new RegExp(`\\b${verb}\\b`, "i").test(diagnosticStep));
 }

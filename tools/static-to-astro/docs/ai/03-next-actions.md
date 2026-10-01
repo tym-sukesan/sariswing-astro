@@ -1,11 +1,21 @@
-Last updated: 2026-09-30
+Last updated: 2026-10-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated push of the relative FTP pwd matcher. Upload remains `if: false`. Set Secret `gosaki-piano` only after matcher is on main; re-enable Upload in a later phase.
-2. Diagnostic listing already showed `gosaki-piano/` + `welcome.html`. **No dispatch / FTP write this phase.**
+1. **Primary:** operator-gated push of the relative-path read-only diagnostic, then one `workflow_dispatch` after Secret `GOSAKI_PRODUCTION_FTP_REMOTE_DIR=gosaki-piano`. Upload stays disabled.
+2. Matcher already on main (`747da947`). **No dispatch / FTP write this phase.**
 3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki FTP relative-path live read-only diagnostic (2026-10-01)
+
+```txt
+FTP_RELATIVE_LIVE_DIAGNOSTIC_IMPLEMENTATION_RESULT: PASS
+UPLOAD_STILL_DISABLED: true
+DISPATCH: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-ftp-relative-path-live-readonly-diagnostic.md`
 
 ## 0. Gosaki FTP relative pwd matcher (2026-09-30)
 

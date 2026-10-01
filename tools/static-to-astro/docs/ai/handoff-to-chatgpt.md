@@ -5,6 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-ftp-relative-path-live-readonly-diagnostic PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-ftp-relative-path-live-readonly-diagnostic.md
+```
+
+## Gosaki FTP relative-path live read-only diagnostic (2026-10-01)
+
+- Diagnostic: `cd` + `pwd` + remote-dir pwd matcher. No `cls`, no `mirror`.
+- Upload remains `if: ${{ false }}`.
+- Intended Secret: `GOSAKI_PRODUCTION_FTP_REMOTE_DIR=gosaki-piano`.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-ftp-relative-pwd-matcher-fix PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep

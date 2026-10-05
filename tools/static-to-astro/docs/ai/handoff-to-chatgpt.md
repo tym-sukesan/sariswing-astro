@@ -5,6 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-ftp-server-pwd-diagnostic-implementation PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+COMMIT: false
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-ftp-server-pwd-diagnostic-implementation.md
+```
+
+## Gosaki FTP server PWD diagnostic (2026-10-06)
+
+- Diagnostic: `quote PWD` → `cd` → lftp `pwd` → `quote PWD` → `bye`.
+- 257 quoted path parser; boolean logs only. No `pwd -p`, no `debug`.
+- Upload remains `if: ${{ false }}`.
+- Next: operator-gated commit, then push, then one read-only diagnostic dispatch.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-ftp-pwd-url-normalization-fix PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep

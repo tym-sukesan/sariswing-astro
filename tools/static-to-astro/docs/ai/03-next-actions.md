@@ -3,9 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the pwd URL normalization, then push, then one read-only `workflow_dispatch` diagnostic. Upload stays `if: ${{ false }}`.
-2. Do not re-enable Upload. Do not use `pwd -p`. **No FTP write / Secret change this phase.**
+1. **Primary:** operator-gated commit of the server PWD diagnostic, then push, then one read-only `workflow_dispatch`. Upload stays `if: ${{ false }}`.
+2. Do not re-enable Upload. Do not use `pwd -p` or `debug`. `quote` is `PWD` only. **No FTP write / Secret change this phase.**
 3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki FTP server PWD diagnostic (2026-10-06)
+
+```txt
+FTP_SERVER_PWD_DIAGNOSTIC_IMPLEMENTATION_RESULT: PASS
+UPLOAD_STILL_DISABLED: true
+COMMIT: false
+DISPATCH: false
+FTP_WRITE: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-ftp-server-pwd-diagnostic-implementation.md`
 
 ## 0. Gosaki FTP pwd URL normalization (2026-10-06)
 

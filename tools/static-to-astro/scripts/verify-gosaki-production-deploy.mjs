@@ -10,7 +10,9 @@ import { fileURLToPath } from "node:url";
 import { GOSAKI_OPERATIONAL_CLIENT_SAVE_UI_ARMS } from "./lib/gosaki-operational-save-ui-arm-inventory.mjs";
 import {
   assessGosakiProductionFtpRemoteDir,
+  extractFtp257QuotedPath,
   inspectPwdOutput,
+  inspectServerPwdReplies,
   pwdMatchesExpected,
 } from "./gosaki-production-ftp-remote-dir-guard.mjs";
 
@@ -104,7 +106,25 @@ assert("diagnostic unquoted heredoc for cd", diagnosticStep.includes("<<EOF") &&
 assert("diagnostic cd remote dir", diagnosticStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert("diagnostic pwd", /^\s+pwd$/m.test(diagnosticStep));
 assert("diagnostic no pwd -p", !diagnosticStep.includes("pwd -p") && !workflow.includes("pwd -p"));
+assert("diagnostic no debug", !/\bdebug\b/i.test(diagnosticStep));
 assert("diagnostic bye", /^\s+bye$/m.test(diagnosticStep));
+const diagnosticQuoteCmds = [...diagnosticStep.matchAll(/^\s+quote\s+(\S+)/gm)].map((m) => m[1]);
+assert("diagnostic quote PWD twice", diagnosticQuoteCmds.length === 2 && diagnosticQuoteCmds.every((cmd) => cmd === "PWD"));
+assert("diagnostic quote is PWD only", /^\s+quote PWD$/m.test(diagnosticStep) && !/^\s+quote\s+(?!PWD\b)/m.test(diagnosticStep));
+const quotePwdIndexes = [];
+for (const match of diagnosticStep.matchAll(/^\s+quote PWD$/gm)) {
+  quotePwdIndexes.push(match.index ?? -1);
+}
+const cdIdx = diagnosticStep.indexOf('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"');
+const lftpPwd = /^\s+pwd$/m.exec(diagnosticStep);
+const lftpPwdIdx = lftpPwd && typeof lftpPwd.index === "number" ? lftpPwd.index : -1;
+assert(
+  "diagnostic quote PWD then cd then pwd then quote PWD",
+  quotePwdIndexes.length === 2 &&
+    cdIdx > quotePwdIndexes[0] &&
+    lftpPwdIdx > cdIdx &&
+    quotePwdIndexes[1] > lftpPwdIdx,
+);
 assert("diagnostic uses REMOTE_DIR", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
 assert("diagnostic match-pwd-file", diagnosticStep.includes("--match-pwd-file"));
 assert("diagnostic no cat pwd file", !/cat\s+"?\$PWD_FILE/.test(diagnosticStep));
@@ -119,6 +139,9 @@ for (const verb of ["mirror", "put", "mput", "mkdir", "rename", "chmod"]) {
 assert("diagnostic no rm", !/\brm\b/.test(diagnosticStep));
 assert("diagnostic no delete", !/\bdelete\b/i.test(diagnosticStep));
 assert("diagnostic no mv", !/\bmv\b/.test(diagnosticStep));
+for (const verb of ["SITE", "STOR", "STOU", "APPE", "DELE", "RMD", "MKD", "RNFR", "RNTO"]) {
+  assert(`diagnostic no ${verb}`, !new RegExp(`\\b${verb}\\b`).test(diagnosticStep));
+}
 assert("diagnostic gosaki host secret name only", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_HOST"));
 assert("diagnostic gosaki user secret name only", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_USER"));
 assert("diagnostic gosaki password secret name only", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_PASSWORD"));
@@ -208,6 +231,18 @@ assert(
 const urlInspect = inspectPwdOutput("ftp://user:dummy@example.invalid/gosaki-piano\n");
 assert("ftp inspect has no credential fields", !("username" in urlInspect) && !("password" in urlInspect) && !("host" in urlInspect) && !("href" in urlInspect));
 assert("ftp inspect path is pathname only", urlInspect.path === "/gosaki-piano");
+assert("257 parser gosaki-piano", extractFtp257QuotedPath('257 "/gosaki-piano" is current directory.') === "/gosaki-piano");
+assert("257 parser escaped quote", extractFtp257QuotedPath('257 "/foo""bar"') === '/foo"bar');
+assert("257 parser malformed", extractFtp257QuotedPath("257 /gosaki-piano") === null);
+const serverInspect = inspectServerPwdReplies(
+  '257 "/" is current directory.\n257 "/gosaki-piano" is current directory.\n',
+  "gosaki-piano",
+);
+assert("server pwd parse ok", serverInspect.parseOk === true);
+assert("server pwd eq gosaki-piano", serverInspect.eqGosakiPiano === true);
+assert("server pwd not nested", serverInspect.nested === false);
+assert("server pwd changed", serverInspect.changed === true);
+assert("server pwd inspect has no path fields", !("path" in serverInspect) && !("raw" in serverInspect));
 assert("upload remains disabled", workflow.includes("if: ${{ false }}"));
 assert("matcher source has no suffix compare", !read("tools/static-to-astro/scripts/gosaki-production-ftp-remote-dir-guard.mjs").includes(".endsWith("));
 

@@ -124,8 +124,10 @@ jobs:
           set ftp:passive-mode on
           set net:max-retries 5
           set net:timeout 30
+          quote PWD
           cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
           pwd
+          quote PWD
           bye
           EOF
           node scripts/gosaki-production-ftp-remote-dir-guard.mjs --match-pwd-file "$PWD_FILE"

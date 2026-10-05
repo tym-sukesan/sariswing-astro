@@ -11,7 +11,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   assessGosakiProductionFtpRemoteDir,
+  extractFtp257QuotedPath,
   inspectPwdOutput,
+  inspectServerPwdReplies,
   pwdMatchesExpected,
 } from "./gosaki-production-ftp-remote-dir-guard.mjs";
 
@@ -154,6 +156,57 @@ const pathInspect = inspectPwdOutput("/gosaki-piano\n");
 assert("path inspect not ftp url", pathInspect.lastLineIsFtpUrl === false);
 assert("path inspect urlParseOk false", pathInspect.urlParseOk === false);
 
+assert("257 root quoted path", extractFtp257QuotedPath('257 "/" is current directory.') === "/");
+assert("257 gosaki-piano quoted path", extractFtp257QuotedPath('257 "/gosaki-piano"') === "/gosaki-piano");
+assert("257 relative quoted path", extractFtp257QuotedPath('257 "gosaki-piano"') === "gosaki-piano");
+assert("257 escaped quote", extractFtp257QuotedPath('257 "/foo""bar"') === '/foo"bar');
+assert("257 nested quoted path", extractFtp257QuotedPath('257 "/foo/gosaki-piano" is current directory.') === "/foo/gosaki-piano");
+assert("257 missing quotes malformed", extractFtp257QuotedPath("257 /gosaki-piano") === null);
+assert("257 unclosed quote malformed", extractFtp257QuotedPath('257 "/gosaki-piano') === null);
+assert("250 is not 257", extractFtp257QuotedPath("250 Directory successfully changed.") === null);
+
+const serverRoot = inspectServerPwdReplies('257 "/" is current directory.\n', "gosaki-piano");
+assert("server root parse ok", serverRoot.parseOk === true);
+assert("server root eq root", serverRoot.eqRoot === true);
+assert("server root not gosaki", serverRoot.eqGosakiPiano === false);
+assert("server root not nested", serverRoot.nested === false);
+assert("server root not changed", serverRoot.changed === false);
+
+const serverGosaki = inspectServerPwdReplies(
+  '257 "/" is current directory.\n257 "/gosaki-piano" is current directory.\n',
+  "gosaki-piano",
+);
+assert("server gosaki parse ok", serverGosaki.parseOk === true);
+assert("server gosaki not root", serverGosaki.eqRoot === false);
+assert("server gosaki eq gosaki-piano", serverGosaki.eqGosakiPiano === true);
+assert("server gosaki not nested", serverGosaki.nested === false);
+assert("server gosaki changed", serverGosaki.changed === true);
+
+const serverNested = inspectServerPwdReplies(
+  '257 "/" is current directory.\n257 "/foo/gosaki-piano" is current directory.\n',
+  "gosaki-piano",
+);
+assert("server nested not gosaki", serverNested.eqGosakiPiano === false);
+assert("server nested true", serverNested.nested === true);
+
+const serverMalformed = inspectServerPwdReplies("257 /gosaki-piano\n", "gosaki-piano");
+assert("server malformed parse false", serverMalformed.parseOk === false);
+
+assert(
+  "server inspect has no path fields",
+  !("path" in serverGosaki) &&
+    !("loginPath" in serverGosaki) &&
+    !("postPath" in serverGosaki) &&
+    !("raw" in serverGosaki) &&
+    !("href" in serverGosaki),
+);
+
+const mixedInspect = inspectPwdOutput(
+  'ftp://user:dummy@example.invalid/\n257 "/" is current directory.\nftp://user:dummy@example.invalid/\n257 "/gosaki-piano" is current directory.\n',
+);
+assert("mixed file uses last ftp url", mixedInspect.lastLineIsFtpUrl === true);
+assert("mixed file lftp pathname is root", mixedInspect.pathnameEqRoot === true);
+
 const guardSrc = fs.readFileSync(GUARD, "utf8");
 assert("guard source has no suffix compare", !guardSrc.includes(".endsWith("));
 assert("guard source does not log href", !/console\.log\([^)]*href/.test(guardSrc));
@@ -191,6 +244,23 @@ assert("cli malformed pwd_match false", /pwd_match false/.test(cliBad.stdout ?? 
 assert("cli malformed url_parse_ok false", /url_parse_ok false/.test(cliBad.stdout ?? ""));
 assert("cli malformed does not echo ftp://", !cliBadOut.includes("ftp://"));
 assert("cli malformed exit 1", cliBad.status === 1);
+
+const cliServer = runMatchPwdFile(
+  'ftp://user:dummy@example.invalid/\n257 "/" is current directory.\nftp://user:dummy@example.invalid/\n257 "/gosaki-piano" is current directory.\n',
+);
+const cliServerOut = `${cliServer.stdout ?? ""}${cliServer.stderr ?? ""}`;
+assert("cli server parse ok", /server_pwd_parse_ok true/.test(cliServer.stdout ?? ""));
+assert("cli server not root", /server_pwd_eq_root false/.test(cliServer.stdout ?? ""));
+assert("cli server eq gosaki-piano", /server_pwd_eq_gosaki_piano true/.test(cliServer.stdout ?? ""));
+assert("cli server not nested", /server_pwd_nested false/.test(cliServer.stdout ?? ""));
+assert("cli server changed", /server_pwd_changed true/.test(cliServer.stdout ?? ""));
+assert("cli server pwd_match false", /pwd_match false/.test(cliServer.stdout ?? ""));
+assert("cli server does not echo dummy", !cliServerOut.includes("dummy"));
+assert("cli server does not echo example.invalid", !cliServerOut.includes("example.invalid"));
+assert("cli server does not echo ftp://", !cliServerOut.includes("ftp://"));
+assert("cli server does not echo 257", !cliServerOut.includes("257"));
+assert("cli server does not echo pathname", !cliServerOut.includes("/gosaki-piano"));
+assert("cli server exit 0 despite lftp url root", cliServer.status === 0);
 
 console.log(`verify-gosaki-production-ftp-remote-dir: ${passes.length} passed, ${failures.length} failed`);
 for (const name of passes) console.log(`PASS ${name}`);

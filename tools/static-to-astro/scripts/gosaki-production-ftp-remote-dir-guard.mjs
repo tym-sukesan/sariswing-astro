@@ -49,7 +49,92 @@ function isRootPathname(value) {
 }
 
 /**
- * Last non-empty lftp stdout line, plus FTP URL → pathname only.
+ * RFC 959 257 quoted directory-name. Doubled quotes are unescaped.
+ * Returns null when the line is not a well-formed 257 quoted reply.
+ * Never logs the path.
+ *
+ * @param {string} line
+ * @returns {string | null}
+ */
+export function extractFtp257QuotedPath(line) {
+  const trimmed = String(line ?? "").trim();
+  if (!/^257\s+"/.test(trimmed)) return null;
+  const after = trimmed.replace(/^257\s+"/, "");
+  let out = "";
+  for (let i = 0; i < after.length; i += 1) {
+    const ch = after[i];
+    if (ch === '"') {
+      if (after[i + 1] === '"') {
+        out += '"';
+        i += 1;
+        continue;
+      }
+      return out;
+    }
+    out += ch;
+  }
+  return null;
+}
+
+function pathSegmentCount(value) {
+  return String(value ?? "")
+    .replace(/\/+$/, "")
+    .split("/")
+    .filter(Boolean).length;
+}
+
+/**
+ * Strict path matcher. `pwdPath` is already a filesystem-style path
+ * (or an FTP URL pathname). Suffix matching is forbidden.
+ *
+ * @param {string} pwdPath
+ * @param {string} expectedNormalized
+ */
+function pwdPathMatchesExpected(pwdPath, expectedNormalized) {
+  const pwd = String(pwdPath ?? "").trim().replace(/\/+$/, "");
+  const expected = String(expectedNormalized ?? "").replace(/\/+$/, "");
+  if (!pwd || !expected) return false;
+  if (pwd === "/" || pwd === "." || expected === "/" || expected === ".") return false;
+  if (pwd === expected) return true;
+
+  const expectedIsSingleSegment = !expected.includes("/");
+  if (!expectedIsSingleSegment) return false;
+  if (path.posix.basename(pwd) !== expected) return false;
+  return pwd === `/${expected}`;
+}
+
+/**
+ * Login (first 257) vs post-cd (last 257) server PWD booleans.
+ * `eqGosakiPiano` uses the same strict path matcher as lftp pwd.
+ *
+ * @param {string} pwdOutput
+ * @param {string} expectedNormalized
+ */
+export function inspectServerPwdReplies(pwdOutput, expectedNormalized) {
+  const paths = [];
+  for (const line of String(pwdOutput ?? "").split(/\r?\n/)) {
+    const extracted = extractFtp257QuotedPath(line);
+    if (extracted !== null) paths.push(extracted);
+  }
+  const parseOk = paths.length > 0;
+  const loginPath = paths[0] ?? "";
+  const postPath = paths.length >= 2 ? paths[paths.length - 1] : loginPath;
+  const eqRoot = parseOk && isRootPathname(postPath);
+  const eqGosakiPiano = parseOk && pwdPathMatchesExpected(postPath, expectedNormalized);
+  const nested = parseOk && !eqRoot && pathSegmentCount(postPath) >= 2;
+  const changed = paths.length >= 2 && loginPath !== postPath;
+  return {
+    parseOk,
+    eqRoot,
+    eqGosakiPiano,
+    nested,
+    changed,
+    replyCount: paths.length,
+  };
+}
+
+/**
+ * Last lftp URL line (or last non-257 line), plus FTP URL → pathname only.
  * Never returns username, password, host, href, or the raw line.
  *
  * @param {string} pwdOutput
@@ -66,7 +151,9 @@ export function inspectPwdOutput(pwdOutput) {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
-  const last = lines[lines.length - 1] ?? "";
+  const ftpLines = lines.filter((line) => FTP_URL_PREFIX.test(line));
+  const non257 = lines.filter((line) => extractFtp257QuotedPath(line) === null);
+  const last = ftpLines[ftpLines.length - 1] ?? non257[non257.length - 1] ?? "";
   const lastLineIsFtpUrl = FTP_URL_PREFIX.test(last);
 
   if (!last) {
@@ -120,26 +207,6 @@ export function inspectPwdOutput(pwdOutput) {
 }
 
 /**
- * Strict path matcher. `pwdPath` is already a filesystem-style path
- * (or an FTP URL pathname). Suffix matching is forbidden.
- *
- * @param {string} pwdPath
- * @param {string} expectedNormalized
- */
-function pwdPathMatchesExpected(pwdPath, expectedNormalized) {
-  const pwd = String(pwdPath ?? "").trim().replace(/\/+$/, "");
-  const expected = String(expectedNormalized ?? "").replace(/\/+$/, "");
-  if (!pwd || !expected) return false;
-  if (pwd === "/" || pwd === "." || expected === "/" || expected === ".") return false;
-  if (pwd === expected) return true;
-
-  const expectedIsSingleSegment = !expected.includes("/");
-  if (!expectedIsSingleSegment) return false;
-  if (path.posix.basename(pwd) !== expected) return false;
-  return pwd === `/${expected}`;
-}
-
-/**
  * Compare lftp `pwd` output to the guarded remote-dir secret.
  *
  * lftp 4.9.x `pwd` prints the current remote URL (not a bare path).
@@ -182,11 +249,21 @@ function main(argv = process.argv.slice(2)) {
     }
     const pwdOutput = fs.readFileSync(filePath, "utf8");
     const inspected = inspectPwdOutput(pwdOutput);
+    const server = inspectServerPwdReplies(pwdOutput, assessed.normalized);
     const match = Boolean(inspected.ok) && pwdMatchesExpected(pwdOutput, assessed.normalized);
     printBool("last_line_is_ftp_url", inspected.lastLineIsFtpUrl);
     printBool("url_parse_ok", inspected.urlParseOk);
     printBool("pathname_eq_root", inspected.pathnameEqRoot);
+    printBool("server_pwd_parse_ok", server.parseOk);
+    printBool("server_pwd_eq_root", server.eqRoot);
+    printBool("server_pwd_eq_gosaki_piano", server.eqGosakiPiano);
+    printBool("server_pwd_nested", server.nested);
+    printBool("server_pwd_changed", server.changed);
     printBool("pwd_match", match);
+    if (server.replyCount > 0) {
+      if (!server.parseOk) process.exitCode = 1;
+      return;
+    }
     if (!match) process.exitCode = 1;
     return;
   }

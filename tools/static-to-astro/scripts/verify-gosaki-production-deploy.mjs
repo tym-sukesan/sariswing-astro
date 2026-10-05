@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { GOSAKI_OPERATIONAL_CLIENT_SAVE_UI_ARMS } from "./lib/gosaki-operational-save-ui-arm-inventory.mjs";
 import {
   assessGosakiProductionFtpRemoteDir,
+  inspectPwdOutput,
   pwdMatchesExpected,
 } from "./gosaki-production-ftp-remote-dir-guard.mjs";
 
@@ -102,6 +103,7 @@ assert("diagnostic set +x", diagnosticStep.includes("set +x"));
 assert("diagnostic unquoted heredoc for cd", diagnosticStep.includes("<<EOF") && !diagnosticStep.includes("<<'EOF'"));
 assert("diagnostic cd remote dir", diagnosticStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert("diagnostic pwd", /^\s+pwd$/m.test(diagnosticStep));
+assert("diagnostic no pwd -p", !diagnosticStep.includes("pwd -p") && !workflow.includes("pwd -p"));
 assert("diagnostic bye", /^\s+bye$/m.test(diagnosticStep));
 assert("diagnostic uses REMOTE_DIR", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
 assert("diagnostic match-pwd-file", diagnosticStep.includes("--match-pwd-file"));
@@ -164,6 +166,48 @@ assert(
   "multi-segment expected rejects relative basename",
   pwdMatchesExpected("gosaki\n", "/home/users/2/example/web/gosaki") === false,
 );
+assert(
+  "ftp url host-only matches relative expected",
+  pwdMatchesExpected("ftp://example.invalid/gosaki-piano\n", "gosaki-piano"),
+);
+assert(
+  "ftp url user matches relative expected",
+  pwdMatchesExpected("ftp://user@example.invalid/gosaki-piano\n", "gosaki-piano"),
+);
+assert(
+  "ftp url dummy-pass matches relative expected",
+  pwdMatchesExpected("ftp://user:dummy@example.invalid/gosaki-piano\n", "gosaki-piano"),
+);
+assert(
+  "ftp url root rejected",
+  pwdMatchesExpected("ftp://example.invalid/\n", "gosaki-piano") === false,
+);
+assert(
+  "ftp url not-gosaki-piano rejected",
+  pwdMatchesExpected("ftp://example.invalid/not-gosaki-piano\n", "gosaki-piano") === false,
+);
+assert(
+  "ftp url nested lookalike rejected",
+  pwdMatchesExpected("ftp://example.invalid/foo/gosaki-piano\n", "gosaki-piano") === false,
+);
+assert(
+  "ftp url malformed rejected",
+  pwdMatchesExpected("ftp://[\n", "gosaki-piano") === false,
+);
+assert(
+  "ftp url does not partial-match",
+  pwdMatchesExpected("ftp://example.invalid/xxgosaki-piano\n", "gosaki-piano") === false,
+);
+assert(
+  "ftp url multi-segment expected still exact",
+  pwdMatchesExpected(
+    "ftp://example.invalid/home/users/2/example/web/gosaki\n",
+    "/home/users/2/example/web/gosaki",
+  ),
+);
+const urlInspect = inspectPwdOutput("ftp://user:dummy@example.invalid/gosaki-piano\n");
+assert("ftp inspect has no credential fields", !("username" in urlInspect) && !("password" in urlInspect) && !("host" in urlInspect) && !("href" in urlInspect));
+assert("ftp inspect path is pathname only", urlInspect.path === "/gosaki-piano");
 assert("upload remains disabled", workflow.includes("if: ${{ false }}"));
 assert("matcher source has no suffix compare", !read("tools/static-to-astro/scripts/gosaki-production-ftp-remote-dir-guard.mjs").includes(".endsWith("));
 

@@ -1,11 +1,23 @@
-Last updated: 2026-10-01
+Last updated: 2026-10-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated push of the relative-path read-only diagnostic, then one `workflow_dispatch` after Secret `GOSAKI_PRODUCTION_FTP_REMOTE_DIR=gosaki-piano`. Upload stays disabled.
-2. Matcher already on main (`747da947`). **No dispatch / FTP write this phase.**
+1. **Primary:** operator-gated commit of the pwd URL normalization, then push, then one read-only `workflow_dispatch` diagnostic. Upload stays `if: ${{ false }}`.
+2. Do not re-enable Upload. Do not use `pwd -p`. **No FTP write / Secret change this phase.**
 3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki FTP pwd URL normalization (2026-10-06)
+
+```txt
+FTP_PWD_URL_NORMALIZATION_FIX_RESULT: PASS
+UPLOAD_STILL_DISABLED: true
+COMMIT: false
+DISPATCH: false
+FTP_WRITE: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-ftp-pwd-url-normalization-fix.md`
 
 ## 0. Gosaki FTP relative-path live read-only diagnostic (2026-10-01)
 

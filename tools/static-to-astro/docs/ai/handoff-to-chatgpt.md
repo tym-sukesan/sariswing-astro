@@ -5,6 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-ftp-pwd-url-normalization-fix PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+COMMIT: false
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-ftp-pwd-url-normalization-fix.md
+```
+
+## Gosaki FTP pwd URL normalization (2026-10-06)
+
+- lftp `pwd` FTP/FTPS URL → `URL.pathname` only → existing strict matcher.
+- `/` `.` `/not-gosaki-piano` `/foo/gosaki-piano` and suffix matches stay false.
+- Boolean-only mismatch logs. No `pwd -p`. Upload remains `if: ${{ false }}`.
+- Next: operator-gated commit, then push, then one read-only diagnostic dispatch.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-ftp-relative-path-live-readonly-diagnostic PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep

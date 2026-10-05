@@ -1,7 +1,9 @@
-Last updated: 2026-10-01
+Last updated: 2026-10-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki FTP pwd URL normalization (2026-10-06):** **PASS** — Phase `gosaki-ftp-pwd-url-normalization-fix` · lftp `pwd` FTP/FTPS URL → `URL.pathname` → existing strict matcher · `/` `.` nested lookalike partial rejected · Upload still `if: false` · no commit / push / dispatch / FTP write / Secret change · Doc: `gosaki-ftp-pwd-url-normalization-fix.md`.
 
 **Gosaki FTP relative-path live read-only diagnostic (2026-10-01):** **PASS** — Phase `gosaki-ftp-relative-path-live-readonly-diagnostic` · diagnostic `cd` + `pwd` + matcher · Upload still `if: false` · no dispatch / FTP write / Secret change · Doc: `gosaki-ftp-relative-path-live-readonly-diagnostic.md`.
 

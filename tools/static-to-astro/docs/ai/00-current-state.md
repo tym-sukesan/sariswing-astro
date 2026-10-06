@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**Gosaki FTP quote PWD capture fix (2026-10-06):** **PASS** — Phase `gosaki-ftp-quote-pwd-capture-fix` · stdout/stderr split · lftp `quote PWD > file` · robust 257 parser · boolean/count logs only · Upload still `if: false` · no commit / push / dispatch / FTP write / Secret change · Doc: `gosaki-ftp-quote-pwd-capture-fix.md`.
+**Gosaki production mirror dry-run step (2026-10-06):** **PASS** — Phase `gosaki-production-mirror-dry-run-step` · PWD / quote PWD diagnostic **closed** (do not extend) · temporary step `Temporary lftp mirror -R dry-run (no write)` uses the same `mirror -R` settings as Upload plus `--dry-run` · Upload remains `if: ${{ false }}` · no `--delete` · no commit / push / dispatch / FTP write / Secret change · verifiers: remote-dir **119/0**, deploy **194/0**.
+
+**Gosaki FTP quote PWD capture fix (2026-10-06):** **CLOSED** — Phase `gosaki-ftp-quote-pwd-capture-fix` · superseded by the mirror dry-run step · do not add further pwd / quote PWD analysis.
 
 **Gosaki FTP server PWD diagnostic (2026-10-06):** **PASS** — Phase `gosaki-ftp-server-pwd-diagnostic-implementation` · login + post-cd `quote PWD` · 257 quoted path parser · boolean logs only · Upload still `if: false` · no commit / push / dispatch / FTP write / Secret change · Doc: `gosaki-ftp-server-pwd-diagnostic-implementation.md`.
 

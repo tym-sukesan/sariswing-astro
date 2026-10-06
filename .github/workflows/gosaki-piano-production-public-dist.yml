@@ -107,7 +107,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: Read-only FTP relative path (temporary diagnostic)
+      - name: Temporary lftp mirror -R dry-run (no write)
         env:
           GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
           GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}
@@ -117,27 +117,18 @@ jobs:
         run: |
           set +x
           node scripts/gosaki-production-ftp-remote-dir-guard.mjs
-          STDOUT_FILE="$(mktemp)"
-          STDERR_FILE="$(mktemp)"
-          QUOTE_LOGIN_FILE="$(mktemp)"
-          QUOTE_AFTER_FILE="$(mktemp)"
-          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF >"$STDOUT_FILE" 2>"$STDERR_FILE"
+          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF
           set cmd:fail-exit true
           set ftp:ssl-allow no
           set ftp:passive-mode on
           set net:max-retries 5
           set net:timeout 30
-          quote PWD > $QUOTE_LOGIN_FILE
+          set xfer:clobber on
           cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
-          pwd
-          quote PWD > $QUOTE_AFTER_FILE
+          lcd output/manual-upload/gosaki-piano-production/public-dist/
+          mirror -R --dry-run --verbose --parallel=3 --exclude-glob .ftpaccess --exclude-glob welcome.html --exclude-glob .htaccess ./
           bye
           EOF
-          node scripts/gosaki-production-ftp-remote-dir-guard.mjs \
-            --match-pwd-file "$STDOUT_FILE" \
-            --match-stderr-file "$STDERR_FILE" \
-            --match-quote-file "$QUOTE_LOGIN_FILE" \
-            --match-quote-file "$QUOTE_AFTER_FILE"
 
       - name: Upload public-dist via lftp mirror -R (delete disabled)
         if: ${{ false }}

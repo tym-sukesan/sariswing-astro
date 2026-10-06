@@ -5,7 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-ftp-quote-pwd-capture-fix PASS
+Current phase: gosaki-production-mirror-dry-run-step PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+COMMIT: false
+PUSH: false
+ftpApply: false
+UPLOAD_STILL_DISABLED: true
+SAFE_TO_COMMIT_FOR_DRY_RUN_DISPATCH: true
+```
+
+## Gosaki production mirror dry-run step (2026-10-06)
+
+- PWD / quote PWD diagnostic is **closed**. Do not add pwd, quote PWD, cls, ls, or debug.
+- Temporary step before Upload: same lftp settings, `cd`, `lcd`, excludes, and `mirror -R --verbose --parallel=3` as the real Upload, plus `--dry-run` only.
+- Real Upload step stays `if: ${{ false }}`. No `--delete`. No FTP write in this phase.
+- Next: operator-gated commit, then push, then one `workflow_dispatch` of this dry-run. Do not enable Upload.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-ftp-quote-pwd-capture-fix CLOSED
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -16,10 +36,8 @@ Doc: tools/static-to-astro/docs/gosaki-ftp-quote-pwd-capture-fix.md
 
 ## Gosaki FTP quote PWD capture fix (2026-10-06)
 
-- stdout / stderr split into temp files. Each `quote PWD > $QUOTE_*_FILE`.
-- Robust 257 parser (prefix / `257-` / plain quoted path). Boolean/count logs only.
-- No `debug`, no `pwd -p`, no `cat`. Upload remains `if: ${{ false }}`.
-- Next: operator-gated commit, then push, then one read-only diagnostic dispatch.
+- Closed. Do not extend pwd / quote PWD analysis.
+- Superseded by the temporary mirror dry-run step.
 
 ## Current phase (prior)
 

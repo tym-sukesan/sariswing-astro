@@ -3,9 +3,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the quote PWD capture fix, then push, then one read-only `workflow_dispatch`. Upload stays `if: ${{ false }}`.
-2. Do not re-enable Upload. Do not use `pwd -p` or `debug`. `quote` is `PWD` only. **No FTP write / Secret change this phase.**
+1. **Primary:** operator-gated commit of the temporary `mirror -R --dry-run` step, then push, then one `workflow_dispatch`. Upload stays `if: ${{ false }}`.
+2. PWD / quote PWD diagnostic is closed. Do not add pwd, quote PWD, cls, ls, or debug. Do not re-enable Upload. **No FTP write / `--delete` / Secret change.**
 3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki production mirror dry-run step (2026-10-06)
+
+```txt
+MIRROR_DRY_RUN_STEP_RESULT: PASS
+UPLOAD_STILL_DISABLED: true
+DELETE_FLAG: false
+COMMIT: false
+DISPATCH: false
+FTP_WRITE: false
+SAFE_TO_COMMIT_FOR_DRY_RUN_DISPATCH: true
+```
+
+PWD / quote PWD work is closed. Next operator step is commit of this dry-run workflow, not another path diagnostic.
 
 ## 0. Gosaki FTP quote PWD capture fix (2026-10-06)
 

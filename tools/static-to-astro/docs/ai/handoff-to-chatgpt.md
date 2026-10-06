@@ -5,22 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-mirror-dry-run-step PASS
+Current phase: gosaki-production-upload-enablement PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
 PUSH: false
 ftpApply: false
-UPLOAD_STILL_DISABLED: true
-SAFE_TO_COMMIT_FOR_DRY_RUN_DISPATCH: true
+TEMPORARY_DRY_RUN_REMOVED: true
+UPLOAD_ENABLED: true
+SAFE_TO_COMMIT_FOR_FIRST_PRODUCTION_UPLOAD: true
+```
+
+## Gosaki production upload enablement (2026-10-06)
+
+- Main `mirror -R --dry-run` already PASS. Temporary dry-run step is removed.
+- Upload step is enabled. In-step PWD pre-check is removed. Flow is remote-dir guard, then one lftp session: `cd` with `cmd:fail-exit`, then `mirror -R` without `--dry-run` and without `--delete`.
+- PWD / quote PWD work stays closed. Do not add it back.
+- Next: operator-gated commit, then push, then one `workflow_dispatch`. That dispatch is the first production upload.
+
+## Current phase (prior)
+
+```txt
+Current phase: gosaki-production-mirror-dry-run-step CLOSED
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+COMMIT: false
+PUSH: false
+ftpApply: false
 ```
 
 ## Gosaki production mirror dry-run step (2026-10-06)
 
-- PWD / quote PWD diagnostic is **closed**. Do not add pwd, quote PWD, cls, ls, or debug.
-- Temporary step before Upload: same lftp settings, `cd`, `lcd`, excludes, and `mirror -R --verbose --parallel=3` as the real Upload, plus `--dry-run` only.
-- Real Upload step stays `if: ${{ false }}`. No `--delete`. No FTP write in this phase.
-- Next: operator-gated commit, then push, then one `workflow_dispatch` of this dry-run. Do not enable Upload.
+- Closed after main dry-run PASS. Temporary step removed. Upload is now enabled.
 
 ## Current phase (prior)
 

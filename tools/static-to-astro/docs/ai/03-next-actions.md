@@ -3,9 +3,24 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the temporary `mirror -R --dry-run` step, then push, then one `workflow_dispatch`. Upload stays `if: ${{ false }}`.
-2. PWD / quote PWD diagnostic is closed. Do not add pwd, quote PWD, cls, ls, or debug. Do not re-enable Upload. **No FTP write / `--delete` / Secret change.**
-3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+1. **Primary:** operator-gated commit of the enabled production Upload step, then push, then one `workflow_dispatch`. This dispatch performs the first real `mirror -R` upload.
+2. Temporary dry-run step is removed. Do not add `--delete`, `--dry-run`, pwd, or quote PWD. **No Secret change.**
+3. `readyForAnyFutureFtpApply: false` for the suspended generic FTP apply path · this Gosaki workflow Upload is the gated production path · vsbvnd STOP.
+
+## 0. Gosaki production upload enablement (2026-10-06)
+
+```txt
+PRODUCTION_UPLOAD_ENABLEMENT_RESULT: PASS
+TEMPORARY_DRY_RUN_REMOVED: true
+UPLOAD_ENABLED: true
+DELETE_FLAG: false
+COMMIT: false
+DISPATCH: false
+FTP_WRITE_THIS_PHASE: false
+SAFE_TO_COMMIT_FOR_FIRST_PRODUCTION_UPLOAD: true
+```
+
+Next operator step is commit, then push, then one `workflow_dispatch`. That dispatch uploads.
 
 ## 0. Gosaki production mirror dry-run step (2026-10-06)
 

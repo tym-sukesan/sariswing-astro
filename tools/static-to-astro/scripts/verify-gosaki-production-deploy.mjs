@@ -89,91 +89,63 @@ assert("uses GOSAKI_PRODUCTION_FTP_*", workflow.includes("GOSAKI_PRODUCTION_FTP_
 assert("cd after connect", workflow.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert("remote dir guard script", workflow.includes("gosaki-production-ftp-remote-dir-guard.mjs"));
 assert("old pwd diagnostic step removed", !workflow.includes("Read-only FTP relative path"));
+assert("temporary dry-run step removed", !workflow.includes("Temporary lftp mirror -R dry-run"));
+assert("no --dry-run", !workflow.includes("--dry-run"));
 assert("no quote PWD diagnostic", !/quote\s+PWD\b/.test(workflow));
 assert("no pwd -p", !workflow.includes("pwd -p"));
+assert("no match-pwd-file", !workflow.includes("--match-pwd-file"));
+assert("upload if false absent", !workflow.includes("if: ${{ false }}"));
 
-const DRY_RUN_STEP = "- name: Temporary lftp mirror -R dry-run (no write)";
 const UPLOAD_STEP = "- name: Upload public-dist via lftp mirror -R (delete disabled)";
-const dryStart = workflow.indexOf(DRY_RUN_STEP);
 const uploadStart = workflow.indexOf(UPLOAD_STEP);
 const lftpInstall = workflow.indexOf("- name: Install lftp");
-assert("temporary mirror dry-run step present", dryStart >= 0);
-assert("upload step present", uploadStart >= 0);
-assert("dry-run after lftp install", lftpInstall >= 0 && dryStart > lftpInstall);
-assert("dry-run before upload", dryStart >= 0 && uploadStart > dryStart);
-const dryRunStep = dryStart >= 0 && uploadStart > dryStart ? workflow.slice(dryStart, uploadStart) : "";
 const uploadStep = uploadStart >= 0 ? workflow.slice(uploadStart) : "";
+assert("upload step present", uploadStart >= 0);
+assert("upload after lftp install", lftpInstall >= 0 && uploadStart > lftpInstall);
+assert("upload step enabled", uploadStep.length > 0 && !/^\s+if:/m.test(uploadStep));
+assert("upload set +x", uploadStep.includes("set +x"));
+assert("upload no set -x", !/set -x/.test(uploadStep));
+assert("upload unquoted heredoc", uploadStep.includes("<<EOF") && !uploadStep.includes("<<'EOF'"));
+assert("upload runs remote-dir guard", uploadStep.includes("node scripts/gosaki-production-ftp-remote-dir-guard.mjs"));
+assert("upload cmd fail-exit", uploadStep.includes("set cmd:fail-exit true"));
+assert("upload ssl-allow no", uploadStep.includes("set ftp:ssl-allow no"));
+assert("upload passive-mode", uploadStep.includes("set ftp:passive-mode on"));
+assert("upload max-retries", uploadStep.includes("set net:max-retries 5"));
+assert("upload timeout", uploadStep.includes("set net:timeout 30"));
+assert("upload clobber", uploadStep.includes("set xfer:clobber on"));
+assert("upload cd remote dir", uploadStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert(
-  "upload step disabled",
-  /- name: Upload public-dist via lftp mirror -R \(delete disabled\)\n\s+if: \$\{\{ false \}\}/.test(workflow),
-);
-assert("dry-run step is not disabled", dryRunStep.length > 0 && !/^\s+if:/m.test(dryRunStep));
-assert("dry-run set +x", dryRunStep.includes("set +x"));
-assert("dry-run no set -x", !/set -x/.test(dryRunStep));
-assert("dry-run unquoted heredoc", dryRunStep.includes("<<EOF") && !dryRunStep.includes("<<'EOF'"));
-assert("dry-run runs remote-dir guard", dryRunStep.includes("node scripts/gosaki-production-ftp-remote-dir-guard.mjs"));
-assert(
-  "dry-run guard has no pwd match flags",
-  !dryRunStep.includes("--match-pwd-file") &&
-    !dryRunStep.includes("--match-stderr-file") &&
-    !dryRunStep.includes("--match-quote-file"),
-);
-assert("dry-run cmd fail-exit", dryRunStep.includes("set cmd:fail-exit true"));
-assert("dry-run ssl-allow no", dryRunStep.includes("set ftp:ssl-allow no"));
-assert("dry-run passive-mode", dryRunStep.includes("set ftp:passive-mode on"));
-assert("dry-run max-retries", dryRunStep.includes("set net:max-retries 5"));
-assert("dry-run timeout", dryRunStep.includes("set net:timeout 30"));
-assert("dry-run clobber", dryRunStep.includes("set xfer:clobber on"));
-assert("dry-run cd remote dir", dryRunStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
-assert(
-  "dry-run lcd public-dist",
-  dryRunStep.includes("lcd output/manual-upload/gosaki-piano-production/public-dist/"),
-);
-assert("dry-run mirror -R", /^\s+mirror -R\b/m.test(dryRunStep));
-assert("dry-run flag", dryRunStep.includes("--dry-run"));
-assert("dry-run parallel", dryRunStep.includes("--parallel=3"));
-assert("dry-run exclude ftpaccess", dryRunStep.includes("--exclude-glob .ftpaccess"));
-assert("dry-run exclude welcome", dryRunStep.includes("--exclude-glob welcome.html"));
-assert("dry-run exclude htaccess", dryRunStep.includes("--exclude-glob .htaccess"));
-assert("dry-run no --delete", !dryRunStep.includes("--delete") && !dryRunStep.includes("--allow-delete"));
-assert("dry-run no pwd", !/^\s+pwd\b/m.test(dryRunStep));
-assert("dry-run no quote", !/^\s+quote\b/m.test(dryRunStep));
-assert("dry-run no cls", !/^\s+cls\b/m.test(dryRunStep));
-assert("dry-run no ls", !/^\s+ls\b/m.test(dryRunStep));
-assert("dry-run no debug", !/\bdebug\b/i.test(dryRunStep));
-assert("dry-run no LOLIPOP", !/LOLIPOP_FTP_/.test(dryRunStep));
-assert("dry-run no staging ftp secrets", !/GOSAKI_STAGING_FTP_/.test(dryRunStep));
-assert("dry-run no echo secrets", !/echo\s+["']?\$\{?GOSAKI_PRODUCTION_FTP_/.test(dryRunStep));
-assert("dry-run no printenv", !/printenv|env\s*\|/.test(dryRunStep));
-assert("dry-run gosaki host secret name only", dryRunStep.includes("GOSAKI_PRODUCTION_FTP_HOST"));
-assert("dry-run gosaki user secret name only", dryRunStep.includes("GOSAKI_PRODUCTION_FTP_USER"));
-assert("dry-run gosaki password secret name only", dryRunStep.includes("GOSAKI_PRODUCTION_FTP_PASSWORD"));
-assert("dry-run gosaki remote dir secret name only", dryRunStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
-const writeVerbs = ["put", "mput", "mkdir", "rename", "chmod", "rm", "delete", "mv", "get", "mget"];
-for (const verb of writeVerbs) {
-  assert(`dry-run no ${verb}`, !new RegExp(`\\b${verb}\\b`, "i").test(dryRunStep));
-}
-for (const verb of ["SITE", "STOR", "STOU", "APPE", "DELE", "RMD", "MKD", "RNFR", "RNTO"]) {
-  assert(`dry-run no ${verb}`, !new RegExp(`\\b${verb}\\b`).test(dryRunStep));
-}
-function mirrorLines(text) {
-  return [...text.matchAll(/^\s*mirror\b.*$/gm)].map((match) => match[0].trim());
-}
-const dryMirrors = mirrorLines(dryRunStep);
-const uploadMirrors = mirrorLines(uploadStep);
-assert("one dry-run mirror", dryMirrors.length === 1 && dryMirrors[0].includes("--dry-run"));
-assert("one upload mirror", uploadMirrors.length === 1 && !uploadMirrors[0].includes("--dry-run"));
-assert(
-  "dry-run mirror matches upload except --dry-run",
-  dryMirrors.length === 1 &&
-    uploadMirrors.length === 1 &&
-    dryMirrors[0].replace(/\s--dry-run\b/, "") === uploadMirrors[0],
-);
-assert(
-  "dry-run lcd matches upload",
+  "upload lcd public-dist",
   uploadStep.includes("lcd output/manual-upload/gosaki-piano-production/public-dist/"),
 );
-assert("dry-run cd matches upload", uploadStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
+assert("upload mirror -R", /^\s+mirror -R\b/m.test(uploadStep));
+assert("upload no --dry-run", !uploadStep.includes("--dry-run"));
+assert("upload parallel", uploadStep.includes("--parallel=3"));
+assert("upload exclude ftpaccess", uploadStep.includes("--exclude-glob .ftpaccess"));
+assert("upload exclude welcome", uploadStep.includes("--exclude-glob welcome.html"));
+assert("upload exclude htaccess", uploadStep.includes("--exclude-glob .htaccess"));
+assert("upload no --delete", !uploadStep.includes("--delete") && !uploadStep.includes("--allow-delete"));
+assert("upload no pwd", !/^\s+pwd\b/m.test(uploadStep));
+assert("upload no quote", !/^\s+quote\b/m.test(uploadStep));
+assert("upload no cls", !/^\s+cls\b/m.test(uploadStep));
+assert("upload no ls", !/^\s+ls\b/m.test(uploadStep));
+assert("upload no debug", !/\bdebug\b/i.test(uploadStep));
+assert("upload no LOLIPOP", !/LOLIPOP_FTP_/.test(uploadStep));
+assert("upload no staging ftp secrets", !/GOSAKI_STAGING_FTP_/.test(uploadStep));
+assert("upload no echo secrets", !/echo\s+["']?\$\{?GOSAKI_PRODUCTION_FTP_/.test(uploadStep));
+assert("upload no printenv", !/printenv|env\s*\|/.test(uploadStep));
+assert("upload gosaki host secret name only", uploadStep.includes("GOSAKI_PRODUCTION_FTP_HOST"));
+assert("upload gosaki user secret name only", uploadStep.includes("GOSAKI_PRODUCTION_FTP_USER"));
+assert("upload gosaki password secret name only", uploadStep.includes("GOSAKI_PRODUCTION_FTP_PASSWORD"));
+assert("upload gosaki remote dir secret name only", uploadStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
+const uploadMirrors = [...uploadStep.matchAll(/^\s*mirror\b.*$/gm)].map((match) => match[0].trim());
+assert(
+  "one upload mirror",
+  uploadMirrors.length === 1 &&
+    uploadMirrors[0] ===
+      "mirror -R --verbose --parallel=3 --exclude-glob .ftpaccess --exclude-glob welcome.html --exclude-glob .htaccess ./",
+);
+assert("upload single lftp session", (uploadStep.match(/\blftp -u\b/g) || []).length === 1);
 assert("no service_role in workflow", !/SERVICE_ROLE/.test(workflow) || workflow.includes("unset") && workflow.includes("SUPABASE_SERVICE_ROLE_KEY"));
 assert("contents: read only", workflow.includes("contents: read"));
 assert("no Contents write permission", !/contents:\s*write/.test(workflow));
@@ -274,7 +246,7 @@ assert("server pwd eq gosaki-piano", serverInspect.eqGosakiPiano === true);
 assert("server pwd not nested", serverInspect.nested === false);
 assert("server pwd changed", serverInspect.changed === true);
 assert("server pwd inspect has no path fields", !("path" in serverInspect) && !("raw" in serverInspect));
-assert("upload remains disabled", workflow.includes("if: ${{ false }}"));
+assert("upload remains enabled", !workflow.includes("if: ${{ false }}"));
 assert("matcher source has no suffix compare", !read("tools/static-to-astro/scripts/gosaki-production-ftp-remote-dir-guard.mjs").includes(".endsWith("));
 
 const triggerHandler = read("supabase/functions/gosaki-production-deploy-trigger/handler.ts");

@@ -107,31 +107,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: Temporary lftp mirror -R dry-run (no write)
-        env:
-          GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
-          GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}
-          GOSAKI_PRODUCTION_FTP_PASSWORD: ${{ secrets.GOSAKI_PRODUCTION_FTP_PASSWORD }}
-          GOSAKI_PRODUCTION_FTP_REMOTE_DIR: ${{ secrets.GOSAKI_PRODUCTION_FTP_REMOTE_DIR }}
-        working-directory: tools/static-to-astro
-        run: |
-          set +x
-          node scripts/gosaki-production-ftp-remote-dir-guard.mjs
-          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF
-          set cmd:fail-exit true
-          set ftp:ssl-allow no
-          set ftp:passive-mode on
-          set net:max-retries 5
-          set net:timeout 30
-          set xfer:clobber on
-          cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
-          lcd output/manual-upload/gosaki-piano-production/public-dist/
-          mirror -R --dry-run --verbose --parallel=3 --exclude-glob .ftpaccess --exclude-glob welcome.html --exclude-glob .htaccess ./
-          bye
-          EOF
-
       - name: Upload public-dist via lftp mirror -R (delete disabled)
-        if: ${{ false }}
         env:
           GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
           GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}
@@ -141,18 +117,6 @@ jobs:
         run: |
           set +x
           node scripts/gosaki-production-ftp-remote-dir-guard.mjs
-          PWD_FILE="$(mktemp)"
-          lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF >"$PWD_FILE"
-          set cmd:fail-exit true
-          set ftp:ssl-allow no
-          set ftp:passive-mode on
-          set net:max-retries 5
-          set net:timeout 30
-          cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
-          pwd
-          bye
-          EOF
-          node scripts/gosaki-production-ftp-remote-dir-guard.mjs --match-pwd-file "$PWD_FILE"
           lftp -u "$GOSAKI_PRODUCTION_FTP_USER","$GOSAKI_PRODUCTION_FTP_PASSWORD" "$GOSAKI_PRODUCTION_FTP_HOST" <<EOF
           set cmd:fail-exit true
           set ftp:ssl-allow no

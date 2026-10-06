@@ -13,6 +13,8 @@ import { pathToFileURL } from "node:url";
 
 const BLOCKED_EXACT = new Set(["", "/", ".", "./", "~", "..", "../"]);
 const FTP_URL_PREFIX = /^ftps?:\/\//i;
+const LFTP_PREFIX = /^(?:---- |<--- |---> )/;
+const FTP_257_QUOTED = /\b257-?\s*"((?:[^"]|"")*)"/;
 
 /**
  * @param {string} raw
@@ -50,30 +52,18 @@ function isRootPathname(value) {
 
 /**
  * RFC 959 257 quoted directory-name. Doubled quotes are unescaped.
- * Returns null when the line is not a well-formed 257 quoted reply.
+ * Accepts optional lftp prefixes (`---- `, `<--- `, `---> `) and `257-`.
+ * Returns null when a quoted path cannot be taken safely.
  * Never logs the path.
  *
  * @param {string} line
  * @returns {string | null}
  */
 export function extractFtp257QuotedPath(line) {
-  const trimmed = String(line ?? "").trim();
-  if (!/^257\s+"/.test(trimmed)) return null;
-  const after = trimmed.replace(/^257\s+"/, "");
-  let out = "";
-  for (let i = 0; i < after.length; i += 1) {
-    const ch = after[i];
-    if (ch === '"') {
-      if (after[i + 1] === '"') {
-        out += '"';
-        i += 1;
-        continue;
-      }
-      return out;
-    }
-    out += ch;
-  }
-  return null;
+  const trimmed = String(line ?? "").trim().replace(LFTP_PREFIX, "");
+  const matched = trimmed.match(FTP_257_QUOTED);
+  if (!matched) return null;
+  return matched[1].replace(/""/g, '"');
 }
 
 function pathSegmentCount(value) {
@@ -101,6 +91,24 @@ function pwdPathMatchesExpected(pwdPath, expectedNormalized) {
   if (!expectedIsSingleSegment) return false;
   if (path.posix.basename(pwd) !== expected) return false;
   return pwd === `/${expected}`;
+}
+
+/**
+ * Boolean/count shape of a capture blob. Never returns raw text.
+ *
+ * @param {string} text
+ */
+export function inspectCaptureFormat(text) {
+  const lines = String(text ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return {
+    lineCount: lines.length,
+    has257Token: /\b257\b/.test(String(text ?? "")),
+    hasQuotedString: /"(?:[^"]|"")*"/.test(String(text ?? "")),
+    hasLftpPrefix: lines.some((line) => LFTP_PREFIX.test(line)),
+  };
 }
 
 /**
@@ -235,10 +243,32 @@ function printBool(name, value) {
   console.log(`${name} ${value ? "true" : "false"}`);
 }
 
+function printCount(name, value) {
+  console.log(`${name} ${Number(value) || 0}`);
+}
+
+function takeFlagValues(argv, flag) {
+  const values = [];
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i] === flag && argv[i + 1]) {
+      values.push(argv[i + 1]);
+      i += 1;
+    }
+  }
+  return values;
+}
+
+function readOptionalFile(filePath) {
+  if (!filePath) return "";
+  return fs.readFileSync(filePath, "utf8");
+}
+
 function main(argv = process.argv.slice(2)) {
   const matchFileIdx = argv.indexOf("--match-pwd-file");
   if (matchFileIdx >= 0) {
     const filePath = argv[matchFileIdx + 1];
+    const stderrPath = takeFlagValues(argv, "--match-stderr-file")[0];
+    const quotePaths = takeFlagValues(argv, "--match-quote-file");
     const assessed = assessGosakiProductionFtpRemoteDir(
       process.env.GOSAKI_PRODUCTION_FTP_REMOTE_DIR ?? "",
     );
@@ -247,10 +277,24 @@ function main(argv = process.argv.slice(2)) {
       process.exitCode = 1;
       return;
     }
-    const pwdOutput = fs.readFileSync(filePath, "utf8");
-    const inspected = inspectPwdOutput(pwdOutput);
-    const server = inspectServerPwdReplies(pwdOutput, assessed.normalized);
-    const match = Boolean(inspected.ok) && pwdMatchesExpected(pwdOutput, assessed.normalized);
+    const stdoutText = readOptionalFile(filePath);
+    const stderrText = stderrPath ? readOptionalFile(stderrPath) : "";
+    const quoteTexts = quotePaths.map((p) => readOptionalFile(p));
+    const combined = [stdoutText, stderrText, ...quoteTexts].join("\n");
+    const stdoutFmt = inspectCaptureFormat(stdoutText);
+    const stderrFmt = inspectCaptureFormat(stderrText);
+    const inspected = inspectPwdOutput(stdoutText);
+    const server = inspectServerPwdReplies(combined, assessed.normalized);
+    const match = Boolean(inspected.ok) && pwdMatchesExpected(stdoutText, assessed.normalized);
+    printCount("stdout_line_count", stdoutFmt.lineCount);
+    printCount("stderr_line_count", stderrFmt.lineCount);
+    printBool("stdout_has_257_token", stdoutFmt.has257Token);
+    printBool("stderr_has_257_token", stderrFmt.has257Token);
+    printBool("stdout_has_quoted_string", stdoutFmt.hasQuotedString);
+    printBool("stderr_has_quoted_string", stderrFmt.hasQuotedString);
+    printBool("stdout_has_lftp_prefix", stdoutFmt.hasLftpPrefix);
+    printBool("stderr_has_lftp_prefix", stderrFmt.hasLftpPrefix);
+    printCount("parser_candidate_count", server.replyCount);
     printBool("last_line_is_ftp_url", inspected.lastLineIsFtpUrl);
     printBool("url_parse_ok", inspected.urlParseOk);
     printBool("pathname_eq_root", inspected.pathnameEqRoot);

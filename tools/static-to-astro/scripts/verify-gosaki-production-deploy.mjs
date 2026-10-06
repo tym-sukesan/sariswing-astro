@@ -88,6 +88,8 @@ assert("no GOSAKI_STAGING_FTP_*", !/GOSAKI_STAGING_FTP_/.test(workflow));
 assert("uses GOSAKI_PRODUCTION_FTP_*", workflow.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
 assert("cd after connect", workflow.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert("pwd then match", workflow.includes("--match-pwd-file"));
+assert("stderr capture flag", workflow.includes("--match-stderr-file"));
+assert("quote file capture flag", workflow.includes("--match-quote-file"));
 assert("remote dir guard script", workflow.includes("gosaki-production-ftp-remote-dir-guard.mjs"));
 
 const DIAG_STEP = "- name: Read-only FTP relative path (temporary diagnostic)";
@@ -110,9 +112,10 @@ assert("diagnostic no debug", !/\bdebug\b/i.test(diagnosticStep));
 assert("diagnostic bye", /^\s+bye$/m.test(diagnosticStep));
 const diagnosticQuoteCmds = [...diagnosticStep.matchAll(/^\s+quote\s+(\S+)/gm)].map((m) => m[1]);
 assert("diagnostic quote PWD twice", diagnosticQuoteCmds.length === 2 && diagnosticQuoteCmds.every((cmd) => cmd === "PWD"));
-assert("diagnostic quote is PWD only", /^\s+quote PWD$/m.test(diagnosticStep) && !/^\s+quote\s+(?!PWD\b)/m.test(diagnosticStep));
+assert("diagnostic quote is PWD only", /^\s+quote PWD\b/m.test(diagnosticStep) && !/^\s+quote\s+(?!PWD\b)/m.test(diagnosticStep));
+assert("diagnostic quote PWD redirects to files", /quote PWD > \$QUOTE_LOGIN_FILE/.test(diagnosticStep) && /quote PWD > \$QUOTE_AFTER_FILE/.test(diagnosticStep));
 const quotePwdIndexes = [];
-for (const match of diagnosticStep.matchAll(/^\s+quote PWD$/gm)) {
+for (const match of diagnosticStep.matchAll(/^\s+quote PWD\b/gm)) {
   quotePwdIndexes.push(match.index ?? -1);
 }
 const cdIdx = diagnosticStep.indexOf('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"');
@@ -127,7 +130,16 @@ assert(
 );
 assert("diagnostic uses REMOTE_DIR", diagnosticStep.includes("GOSAKI_PRODUCTION_FTP_REMOTE_DIR"));
 assert("diagnostic match-pwd-file", diagnosticStep.includes("--match-pwd-file"));
-assert("diagnostic no cat pwd file", !/cat\s+"?\$PWD_FILE/.test(diagnosticStep));
+assert("diagnostic match-stderr-file", diagnosticStep.includes("--match-stderr-file"));
+assert("diagnostic match-quote-file", diagnosticStep.includes("--match-quote-file"));
+assert("diagnostic stdout temp", diagnosticStep.includes('STDOUT_FILE="$(mktemp)"'));
+assert("diagnostic stderr temp", diagnosticStep.includes('STDERR_FILE="$(mktemp)"'));
+assert("diagnostic quote login temp", diagnosticStep.includes('QUOTE_LOGIN_FILE="$(mktemp)"'));
+assert("diagnostic quote after temp", diagnosticStep.includes('QUOTE_AFTER_FILE="$(mktemp)"'));
+assert("diagnostic stdout redirect", diagnosticStep.includes('>"$STDOUT_FILE"'));
+assert("diagnostic stderr redirect", diagnosticStep.includes('2>"$STDERR_FILE"'));
+assert("diagnostic no merged stderr", !diagnosticStep.includes("2>&1"));
+assert("diagnostic no cat pwd file", !/cat\s+"?\$PWD_FILE/.test(diagnosticStep) && !/cat\s+"?\$STDOUT_FILE/.test(diagnosticStep) && !/cat\s+"?\$STDERR_FILE/.test(diagnosticStep) && !/cat\s+"?\$QUOTE_/.test(diagnosticStep));
 assert("diagnostic no cls", !diagnosticStep.includes("cls"));
 assert("diagnostic no LOLIPOP", !/LOLIPOP_FTP_/.test(diagnosticStep));
 assert("diagnostic no echo secrets", !/echo\s+["']?\$\{?GOSAKI_PRODUCTION_FTP_/.test(diagnosticStep));
@@ -234,6 +246,8 @@ assert("ftp inspect path is pathname only", urlInspect.path === "/gosaki-piano")
 assert("257 parser gosaki-piano", extractFtp257QuotedPath('257 "/gosaki-piano" is current directory.') === "/gosaki-piano");
 assert("257 parser escaped quote", extractFtp257QuotedPath('257 "/foo""bar"') === '/foo"bar');
 assert("257 parser malformed", extractFtp257QuotedPath("257 /gosaki-piano") === null);
+assert("257 parser prefixed", extractFtp257QuotedPath('<--- 257 "/gosaki-piano" is current directory.') === "/gosaki-piano");
+assert("257 parser 257- line", extractFtp257QuotedPath('257-"/gosaki-piano"') === "/gosaki-piano");
 const serverInspect = inspectServerPwdReplies(
   '257 "/" is current directory.\n257 "/gosaki-piano" is current directory.\n',
   "gosaki-piano",

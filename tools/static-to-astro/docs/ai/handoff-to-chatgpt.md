@@ -5,6 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
+Current phase: gosaki-ftp-quote-pwd-capture-fix PASS
+Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
+BRANCH: gosaki-main-merge-prep
+COMMIT: false
+PUSH: false
+ftpApply: false
+Doc: tools/static-to-astro/docs/gosaki-ftp-quote-pwd-capture-fix.md
+```
+
+## Gosaki FTP quote PWD capture fix (2026-10-06)
+
+- stdout / stderr split into temp files. Each `quote PWD > $QUOTE_*_FILE`.
+- Robust 257 parser (prefix / `257-` / plain quoted path). Boolean/count logs only.
+- No `debug`, no `pwd -p`, no `cat`. Upload remains `if: ${{ false }}`.
+- Next: operator-gated commit, then push, then one read-only diagnostic dispatch.
+
+## Current phase (prior)
+
+```txt
 Current phase: gosaki-ftp-server-pwd-diagnostic-implementation PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep

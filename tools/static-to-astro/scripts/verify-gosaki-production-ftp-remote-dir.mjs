@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import {
   assessGosakiProductionFtpRemoteDir,
   extractFtp257QuotedPath,
+  inspectCaptureFormat,
   inspectPwdOutput,
   inspectServerPwdReplies,
   pwdMatchesExpected,
@@ -164,6 +165,16 @@ assert("257 nested quoted path", extractFtp257QuotedPath('257 "/foo/gosaki-piano
 assert("257 missing quotes malformed", extractFtp257QuotedPath("257 /gosaki-piano") === null);
 assert("257 unclosed quote malformed", extractFtp257QuotedPath('257 "/gosaki-piano') === null);
 assert("250 is not 257", extractFtp257QuotedPath("250 Directory successfully changed.") === null);
+assert(
+  "257 prefixed arrow",
+  extractFtp257QuotedPath('<--- 257 "/gosaki-piano" is current directory.') === "/gosaki-piano",
+);
+assert(
+  "257 prefixed dashes",
+  extractFtp257QuotedPath('---- 257 "/gosaki-piano"') === "/gosaki-piano",
+);
+assert("257- multiline first line", extractFtp257QuotedPath('257-"/gosaki-piano"') === "/gosaki-piano");
+assert("257- with space then quote", extractFtp257QuotedPath('257- "/gosaki-piano"') === "/gosaki-piano");
 
 const serverRoot = inspectServerPwdReplies('257 "/" is current directory.\n', "gosaki-piano");
 assert("server root parse ok", serverRoot.parseOk === true);
@@ -192,6 +203,34 @@ assert("server nested true", serverNested.nested === true);
 const serverMalformed = inspectServerPwdReplies("257 /gosaki-piano\n", "gosaki-piano");
 assert("server malformed parse false", serverMalformed.parseOk === false);
 
+const serverPrefixed = inspectServerPwdReplies(
+  '<--- 257 "/" is current directory.\n<--- 257 "/gosaki-piano" is current directory.\n',
+  "gosaki-piano",
+);
+assert("server prefixed parse ok", serverPrefixed.parseOk === true);
+assert("server prefixed eq gosaki-piano", serverPrefixed.eqGosakiPiano === true);
+assert("server prefixed changed", serverPrefixed.changed === true);
+
+const serverMultiline = inspectServerPwdReplies(
+  '257-"/"\n257 End\n257-"/gosaki-piano"\n257 End\n',
+  "gosaki-piano",
+);
+assert("server multiline parse ok", serverMultiline.parseOk === true);
+assert("server multiline eq gosaki-piano", serverMultiline.eqGosakiPiano === true);
+assert("server multiline changed", serverMultiline.changed === true);
+
+const fmt257 = inspectCaptureFormat('257 "/gosaki-piano" is current directory.\n');
+assert("format has 257 token", fmt257.has257Token === true);
+assert("format has quoted string", fmt257.hasQuotedString === true);
+assert("format line count", fmt257.lineCount === 1);
+assert("format no lftp prefix", fmt257.hasLftpPrefix === false);
+const fmtPrefix = inspectCaptureFormat('<--- 257 "/" is current directory.\n');
+assert("format detects lftp prefix", fmtPrefix.hasLftpPrefix === true);
+assert(
+  "format inspect has no raw fields",
+  !("text" in fmt257) && !("sample" in fmt257) && !("path" in fmt257),
+);
+
 assert(
   "server inspect has no path fields",
   !("path" in serverGosaki) &&
@@ -212,17 +251,29 @@ assert("guard source has no suffix compare", !guardSrc.includes(".endsWith("));
 assert("guard source does not log href", !/console\.log\([^)]*href/.test(guardSrc));
 assert("guard source does not print pathname labels", !/console\.log\([^)]*pathname/.test(guardSrc));
 
-function runMatchPwdFile(contents) {
-  const tmp = path.join(os.tmpdir(), `gosaki-pwd-url-${process.pid}-${Date.now()}.txt`);
+function runMatchPwdFile(contents, extraArgs = []) {
+  const tmp = path.join(os.tmpdir(), `gosaki-pwd-url-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`);
   fs.writeFileSync(tmp, contents, "utf8");
+  const extraFiles = [];
   try {
-    return spawnSync(process.execPath, [GUARD, "--match-pwd-file", tmp], {
+    const args = [GUARD, "--match-pwd-file", tmp];
+    for (const extra of extraArgs) {
+      const extraPath = path.join(
+        os.tmpdir(),
+        `gosaki-pwd-extra-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`,
+      );
+      fs.writeFileSync(extraPath, extra.contents, "utf8");
+      extraFiles.push(extraPath);
+      args.push(extra.flag, extraPath);
+    }
+    return spawnSync(process.execPath, args, {
       encoding: "utf8",
       env: { ...process.env, GOSAKI_PRODUCTION_FTP_REMOTE_DIR: "gosaki-piano" },
       cwd: TOOL_ROOT,
     });
   } finally {
     fs.unlinkSync(tmp);
+    for (const extraPath of extraFiles) fs.unlinkSync(extraPath);
   }
 }
 
@@ -258,9 +309,27 @@ assert("cli server pwd_match false", /pwd_match false/.test(cliServer.stdout ?? 
 assert("cli server does not echo dummy", !cliServerOut.includes("dummy"));
 assert("cli server does not echo example.invalid", !cliServerOut.includes("example.invalid"));
 assert("cli server does not echo ftp://", !cliServerOut.includes("ftp://"));
-assert("cli server does not echo 257", !cliServerOut.includes("257"));
+assert("cli server does not echo 257 quoted reply", !/257\s+"/.test(cliServerOut));
 assert("cli server does not echo pathname", !cliServerOut.includes("/gosaki-piano"));
 assert("cli server exit 0 despite lftp url root", cliServer.status === 0);
+assert("cli server stdout_has_257_token", /stdout_has_257_token true/.test(cliServer.stdout ?? ""));
+assert("cli server parser_candidate_count 2", /parser_candidate_count 2/.test(cliServer.stdout ?? ""));
+
+const cliSplit = runMatchPwdFile("ftp://user:dummy@example.invalid/\n", [
+  { flag: "--match-stderr-file", contents: '<--- 257 "/" is current directory.\n' },
+  { flag: "--match-quote-file", contents: '257 "/" is current directory.\n' },
+  { flag: "--match-quote-file", contents: '257 "/gosaki-piano" is current directory.\n' },
+]);
+const cliSplitOut = `${cliSplit.stdout ?? ""}${cliSplit.stderr ?? ""}`;
+assert("cli split stderr_has_257_token", /stderr_has_257_token true/.test(cliSplit.stdout ?? ""));
+assert("cli split stderr_has_lftp_prefix", /stderr_has_lftp_prefix true/.test(cliSplit.stdout ?? ""));
+assert("cli split parse ok", /server_pwd_parse_ok true/.test(cliSplit.stdout ?? ""));
+assert("cli split eq gosaki-piano", /server_pwd_eq_gosaki_piano true/.test(cliSplit.stdout ?? ""));
+assert("cli split changed", /server_pwd_changed true/.test(cliSplit.stdout ?? ""));
+assert("cli split does not echo dummy", !cliSplitOut.includes("dummy"));
+assert("cli split does not echo pathname", !cliSplitOut.includes("/gosaki-piano"));
+assert("cli split does not echo 257 quoted reply", !/257\s+"/.test(cliSplitOut));
+assert("cli split exit 0", cliSplit.status === 0);
 
 console.log(`verify-gosaki-production-ftp-remote-dir: ${passes.length} passed, ${failures.length} failed`);
 for (const name of passes) console.log(`PASS ${name}`);

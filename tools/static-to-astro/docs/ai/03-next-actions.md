@@ -3,9 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the server PWD diagnostic, then push, then one read-only `workflow_dispatch`. Upload stays `if: ${{ false }}`.
+1. **Primary:** operator-gated commit of the quote PWD capture fix, then push, then one read-only `workflow_dispatch`. Upload stays `if: ${{ false }}`.
 2. Do not re-enable Upload. Do not use `pwd -p` or `debug`. `quote` is `PWD` only. **No FTP write / Secret change this phase.**
 3. `readyForAnyFutureFtpApply: false` · vsbvnd STOP.
+
+## 0. Gosaki FTP quote PWD capture fix (2026-10-06)
+
+```txt
+FTP_QUOTE_PWD_CAPTURE_FIX_RESULT: PASS
+UPLOAD_STILL_DISABLED: true
+COMMIT: false
+DISPATCH: false
+FTP_WRITE: false
+```
+
+Doc: `tools/static-to-astro/docs/gosaki-ftp-quote-pwd-capture-fix.md`
 
 ## 0. Gosaki FTP server PWD diagnostic (2026-10-06)
 

@@ -142,14 +142,19 @@ assert("inventory site key", GOSAKI_MUTEX_INVENTORY_SITE_KEY === "gosaki-piano")
 }
 
 {
-  const env = envArmIds(["gosaki-schedule", "gosaki-about-supabase"]);
+  const env = envArmIds([
+    "gosaki-schedule",
+    "gosaki-discography",
+    "gosaki-youtube-supabase",
+    "gosaki-about-supabase",
+  ]);
   const result = evaluateGosakiOperationalClientSaveUiMutexFromEnv(env);
-  assert("schedule+about fail", result.ok === false);
+  assert("four supabase arms pass", result.ok === true);
   assert(
-    "schedule+about reason",
-    result.reason === MUTEX_REASON.MULTIPLE_OPERATIONAL_SAVE_ARMS,
+    "four supabase arms reason",
+    result.reason === MUTEX_REASON.SIMULTANEOUS_OPERATIONAL_SAVE_ARMS,
   );
-  assert("schedule+about count 2", result.armedCount === 2);
+  assert("four supabase arms count 4", result.armedCount === 4);
 }
 
 {
@@ -231,11 +236,6 @@ function simulatePackageGenerateGate(env, paths, mutate) {
 // --- FAIL: filesystem untouched across package-like layout; PASS: proceeded once ---
 {
   const cases = [
-    {
-      label: "schedule+about",
-      env: envArmIds(["gosaki-schedule", "gosaki-about-supabase"]),
-      expectReason: MUTEX_REASON.MULTIPLE_OPERATIONAL_SAVE_ARMS,
-    },
     {
       label: "youtube-pair",
       env: envArmIds(["gosaki-youtube-contents", "gosaki-youtube-supabase"]),

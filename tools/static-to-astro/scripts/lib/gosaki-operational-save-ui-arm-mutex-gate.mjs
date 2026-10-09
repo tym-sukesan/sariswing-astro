@@ -27,6 +27,14 @@ import {
 export { MUTEX_REASON };
 export { GOSAKI_MUTEX_INVENTORY_SITE_KEY };
 
+/** Production Admin may arm these four Supabase/operational Saves together. */
+export const GOSAKI_SIMULTANEOUS_SAVE_ARM_FEATURE_IDS = Object.freeze([
+  "gosaki-schedule",
+  "gosaki-discography",
+  "gosaki-youtube-supabase",
+  "gosaki-about-supabase",
+]);
+
 /**
  * @param {string | null | undefined} siteKey
  * @returns {boolean}
@@ -55,6 +63,10 @@ export function collectGosakiOperationalClientSaveUiMutexEntries(env = process.e
 export function evaluateGosakiOperationalClientSaveUiMutexFromEnv(env = process.env) {
   return evaluateOperationalClientSaveUiMutex(
     collectGosakiOperationalClientSaveUiMutexEntries(env),
+    {
+      knownFeatureIds: GOSAKI_OPERATIONAL_CLIENT_SAVE_UI_ARMS.map((arm) => arm.featureId),
+      allowSimultaneousFeatureIds: [...GOSAKI_SIMULTANEOUS_SAVE_ARM_FEATURE_IDS],
+    },
   );
 }
 

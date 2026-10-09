@@ -20,7 +20,10 @@ import {
   userMessageForSaveFailure,
 } from "./gosaki-staging-one-click-save";
 import {
+  applyAboutSupabaseFieldsToSnapshot,
+  buildAboutSupabaseDryRunEndpointRequest,
   buildAboutSupabaseReadEndpointRequest,
+  buildAboutSupabaseSaveEndpointRequest,
   overlayAboutProfileLedeInBody,
   sanitizeAboutSupabaseReadDisplay,
 } from "./gosaki-staging-read-only-admin";
@@ -80,6 +83,8 @@ export type AboutOperationalEditDeps = {
     fingerprint?: string;
     currentFileSha?: string;
     expectedBeforeUpdatedAt?: string | null;
+    fieldLocks?: Record<string, string | null> | null;
+    fields?: Array<{ fieldKey: string; valueText: string; updatedAt?: string | null }>;
     current?: AboutFormSnapshot;
     next?: AboutFormSnapshot;
     before?: AboutFormSnapshot;
@@ -180,6 +185,7 @@ export function initGosakiAboutOperationalEdit(
   let baselineFingerprint: string | null = null;
   /** Supabase profile.lede updatedAt baseline for future optimistic lock (internal only). */
   let supabaseLedeUpdatedAtBaseline: string | null = null;
+  let supabaseFieldLocks: Record<string, string | null> | null = null;
 
   const saveArmed = isClientSaveArmed(deps.saveArmed);
   const writeBackend = deps.writeBackend === "supabase" ? "supabase" : "contents";
@@ -209,10 +215,13 @@ export function initGosakiAboutOperationalEdit(
     fingerprint?: string;
     currentFileSha?: string;
     expectedBeforeUpdatedAt?: string | null;
+    fieldLocks?: Record<string, string | null> | null;
     before?: AboutFormSnapshot | null;
   }): boolean {
     if (!display.ok || !display.fingerprint) return false;
-    if (isSupabasePath) return Boolean(resolveDryRunLockUpdatedAt(display));
+    if (isSupabasePath) {
+      return Boolean(resolveDryRunLockUpdatedAt(display) || display.fieldLocks);
+    }
     return Boolean(display.currentFileSha);
   }
 
@@ -224,13 +233,15 @@ export function initGosakiAboutOperationalEdit(
       dryRunServerFingerprint != null &&
       dryRunExpectedBefore != null;
     if (!base) return false;
-    if (isSupabasePath) return Boolean(String(dryRunExpectedBeforeUpdatedAt ?? "").trim());
+    if (isSupabasePath) return supabaseFieldLocks != null || Boolean(String(dryRunExpectedBeforeUpdatedAt ?? "").trim());
     return dryRunFileSha != null;
   }
 
   function fingerprintPresentForGate(): boolean {
     if (!dryRunServerFingerprint) return false;
-    if (isSupabasePath) return Boolean(String(dryRunExpectedBeforeUpdatedAt ?? "").trim());
+    if (isSupabasePath) {
+      return supabaseFieldLocks != null || Boolean(String(dryRunExpectedBeforeUpdatedAt ?? "").trim());
+    }
     return dryRunFileSha != null;
   }
   function setLiveReadUi(state: "pending" | "ready" | "error", error = "") {
@@ -362,6 +373,7 @@ export function initGosakiAboutOperationalEdit(
     dryRunFileSha = null;
     dryRunExpectedBefore = null;
     dryRunExpectedBeforeUpdatedAt = null;
+    supabaseFieldLocks = null;
     void refreshSaveGate();
   }
 
@@ -554,10 +566,21 @@ export function initGosakiAboutOperationalEdit(
         });
         const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
         const display = sanitizeAboutSupabaseReadDisplay(body, res.status);
-        if (display.ok && display.valueText && !display.unsafeWriteFlags) {
+        if (display.ok && !display.unsafeWriteFlags && (display.fields?.length || display.valueText)) {
           const snap = readFormSnapshot();
-          snap.profile.body = overlayAboutProfileLedeInBody(snap.profile.body, display.valueText);
-          writeFormSnapshot(snap);
+          const nextSnap = display.fields?.length
+            ? applyAboutSupabaseFieldsToSnapshot(snap, display.fields)
+            : {
+                ...snap,
+                profile: {
+                  ...snap.profile,
+                  body: overlayAboutProfileLedeInBody(snap.profile.body, display.valueText || ""),
+                },
+              };
+          writeFormSnapshot(nextSnap);
+          supabaseFieldLocks = Object.fromEntries(
+            (display.fields ?? []).map((field) => [field.fieldKey, field.updatedAt ?? null]),
+          );
           supabaseLedeUpdatedAtBaseline =
             display.updatedAt != null && String(display.updatedAt).trim()
               ? String(display.updatedAt)
@@ -686,10 +709,20 @@ export function initGosakiAboutOperationalEdit(
       const anon = String(deps.anonKey ?? "").trim();
       if (anon) headers.apikey = anon;
 
+      const dryRunPayload = isSupabasePath
+        ? buildAboutSupabaseDryRunEndpointRequest({
+            snapshot: next,
+            fieldLocks: supabaseFieldLocks ?? {},
+          })
+        : deps.buildDryRunEndpointRequest(next);
+      if (isSupabasePath && dryRunPayload.fieldError) {
+        setLocalValidation(String(dryRunPayload.fieldError), false);
+        return;
+      }
       const response = await fetchImpl(endpoint, {
         method: "POST",
         headers,
-        body: JSON.stringify(deps.buildDryRunEndpointRequest(next)),
+        body: JSON.stringify(dryRunPayload),
       });
       let body: unknown = null;
       try {
@@ -743,8 +776,9 @@ export function initGosakiAboutOperationalEdit(
       dryRunFormFingerprint = formFingerprint(next);
       dryRunServerFingerprint = display.fingerprint ?? null;
       dryRunFileSha = display.currentFileSha ?? null;
-      dryRunExpectedBefore = display.current ?? display.before ?? null;
+      dryRunExpectedBefore = display.current ?? display.before ?? (isSupabasePath ? next : null);
       dryRunExpectedBeforeUpdatedAt = resolveDryRunLockUpdatedAt(display);
+      if (isSupabasePath && display.fieldLocks) supabaseFieldLocks = display.fieldLocks;
       if (isSupabasePath && dryRunExpectedBeforeUpdatedAt) {
         // Ensure Save builder can read updatedAt from expectedBefore object.
         (dryRunExpectedBefore as { updatedAt?: string }).updatedAt =
@@ -848,7 +882,11 @@ export function initGosakiAboutOperationalEdit(
       applySaveButtonUi(false, "いまは保存できません");
       return;
     }
-    if (isSupabasePath && !String(dryRunExpectedBeforeUpdatedAt ?? "").trim()) {
+    if (
+      isSupabasePath &&
+      !supabaseFieldLocks &&
+      !String(dryRunExpectedBeforeUpdatedAt ?? "").trim()
+    ) {
       applySaveButtonUi(false, "いまは保存できません");
       return;
     }
@@ -872,18 +910,28 @@ export function initGosakiAboutOperationalEdit(
       const anon = String(deps.anonKey ?? "").trim();
       if (anon) headers.apikey = anon;
 
+      const savePayload = isSupabasePath
+        ? buildAboutSupabaseSaveEndpointRequest({
+            snapshot: next,
+            fieldLocks: supabaseFieldLocks ?? {},
+            fingerprint: dryRunServerFingerprint,
+          })
+        : deps.buildSaveEndpointRequest({
+            next,
+            expectedBefore: dryRunExpectedBefore,
+            fingerprint: dryRunServerFingerprint,
+          });
+      if (isSupabasePath && savePayload.fieldError) {
+        invalidateDryRun();
+        setLocalValidation(String(savePayload.fieldError), false);
+        return;
+      }
       let response: Response;
       try {
         response = await fetchImpl(saveEndpoint, {
           method: "POST",
           headers,
-          body: JSON.stringify(
-            deps.buildSaveEndpointRequest({
-              next,
-              expectedBefore: dryRunExpectedBefore,
-              fingerprint: dryRunServerFingerprint,
-            }),
-          ),
+          body: JSON.stringify(savePayload),
         });
       } catch (err) {
         invalidateDryRun();
@@ -948,19 +996,29 @@ export function initGosakiAboutOperationalEdit(
       // Save success: response.after becomes the new dirty/cancel baseline.
       // Form keeps saved values; dirty=false until the operator edits again.
       if (isSupabasePath) {
-        // Edge after is { valueText, updatedAt, … } — overlay lede only; keep bands/images.
-        const lede =
-          String(display.afterValueText ?? "").trim() ||
-          String((display.after as { valueText?: string } | undefined)?.valueText ?? "").trim();
         const snap = readFormSnapshot();
-        if (lede) {
-          snap.profile.body = overlayAboutProfileLedeInBody(snap.profile.body, lede);
+        if (display.fields?.length) {
+          const nextSnap = applyAboutSupabaseFieldsToSnapshot(snap, display.fields);
+          writeFormSnapshot(nextSnap);
+          baselineFingerprint = formFingerprint(nextSnap);
+          supabaseFieldLocks =
+            display.fieldLocks ??
+            Object.fromEntries(display.fields.map((field) => [field.fieldKey, field.updatedAt ?? null]));
+        } else {
+          // Legacy single-field after is { valueText, updatedAt } — overlay lede only.
+          const lede =
+            String(display.afterValueText ?? "").trim() ||
+            String((display.after as { valueText?: string } | undefined)?.valueText ?? "").trim();
+          if (lede) {
+            snap.profile.body = overlayAboutProfileLedeInBody(snap.profile.body, lede);
+          }
+          writeFormSnapshot(snap);
+          baselineFingerprint = formFingerprint(snap);
         }
-        writeFormSnapshot(snap);
-        baselineFingerprint = formFingerprint(snap);
         const nextUpdatedAt =
           String(display.afterUpdatedAt ?? "").trim() ||
           String((display.after as { updatedAt?: string } | undefined)?.updatedAt ?? "").trim() ||
+          String(supabaseFieldLocks?.["profile.lede"] ?? "").trim() ||
           null;
         supabaseLedeUpdatedAtBaseline = nextUpdatedAt;
         root.dataset.gosakiAboutLedeUpdatedAt = nextUpdatedAt ?? "";

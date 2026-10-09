@@ -27,12 +27,17 @@ export const ADMIN_RUNTIME_MUTEX_WIRED = false;
 export const MUTEX_REASON = Object.freeze({
   NO_OPERATIONAL_SAVE_ARM: "no_operational_save_arm",
   SINGLE_OPERATIONAL_SAVE_ARM: "single_operational_save_arm",
+  SIMULTANEOUS_OPERATIONAL_SAVE_ARMS: "simultaneous_operational_save_arms",
   MULTIPLE_OPERATIONAL_SAVE_ARMS: "multiple_operational_save_arms",
   INVALID_OPERATIONAL_SAVE_ARM_INPUT: "invalid_operational_save_arm_input",
 });
 
 /**
  * @typedef {{ featureId: string, armed: boolean }} OperationalSaveArmEntry
+ * @typedef {{
+ *   knownFeatureIds?: string[],
+ *   allowSimultaneousFeatureIds?: string[],
+ * }} OperationalSaveArmMutexPolicy
  * @typedef {{
  *   ok: boolean,
  *   reason: string,
@@ -46,10 +51,15 @@ export const MUTEX_REASON = Object.freeze({
  * Evaluate operational client Save UI arm mutex.
  * Never throws — invalid input → fail-closed.
  *
+ * Default (no policy): more than one armed id fails.
+ * With allowSimultaneousFeatureIds: a set that is a subset of that list may be armed together.
+ * Any other combination of 2+ arms still fails. Unknown ids fail when knownFeatureIds is set.
+ *
  * @param {unknown} entries
+ * @param {OperationalSaveArmMutexPolicy} [policy]
  * @returns {OperationalSaveArmMutexResult}
  */
-export function evaluateOperationalClientSaveUiMutex(entries) {
+export function evaluateOperationalClientSaveUiMutex(entries, policy) {
   if (!Array.isArray(entries)) {
     return {
       ok: false,
@@ -90,6 +100,10 @@ export function evaluateOperationalClientSaveUiMutex(entries) {
       invalidEntries.push({ index: i, issue: "armed_not_boolean" });
       continue;
     }
+    if (Array.isArray(policy?.knownFeatureIds) && !policy.knownFeatureIds.includes(featureId)) {
+      invalidEntries.push({ index: i, issue: "unknown_feature_id" });
+      continue;
+    }
     if (armed === true) armedFeatureIds.push(featureId);
   }
 
@@ -117,6 +131,19 @@ export function evaluateOperationalClientSaveUiMutex(entries) {
       ok: true,
       reason: MUTEX_REASON.SINGLE_OPERATIONAL_SAVE_ARM,
       armedCount: 1,
+      armedFeatureIds,
+    };
+  }
+  const allow = policy?.allowSimultaneousFeatureIds;
+  if (
+    Array.isArray(allow) &&
+    allow.length > 0 &&
+    armedFeatureIds.every((id) => allow.includes(id))
+  ) {
+    return {
+      ok: true,
+      reason: MUTEX_REASON.SIMULTANEOUS_OPERATIONAL_SAVE_ARMS,
+      armedCount,
       armedFeatureIds,
     };
   }

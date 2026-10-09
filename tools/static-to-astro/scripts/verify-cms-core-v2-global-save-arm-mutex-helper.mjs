@@ -163,7 +163,43 @@ const ytPair = GOSAKI_OPERATIONAL_CLIENT_SAVE_UI_ARMS.filter((a) => a.family ===
   (a) => ({ featureId: a.featureId, armed: true }),
 );
 const ytPairResult = evaluateOperationalClientSaveUiMutex(ytPair);
-assert("gosaki youtube pair fails", ytPairResult.ok === false);
+assert("gosaki youtube pair fails without policy", ytPairResult.ok === false);
+const fourPolicy = {
+  knownFeatureIds: GOSAKI_OPERATIONAL_CLIENT_SAVE_UI_ARMS.map((arm) => arm.featureId),
+  allowSimultaneousFeatureIds: [
+    "gosaki-schedule",
+    "gosaki-discography",
+    "gosaki-youtube-supabase",
+    "gosaki-about-supabase",
+  ],
+};
+const four = evaluateOperationalClientSaveUiMutex(
+  fourPolicy.allowSimultaneousFeatureIds.map((featureId) => ({ featureId, armed: true })),
+  fourPolicy,
+);
+assert("policy four supabase arms pass", four.ok === true);
+assert(
+  "policy four reason",
+  four.reason === MUTEX_REASON.SIMULTANEOUS_OPERATIONAL_SAVE_ARMS,
+);
+const mixed = evaluateOperationalClientSaveUiMutex(
+  [
+    { featureId: "gosaki-youtube-contents", armed: true },
+    { featureId: "gosaki-youtube-supabase", armed: true },
+  ],
+  fourPolicy,
+);
+assert("policy contents+supabase fails", mixed.ok === false);
+assert("policy contents+supabase reason", mixed.reason === MUTEX_REASON.MULTIPLE_OPERATIONAL_SAVE_ARMS);
+const unknown = evaluateOperationalClientSaveUiMutex(
+  [{ featureId: "not-a-registered-arm", armed: true }],
+  fourPolicy,
+);
+assert("policy unknown arm fails", unknown.ok === false);
+assert(
+  "policy unknown arm reason",
+  unknown.reason === MUTEX_REASON.INVALID_OPERATIONAL_SAVE_ARM_INPUT,
+);
 assert(
   "gosaki youtube pair reason",
   ytPairResult.reason === MUTEX_REASON.MULTIPLE_OPERATIONAL_SAVE_ARMS,

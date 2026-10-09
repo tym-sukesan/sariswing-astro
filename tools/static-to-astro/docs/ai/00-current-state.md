@@ -1,7 +1,9 @@
-Last updated: 2026-10-06
+Last updated: 2026-10-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki production multi-save local implementation (2026-10-09):** **PASS local / not rolled out** — Phase `gosaki-production-multi-save-local` · four Supabase Save arms may be true together (`gosaki-schedule`, `gosaki-discography`, `gosaki-youtube-supabase`, `gosaki-about-supabase`) · Contents+Supabase pairs still fail · About Save allowlist is heading, body, image alt, `profile.lede`, and the five band name/body/image alt keys from `gosaki-piano-band-profiles.json` · public About overlay still applies `profile.lede` only · workflow `CMS_KIT_SITE_EMBEDS_BUILD_READ` and `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` stay unset · no commit / Edge deploy / SQL apply / Secret change · verifiers: multi-save **66/0**, mutex helper **80/0**, mutex package-gate **106/0**, about vertical-slice **106/0**, about apply-readiness **144/0**, youtube vertical-slice **256/0**, save-completion **47/0**, deploy **179/0**.
 
 **Gosaki production Deploy button session retry (2026-10-09):** **PASS** — Phase `gosaki-production-deploy-session-retry` · Supabase CDN is a classic inline script before auth · Deploy init waits for `window.__gosakiAdminSupabaseClient` and rechecks on `gosaki-admin-auth-changed` · one-shot null no longer disables permanently · unarmed stays disabled · `deployInFlight` kept · no Edge / Secret / DB / workflow / commit · verifier: deploy **179/0**.
 

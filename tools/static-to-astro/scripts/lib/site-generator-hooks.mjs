@@ -25,6 +25,8 @@ export const TOOL_ROOT = path.resolve(__dirname, "../..");
  * @property {{ productionOrigin: string | null }} linkTransformContext
  * @property {unknown} [scheduleBundle]
  * @property {unknown} [discographyBundle]
+ * @property {unknown} [embedsBundle]
+ * @property {unknown} [pageFieldsBundle]
  * @property {unknown} [gosakiScheduleBundle]
  * @property {unknown} [gosakiDiscographyBundle]
  * @property {boolean} [useScheduleData]

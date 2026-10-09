@@ -1,11 +1,28 @@
-Last updated: 2026-10-06
+Last updated: 2026-10-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the Deploy session-retry fix. A production package rebuild is required before the live `/admin/` button can pick it up. Do not deploy from this phase.
-2. Logged-in Deploy enablement waits for the shared Supabase client and `gosaki-admin-auth-changed`. Unarmed and logged-out stay disabled.
-3. `readyForAnyFutureFtpApply: false` for the suspended generic FTP apply path · vsbvnd STOP.
+1. **Primary:** operator-gated commit of the multi-save local code. Do not arm production, deploy Edge, or apply SQL from this phase.
+2. After commit, operator steps that are still unexecuted: deploy `gosaki-about-supabase-save-dry-run` (new field allowlist), confirm `gosaki-schedule-save-dry-run` deploy (`DEPLOY_EXECUTED: false` in the schedule edge review) and apply `schedules_site_writer_update`, apply `site_embeds_admin_delete_youtube` and redeploy `gosaki-youtube-supabase-save-dry-run`. Discography operational Save is already live. No new Discography SQL.
+3. After a SELECT-only parity check, one workflow change may set `CMS_KIT_SITE_EMBEDS_BUILD_READ` and `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` to true. Public About still overlays `profile.lede` only. Heading, full body, image alt, and band fields need a later public overlay before those rows change the live About page.
+4. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).
+
+## 0. Gosaki production multi-save local implementation (2026-10-09)
+
+```txt
+MULTI_SAVE_LOCAL_RESULT: PASS
+FOUR_SUPABASE_ARMS_SIMULTANEOUS: PASS
+CONTENTS_SUPABASE_MIX: FAIL closed
+READY_FOR_OPERATOR_GATED_ROLLOUT: false
+SAFE_TO_COMMIT: true
+COMMIT: false
+EDGE_DEPLOY: false
+SQL_APPLY: false
+SECRET_CHANGE: false
+BUILD_READ_ENABLED: false
+seedAppliedStaging: true
+```
 
 ## 0. Gosaki production Deploy button session retry (2026-10-09)
 

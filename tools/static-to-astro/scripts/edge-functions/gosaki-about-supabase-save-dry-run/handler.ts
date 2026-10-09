@@ -3,7 +3,9 @@
  * Endpoint name: gosaki-about-supabase-save-dry-run
  * Staging only: kmjqppxjdnwwrtaeqjta · STOP: vsbvndwuajjhnzpohghh
  * Auth: user JWT + anon key · can_write_site · no service_role
- * Slice: page_key=about field_key=profile.lede only
+ * Slice: page_key=about. Legacy single-field path remains profile.lede.
+ * Multi-field path allowlist: profile.heading, profile.body, profile.image_alt,
+ * bands.<stable-id>.name|body|image_alt (stable id = gosaki-piano-band-profiles.json id).
  * operation=read: SELECT-only hydrate (no nextValueText · no Save approval)
  * Contents API path (G-12a) is NOT used here — parallel until cutover.
  *
@@ -18,6 +20,36 @@ export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 export const PAGE_KEY = "about";
 export const FIELD_KEY = "profile.lede";
+export const PROFILE_FIELD_KEYS = [
+  "profile.heading",
+  "profile.body",
+  "profile.image_alt",
+  "profile.lede",
+] as const;
+/** Article id `band-<json id>` → json id in config/sites/gosaki-piano-band-profiles.json. */
+export const BAND_ARTICLE_ID_RE = /^band-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+export const BAND_FIELD_KEY_RE = /^bands\.([a-z0-9]+(?:-[a-z0-9]+)*)\.(name|body|image_alt)$/;
+
+/** Stable ids from config/sites/gosaki-piano-band-profiles.json — not a guessed pattern. */
+export const ABOUT_BAND_STABLE_IDS = [
+  "gosakirika-trio",
+  "onomatope",
+  "careless-hornets",
+  "kikioto",
+  "caribbean-function",
+] as const;
+
+export function isAboutSupabaseAllowlistedFieldKey(fieldKey: string): boolean {
+  const key = String(fieldKey ?? "").trim();
+  if ((PROFILE_FIELD_KEYS as readonly string[]).includes(key)) return true;
+  const match = BAND_FIELD_KEY_RE.exec(key);
+  if (!match) return false;
+  return (ABOUT_BAND_STABLE_IDS as readonly string[]).includes(match[1]);
+}
+
+export function aboutFieldAllowsEmpty(fieldKey: string): boolean {
+  return fieldKey === "profile.image_alt" || fieldKey.endsWith(".image_alt");
+}
 export const READ_OPERATION = "read";
 export const DRY_RUN_OPERATION = "dryRun";
 export const SAVE_OPERATION = "save";
@@ -161,7 +193,8 @@ export async function handleAboutSupabaseSaveDryRun(
   if (siteSlug !== SITE_SLUG) {
     return { status: 400, ok: false, error: "siteSlug must be gosaki-piano", ...WRITE_FALSE };
   }
-  if (pageKey !== PAGE_KEY || fieldKey !== FIELD_KEY) {
+  const multi = Array.isArray(body.fields);
+  if (pageKey !== PAGE_KEY || (!multi && fieldKey !== FIELD_KEY)) {
     return {
       status: 400,
       ok: false,
@@ -202,6 +235,17 @@ export async function handleAboutSupabaseSaveDryRun(
     };
   }
 
+  if (multi) {
+    return handleAboutSupabaseFieldSet({
+      client: auth.client,
+      siteId: String(siteRow.id),
+      fields: body.fields,
+      operation,
+      approvalId,
+      getEnv,
+    });
+  }
+
   const { data: row, error: loadErr } = await loadTargetRow(auth.client);
   if (loadErr) {
     return {
@@ -240,6 +284,7 @@ export async function handleAboutSupabaseSaveDryRun(
       fieldKey: FIELD_KEY,
       valueText: before.valueText,
       updatedAt: before.updatedAt,
+      fields: await listAllowlistedFieldDrafts(auth.client),
       ...WRITE_FALSE,
     };
   }
@@ -395,5 +440,235 @@ export async function handleAboutSupabaseSaveDryRun(
       sortOrder: Number(updated.sort_order ?? 0) || 0,
       updatedAt: updated.updated_at != null ? String(updated.updated_at) : null,
     }),
+  };
+}
+
+type FieldDraft = {
+  fieldKey: string;
+  valueText: string;
+  updatedAt: string | null;
+  rowId: string | null;
+};
+
+async function listAllowlistedFieldDrafts(client: SupabaseClient): Promise<FieldDraft[]> {
+  const { data, error } = await client
+    .from("site_page_fields")
+    .select(SELECT_COLS)
+    .eq("site_slug", SITE_SLUG)
+    .eq("page_key", PAGE_KEY);
+  if (error || !Array.isArray(data)) return [];
+  return data
+    .filter((row) => isAboutSupabaseAllowlistedFieldKey(String(row.field_key ?? "")))
+    .map((row) => ({
+      fieldKey: String(row.field_key ?? "").trim(),
+      valueText: String(row.value_text ?? ""),
+      updatedAt: row.updated_at != null ? String(row.updated_at) : null,
+      rowId: row.id != null ? String(row.id) : null,
+    }));
+}
+
+async function handleAboutSupabaseFieldSet(input: {
+  client: SupabaseClient;
+  siteId: string;
+  fields: unknown;
+  operation: string;
+  approvalId: string;
+  getEnv: (key: string) => string | undefined;
+}): Promise<HandlerResult> {
+  const raw = Array.isArray(input.fields) ? input.fields : [];
+  if (raw.length === 0) {
+    return { status: 400, ok: false, error: "fields_required", ...WRITE_FALSE };
+  }
+  const seen = new Set<string>();
+  const requested: Array<{ fieldKey: string; nextValueText: string; expectedBeforeUpdatedAt: string | null }> = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      return { status: 400, ok: false, error: "field_not_allowed", ...WRITE_FALSE };
+    }
+    const record = item as Record<string, unknown>;
+    const fieldKey = String(record.fieldKey ?? "").trim();
+    if (!isAboutSupabaseAllowlistedFieldKey(fieldKey) || seen.has(fieldKey)) {
+      return {
+        status: 400,
+        ok: false,
+        error: "field_not_allowed",
+        detail: fieldKey || "duplicate_or_unknown",
+        ...WRITE_FALSE,
+      };
+    }
+    seen.add(fieldKey);
+    const nextValueText = String(record.nextValueText ?? record.valueText ?? "");
+    const trimmed = nextValueText.trim();
+    if (!aboutFieldAllowsEmpty(fieldKey) && !trimmed) {
+      return { status: 400, ok: false, error: "value_text_required", detail: fieldKey, ...WRITE_FALSE };
+    }
+    const lock = String(record.expectedBeforeUpdatedAt ?? "").trim();
+    requested.push({
+      fieldKey,
+      nextValueText: trimmed,
+      expectedBeforeUpdatedAt: lock || null,
+    });
+  }
+
+  const existing = await listAllowlistedFieldDrafts(input.client);
+  const byKey = new Map(existing.map((row) => [row.fieldKey, row]));
+  const planFields = requested.map((field) => {
+    const before = byKey.get(field.fieldKey) ?? null;
+    return {
+      fieldKey: field.fieldKey,
+      nextValueText: field.nextValueText,
+      expectedBeforeUpdatedAt: field.expectedBeforeUpdatedAt,
+      beforeUpdatedAt: before?.updatedAt ?? null,
+      changed: (before?.valueText ?? "") !== field.nextValueText || !before,
+      rowId: before?.rowId ?? null,
+    };
+  });
+  for (const field of planFields) {
+    const before = byKey.get(field.fieldKey) ?? null;
+    if (before && field.expectedBeforeUpdatedAt !== before.updatedAt) {
+      return {
+        status: 409,
+        ok: false,
+        error: "stale_optimistic_lock",
+        detail: field.fieldKey,
+        ...WRITE_FALSE,
+      };
+    }
+    if (!before && field.expectedBeforeUpdatedAt) {
+      return {
+        status: 409,
+        ok: false,
+        error: "stale_optimistic_lock",
+        detail: `${field.fieldKey} missing`,
+        ...WRITE_FALSE,
+      };
+    }
+  }
+
+  const changedFields = planFields.filter((field) => field.changed).map((field) => field.fieldKey);
+  const lockToken =
+    planFields.find((field) => field.beforeUpdatedAt)?.beforeUpdatedAt ??
+    planFields.find((field) => field.expectedBeforeUpdatedAt)?.expectedBeforeUpdatedAt ??
+    "insert";
+  const fingerprintValue = JSON.stringify(
+    planFields.map((field) => ({
+      fieldKey: field.fieldKey,
+      valueText: field.nextValueText,
+      updatedAt: field.beforeUpdatedAt,
+    })),
+  );
+  const plan = {
+    ok: true,
+    dryRun: input.operation !== SAVE_OPERATION,
+    pageKey: PAGE_KEY,
+    fieldKey: "multi",
+    changedFields,
+    noChange: changedFields.length === 0,
+    expectedBeforeUpdatedAt: lockToken,
+    fieldLocks: Object.fromEntries(planFields.map((field) => [field.fieldKey, field.beforeUpdatedAt])),
+    fingerprint: fingerprintValue,
+    errors: [] as string[],
+  };
+
+  if (input.operation === DRY_RUN_OPERATION) {
+    if (input.approvalId && input.approvalId !== DRY_RUN_APPROVAL_ID) {
+      return {
+        status: 400,
+        ok: false,
+        error: "approval_id_mismatch",
+        detail: `expected ${DRY_RUN_APPROVAL_ID}`,
+        ...WRITE_FALSE,
+      };
+    }
+    return {
+      status: 200,
+      ok: true,
+      operation: DRY_RUN_OPERATION,
+      approvalId: DRY_RUN_APPROVAL_ID,
+      ...plan,
+      ...WRITE_FALSE,
+    };
+  }
+
+  if (input.operation !== SAVE_OPERATION) {
+    return { status: 400, ok: false, error: "unknown_operation", ...WRITE_FALSE };
+  }
+  if (input.approvalId !== SAVE_APPROVAL_ID) {
+    return {
+      status: 400,
+      ok: false,
+      error: "approval_id_mismatch",
+      detail: `expected ${SAVE_APPROVAL_ID}`,
+      ...WRITE_FALSE,
+    };
+  }
+  if (!isAboutSupabaseSaveArmed(input.getEnv)) {
+    return {
+      status: 403,
+      ...plan,
+      ok: false,
+      error: "save_not_armed",
+      detail: `${SAVE_ARMED_ENV} must be true`,
+      saveArmed: false,
+      ...WRITE_FALSE,
+    };
+  }
+  if (changedFields.length === 0) {
+    return {
+      status: 200,
+      ok: true,
+      operation: SAVE_OPERATION,
+      noChange: true,
+      ...plan,
+      ...WRITE_FALSE,
+    };
+  }
+
+  for (const field of planFields) {
+    if (!field.changed) continue;
+    if (field.rowId && field.beforeUpdatedAt) {
+      const { data: updated, error: updateErr } = await input.client
+        .from("site_page_fields")
+        .update({ value_text: field.nextValueText })
+        .eq("id", field.rowId)
+        .eq("site_slug", SITE_SLUG)
+        .eq("updated_at", field.beforeUpdatedAt)
+        .select("id");
+      if (updateErr) {
+        return { status: 500, ok: false, error: "update_failed", detail: updateErr.message, ...WRITE_FALSE };
+      }
+      if (!updated || updated.length !== 1) {
+        return { status: 409, ok: false, error: "stale_optimistic_lock", detail: field.fieldKey, ...WRITE_FALSE };
+      }
+    } else {
+      const { error: insertErr } = await input.client.from("site_page_fields").insert({
+        site_id: input.siteId,
+        site_slug: SITE_SLUG,
+        page_key: PAGE_KEY,
+        field_key: field.fieldKey,
+        value_text: field.nextValueText,
+        published: true,
+        sort_order: 100,
+      });
+      if (insertErr) {
+        return { status: 500, ok: false, error: "insert_failed", detail: insertErr.message, ...WRITE_FALSE };
+      }
+    }
+  }
+
+  const after = await listAllowlistedFieldDrafts(input.client);
+  return {
+    status: 200,
+    ok: true,
+    operation: SAVE_OPERATION,
+    approvalId: SAVE_APPROVAL_ID,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: false,
+    writeBackend: "supabase",
+    changedFields,
+    fields: after.filter((row) => seen.has(row.fieldKey)),
+    fieldLocks: Object.fromEntries(after.filter((row) => seen.has(row.fieldKey)).map((row) => [row.fieldKey, row.updatedAt])),
+    fingerprint: JSON.stringify(after.filter((row) => seen.has(row.fieldKey))),
   };
 }

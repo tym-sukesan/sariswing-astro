@@ -5,14 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-deploy-session-retry PASS
+Current phase: gosaki-production-multi-save-local PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
 PUSH: false
 ftpApply: false
+EDGE_DEPLOY: false
+SQL_APPLY: false
+READY_FOR_OPERATOR_GATED_ROLLOUT: false
 SAFE_TO_COMMIT: true
+seedAppliedStaging: true
 ```
+
+## Gosaki production multi-save local implementation (2026-10-09)
+
+- Package mutex allows the four Supabase Save arms together. YouTube Contents+Supabase and About Contents+Supabase still fail. Unknown ids and non-boolean `armed` values fail. Env strings other than exact `"true"` stay disarmed via `isSaveArmExactTrue`.
+- About Supabase Save writes `profile.heading`, `profile.body`, `profile.image_alt`, derived `profile.lede`, and `bands.<stable-id>.name|body|image_alt` for gosakirika-trio, onomatope, careless-hornets, kikioto, caribbean-function. Optimistic lock is per field. Missing rows insert. `site_slug` stays `gosaki-piano`. No `service_role`. Contents Save is not this path.
+- Public build still overlays only `profile.lede`. Do not turn `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` on until parity, and do not expect heading/bands on the public page from that flag alone.
+- Schedule source already matches edit (published, not date), create (`published=false`), and no physical delete. Recorded schedule Edge deploy and `schedules_site_writer_update` apply are still false.
+- YouTube source already covers add, edit, published, sort_order, and delete. Recorded delete RLS apply and Edge redeploy are still false.
+- Discography operational RPC is already the live Save. No new SQL.
+- Production workflow leaves both BUILD_READ envs and all Save arms unset. Comments name the later operator switch. No new Secrets.
 
 ## Gosaki production Deploy button session retry (2026-10-09)
 

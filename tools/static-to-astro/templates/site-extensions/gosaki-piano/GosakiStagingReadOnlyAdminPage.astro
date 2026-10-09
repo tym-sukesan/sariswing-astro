@@ -740,7 +740,6 @@ const showClientScript = true;
         buildAboutSaveEndpointRequest,
         buildAboutSupabaseDryRunEndpointRequest,
         buildAboutSupabaseSaveEndpointRequest,
-        extractAboutProfileLedeFromBody,
         sanitizeAboutDryRunEndpointDisplay,
         sanitizeAboutSaveEndpointDisplay,
         sanitizeAboutSupabaseDryRunEndpointDisplay,
@@ -1035,18 +1034,12 @@ const showClientScript = true;
           assertDryRunEndpointSafe: assertGosakiAboutDryRunEndpointSafe,
           assertSaveEndpointSafe: assertGosakiAboutSaveEndpointSafe,
           buildDryRunEndpointRequest: aboutUseSupabase
-            ? (next) =>
-                buildAboutSupabaseDryRunEndpointRequest({
-                  nextValueText: extractAboutProfileLedeFromBody(next.profile.body),
-                })
+            ? (next) => buildAboutSupabaseDryRunEndpointRequest({ snapshot: next })
             : buildAboutDryRunEndpointRequest,
           buildSaveEndpointRequest: aboutUseSupabase
-            ? ({ next, expectedBefore, fingerprint, requestId }) =>
+            ? ({ next, fingerprint, requestId }) =>
                 buildAboutSupabaseSaveEndpointRequest({
-                  nextValueText: extractAboutProfileLedeFromBody(next.profile.body),
-                  expectedBeforeUpdatedAt: String(
-                    (expectedBefore as { updatedAt?: string } | null)?.updatedAt ?? "",
-                  ).trim(),
+                  snapshot: next,
                   fingerprint,
                   requestId,
                 })

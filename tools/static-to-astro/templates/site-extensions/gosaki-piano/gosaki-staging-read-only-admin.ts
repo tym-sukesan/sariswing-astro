@@ -129,6 +129,75 @@ export const ABOUT_SUPABASE_SAVE_OPERATION = "save" as const;
 export const ABOUT_SUPABASE_READ_OPERATION = "read" as const;
 export const ABOUT_SUPABASE_PAGE_KEY = "about";
 export const ABOUT_SUPABASE_FIELD_KEY = "profile.lede";
+export const ABOUT_SUPABASE_PROFILE_FIELD_KEYS = [
+  "profile.heading",
+  "profile.body",
+  "profile.image_alt",
+] as const;
+
+/** `band-gosakirika-trio` (article id) → `gosakirika-trio` (gosaki-piano-band-profiles.json). */
+/** Stable ids from config/sites/gosaki-piano-band-profiles.json. */
+export const ABOUT_BAND_STABLE_IDS = [
+  "gosakirika-trio",
+  "onomatope",
+  "careless-hornets",
+  "kikioto",
+  "caribbean-function",
+] as const;
+
+export function aboutBandStableIdFromArticleId(articleId: string): string | null {
+  const match = /^band-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(String(articleId ?? "").trim());
+  const stableId = match?.[1] ?? "";
+  return (ABOUT_BAND_STABLE_IDS as readonly string[]).includes(stableId) ? stableId : null;
+}
+
+export function aboutSupabaseBandFieldKey(
+  stableId: string,
+  part: "name" | "body" | "image_alt",
+): string {
+  return `bands.${stableId}.${part}`;
+}
+
+export type AboutSupabaseFieldWrite = {
+  fieldKey: string;
+  nextValueText: string;
+  expectedBeforeUpdatedAt: string | null;
+};
+
+export function buildAboutSupabaseFieldWrites(
+  snapshot: AboutContentFormSnapshot,
+  fieldLocks: Record<string, string | null> = {},
+): { ok: true; fields: AboutSupabaseFieldWrite[] } | { ok: false; error: string } {
+  const fields: AboutSupabaseFieldWrite[] = [];
+  const push = (fieldKey: string, value: string, allowEmpty: boolean) => {
+    const text = String(value ?? "").trim();
+    if (!allowEmpty && !text) return `${fieldKey} is required`;
+    fields.push({
+      fieldKey,
+      nextValueText: text,
+      expectedBeforeUpdatedAt: fieldLocks[fieldKey] ?? null,
+    });
+    return null;
+  };
+  const headingError = push("profile.heading", snapshot.profile.heading, false);
+  if (headingError) return { ok: false, error: headingError };
+  const bodyError = push("profile.body", snapshot.profile.body, false);
+  if (bodyError) return { ok: false, error: bodyError };
+  const lede = extractAboutProfileLedeFromBody(snapshot.profile.body);
+  const ledeError = push("profile.lede", lede, false);
+  if (ledeError) return { ok: false, error: ledeError };
+  push("profile.image_alt", snapshot.profile.imageAlt, true);
+  for (const band of snapshot.bands) {
+    const stableId = aboutBandStableIdFromArticleId(band.id);
+    if (!stableId) return { ok: false, error: `unsupported band id: ${band.id}` };
+    const nameError = push(aboutSupabaseBandFieldKey(stableId, "name"), band.name, false);
+    if (nameError) return { ok: false, error: nameError };
+    const bandBodyError = push(aboutSupabaseBandFieldKey(stableId, "body"), band.body, false);
+    if (bandBodyError) return { ok: false, error: bandBodyError };
+    push(aboutSupabaseBandFieldKey(stableId, "image_alt"), band.imageAlt, true);
+  }
+  return { ok: true, fields };
+}
 
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
@@ -1938,6 +2007,37 @@ export function extractAboutProfileLedeFromBody(body: string): string {
  * Overlay profile.lede into Admin form body (plain-text paragraphs or HTML).
  * Replaces first paragraph only — heading / bands / images untouched.
  */
+export function applyAboutSupabaseFieldsToSnapshot(
+  snapshot: AboutContentFormSnapshot,
+  fields: Array<{ fieldKey: string; valueText: string }>,
+): AboutContentFormSnapshot {
+  const next: AboutContentFormSnapshot = {
+    profile: { ...snapshot.profile },
+    bands: snapshot.bands.map((band) => ({ ...band })),
+  };
+  const byKey = new Map(fields.map((field) => [field.fieldKey, field.valueText]));
+  if (byKey.has("profile.heading")) next.profile.heading = byKey.get("profile.heading") ?? "";
+  if (byKey.has("profile.body")) next.profile.body = byKey.get("profile.body") ?? "";
+  else if (byKey.has("profile.lede")) {
+    next.profile.body = overlayAboutProfileLedeInBody(next.profile.body, byKey.get("profile.lede") ?? "");
+  }
+  if (byKey.has("profile.image_alt")) next.profile.imageAlt = byKey.get("profile.image_alt") ?? "";
+  next.bands = next.bands.map((band) => {
+    const stableId = aboutBandStableIdFromArticleId(band.id);
+    if (!stableId) return band;
+    const name = byKey.get(aboutSupabaseBandFieldKey(stableId, "name"));
+    const body = byKey.get(aboutSupabaseBandFieldKey(stableId, "body"));
+    const alt = byKey.get(aboutSupabaseBandFieldKey(stableId, "image_alt"));
+    return {
+      ...band,
+      name: name !== undefined ? name : band.name,
+      body: body !== undefined ? body : band.body,
+      imageAlt: alt !== undefined ? alt : band.imageAlt,
+    };
+  });
+  return next;
+}
+
 export function overlayAboutProfileLedeInBody(body: string, ledeText: string): string {
   const next = String(ledeText ?? "").trim();
   if (!next) return String(body ?? "");
@@ -1983,6 +2083,7 @@ export type AboutSupabaseReadDisplay = {
   fieldKey?: string;
   valueText?: string;
   updatedAt?: string | null;
+  fields?: Array<{ fieldKey: string; valueText: string; updatedAt: string | null }>;
   didWrite: boolean;
   dbWrite: boolean;
   networkWrite?: boolean;
@@ -2006,18 +2107,32 @@ export function sanitizeAboutSupabaseReadDisplay(
   const networkWrite = data.networkWrite === true;
   const unsafeWriteFlags = didWrite || dbWrite || networkWrite;
   const valueText = typeof data.valueText === "string" ? data.valueText.trim() : "";
+  const fields = Array.isArray(data.fields)
+    ? data.fields
+        .filter((row) => row && typeof row === "object")
+        .map((row) => {
+          const record = row as Record<string, unknown>;
+          return {
+            fieldKey: String(record.fieldKey ?? "").trim(),
+            valueText: String(record.valueText ?? ""),
+            updatedAt: record.updatedAt == null ? null : String(record.updatedAt),
+          };
+        })
+        .filter((row) => row.fieldKey.length > 0)
+    : [];
   const ok =
     data.ok === true &&
     String(data.operation ?? "") === ABOUT_SUPABASE_READ_OPERATION &&
     !unsafeWriteFlags &&
     errors.length === 0 &&
-    valueText.length > 0;
+    (valueText.length > 0 || fields.length > 0);
   return {
     ok,
     operation: typeof data.operation === "string" ? data.operation : undefined,
     pageKey: typeof data.pageKey === "string" ? data.pageKey : undefined,
     fieldKey: typeof data.fieldKey === "string" ? data.fieldKey : undefined,
     valueText: valueText || undefined,
+    fields,
     updatedAt:
       data.updatedAt == null
         ? null
@@ -2034,10 +2149,34 @@ export function sanitizeAboutSupabaseReadDisplay(
   };
 }
 
+function readAboutFieldLocks(value: unknown): Record<string, string | null> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const locks: Record<string, string | null> = {};
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (!key.trim()) continue;
+    locks[key] = raw == null || String(raw).trim() === "" ? null : String(raw);
+  }
+  return locks;
+}
+
 export function buildAboutSupabaseDryRunEndpointRequest(input: {
-  nextValueText: string;
+  nextValueText?: string;
   expectedBeforeUpdatedAt?: string | null;
+  snapshot?: AboutContentFormSnapshot;
+  fieldLocks?: Record<string, string | null>;
 }): Record<string, unknown> {
+  if (input.snapshot) {
+    const built = buildAboutSupabaseFieldWrites(input.snapshot, input.fieldLocks ?? {});
+    return {
+      siteSlug: GOSAKI_STAGING_SITE_SLUG,
+      pageKey: ABOUT_SUPABASE_PAGE_KEY,
+      dryRun: true,
+      operation: ABOUT_SUPABASE_DRY_RUN_OPERATION,
+      approvalId: ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID,
+      fields: built.ok ? built.fields : [],
+      fieldError: built.ok ? undefined : built.error,
+    };
+  }
   return {
     siteSlug: GOSAKI_STAGING_SITE_SLUG,
     pageKey: ABOUT_SUPABASE_PAGE_KEY,
@@ -2051,11 +2190,27 @@ export function buildAboutSupabaseDryRunEndpointRequest(input: {
 }
 
 export function buildAboutSupabaseSaveEndpointRequest(input: {
-  nextValueText: string;
-  expectedBeforeUpdatedAt: string;
+  nextValueText?: string;
+  expectedBeforeUpdatedAt?: string;
   fingerprint?: string;
   requestId?: string;
+  snapshot?: AboutContentFormSnapshot;
+  fieldLocks?: Record<string, string | null>;
 }): Record<string, unknown> {
+  if (input.snapshot) {
+    const built = buildAboutSupabaseFieldWrites(input.snapshot, input.fieldLocks ?? {});
+    return {
+      siteSlug: GOSAKI_STAGING_SITE_SLUG,
+      pageKey: ABOUT_SUPABASE_PAGE_KEY,
+      dryRun: false,
+      operation: ABOUT_SUPABASE_SAVE_OPERATION,
+      approvalId: ABOUT_SUPABASE_SAVE_APPROVAL_ID,
+      fields: built.ok ? built.fields : [],
+      fieldError: built.ok ? undefined : built.error,
+      fingerprint: String(input.fingerprint ?? "").trim(),
+      requestId: String(input.requestId ?? `ui-${Date.now()}`).trim(),
+    };
+  }
   return {
     siteSlug: GOSAKI_STAGING_SITE_SLUG,
     pageKey: ABOUT_SUPABASE_PAGE_KEY,
@@ -2216,6 +2371,8 @@ export type AboutEndpointDisplay = {
   commitUrl?: string | null;
   /** Supabase site_page_fields lock (dry-run / Save) — Contents path unused. */
   expectedBeforeUpdatedAt?: string | null;
+  /** Per-field updated_at from About multi-field dry-run. null = row not in DB yet. */
+  fieldLocks?: Record<string, string | null>;
   afterValueText?: string;
   afterUpdatedAt?: string | null;
   error?: string;
@@ -2341,13 +2498,14 @@ export function sanitizeAboutSupabaseDryRunEndpointDisplay(
     String(data.expectedBeforeUpdatedAt).trim()
       ? String(data.expectedBeforeUpdatedAt).trim()
       : null) || readUpdatedAtFromUnknown(data.before);
+  const fieldLocks = readAboutFieldLocks(data.fieldLocks);
   const ok =
     data.ok === true &&
     !unsafe &&
     errors.length === 0 &&
     data.dryRun === true &&
     Boolean(fingerprint) &&
-    Boolean(expectedBeforeUpdatedAt) &&
+    (Boolean(expectedBeforeUpdatedAt) || fieldLocks != null) &&
     !noChange;
   return {
     httpStatus,
@@ -2361,6 +2519,7 @@ export function sanitizeAboutSupabaseDryRunEndpointDisplay(
     after: asAboutSnapshot(data.after),
     fingerprint,
     expectedBeforeUpdatedAt,
+    fieldLocks: fieldLocks ?? undefined,
     // Intentionally omit currentFileSha — Supabase Edit must not require it.
     error,
     errors,
@@ -2440,6 +2599,20 @@ export function sanitizeAboutSupabaseSaveEndpointDisplay(
     data.indeterminate === true || String(data.saveReadiness ?? "") === "verification_required";
   const afterValueText = readValueTextFromUnknown(data.after);
   const afterUpdatedAt = readUpdatedAtFromUnknown(data.after);
+  const fieldLocks = readAboutFieldLocks(data.fieldLocks);
+  const fields = Array.isArray(data.fields)
+    ? data.fields
+        .filter((row) => row && typeof row === "object")
+        .map((row) => {
+          const record = row as Record<string, unknown>;
+          return {
+            fieldKey: String(record.fieldKey ?? "").trim(),
+            valueText: String(record.valueText ?? ""),
+            updatedAt: record.updatedAt == null ? null : String(record.updatedAt),
+          };
+        })
+        .filter((row) => row.fieldKey.length > 0)
+    : [];
   const expectedBeforeUpdatedAt =
     (typeof data.expectedBeforeUpdatedAt === "string" &&
     String(data.expectedBeforeUpdatedAt).trim()
@@ -2449,8 +2622,8 @@ export function sanitizeAboutSupabaseSaveEndpointDisplay(
     data.ok === true &&
     data.didWrite === true &&
     data.dbWrite === true &&
-    Boolean(afterValueText) &&
-    Boolean(afterUpdatedAt) &&
+    ((Boolean(afterValueText) && Boolean(afterUpdatedAt)) ||
+      (fields.length > 0 && fieldLocks != null)) &&
     !unsafe &&
     !indeterminate &&
     errors.length === 0;
@@ -2468,6 +2641,8 @@ export function sanitizeAboutSupabaseSaveEndpointDisplay(
     expectedBeforeUpdatedAt,
     afterValueText: afterValueText || undefined,
     afterUpdatedAt,
+    fields,
+    fieldLocks: fieldLocks ?? undefined,
     error,
     errors,
     saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,

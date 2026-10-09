@@ -120,6 +120,7 @@
     "verify:gosaki:production": "node scripts/verify-site-package.mjs --site gosaki-piano --profile production",
     "verify:gosaki-production-cms-save-completion": "node scripts/verify-gosaki-production-cms-save-completion.mjs",
     "verify:gosaki-production-deploy": "node scripts/verify-gosaki-production-deploy.mjs",
+    "verify:gosaki-production-multi-save": "node scripts/verify-gosaki-production-multi-save.mjs",
     "verify:gosaki-production-ftp-remote-dir": "node scripts/verify-gosaki-production-ftp-remote-dir.mjs",
     "verify:gosaki-production-ci-fixture": "node scripts/verify-gosaki-production-ci-fixture.mjs",
     "sanitize:gosaki-piano-ci": "node scripts/sanitize-gosaki-piano-ci-fixture.mjs",

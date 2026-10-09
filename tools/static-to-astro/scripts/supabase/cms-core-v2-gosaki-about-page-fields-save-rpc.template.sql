@@ -9,6 +9,10 @@
 -- Authz: SECURITY INVOKER + public.can_write_site(site_id). No service_role.
 -- Scope: site_slug = gosaki-piano, page_key = about, allowlisted field keys.
 -- Does not change image URLs. Does not touch Contents.
+-- Table privilege: GRANT INSERT, UPDATE ON site_page_fields TO authenticated.
+--   Column grants in the RLS template do not cover SELECT ... FOR UPDATE,
+--   nor columns written by the non-DEFINER updated_at / audit triggers.
+--   RLS policies still require can_write_site. anon is not granted.
 -- Rollback: cms-core-v2-gosaki-about-page-fields-save-rpc-rollback.template.sql
 -- =============================================================================
 
@@ -244,5 +248,10 @@ REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) F
 REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM anon;
 REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM service_role;
 GRANT EXECUTE ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) TO authenticated;
+
+-- INVOKER writes and SELECT ... FOR UPDATE need table INSERT/UPDATE.
+-- Idempotent if already present. Does not grant anon, service_role, or DELETE.
+-- Does not replace RLS: site_page_fields_admin_insert / _admin_update stay in force.
+GRANT INSERT, UPDATE ON TABLE public.site_page_fields TO authenticated;
 
 COMMIT;

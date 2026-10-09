@@ -56,6 +56,16 @@ const mirror = read(
 );
 const workflow = read(".github/workflows/gosaki-piano-production-public-dist.yml");
 
+function sqlStatements(text) {
+  return text
+    .split("\n")
+    .filter((line) => !/^\s*--/.test(line))
+    .join("\n");
+}
+
+const sqlBody = sqlStatements(sql);
+const rollbackBody = sqlStatements(rollback);
+
 const writeAt = sql.indexOf("-- ATOMIC WRITES");
 assert("sql validates before writes", writeAt > 0 && sql.indexOf("field_not_allowed") < writeAt);
 assert("sql lock check before writes", sql.indexOf("stale_optimistic_lock") < writeAt);
@@ -67,9 +77,27 @@ assert("sql invoker", sql.includes("SECURITY INVOKER"));
 assert("sql can_write_site", sql.includes("public.can_write_site"));
 assert("sql gosaki-piano", sql.includes("v_site_slug <> 'gosaki-piano'"));
 assert("sql page about", sql.includes("v_page_key <> 'about'"));
-assert("sql no service_role grant", !/GRANT[^;]*service_role/i.test(sql));
+assert("sql no service_role grant", !/GRANT[^;]*service_role/i.test(sqlBody));
 assert("sql revokes service_role execute", sql.includes("REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM service_role"));
-assert("rollback drops function only", rollback.includes("DROP FUNCTION IF EXISTS public.gosaki_about_page_fields_save"));
+assert("sql stays invoker", sqlBody.includes("SECURITY INVOKER") && !/SECURITY DEFINER/i.test(sqlBody));
+assert(
+  "sql grants table insert and update to authenticated",
+  /GRANT INSERT, UPDATE ON TABLE public\.site_page_fields TO authenticated;/i.test(sqlBody),
+);
+assert(
+  "sql does not grant insert or update to anon",
+  !/GRANT[^;]*\b(INSERT|UPDATE)\b[^;]*TO anon/i.test(sqlBody),
+);
+assert("sql does not grant delete", !/GRANT[^;]*\bDELETE\b/i.test(sqlBody));
+assert("sql keeps rls dependency", sql.includes("public.can_write_site"));
+assert("rollback drops function", rollback.includes("DROP FUNCTION IF EXISTS public.gosaki_about_page_fields_save"));
+assert(
+  "rollback revokes only table insert and update",
+  /REVOKE INSERT, UPDATE ON TABLE public\.site_page_fields FROM authenticated;/i.test(rollbackBody),
+);
+assert("rollback does not revoke select", !/REVOKE[^;]*\bSELECT\b/i.test(rollbackBody));
+assert("rollback does not revoke from anon", !/REVOKE[^;]*\banon\b/i.test(rollbackBody));
+assert("rollback does not drop policies", !/DROP POLICY/i.test(rollbackBody));
 for (const id of ABOUT_BAND_STABLE_IDS) {
   assert(`sql stable id ${id}`, sql.includes(`'${id}'`));
   assert(`handler stable id ${id}`, handler.includes(`"${id}"`));

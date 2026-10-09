@@ -1,7 +1,9 @@
-Last updated: 2026-10-09
+Last updated: 2026-10-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki About RPC table grant (2026-10-10):** **PASS local / not applied** — Phase `gosaki-about-rpc-table-grant` · live kmjq has About insert/update RLS and SELECT, but authenticated table INSERT/UPDATE are absent · RPC stays `SECURITY INVOKER` · template now `GRANT INSERT, UPDATE ON TABLE public.site_page_fields TO authenticated` · column grants are not enough for `SELECT … FOR UPDATE` or the non-DEFINER audit triggers · anon and `service_role` are not granted · rollback drops the function and revokes only that table INSERT/UPDATE · Schedule UPDATE policy and YouTube DELETE policy are already live, do not re-apply · no SQL apply / Edge deploy / Secret change / commit · verifier: atomic+overlay **77/0**.
 
 **Gosaki About atomic Save and public overlay (2026-10-10):** **PASS local / not rolled out** — Phase `gosaki-about-atomic-save-and-public-overlay` · multi-field About Save calls `gosaki_about_page_fields_save` (one transaction; validation before writes; `RAISE` rolls back) · SQL template only, not applied · public About overlay covers heading, body, image alt, lede, and the five bands' name/body/alt when `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` · image URLs unchanged · flag stays unset · current HTML re-applied is `noop_equal` · no commit / Edge deploy / SQL apply · verifier: atomic+overlay **68/0**, about vertical-slice **106/0**, multi-save **66/0**, save-completion **47/0**.
 

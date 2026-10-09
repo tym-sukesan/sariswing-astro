@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-about-atomic-save-and-public-overlay PASS
+Current phase: gosaki-about-rpc-table-grant PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -15,9 +15,19 @@ EDGE_DEPLOY: false
 SQL_APPLY: false
 BUILD_READ_ENABLED: false
 READY_TO_COMMIT: true
+READY_TO_APPLY_ABOUT_SQL: true
 READY_FOR_OPERATOR_GATED_ROLLOUT: false
 seedAppliedStaging: true
 ```
+
+## Gosaki About RPC table grant (2026-10-10)
+
+- Live kmjq already has `site_page_fields_admin_insert` and `site_page_fields_admin_update` (`can_write_site`), and authenticated SELECT. Table INSERT and UPDATE for `authenticated` are absent. `gosaki_about_page_fields_save` is not live.
+- The RPC stays `SECURITY INVOKER`. The template adds `GRANT INSERT, UPDATE ON TABLE public.site_page_fields TO authenticated`. Column grants are narrower on paper, but `SELECT … FOR UPDATE` and the non-DEFINER `updated_at` / audit triggers need the table privileges. anon is not granted. `service_role` is not used.
+- RLS, `site_slug=gosaki-piano`, `page_key=about`, the field allowlist, and the optimistic lock are unchanged.
+- Rollback drops the function and revokes only that table INSERT/UPDATE. It does not revoke SELECT or any column grants the RLS template may already hold. Schedule, YouTube, and Discography do not write `site_page_fields`.
+- Operator SELECT: `schedules_site_writer_update` and `site_embeds_admin_delete_youtube` are already live. Do not re-apply them.
+- SQL is not applied. Edge is not deployed. Secrets are unchanged.
 
 ## Gosaki About atomic Save and public overlay (2026-10-10)
 

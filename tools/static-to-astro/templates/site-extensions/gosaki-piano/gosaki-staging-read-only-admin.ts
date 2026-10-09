@@ -34,6 +34,23 @@ export function isGosakiProductionAdminSurface(
 }
 export const GOSAKI_STAGING_PREVIEW_URL =
   "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
+export const GOSAKI_PRODUCTION_PUBLIC_SITE_URL = "https://www.gosaki-piano.com/";
+
+/** Footer brand only on production. Staging keeps the test-environment notice. */
+export function resolveGosakiAdminFooterText(
+  env: Record<string, unknown> = import.meta.env as Record<string, unknown>,
+): string {
+  if (isGosakiProductionAdminSurface(env)) return "Gosaki Piano CMS";
+  return `Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_STAGING}`;
+}
+
+/** Public-site link: production origin only when the production admin surface is baked. */
+export function resolveGosakiAdminPublicSiteUrl(
+  env: Record<string, unknown> = import.meta.env as Record<string, unknown>,
+): string {
+  if (isGosakiProductionAdminSurface(env)) return GOSAKI_PRODUCTION_PUBLIC_SITE_URL;
+  return GOSAKI_STAGING_PREVIEW_URL;
+}
 
 /** G-11c4a — staging-only dry-run endpoint wiring (public URLs; no secrets). */
 export const G11C4A_PHASE = "G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep";

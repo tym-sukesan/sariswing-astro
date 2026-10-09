@@ -16,7 +16,6 @@ import AdminGosakiStagingCompactAuthBar from "./gosaki-admin/AdminGosakiStagingC
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
-  GOSAKI_STAGING_PREVIEW_URL as GOSAKI_PACKAGE_PREVIEW_URL,
 } from "../lib/gosaki-package-admin-paths";
 import youtubeConfig from "../data/gosaki-youtube-embed.json";
 import aboutConfig from "../data/gosaki-about-content.json";
@@ -53,8 +52,8 @@ import {
   assertG20u41DiscographySaveEndpointSafe,
   GOSAKI_STAGING_PREVIEW_URL,
   isGosakiProductionAdminSurface,
-  GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION,
-  GOSAKI_ADMIN_SAFETY_CHIP_STAGING,
+  resolveGosakiAdminFooterText,
+  resolveGosakiAdminPublicSiteUrl,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
   isG11c6aSaveEnabled,
@@ -188,9 +187,8 @@ const pageTitleByRoute = isProductionAdmin
       about: "プロフィール管理（テスト環境）",
     };
 const pageTitle = pageTitleByRoute[page];
-const adminFooterText = isProductionAdmin
-  ? `Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION}`
-  : `Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_STAGING}`;
+const adminFooterText = resolveGosakiAdminFooterText(import.meta.env);
+const publicSiteUrl = resolveGosakiAdminPublicSiteUrl(import.meta.env);
 const navCurrent = page === "portal" ? "home" : page;
 /** Auth script on every admin route (including portal) so logout works everywhere. */
 const showClientScript = true;
@@ -282,7 +280,7 @@ const showClientScript = true;
           {
             page === "portal" ? (
               <AdminGosakiStagingOperatorHome
-                previewUrl={GOSAKI_PACKAGE_PREVIEW_URL || publicHomeUrl}
+                previewUrl={publicSiteUrl}
                 schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
                 supabaseAuthConfigured={supabaseAuthConfigured}
                 showAuthBar={false}

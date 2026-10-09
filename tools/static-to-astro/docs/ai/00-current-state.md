@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki production admin footer and public-site link (2026-10-09):** **PASS** — Phase `gosaki-production-admin-footer-and-public-link` · production footer is `Gosaki Piano CMS` only · top chip unchanged · production public-site link is `https://www.gosaki-piano.com/` · staging / non-production stay on the staging preview URL · no commit / push / deploy · verifier: cms-save-completion **47/0**, deploy **172/0**.
+
 **Gosaki production upload enablement (2026-10-06):** **PASS** — Phase `gosaki-production-upload-enablement` · temporary `mirror -R --dry-run` step removed · Upload step enabled (no `if: ${{ false }}`) · PWD pre-check removed from Upload · guard + `cd` fail-exit + `mirror -R` only · no `--delete` · no `--dry-run` · no commit / push / dispatch / FTP connection · verifiers: remote-dir **119/0**, deploy **172/0**.
 
 **Gosaki production mirror dry-run step (2026-10-06):** **CLOSED** — Phase `gosaki-production-mirror-dry-run-step` · main dry-run PASS · superseded by upload enablement.

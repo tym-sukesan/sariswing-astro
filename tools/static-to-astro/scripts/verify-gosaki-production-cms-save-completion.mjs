@@ -88,6 +88,33 @@ assert(
   /portal:\s*"Gosaki Piano CMS"/.test(page) && page.includes("adminFooterText"),
 );
 assert(
+  "production footer is brand only",
+  adminLib.includes('if (isGosakiProductionAdminSurface(env)) return "Gosaki Piano CMS";') &&
+    page.includes("resolveGosakiAdminFooterText(import.meta.env)") &&
+    !page.includes("Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_PRODUCTION}"),
+);
+assert(
+  "staging footer keeps test-environment notice",
+  adminLib.includes("Gosaki Piano CMS — ${GOSAKI_ADMIN_SAFETY_CHIP_STAGING}"),
+);
+assert(
+  "production public site url is www.gosaki-piano.com",
+  adminLib.includes('export const GOSAKI_PRODUCTION_PUBLIC_SITE_URL = "https://www.gosaki-piano.com/";') &&
+    adminLib.includes("if (isGosakiProductionAdminSurface(env)) return GOSAKI_PRODUCTION_PUBLIC_SITE_URL;") &&
+    page.includes("resolveGosakiAdminPublicSiteUrl(import.meta.env)") &&
+    page.includes("previewUrl={publicSiteUrl}"),
+);
+assert(
+  "staging public site url unchanged",
+  adminLib.includes(
+    'export const GOSAKI_STAGING_PREVIEW_URL =\n  "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";',
+  ) && adminLib.includes("return GOSAKI_STAGING_PREVIEW_URL;"),
+);
+assert(
+  "production admin page does not hardcode staging preview link",
+  !page.includes("GOSAKI_PACKAGE_PREVIEW_URL"),
+);
+assert(
   "musician-basic shell staging copy retained",
   shell.includes("Gosaki Piano CMS（テスト環境）") && shell.includes("AdminGosakiStagingSafetyChips"),
 );

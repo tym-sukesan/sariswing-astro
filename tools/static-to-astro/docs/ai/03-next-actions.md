@@ -3,9 +3,20 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the enabled production Upload step, then push, then one `workflow_dispatch`. This dispatch performs the first real `mirror -R` upload.
-2. Temporary dry-run step is removed. Do not add `--delete`, `--dry-run`, pwd, or quote PWD. **No Secret change.**
-3. `readyForAnyFutureFtpApply: false` for the suspended generic FTP apply path · this Gosaki workflow Upload is the gated production path · vsbvnd STOP.
+1. **Primary:** operator-gated commit of the production admin footer/link fix together with the already-local upload enablement, if both are still uncommitted. Do not deploy from this phase.
+2. Production `/admin/` footer is `Gosaki Piano CMS` only. The upper chip stays. The public-site link is `https://www.gosaki-piano.com/` only when `PUBLIC_GOSAKI_ADMIN_SURFACE=production`.
+3. `readyForAnyFutureFtpApply: false` for the suspended generic FTP apply path · vsbvnd STOP.
+
+## 0. Gosaki production admin footer and public-site link (2026-10-09)
+
+```txt
+PRODUCTION_ADMIN_FOOTER_AND_PUBLIC_LINK_RESULT: PASS
+PRODUCTION_FOOTER: Gosaki Piano CMS
+PRODUCTION_PUBLIC_SITE_URL: https://www.gosaki-piano.com/
+STAGING_BEHAVIOR_UNCHANGED: true
+COMMIT: false
+SAFE_TO_COMMIT: true
+```
 
 ## 0. Gosaki production upload enablement (2026-10-06)
 

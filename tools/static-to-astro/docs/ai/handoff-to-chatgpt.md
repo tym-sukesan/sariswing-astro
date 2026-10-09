@@ -5,16 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-upload-enablement PASS
+Current phase: gosaki-production-admin-footer-and-public-link PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
 PUSH: false
 ftpApply: false
-TEMPORARY_DRY_RUN_REMOVED: true
-UPLOAD_ENABLED: true
-SAFE_TO_COMMIT_FOR_FIRST_PRODUCTION_UPLOAD: true
+PRODUCTION_FOOTER: Gosaki Piano CMS
+PRODUCTION_PUBLIC_SITE_URL: https://www.gosaki-piano.com/
+STAGING_BEHAVIOR_UNCHANGED: true
+SAFE_TO_COMMIT: true
 ```
+
+## Gosaki production admin footer and public-site link (2026-10-09)
+
+- Production footer no longer appends the safety chip. Upper chip copy is unchanged.
+- `公開サイトを確認する` uses `https://www.gosaki-piano.com/` only when the production admin surface is baked. Staging and other surfaces keep the staging preview URL.
+- No Deploy / Save / Edge / DB / FTP changes in this phase.
 
 ## Gosaki production upload enablement (2026-10-06)
 

@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-multi-save-local PASS
+Current phase: gosaki-about-atomic-save-and-public-overlay PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -13,10 +13,18 @@ PUSH: false
 ftpApply: false
 EDGE_DEPLOY: false
 SQL_APPLY: false
+BUILD_READ_ENABLED: false
+READY_TO_COMMIT: true
 READY_FOR_OPERATOR_GATED_ROLLOUT: false
-SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki About atomic Save and public overlay (2026-10-10)
+
+- Multi-field About Save no longer writes `site_page_fields` one row at a time. Edge calls `public.gosaki_about_page_fields_save`. The function checks allowlist, required text, and every optimistic lock before any INSERT/UPDATE. A lock miss on a later write raises and rolls the transaction back.
+- The RPC template is not applied. The Edge function is not deployed. `SECURITY INVOKER`, `can_write_site`, `site_slug=gosaki-piano`, no `service_role`, no Contents path.
+- When `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true`, the public About page can overlay `profile.heading`, `profile.body`, `profile.image_alt`, `profile.lede`, and `bands.<stable-id>.name|body|image_alt`. Image `src` stays. A missing DB value keeps the existing HTML. Read failure, empty, or duplicate keys keep the JSON page. Lede-only bundles still replace only the first paragraph.
+- The production workflow still unsets that flag. Do not set it until a SELECT-only parity check. Re-applying the current public HTML through the overlay is `noop_equal`.
 
 ## Gosaki production multi-save local implementation (2026-10-09)
 

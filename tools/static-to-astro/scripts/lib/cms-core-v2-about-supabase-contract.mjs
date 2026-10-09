@@ -18,6 +18,91 @@ export {
 export const ABOUT_SUPABASE_ENDPOINT_NAME = "gosaki-about-supabase-save-dry-run";
 export const ABOUT_PAGE_KEY = "about";
 export const ABOUT_FIELD_KEY_PROFILE_LEDE = "profile.lede";
+export const ABOUT_PROFILE_FIELD_KEYS = Object.freeze([
+  "profile.heading",
+  "profile.body",
+  "profile.image_alt",
+  "profile.lede",
+]);
+/** Stable ids from config/sites/gosaki-piano-band-profiles.json. */
+export const ABOUT_BAND_STABLE_IDS = Object.freeze([
+  "gosakirika-trio",
+  "onomatope",
+  "careless-hornets",
+  "kikioto",
+  "caribbean-function",
+]);
+
+/**
+ * @param {string} fieldKey
+ */
+export function isAboutAllowlistedFieldKey(fieldKey) {
+  const key = String(fieldKey ?? "").trim();
+  if (ABOUT_PROFILE_FIELD_KEYS.includes(key)) return true;
+  const match = /^bands\.([a-z0-9]+(?:-[a-z0-9]+)*)\.(name|body|image_alt)$/.exec(key);
+  if (!match) return false;
+  return ABOUT_BAND_STABLE_IDS.includes(match[1]);
+}
+
+/**
+ * @param {string} fieldKey
+ */
+export function aboutFieldAllowsEmpty(fieldKey) {
+  return fieldKey === "profile.image_alt" || String(fieldKey).endsWith(".image_alt");
+}
+
+/**
+ * Pure all-or-nothing plan. A single invalid field or lock mismatch returns no writes.
+ * @param {Array<{ fieldKey?: string, nextValueText?: string, valueText?: string, expectedBeforeUpdatedAt?: string | null }>} fields
+ * @param {Record<string, { valueText?: string, updatedAt?: string | null } | null | undefined>} [existingByKey]
+ */
+export function evaluateAboutFieldsAtomicSave(fields, existingByKey = {}) {
+  if (!Array.isArray(fields) || fields.length === 0) {
+    return { ok: false, error: "fields_required", writes: [] };
+  }
+  const seen = new Set();
+  /** @type {Array<{ fieldKey: string, nextValueText: string, expectedBeforeUpdatedAt: string | null, mode: "update" | "insert", changed: boolean }>} */
+  const writes = [];
+  for (const field of fields) {
+    const fieldKey = String(field?.fieldKey ?? "").trim();
+    if (!isAboutAllowlistedFieldKey(fieldKey) || seen.has(fieldKey)) {
+      return { ok: false, error: "field_not_allowed", detail: fieldKey, writes: [] };
+    }
+    seen.add(fieldKey);
+    const text = String(field?.nextValueText ?? field?.valueText ?? "").trim();
+    if (!aboutFieldAllowsEmpty(fieldKey) && !text) {
+      return { ok: false, error: "value_text_required", detail: fieldKey, writes: [] };
+    }
+    const rawLock = field?.expectedBeforeUpdatedAt;
+    const lock =
+      rawLock == null || String(rawLock).trim() === "" ? null : String(rawLock).trim();
+    const before = existingByKey[fieldKey] ?? null;
+    const beforeUpdatedAt =
+      before && before.updatedAt != null && String(before.updatedAt).trim()
+        ? String(before.updatedAt).trim()
+        : null;
+    if (before && lock !== beforeUpdatedAt) {
+      return { ok: false, error: "stale_optimistic_lock", detail: fieldKey, writes: [] };
+    }
+    if (!before && lock) {
+      return { ok: false, error: "stale_optimistic_lock", detail: fieldKey, writes: [] };
+    }
+    const beforeText = before ? String(before.valueText ?? "").trim() : null;
+    const changed = !before || beforeText !== text;
+    writes.push({
+      fieldKey,
+      nextValueText: text,
+      expectedBeforeUpdatedAt: lock,
+      mode: before ? "update" : "insert",
+      changed,
+    });
+  }
+  return {
+    ok: true,
+    noChange: writes.every((row) => !row.changed),
+    writes,
+  };
+}
 
 export const ABOUT_SUPABASE_DRY_RUN_OPERATION = "dryRun";
 export const ABOUT_SUPABASE_SAVE_OPERATION = "save";

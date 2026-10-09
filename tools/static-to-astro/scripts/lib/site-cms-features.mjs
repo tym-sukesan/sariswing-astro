@@ -15,6 +15,11 @@ import {
   createBuildReadSuccessEnvelope,
 } from "./build-read-envelope-utils.mjs";
 import { isFeatureFlagTrimTrue } from "./feature-flag-trim-true-utils.mjs";
+import {
+  ABOUT_FIELD_KEY_PROFILE_LEDE,
+  aboutFieldAllowsEmpty,
+  isAboutAllowlistedFieldKey,
+} from "./cms-core-v2-about-supabase-contract.mjs";
 
 /** @typedef {'schedule' | 'discography' | 'siteEmbeds' | 'sitePageFields'} SupabaseFeatureId */
 /** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent' | 'readOnlyAdmin'} CmsFeatureId */
@@ -301,7 +306,9 @@ export async function loadSiteEmbedsDataForBuild(opts) {
  * Read-only site_page_fields loader for build/convert (CMS Core v2 About slice).
  * Default: null when registry.sitePageFields=false and CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ≠true
  * (JSON About SoT remains convert fallback — no blank About).
- * When enabled: anon SELECT published about/profile.lede; empty/error → caller keeps JSON.
+ * When enabled: anon SELECT published about fields; empty/error/invalid → caller keeps JSON.
+ * profile.lede remains the legacy single-row success shape. Extra allowlisted fields
+ * are returned on aboutFields for the public overlay.
  * Never uses the service role key. Production ref STOP.
  *
  * @param {{ siteKey: string, toolRoot?: string, env?: NodeJS.ProcessEnv }} opts
@@ -318,7 +325,6 @@ export async function loadSitePageFieldsDataForBuild(opts) {
   const { resolveSupabaseAnonReadEnv } = await import("./supabase-anon-read-env-utils.mjs");
   const {
     ABOUT_PAGE_KEY,
-    ABOUT_FIELD_KEY_PROFILE_LEDE,
     SITE_PAGE_FIELDS_SELECT,
     mapSitePageFieldRowToLedeDraft,
   } = await import("./cms-core-v2-about-supabase-contract.mjs");
@@ -356,9 +362,8 @@ export async function loadSitePageFieldsDataForBuild(opts) {
       .select(SITE_PAGE_FIELDS_SELECT)
       .eq("site_slug", siteSlug)
       .eq("page_key", ABOUT_PAGE_KEY)
-      .eq("field_key", ABOUT_FIELD_KEY_PROFILE_LEDE)
       .eq("published", true)
-      .limit(2);
+      .limit(200);
     if (error) {
       return createBuildReadFallbackEnvelope({
         dataSourceKey: "pageFieldDataSource",
@@ -367,11 +372,26 @@ export async function loadSitePageFieldsDataForBuild(opts) {
         rowsKey: "fields",
         rows: [],
         siteSlug,
-        extra: { profileLede: null, fieldCount: 0 },
+        extra: { profileLede: null, fieldCount: 0, aboutFields: null },
       });
     }
     const fields = Array.isArray(data) ? data : [];
-    return finalizeSitePageFieldsLoadResult({ fields, siteSlug, mapSitePageFieldRowToLedeDraft });
+    if (fields.length >= 200) {
+      return createBuildReadFallbackEnvelope({
+        dataSourceKey: "pageFieldDataSource",
+        dataSource: "error",
+        fallbackReason: "about_fields_read_truncated",
+        rowsKey: "fields",
+        rows: [],
+        siteSlug,
+        extra: { profileLede: null, fieldCount: 0, aboutFields: null },
+      });
+    }
+    return finalizeSitePageFieldsAllowlistLoadResult({
+      fields,
+      siteSlug,
+      mapSitePageFieldRowToLedeDraft,
+    });
   } catch (err) {
     return createBuildReadFallbackEnvelope({
       dataSourceKey: "pageFieldDataSource",
@@ -439,5 +459,87 @@ export function finalizeSitePageFieldsLoadResult(input) {
     rows: fields,
     siteSlug,
     extra: { profileLede, fieldCount: 1 },
+  });
+}
+
+/**
+ * Adopt every allowlisted published About field.
+ * Duplicate keys or a truncated read are invalid and fall back to JSON.
+ * Blank non-alt values are omitted so the public page keeps the existing text.
+ * A blank image alt is kept so the overlay can clear alt without touching src.
+ *
+ * @param {{
+ *   fields: unknown[],
+ *   siteSlug: string,
+ *   mapSitePageFieldRowToLedeDraft: (row: unknown) => { fieldKey?: string, valueText?: string, updatedAt?: string | null },
+ * }} input
+ */
+export function finalizeSitePageFieldsAllowlistLoadResult(input) {
+  const fields = Array.isArray(input.fields) ? input.fields : [];
+  const siteSlug = String(input.siteSlug ?? "");
+  const mapRow = input.mapSitePageFieldRowToLedeDraft;
+  if (fields.length === 0) {
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "supabase-empty",
+      fallbackReason: "no_published_site_page_fields_rows",
+      rowsKey: "fields",
+      rows: [],
+      siteSlug,
+      extra: { profileLede: null, fieldCount: 0, aboutFields: null },
+    });
+  }
+  /** @type {Record<string, { fieldKey: string, valueText: string, updatedAt: string | null }>} */
+  const byKey = {};
+  for (const row of fields) {
+    const mapped = mapRow(row);
+    const fieldKey = String(mapped?.fieldKey ?? "").trim();
+    if (!isAboutAllowlistedFieldKey(fieldKey)) continue;
+    if (byKey[fieldKey]) {
+      return createBuildReadFallbackEnvelope({
+        dataSourceKey: "pageFieldDataSource",
+        dataSource: "error",
+        fallbackReason: "duplicate_about_field_key",
+        rowsKey: "fields",
+        rows: [],
+        siteSlug,
+        extra: { profileLede: null, fieldCount: 0, aboutFields: null },
+      });
+    }
+    const valueText = String(mapped?.valueText ?? "");
+    const trimmed = valueText.trim();
+    if (!aboutFieldAllowsEmpty(fieldKey) && !trimmed) continue;
+    byKey[fieldKey] = {
+      fieldKey,
+      valueText: trimmed,
+      updatedAt: mapped?.updatedAt != null ? String(mapped.updatedAt) : null,
+    };
+  }
+  const adopted = Object.values(byKey);
+  if (adopted.length === 0) {
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "supabase-empty",
+      fallbackReason: "no_allowlisted_about_fields",
+      rowsKey: "fields",
+      rows: [],
+      siteSlug,
+      extra: { profileLede: null, fieldCount: 0, aboutFields: null },
+    });
+  }
+  const lede = byKey[ABOUT_FIELD_KEY_PROFILE_LEDE];
+  /** @type {Record<string, string>} */
+  const aboutFields = {};
+  for (const row of adopted) aboutFields[row.fieldKey] = row.valueText;
+  return createBuildReadSuccessEnvelope({
+    dataSourceKey: "pageFieldDataSource",
+    rowsKey: "fields",
+    rows: adopted,
+    siteSlug,
+    extra: {
+      profileLede: lede ? { valueText: lede.valueText, updatedAt: lede.updatedAt } : null,
+      fieldCount: adopted.length,
+      aboutFields,
+    },
   });
 }

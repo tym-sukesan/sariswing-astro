@@ -3,10 +3,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the multi-save local code. Do not arm production, deploy Edge, or apply SQL from this phase.
-2. After commit, operator steps that are still unexecuted: deploy `gosaki-about-supabase-save-dry-run` (new field allowlist), confirm `gosaki-schedule-save-dry-run` deploy (`DEPLOY_EXECUTED: false` in the schedule edge review) and apply `schedules_site_writer_update`, apply `site_embeds_admin_delete_youtube` and redeploy `gosaki-youtube-supabase-save-dry-run`. Discography operational Save is already live. No new Discography SQL.
-3. After a SELECT-only parity check, one workflow change may set `CMS_KIT_SITE_EMBEDS_BUILD_READ` and `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` to true. Public About still overlays `profile.lede` only. Heading, full body, image alt, and band fields need a later public overlay before those rows change the live About page.
-4. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).
+1. **Primary:** operator-gated commit of the About atomic Save RPC and public overlay. Do not apply SQL, deploy Edge, or arm production from this phase.
+2. After commit, apply `cms-core-v2-gosaki-about-page-fields-save-rpc.template.sql` once, then deploy `gosaki-about-supabase-save-dry-run`. Until both are done, multi-field About Save cannot run atomically on kmjq.
+3. Schedule Edge deploy and `schedules_site_writer_update`, plus YouTube delete RLS `site_embeds_admin_delete_youtube` and its Edge redeploy, remain unexecuted. Discography needs no new SQL.
+4. After a SELECT-only parity check, one workflow change may set `CMS_KIT_SITE_EMBEDS_BUILD_READ` and `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` to true. The About overlay is ready for that flag. Re-applying the current public HTML is a no-op. A DB read failure keeps the JSON page.
+5. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).
+
+## 0. Gosaki About atomic Save and public overlay (2026-10-10)
+
+```txt
+ABOUT_ATOMIC_SAVE_AND_PUBLIC_OVERLAY_RESULT: PASS
+SQL_APPLY: false
+EDGE_DEPLOY: false
+BUILD_READ_ENABLED: false
+READY_TO_COMMIT: true
+READY_FOR_OPERATOR_GATED_ROLLOUT: false
+seedAppliedStaging: true
+```
 
 ## 0. Gosaki production multi-save local implementation (2026-10-09)
 

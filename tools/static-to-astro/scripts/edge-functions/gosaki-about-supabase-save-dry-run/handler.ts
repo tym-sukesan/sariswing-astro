@@ -4,7 +4,8 @@
  * Staging only: kmjqppxjdnwwrtaeqjta · STOP: vsbvndwuajjhnzpohghh
  * Auth: user JWT + anon key · can_write_site · no service_role
  * Slice: page_key=about. Legacy single-field path remains profile.lede.
- * Multi-field path allowlist: profile.heading, profile.body, profile.image_alt,
+ * Multi-field Save calls public.gosaki_about_page_fields_save (one transaction).
+ * Allowlist: profile.heading, profile.body, profile.image_alt, profile.lede,
  * bands.<stable-id>.name|body|image_alt (stable id = gosaki-piano-band-profiles.json id).
  * operation=read: SELECT-only hydrate (no nextValueText · no Save approval)
  * Contents API path (G-12a) is NOT used here — parallel until cutover.
@@ -624,39 +625,52 @@ async function handleAboutSupabaseFieldSet(input: {
     };
   }
 
-  for (const field of planFields) {
-    if (!field.changed) continue;
-    if (field.rowId && field.beforeUpdatedAt) {
-      const { data: updated, error: updateErr } = await input.client
-        .from("site_page_fields")
-        .update({ value_text: field.nextValueText })
-        .eq("id", field.rowId)
-        .eq("site_slug", SITE_SLUG)
-        .eq("updated_at", field.beforeUpdatedAt)
-        .select("id");
-      if (updateErr) {
-        return { status: 500, ok: false, error: "update_failed", detail: updateErr.message, ...WRITE_FALSE };
-      }
-      if (!updated || updated.length !== 1) {
-        return { status: 409, ok: false, error: "stale_optimistic_lock", detail: field.fieldKey, ...WRITE_FALSE };
-      }
-    } else {
-      const { error: insertErr } = await input.client.from("site_page_fields").insert({
-        site_id: input.siteId,
-        site_slug: SITE_SLUG,
-        page_key: PAGE_KEY,
-        field_key: field.fieldKey,
-        value_text: field.nextValueText,
-        published: true,
-        sort_order: 100,
-      });
-      if (insertErr) {
-        return { status: 500, ok: false, error: "insert_failed", detail: insertErr.message, ...WRITE_FALSE };
-      }
-    }
+  const { data, error: rpcErr } = await input.client.rpc("gosaki_about_page_fields_save", {
+    p_site_slug: SITE_SLUG,
+    p_page_key: PAGE_KEY,
+    p_fields: planFields.map((field) => ({
+      fieldKey: field.fieldKey,
+      nextValueText: field.nextValueText,
+      expectedBeforeUpdatedAt: field.expectedBeforeUpdatedAt,
+    })),
+  });
+  if (rpcErr) {
+    const message = String(rpcErr.message ?? "");
+    const stale = /stale_optimistic_lock|about_fields_save:/.test(message);
+    return {
+      status: stale ? 409 : 500,
+      ok: false,
+      error: stale ? "stale_optimistic_lock" : "save_failed",
+      detail: message,
+      ...WRITE_FALSE,
+    };
   }
-
-  const after = await listAllowlistedFieldDrafts(input.client);
+  const result = data && typeof data === "object" ? (data as Record<string, unknown>) : {};
+  if (result.ok !== true) {
+    const status = Number(result.http_status);
+    return {
+      status: Number.isFinite(status) && status >= 400 ? status : 400,
+      ok: false,
+      error: String(result.error ?? "save_failed"),
+      detail: result.detail != null ? String(result.detail) : undefined,
+      ...WRITE_FALSE,
+    };
+  }
+  if (result.noChange === true) {
+    return {
+      status: 200,
+      ok: true,
+      operation: SAVE_OPERATION,
+      noChange: true,
+      ...plan,
+      ...WRITE_FALSE,
+    };
+  }
+  const afterFields = Array.isArray(result.fields) ? result.fields : [];
+  const fieldLocks =
+    result.fieldLocks && typeof result.fieldLocks === "object" && !Array.isArray(result.fieldLocks)
+      ? result.fieldLocks
+      : {};
   return {
     status: 200,
     ok: true,
@@ -666,9 +680,9 @@ async function handleAboutSupabaseFieldSet(input: {
     dbWrite: true,
     networkWrite: false,
     writeBackend: "supabase",
-    changedFields,
-    fields: after.filter((row) => seen.has(row.fieldKey)),
-    fieldLocks: Object.fromEntries(after.filter((row) => seen.has(row.fieldKey)).map((row) => [row.fieldKey, row.updatedAt])),
-    fingerprint: JSON.stringify(after.filter((row) => seen.has(row.fieldKey))),
+    changedFields: Array.isArray(result.changedFields) ? result.changedFields : changedFields,
+    fields: afterFields,
+    fieldLocks,
+    fingerprint: JSON.stringify(afterFields),
   };
 }

@@ -64,7 +64,7 @@ export function buildAboutPublicBuildReadEvidence(input = {}) {
 
   const supabaseSuccess =
     source === "supabase" &&
-    Number(fieldCount) === 1 &&
+    Number(fieldCount) >= 1 &&
     (overlayOutcome === "applied" || overlayOutcome === "noop_equal");
 
   /** @type {string | null} */
@@ -261,6 +261,185 @@ export function verifyAboutContentHtml(aboutHtml, expected) {
   return { ok: errors.length === 0, errors };
 }
 
+function decodeAboutText(value) {
+  return String(value ?? "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/\u00a0/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeAboutText(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeAboutAttr(value) {
+  return escapeAboutText(value).replace(/"/g, "&quot;");
+}
+
+function paragraphTexts(html) {
+  return [...String(html ?? "").matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map((match) =>
+    decodeAboutText(match[1]),
+  );
+}
+
+/**
+ * Replace paragraph text inside one fragment. Equal text keeps the original markup.
+ * @param {string} html
+ * @param {string} bodyText
+ */
+function overlayParagraphTexts(html, bodyText) {
+  const source = String(html ?? "");
+  const parts = String(bodyText ?? "")
+    .split(/\n\s*\n/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const existing = [...source.matchAll(/<p\b[^>]*>[\s\S]*?<\/p>/gi)];
+  if (existing.length === 0 || parts.length === 0) {
+    return { html: source, missing: existing.length === 0, applied: false };
+  }
+  if (paragraphTexts(source).join("\n\n") === parts.join("\n\n")) {
+    return { html: source, missing: false, applied: false };
+  }
+  const open = existing[0][0].match(/^<p\b[^>]*>/i)?.[0] ?? "<p>";
+  const rebuilt = parts.map((text) => `${open}${escapeAboutText(text)}</p>`).join("\n\n");
+  const start = existing[0].index ?? 0;
+  const last = existing[existing.length - 1];
+  const end = (last.index ?? 0) + last[0].length;
+  return {
+    html: `${source.slice(0, start)}${rebuilt}${source.slice(end)}`,
+    missing: false,
+    applied: true,
+  };
+}
+
+/**
+ * @param {string} html
+ * @param {string} text
+ */
+function overlayFirstHeadingText(html, text) {
+  const source = String(html ?? "");
+  const match = source.match(/<h[1-6]\b[^>]*>[\s\S]*?<\/h[1-6]>/i);
+  if (!match || match.index == null) return { html: source, missing: true, applied: false };
+  if (decodeAboutText(match[0]) === text) return { html: source, missing: false, applied: false };
+  const open = match[0].match(/^<h[1-6]\b[^>]*>/i)?.[0] ?? "<h4>";
+  const close = match[0].match(/<\/h[1-6]>$/i)?.[0] ?? "</h4>";
+  const next = `${open}${escapeAboutText(text)}${close}`;
+  return {
+    html: `${source.slice(0, match.index)}${next}${source.slice(match.index + match[0].length)}`,
+    missing: false,
+    applied: true,
+  };
+}
+
+/**
+ * @param {string} html
+ * @param {string} alt
+ */
+function overlayFirstImageAlt(html, alt) {
+  const source = String(html ?? "");
+  const match = source.match(/<img\b[^>]*>/i);
+  if (!match || match.index == null) return { html: source, missing: true, applied: false };
+  const tag = match[0];
+  const current = decodeAboutText(tag.match(/\balt="([^"]*)"/i)?.[1] ?? "");
+  if (/\balt="/i.test(tag) && current === alt) return { html: source, missing: false, applied: false };
+  const next = /\balt="[^"]*"/i.test(tag)
+    ? tag.replace(/\balt="[^"]*"/i, `alt="${escapeAboutAttr(alt)}"`)
+    : tag.replace(/<img\b/i, `<img alt="${escapeAboutAttr(alt)}"`);
+  if (next === tag) return { html: source, missing: false, applied: false };
+  return {
+    html: `${source.slice(0, match.index)}${next}${source.slice(match.index + tag.length)}`,
+    missing: false,
+    applied: true,
+  };
+}
+
+/**
+ * @param {string} articleHtml
+ * @param {{ name?: string, body?: string, imageAlt?: string }} patch
+ */
+function overlayBandArticle(articleHtml, patch) {
+  let html = articleHtml;
+  let applied = false;
+  if (patch.name != null) {
+    const name = overlayElementText(html, "h3", "band-profile__name", patch.name);
+    if (name.missing) return { html: articleHtml, missing: true, applied: false };
+    html = name.html;
+    applied = applied || name.applied;
+  }
+  if (patch.body != null) {
+    const desc = overlayClassInner(html, "div", "band-profile__description", (inner) =>
+      overlayParagraphTexts(inner, patch.body),
+    );
+    if (desc.missing) return { html: articleHtml, missing: true, applied: false };
+    html = desc.html;
+    applied = applied || desc.applied;
+  }
+  if (patch.imageAlt != null) {
+    const alt = overlayFirstImageAlt(html, patch.imageAlt);
+    if (alt.missing) return { html: articleHtml, missing: true, applied: false };
+    html = alt.html;
+    applied = applied || alt.applied;
+  }
+  return { html, missing: false, applied };
+}
+
+/**
+ * @param {string} html
+ * @param {string} tag
+ * @param {string} className
+ * @param {string} text
+ */
+function overlayElementText(html, tag, className, text) {
+  const source = String(html ?? "");
+  const re = new RegExp(
+    `(<${tag}\\b[^>]*\\bclass="[^"]*\\b${className}\\b[^"]*"[^>]*>)([\\s\\S]*?)(</${tag}>)`,
+    "i",
+  );
+  const match = source.match(re);
+  if (!match || match.index == null) return { html: source, missing: true, applied: false };
+  if (decodeAboutText(match[2]) === text) return { html: source, missing: false, applied: false };
+  const next = `${match[1]}${escapeAboutText(text)}${match[3]}`;
+  return {
+    html: `${source.slice(0, match.index)}${next}${source.slice(match.index + match[0].length)}`,
+    missing: false,
+    applied: true,
+  };
+}
+
+/**
+ * @param {string} html
+ * @param {string} tag
+ * @param {string} className
+ * @param {(inner: string) => { html: string, missing: boolean, applied: boolean }} replacer
+ */
+function overlayClassInner(html, tag, className, replacer) {
+  const source = String(html ?? "");
+  const re = new RegExp(
+    `(<${tag}\\b[^>]*\\bclass="[^"]*\\b${className}\\b[^"]*"[^>]*>)([\\s\\S]*?)(</${tag}>)`,
+    "i",
+  );
+  const match = source.match(re);
+  if (!match || match.index == null) return { html: source, missing: true, applied: false };
+  const inner = replacer(match[2]);
+  if (inner.missing) return { html: source, missing: true, applied: false };
+  if (!inner.applied) return { html: source, missing: false, applied: false };
+  const next = `${match[1]}${inner.html}${match[3]}`;
+  return {
+    html: `${source.slice(0, match.index)}${next}${source.slice(match.index + match[0].length)}`,
+    missing: false,
+    applied: true,
+  };
+}
+
 /**
  * Prefer Supabase profile.lede over JSON first <p> when build-read returns a non-empty value.
  * Empty/error bundles leave config unchanged (Contents/JSON fallback).
@@ -326,6 +505,178 @@ export function applySitePageFieldsLedeToAboutConfig(config, pageFieldsBundle) {
 }
 
 /**
+ * Overlay every allowlisted About field when build-read returned supabase rows.
+ * A lede-only bundle keeps applySitePageFieldsLedeToAboutConfig.
+ * Missing anchors or a non-supabase bundle leave the JSON config unchanged.
+ * Image src is never rewritten. A missing field keeps the existing HTML value.
+ *
+ * @param {{ blocks?: Array<{ id?: string, enabled?: boolean, html?: string }> }} config
+ * @param {{ pageFieldDataSource?: string, profileLede?: { valueText?: string } | null, aboutFields?: Record<string, string> | null } | null | undefined} pageFieldsBundle
+ */
+/**
+ * Values already present in the public About HTML, keyed like site_page_fields.
+ * Re-applying this map must leave the HTML unchanged.
+ * @param {string} profileHtml
+ * @param {string} bandsHtml
+ */
+export function readAboutPublicOverlayFields(profileHtml, bandsHtml) {
+  /** @type {Record<string, string>} */
+  const aboutFields = {};
+  const heading = String(profileHtml ?? "").match(/<h[1-6]\b[^>]*>[\s\S]*?<\/h[1-6]>/i);
+  if (heading) aboutFields["profile.heading"] = decodeAboutText(heading[0]);
+  const body = paragraphTexts(profileHtml).join("\n\n");
+  if (body) aboutFields["profile.body"] = body;
+  const profileImg = String(profileHtml ?? "").match(/<img\b[^>]*>/i);
+  if (profileImg) {
+    aboutFields["profile.image_alt"] = decodeAboutText(
+      profileImg[0].match(/\balt="([^"]*)"/i)?.[1] ?? "",
+    );
+  }
+  const lede = extractProfileLedeFromBody(profileHtml);
+  if (lede) aboutFields["profile.lede"] = lede;
+  for (const article of String(bandsHtml ?? "").matchAll(
+    /<article\b[^>]*\bid="(band-[^"]+)"[^>]*>([\s\S]*?)<\/article>/gi,
+  )) {
+    const stableId = article[1].replace(/^band-/, "");
+    const inner = article[2];
+    const name = inner.match(
+      /<h3\b[^>]*\bclass="[^"]*\bband-profile__name\b[^"]*"[^>]*>([\s\S]*?)<\/h3>/i,
+    );
+    if (name) aboutFields[`bands.${stableId}.name`] = decodeAboutText(name[1]);
+    const desc = inner.match(
+      /<div\b[^>]*\bclass="[^"]*\bband-profile__description\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+    );
+    if (desc) {
+      const bandBody = paragraphTexts(desc[1]).join("\n\n");
+      if (bandBody) aboutFields[`bands.${stableId}.body`] = bandBody;
+    }
+    const img = inner.match(/<img\b[^>]*>/i);
+    if (img) {
+      aboutFields[`bands.${stableId}.image_alt`] = decodeAboutText(
+        img[0].match(/\balt="([^"]*)"/i)?.[1] ?? "",
+      );
+    }
+  }
+  return aboutFields;
+}
+
+export function applySitePageFieldsToAboutConfig(config, pageFieldsBundle) {
+  const aboutFields =
+    pageFieldsBundle &&
+    pageFieldsBundle.aboutFields &&
+    typeof pageFieldsBundle.aboutFields === "object"
+      ? pageFieldsBundle.aboutFields
+      : null;
+  const keys = aboutFields ? Object.keys(aboutFields) : [];
+  const onlyLede = keys.length === 0 || keys.every((key) => key === "profile.lede");
+  if (onlyLede) return applySitePageFieldsLedeToAboutConfig(config, pageFieldsBundle);
+  if (!pageFieldsBundle || pageFieldsBundle.pageFieldDataSource !== "supabase") {
+    return {
+      config,
+      ledeOverlaid: false,
+      reason: "page_fields_not_supabase",
+      overlayOutcome: "failed",
+    };
+  }
+
+  const blocks = Array.isArray(config.blocks) ? config.blocks.map((block) => ({ ...block })) : [];
+  const profileIdx = blocks.findIndex((block) => block?.id === BLOCK_PROFILE_ID);
+  const bandsIdx = blocks.findIndex((block) => block?.id === BLOCK_BANDS_ID);
+  const profileKeys = keys.filter((key) => key.startsWith("profile."));
+  const bandKeys = keys.filter((key) => key.startsWith("bands."));
+  if ((profileKeys.length > 0 && profileIdx < 0) || (bandKeys.length > 0 && bandsIdx < 0)) {
+    return { config, ledeOverlaid: false, reason: "about_block_missing", overlayOutcome: "failed" };
+  }
+
+  let profileHtml = String(blocks[profileIdx]?.html ?? "");
+  let bandsHtml = String(blocks[bandsIdx]?.html ?? "");
+  let applied = false;
+  const beforeLede = extractProfileLedeFromBody(profileHtml);
+
+  if (Object.prototype.hasOwnProperty.call(aboutFields, "profile.heading")) {
+    const heading = overlayFirstHeadingText(profileHtml, String(aboutFields["profile.heading"] ?? ""));
+    if (heading.missing) {
+      return { config, ledeOverlaid: false, reason: "profile_heading_missing", overlayOutcome: "failed" };
+    }
+    profileHtml = heading.html;
+    applied = applied || heading.applied;
+  }
+  if (Object.prototype.hasOwnProperty.call(aboutFields, "profile.body")) {
+    const body = overlayParagraphTexts(profileHtml, String(aboutFields["profile.body"] ?? ""));
+    if (body.missing) {
+      return { config, ledeOverlaid: false, reason: "profile_body_missing", overlayOutcome: "failed" };
+    }
+    profileHtml = body.html;
+    applied = applied || body.applied;
+  }
+  if (Object.prototype.hasOwnProperty.call(aboutFields, "profile.image_alt")) {
+    const alt = overlayFirstImageAlt(profileHtml, String(aboutFields["profile.image_alt"] ?? ""));
+    if (alt.missing) {
+      return { config, ledeOverlaid: false, reason: "profile_image_missing", overlayOutcome: "failed" };
+    }
+    profileHtml = alt.html;
+    applied = applied || alt.applied;
+  }
+
+  /** @type {Record<string, { name?: string, body?: string, imageAlt?: string }>} */
+  const bands = {};
+  for (const key of bandKeys) {
+    const match = /^bands\.([a-z0-9]+(?:-[a-z0-9]+)*)\.(name|body|image_alt)$/.exec(key);
+    if (!match) {
+      return { config, ledeOverlaid: false, reason: "field_not_allowed", overlayOutcome: "failed" };
+    }
+    const stableId = match[1];
+    bands[stableId] = bands[stableId] ?? {};
+    if (match[2] === "name") bands[stableId].name = String(aboutFields[key] ?? "");
+    if (match[2] === "body") bands[stableId].body = String(aboutFields[key] ?? "");
+    if (match[2] === "image_alt") bands[stableId].imageAlt = String(aboutFields[key] ?? "");
+  }
+  for (const [stableId, patch] of Object.entries(bands)) {
+    const re = new RegExp(
+      `<article\\b[^>]*\\bid="band-${stableId}"[^>]*>[\\s\\S]*?</article>`,
+      "i",
+    );
+    const article = bandsHtml.match(re);
+    if (!article || article.index == null) {
+      return { config, ledeOverlaid: false, reason: "band_article_missing", overlayOutcome: "failed" };
+    }
+    const next = overlayBandArticle(article[0], patch);
+    if (next.missing) {
+      return { config, ledeOverlaid: false, reason: "band_article_missing", overlayOutcome: "failed" };
+    }
+    if (next.applied) {
+      bandsHtml = `${bandsHtml.slice(0, article.index)}${next.html}${bandsHtml.slice(article.index + article[0].length)}`;
+      applied = true;
+    }
+  }
+
+  const ledeText = String(
+    aboutFields["profile.lede"] ?? pageFieldsBundle.profileLede?.valueText ?? "",
+  ).trim();
+  if (ledeText && extractProfileLedeFromBody(profileHtml) !== ledeText) {
+    const nextProfile = overlayProfileLedeInHtml(profileHtml, ledeText);
+    if (nextProfile === profileHtml) {
+      return { config, ledeOverlaid: false, reason: "overlay_noop", overlayOutcome: "failed" };
+    }
+    profileHtml = nextProfile;
+    applied = true;
+  }
+
+  if (profileIdx >= 0) blocks[profileIdx] = { ...blocks[profileIdx], html: profileHtml };
+  if (bandsIdx >= 0) blocks[bandsIdx] = { ...blocks[bandsIdx], html: bandsHtml };
+  const ledeOverlaid = extractProfileLedeFromBody(profileHtml) !== beforeLede;
+  if (!applied) {
+    return { config, ledeOverlaid: false, reason: null, overlayOutcome: "noop_equal" };
+  }
+  return {
+    config: { ...config, blocks },
+    ledeOverlaid,
+    reason: null,
+    overlayOutcome: "applied",
+  };
+}
+
+/**
  * @param {string} outDir
  * @param {string} toolRoot
  * @param {{ aboutPagePath?: string, pageFieldsBundle?: object | null }} [options]
@@ -378,7 +729,7 @@ export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
     };
   }
 
-  const overlay = applySitePageFieldsLedeToAboutConfig(loaded.config, options.pageFieldsBundle);
+  const overlay = applySitePageFieldsToAboutConfig(loaded.config, options.pageFieldsBundle);
   const effectiveConfig = overlay.config;
   const evidence = buildAboutPublicBuildReadEvidence({
     pageFieldsBundle: options.pageFieldsBundle ?? null,

@@ -4,6 +4,7 @@
  * Source-only. No Edge deploy, Secret set, workflow_dispatch, FTP, DB, or production build.
  */
 
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -326,6 +327,18 @@ assert("unarmed reason visible", deployBar.includes("Deploy 未武装"));
 assert("Save vs Deploy copy", deployBar.includes("Save とは別操作") || deployBar.includes("保存ボタンではありません"));
 assert("polling 12s", deployTs.includes("12_000") || deployTs.includes("12000"));
 assert("double-run lock", deployTs.includes("deployInFlight"));
+assert("deploy init runs once", deployTs.includes("deployBarInitialized"));
+assert("deploy retries after auth event", deployTs.includes('addEventListener("gosaki-admin-auth-changed"'));
+assert("deploy waits for shared admin client", deployTs.includes("waitForSharedAdminClient"));
+assert("deploy does not lock the first null token", !deployTs.includes("if (!token) {\n      message.textContent = LOGIN_READY_MESSAGE;\n      button.disabled = true;\n      return;\n    }"));
+assert(
+  "supabase cdn is classic inline before auth",
+  adminPage.includes(
+    'is:inline\n        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"',
+  ) &&
+    adminPage.indexOf("cdn.jsdelivr.net/npm/@supabase/supabase-js") <
+      adminPage.indexOf("Auth wiring must not depend on YouTube dry-run DOM"),
+);
 assert("portal-only init", adminPage.includes('dataset.gosakiAdminPage === "portal"'));
 assert("portal-only OperatorHome", /page === "portal"[\s\S]*AdminGosakiStagingOperatorHome/.test(adminPage));
 assert("deploy dataset on body", adminPage.includes("data-gosaki-production-deploy-armed"));
@@ -404,6 +417,223 @@ assert(
   pkg.scripts &&
     pkg.scripts["verify:gosaki-production-ftp-remote-dir"] ===
       "node scripts/verify-gosaki-production-ftp-remote-dir.mjs",
+);
+
+const sessionBehavior = spawnSync(
+  process.execPath,
+  ["--experimental-strip-types", "--input-type=module"],
+  {
+    cwd: TOOL_ROOT,
+    encoding: "utf8",
+    input: `
+import { initGosakiProductionDeployBar } from "./templates/site-extensions/gosaki-piano/gosaki-production-deploy.ts";
+
+function el(tag) {
+  const listeners = [];
+  return {
+    tagName: String(tag).toUpperCase(),
+    disabled: false,
+    textContent: "",
+    dataset: {},
+    attributes: {},
+    classList: { add() {}, remove() {} },
+    getAttribute(name) { return this.attributes[name] ?? null; },
+    setAttribute(name, value) { this.attributes[name] = String(value); },
+    addEventListener(type, fn) { listeners.push({ type, fn }); },
+    listenerCount(type) { return listeners.filter((entry) => entry.type === type).length; },
+  };
+}
+
+function installDom({ armed, token }) {
+  let currentToken = token;
+  const button = new HTMLButtonElement();
+  Object.assign(button, el("button"));
+  const message = el("p");
+  const status = el("p");
+  const hint = el("p");
+  const last = el("p");
+  const bar = el("aside");
+  bar.setAttribute("data-gosaki-production-deploy-bar", "true");
+  bar.setAttribute("data-gosaki-production-deploy-armed", armed ? "true" : "false");
+  const body = el("body");
+  body.dataset.gosakiProductionDeployArmed = armed ? "true" : "false";
+  body.dataset.gosakiSupabaseAuthConfigured = "true";
+  body.dataset.gosakiSupabaseUrl = "https://kmjqppxjdnwwrtaeqjta.supabase.co";
+  body.dataset.gosakiSupabaseAnonKey = "test-anon";
+  const ids = {
+    gosakiTriggerProductionDeploy: button,
+    gosakiDeployMessage: message,
+    gosakiDeployStatus: status,
+    gosakiDeployHint: hint,
+    gosakiDeployLastRun: last,
+  };
+  const windowListeners = [];
+  globalThis.HTMLButtonElement = HTMLButtonElement;
+  globalThis.document = {
+    body,
+    getElementById(id) { return ids[id] ?? null; },
+    querySelector(sel) { return String(sel).includes("deploy-bar") ? bar : null; },
+  };
+  globalThis.window = {
+    addEventListener(type, fn) { windowListeners.push({ type, fn }); },
+    dispatchEvent(event) {
+      for (const entry of windowListeners) {
+        if (entry.type === event.type) entry.fn(event);
+      }
+    },
+    listenerCount(type) { return windowListeners.filter((entry) => entry.type === type).length; },
+  };
+  globalThis.localStorage = { getItem() { return null; }, setItem() {} };
+  globalThis.confirm = () => false;
+  const client = {
+    auth: {
+      getSession: async () => ({
+        data: { session: currentToken ? { access_token: currentToken } : null },
+      }),
+    },
+  };
+  return {
+    button,
+    message,
+    setToken(next) { currentToken = next; },
+    setClient() { globalThis.window.__gosakiAdminSupabaseClient = client; },
+    clearClient() { delete globalThis.window.__gosakiAdminSupabaseClient; },
+  };
+}
+
+function waitFor(pred, timeoutMs = 800) {
+  const started = Date.now();
+  return new Promise((resolve, reject) => {
+    const tick = () => {
+      if (pred()) { resolve(); return; }
+      if (Date.now() - started > timeoutMs) { reject(new Error("timeout")); return; }
+      setTimeout(tick, 20);
+    };
+    tick();
+  });
+}
+
+class HTMLButtonElement {}
+
+const results = [];
+function check(name, cond) {
+  results.push(cond ? "PASS " + name : "FAIL " + name);
+}
+
+{
+  const dom = installDom({ armed: true, token: null });
+  dom.clearClient();
+  initGosakiProductionDeployBar();
+  check("starts disabled before client", dom.button.disabled === true);
+  setTimeout(() => dom.setToken("token-1"), 40);
+  setTimeout(() => dom.setClient(), 40);
+  await waitFor(() => dom.button.disabled === false);
+  check("enabled after shared client session", dom.button.disabled === false && dom.message.textContent === "");
+  initGosakiProductionDeployBar();
+  check("click listener once", dom.button.listenerCount("click") === 1);
+  check("auth listener once", globalThis.window.listenerCount("gosaki-admin-auth-changed") === 1);
+  dom.setToken(null);
+  globalThis.window.dispatchEvent(new Event("gosaki-admin-auth-changed"));
+  await waitFor(() => dom.button.disabled === true && dom.message.textContent.includes("ログイン後に"));
+  check("disabled after logout event", dom.button.disabled === true);
+  dom.setToken("token-2");
+  globalThis.window.dispatchEvent(new Event("gosaki-admin-auth-changed"));
+  await waitFor(() => dom.button.disabled === false);
+  check("enabled after later auth event", dom.button.disabled === false);
+}
+
+console.log(results.join("\\n"));
+if (results.some((line) => line.startsWith("FAIL"))) process.exit(1);
+`,
+  },
+);
+
+const behaviorOut = `${sessionBehavior.stdout || ""}\n${sessionBehavior.stderr || ""}`;
+assert(
+  "deploy session retry behavior",
+  sessionBehavior.status === 0 &&
+    behaviorOut.includes("PASS starts disabled before client") &&
+    behaviorOut.includes("PASS enabled after shared client session") &&
+    behaviorOut.includes("PASS click listener once") &&
+    behaviorOut.includes("PASS auth listener once") &&
+    behaviorOut.includes("PASS disabled after logout event") &&
+    behaviorOut.includes("PASS enabled after later auth event"),
+  behaviorOut.trim(),
+);
+
+const unarmedBehavior = spawnSync(
+  process.execPath,
+  ["--experimental-strip-types", "--input-type=module"],
+  {
+    cwd: TOOL_ROOT,
+    encoding: "utf8",
+    input: `
+import { initGosakiProductionDeployBar } from "./templates/site-extensions/gosaki-piano/gosaki-production-deploy.ts";
+class HTMLButtonElement {}
+function el(tag) {
+  const listeners = [];
+  return {
+    tagName: String(tag).toUpperCase(),
+    disabled: false,
+    textContent: "",
+    dataset: {},
+    attributes: {},
+    classList: { add() {}, remove() {} },
+    getAttribute(name) { return this.attributes[name] ?? null; },
+    setAttribute(name, value) { this.attributes[name] = String(value); },
+    addEventListener(type, fn) { listeners.push({ type, fn }); },
+    listenerCount(type) { return listeners.filter((entry) => entry.type === type).length; },
+  };
+}
+const button = new HTMLButtonElement();
+Object.assign(button, el("button"));
+const message = el("p");
+const bar = el("aside");
+bar.setAttribute("data-gosaki-production-deploy-armed", "false");
+const body = el("body");
+body.dataset.gosakiProductionDeployArmed = "false";
+body.dataset.gosakiSupabaseAuthConfigured = "true";
+body.dataset.gosakiSupabaseUrl = "https://kmjqppxjdnwwrtaeqjta.supabase.co";
+body.dataset.gosakiSupabaseAnonKey = "test-anon";
+const ids = {
+  gosakiTriggerProductionDeploy: button,
+  gosakiDeployMessage: message,
+  gosakiDeployStatus: el("p"),
+  gosakiDeployHint: el("p"),
+  gosakiDeployLastRun: el("p"),
+};
+globalThis.HTMLButtonElement = HTMLButtonElement;
+globalThis.document = {
+  body,
+  getElementById(id) { return ids[id] ?? null; },
+  querySelector() { return bar; },
+};
+globalThis.window = {
+  __gosakiAdminSupabaseClient: {
+    auth: { getSession: async () => ({ data: { session: { access_token: "token" } } }) },
+  },
+  addEventListener() {},
+  dispatchEvent() {},
+};
+globalThis.localStorage = { getItem() { return null; }, setItem() {} };
+initGosakiProductionDeployBar();
+await new Promise((resolve) => setTimeout(resolve, 50));
+if (button.disabled !== true) {
+  console.error("unarmed button was enabled");
+  process.exit(1);
+}
+if (message.textContent.includes("ログイン後に")) {
+  console.error("unarmed showed login message");
+  process.exit(1);
+}
+console.log("PASS unarmed stays disabled");
+`,
+  },
+);
+assert(
+  "deploy unarmed stays disabled",
+  unarmedBehavior.status === 0 && (unarmedBehavior.stdout || "").includes("PASS unarmed stays disabled"),
+  `${unarmedBehavior.stdout || ""}\n${unarmedBehavior.stderr || ""}`.trim(),
 );
 
 console.log(`verify-gosaki-production-deploy: ${passes.length} passed, ${failures.length} failed`);

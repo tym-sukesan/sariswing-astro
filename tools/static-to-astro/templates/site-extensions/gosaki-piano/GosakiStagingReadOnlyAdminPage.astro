@@ -342,7 +342,10 @@ const showClientScript = true;
     </div>
     {showClientScript ? (
       <>
-      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+      <script
+        is:inline
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"
+      ></script>
     <script is:inline>
       (function () {
         var body = document.body;

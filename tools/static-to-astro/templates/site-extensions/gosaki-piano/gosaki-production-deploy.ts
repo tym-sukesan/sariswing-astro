@@ -47,6 +47,25 @@ type StoredDeploy = {
 };
 
 let deployInFlight = false;
+let deployBarInitialized = false;
+
+const LOGIN_READY_MESSAGE = "ログイン後に公開サイトを更新できます。";
+const SHARED_CLIENT_WAIT_ATTEMPTS = 40;
+const SHARED_CLIENT_WAIT_MS = 100;
+
+type GosakiAdminWindow = Window & {
+  __gosakiAdminSupabaseClient?: {
+    auth: { getSession: () => Promise<{ data?: { session?: { access_token?: string } } }> };
+  };
+  supabase?: {
+    createClient?: (...args: unknown[]) => unknown;
+    default?: { createClient?: (...args: unknown[]) => unknown };
+  };
+};
+
+function gosakiAdminWindow(): GosakiAdminWindow {
+  return window as GosakiAdminWindow;
+}
 
 function formatDateTime(iso: string) {
   const date = new Date(iso);
@@ -135,15 +154,7 @@ function resolveAccessToken(): Promise<string | null> {
   if (!configured || !supabaseUrl || !supabaseAnonKey) {
     return Promise.resolve(null);
   }
-  const w = window as Window & {
-    __gosakiAdminSupabaseClient?: {
-      auth: { getSession: () => Promise<{ data?: { session?: { access_token?: string } } }> };
-    };
-    supabase?: {
-      createClient?: (...args: unknown[]) => unknown;
-      default?: { createClient?: (...args: unknown[]) => unknown };
-    };
-  };
+  const w = gosakiAdminWindow();
   if (w.__gosakiAdminSupabaseClient) {
     return w.__gosakiAdminSupabaseClient.auth
       .getSession()
@@ -164,6 +175,14 @@ function resolveAccessToken(): Promise<string | null> {
   };
   w.__gosakiAdminSupabaseClient = client;
   return client.auth.getSession().then((res) => res.data?.session?.access_token ?? null);
+}
+
+async function waitForSharedAdminClient(): Promise<void> {
+  const w = gosakiAdminWindow();
+  for (let attempt = 0; attempt < SHARED_CLIENT_WAIT_ATTEMPTS; attempt += 1) {
+    if (w.__gosakiAdminSupabaseClient) return;
+    await sleep(SHARED_CLIENT_WAIT_MS);
+  }
 }
 
 function functionUrl(supabaseUrl: string, name: string) {
@@ -268,6 +287,8 @@ async function pollDeployStatus(
 }
 
 export function initGosakiProductionDeployBar() {
+  if (deployBarInitialized) return;
+
   const bar = document.querySelector("[data-gosaki-production-deploy-bar]");
   const button = document.getElementById("gosakiTriggerProductionDeploy");
   const message = document.getElementById("gosakiDeployMessage");
@@ -276,6 +297,7 @@ export function initGosakiProductionDeployBar() {
   const lastDeploy = document.getElementById("gosakiDeployLastRun");
 
   if (!bar || !(button instanceof HTMLButtonElement) || !message || !statusEl) return;
+  deployBarInitialized = true;
 
   const armed =
     document.body.dataset.gosakiProductionDeployArmed === "true" ||
@@ -288,15 +310,29 @@ export function initGosakiProductionDeployBar() {
     return;
   }
 
-  void (async () => {
+  button.disabled = true;
+  message.textContent = LOGIN_READY_MESSAGE;
+
+  let syncGen = 0;
+  const syncSession = async () => {
+    if (deployInFlight) return;
+    const gen = ++syncGen;
     const token = await resolveAccessToken();
-    if (!token) {
-      message.textContent = "ログイン後に公開サイトを更新できます。";
-      button.disabled = true;
+    if (gen !== syncGen || deployInFlight) return;
+    if (token) {
+      button.disabled = false;
+      if (message.textContent === LOGIN_READY_MESSAGE) message.textContent = "";
       return;
     }
+    button.disabled = true;
+    message.textContent = LOGIN_READY_MESSAGE;
+  };
 
-    button.addEventListener("click", async () => {
+  window.addEventListener("gosaki-admin-auth-changed", () => {
+    void syncSession();
+  });
+
+  button.addEventListener("click", async () => {
       if (deployInFlight || button.disabled) return;
 
       const clickToken = await resolveAccessToken();
@@ -361,5 +397,9 @@ export function initGosakiProductionDeployBar() {
         setButtonBusy(button, false, true);
       }
     });
+
+  void (async () => {
+    await waitForSharedAdminClient();
+    await syncSession();
   })();
 }

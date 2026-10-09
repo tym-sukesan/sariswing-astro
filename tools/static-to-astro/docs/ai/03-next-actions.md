@@ -3,9 +3,20 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the production admin footer/link fix together with the already-local upload enablement, if both are still uncommitted. Do not deploy from this phase.
-2. Production `/admin/` footer is `Gosaki Piano CMS` only. The upper chip stays. The public-site link is `https://www.gosaki-piano.com/` only when `PUBLIC_GOSAKI_ADMIN_SURFACE=production`.
+1. **Primary:** operator-gated commit of the Deploy session-retry fix. A production package rebuild is required before the live `/admin/` button can pick it up. Do not deploy from this phase.
+2. Logged-in Deploy enablement waits for the shared Supabase client and `gosaki-admin-auth-changed`. Unarmed and logged-out stay disabled.
 3. `readyForAnyFutureFtpApply: false` for the suspended generic FTP apply path · vsbvnd STOP.
+
+## 0. Gosaki production Deploy button session retry (2026-10-09)
+
+```txt
+DEPLOY_SESSION_RETRY_RESULT: PASS
+LOGGED_IN_ENABLES_AFTER_CLIENT: true
+LOGGED_OUT_STAYS_DISABLED: true
+UNARMED_STAYS_DISABLED: true
+COMMIT: false
+SAFE_TO_COMMIT: true
+```
 
 ## 0. Gosaki production admin footer and public-site link (2026-10-09)
 

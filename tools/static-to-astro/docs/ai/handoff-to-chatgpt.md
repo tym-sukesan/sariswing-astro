@@ -5,17 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-admin-footer-and-public-link PASS
+Current phase: gosaki-production-deploy-session-retry PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
 PUSH: false
 ftpApply: false
-PRODUCTION_FOOTER: Gosaki Piano CMS
-PRODUCTION_PUBLIC_SITE_URL: https://www.gosaki-piano.com/
-STAGING_BEHAVIOR_UNCHANGED: true
 SAFE_TO_COMMIT: true
 ```
+
+## Gosaki production Deploy button session retry (2026-10-09)
+
+- Supabase UMD is an inline classic script before the auth script.
+- Deploy init no longer treats the first missing access token as final. It waits for `window.__gosakiAdminSupabaseClient` and rechecks on `gosaki-admin-auth-changed`.
+- Logged-in enables the button. Logged-out and unarmed stay disabled. `deployInFlight` still blocks a second deploy.
+- Edge `GOSAKI_PRODUCTION_DEPLOY_ARMED` was not changed. Live `/admin/` needs a new production package before this runs there.
 
 ## Gosaki production admin footer and public-site link (2026-10-09)
 

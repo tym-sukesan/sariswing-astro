@@ -3,8 +3,8 @@
  * Endpoint name: gosaki-about-supabase-save-dry-run
  * Staging only: kmjqppxjdnwwrtaeqjta · STOP: vsbvndwuajjhnzpohghh
  * Auth: user JWT + anon key · can_write_site · no service_role
- * Slice: page_key=about. Legacy single-field path remains profile.lede.
- * Multi-field Save calls public.gosaki_about_page_fields_save (one transaction).
+ * Slice: page_key=about. profile.lede-only Save uses the same RPC.
+ * Every Save calls public.gosaki_about_page_fields_save (one transaction).
  * Allowlist: profile.heading, profile.body, profile.image_alt, profile.lede,
  * bands.<stable-id>.name|body|image_alt (stable id = gosaki-piano-band-profiles.json id).
  * operation=read: SELECT-only hydrate (no nextValueText · no Save approval)
@@ -391,32 +391,61 @@ export async function handleAboutSupabaseSaveDryRun(
     };
   }
 
-  const { data: updated, error: updateErr } = await auth.client
-    .from("site_page_fields")
-    .update({ value_text: after.valueText })
-    .eq("id", row.id)
-    .eq("updated_at", before.updatedAt)
-    .select(SELECT_COLS)
-    .maybeSingle();
-
-  if (updateErr) {
+  const { data, error: rpcErr } = await auth.client.rpc("gosaki_about_page_fields_save", {
+    p_site_slug: SITE_SLUG,
+    p_page_key: PAGE_KEY,
+    p_fields: [
+      {
+        fieldKey: FIELD_KEY,
+        nextValueText: after.valueText,
+        expectedBeforeUpdatedAt: before.updatedAt,
+      },
+    ],
+  });
+  if (rpcErr) {
+    const message = String(rpcErr.message ?? "");
+    const stale = /stale_optimistic_lock|about_fields_save:/.test(message);
     return {
-      status: 500,
+      status: stale ? 409 : 500,
       ok: false,
-      error: "update_failed",
-      detail: updateErr.message,
+      error: stale ? "stale_optimistic_lock" : "update_failed",
+      detail: message,
       ...WRITE_FALSE,
     };
   }
-  if (!updated) {
+  const result = data && typeof data === "object" ? (data as Record<string, unknown>) : {};
+  if (result.ok !== true) {
+    const status = Number(result.http_status);
     return {
-      status: 409,
+      status: Number.isFinite(status) && status >= 400 ? status : 400,
       ok: false,
-      error: "stale_optimistic_lock",
-      detail: "row changed before update",
+      error: String(result.error ?? "update_failed"),
+      detail: result.detail != null ? String(result.detail) : undefined,
       ...WRITE_FALSE,
     };
   }
+  if (result.noChange === true) {
+    return {
+      status: 200,
+      ok: true,
+      operation: SAVE_OPERATION,
+      approvalId: SAVE_APPROVAL_ID,
+      ...plan,
+      ...WRITE_FALSE,
+      noChange: true,
+    };
+  }
+  const savedRow = (Array.isArray(result.fields) ? result.fields : []).find((item) => {
+    return item && typeof item === "object" && String((item as Record<string, unknown>).fieldKey ?? "") === FIELD_KEY;
+  }) as Record<string, unknown> | undefined;
+  const savedText = savedRow ? String(savedRow.valueText ?? after.valueText) : after.valueText;
+  const savedUpdatedAt = savedRow && savedRow.updatedAt != null ? String(savedRow.updatedAt) : null;
+  const saved = {
+    valueText: savedText,
+    published: before.published,
+    sortOrder: before.sortOrder,
+    updatedAt: savedUpdatedAt,
+  };
 
   return {
     status: 200,
@@ -428,19 +457,9 @@ export async function handleAboutSupabaseSaveDryRun(
     networkWrite: false,
     writeBackend: "supabase",
     before,
-    after: {
-      valueText: String(updated.value_text ?? ""),
-      published: updated.published === true,
-      sortOrder: Number(updated.sort_order ?? 0) || 0,
-      updatedAt: updated.updated_at != null ? String(updated.updated_at) : null,
-    },
+    after: saved,
     changedFields: ["value_text"],
-    fingerprint: fingerprint({
-      valueText: String(updated.value_text ?? ""),
-      published: updated.published === true,
-      sortOrder: Number(updated.sort_order ?? 0) || 0,
-      updatedAt: updated.updated_at != null ? String(updated.updated_at) : null,
-    }),
+    fingerprint: fingerprint(saved),
   };
 }
 

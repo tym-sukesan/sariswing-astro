@@ -11,7 +11,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   ABOUT_BAND_STABLE_IDS,
+  ABOUT_PROFILE_FIELD_KEYS,
   evaluateAboutFieldsAtomicSave,
+  isAboutAllowlistedFieldKey,
 } from "./lib/cms-core-v2-about-supabase-contract.mjs";
 import {
   applySitePageFieldsLedeToAboutConfig,
@@ -81,8 +83,17 @@ assert("sql no service_role grant", !/GRANT[^;]*service_role/i.test(sqlBody));
 assert("sql revokes service_role execute", sql.includes("REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM service_role"));
 assert("sql stays invoker", sqlBody.includes("SECURITY INVOKER") && !/SECURITY DEFINER/i.test(sqlBody));
 assert(
-  "sql grants table insert and update to authenticated",
-  /GRANT INSERT, UPDATE ON TABLE public\.site_page_fields TO authenticated;/i.test(sqlBody),
+  "sql has no table insert or update grant",
+  !/GRANT\s+(INSERT|UPDATE)\s+ON\s+TABLE/i.test(sqlBody),
+);
+assert(
+  "sql grants required insert columns",
+  /GRANT INSERT \(\s*site_id,\s*site_slug,\s*page_key,\s*field_key,\s*value_text,\s*published,\s*sort_order\s*\) ON TABLE public\.site_page_fields TO authenticated;/i.test(sqlBody),
+);
+assert(
+  "sql grants update of value_text only",
+  /GRANT UPDATE \(value_text\) ON TABLE public\.site_page_fields TO authenticated;/i.test(sqlBody) &&
+    !/GRANT UPDATE \([^)]*published/i.test(sqlBody),
 );
 assert(
   "sql does not grant insert or update to anon",
@@ -90,17 +101,64 @@ assert(
 );
 assert("sql does not grant delete", !/GRANT[^;]*\bDELETE\b/i.test(sqlBody));
 assert("sql keeps rls dependency", sql.includes("public.can_write_site"));
+assert(
+  "marker is transaction-local and set before lock read",
+  sql.includes("set_config('app.gosaki_about_rpc_write', '1', true)") &&
+    sql.indexOf("set_config('app.gosaki_about_rpc_write', '1', true)") < sql.indexOf("\n    FOR UPDATE;"),
+);
+assert(
+  "restrictive policies call the shared write predicate",
+  sql.includes("CREATE POLICY site_page_fields_about_rpc_insert") &&
+    sql.includes("CREATE POLICY site_page_fields_about_rpc_update") &&
+    sql.includes("AS RESTRICTIVE") &&
+    sql.includes("current_setting('app.gosaki_about_rpc_write', true) = '1'") &&
+    sql.includes("public.can_write_site(p_site_id)") &&
+    sql.includes("= 'gosaki-piano'") &&
+    sql.includes("= 'about'") &&
+    sql.includes("public.gosaki_about_field_key_allowed(p_field_key)") &&
+    sql.split("public.gosaki_about_rpc_write_allowed(site_id, site_slug, page_key, field_key)").length === 4,
+);
+assert("rpc uses the same allowlist function", sql.includes("public.gosaki_about_field_key_allowed(v_field_key)"));
 assert("rollback drops function", rollback.includes("DROP FUNCTION IF EXISTS public.gosaki_about_page_fields_save"));
 assert(
-  "rollback revokes only table insert and update",
-  /REVOKE INSERT, UPDATE ON TABLE public\.site_page_fields FROM authenticated;/i.test(rollbackBody),
+  "rollback drops only the new restrictive policies",
+  rollbackBody.includes("DROP POLICY IF EXISTS site_page_fields_about_rpc_insert ON public.site_page_fields") &&
+    rollbackBody.includes("DROP POLICY IF EXISTS site_page_fields_about_rpc_update ON public.site_page_fields") &&
+    !/DROP POLICY[^;]*site_page_fields_(admin_insert|admin_update|public_select_published|admin_select_site)/.test(rollbackBody),
+);
+assert(
+  "rollback revokes the column grants",
+  /REVOKE INSERT \(\s*site_id,\s*site_slug,\s*page_key,\s*field_key,\s*value_text,\s*published,\s*sort_order\s*\) ON TABLE public\.site_page_fields FROM authenticated;/i.test(rollbackBody) &&
+    /REVOKE UPDATE \(value_text\) ON TABLE public\.site_page_fields FROM authenticated;/i.test(rollbackBody) &&
+    !/REVOKE\s+(INSERT|UPDATE)\s+ON\s+TABLE/i.test(rollbackBody),
 );
 assert("rollback does not revoke select", !/REVOKE[^;]*\bSELECT\b/i.test(rollbackBody));
 assert("rollback does not revoke from anon", !/REVOKE[^;]*\banon\b/i.test(rollbackBody));
-assert("rollback does not drop policies", !/DROP POLICY/i.test(rollbackBody));
+function rpcWriteAllowed(input) {
+  return input.marker === "1" &&
+    input.canWrite === true &&
+    input.siteSlug === "gosaki-piano" &&
+    input.pageKey === "about" &&
+    isAboutAllowlistedFieldKey(input.fieldKey);
+}
+const allowedBase = { marker: "1", canWrite: true, siteSlug: "gosaki-piano", pageKey: "about", fieldKey: "profile.lede" };
+assert("direct write without marker denied", rpcWriteAllowed({ ...allowedBase, marker: null }) === false);
+assert("rpc marker and valid field allowed", rpcWriteAllowed(allowedBase) === true);
+assert("wrong site denied", rpcWriteAllowed({ ...allowedBase, siteSlug: "other" }) === false);
+assert("wrong page denied", rpcWriteAllowed({ ...allowedBase, pageKey: "home" }) === false);
+assert("invalid field denied", rpcWriteAllowed({ ...allowedBase, fieldKey: "bands.not-a-band.name" }) === false);
+assert("can_write_site false denied", rpcWriteAllowed({ ...allowedBase, canWrite: false }) === false);
+for (const key of ABOUT_PROFILE_FIELD_KEYS) {
+  assert(`sql allowlist ${key}`, sql.includes(`'${key}'`));
+  assert(`predicate allows ${key}`, rpcWriteAllowed({ ...allowedBase, fieldKey: key }) === true);
+}
 for (const id of ABOUT_BAND_STABLE_IDS) {
-  assert(`sql stable id ${id}`, sql.includes(`'${id}'`));
   assert(`handler stable id ${id}`, handler.includes(`"${id}"`));
+  for (const part of ["name", "body", "image_alt"]) {
+    const key = `bands.${id}.${part}`;
+    assert(`sql allowlist ${key}`, sql.includes(`'${key}'`));
+    assert(`predicate allows ${key}`, rpcWriteAllowed({ ...allowedBase, fieldKey: key }) === true);
+  }
 }
 
 const existing = {
@@ -152,6 +210,9 @@ assert("non-alt empty rejected", emptyHeading.ok === false && emptyHeading.write
 const multiFn = handler.slice(handler.indexOf("async function handleAboutSupabaseFieldSet"));
 assert("multi save calls one rpc", multiFn.includes('rpc("gosaki_about_page_fields_save"'));
 assert("multi save has no per-field update", !multiFn.includes(".update("));
+const ledeFn = handler.slice(0, handler.indexOf("async function handleAboutSupabaseFieldSet"));
+assert("single lede save uses the rpc", ledeFn.includes('rpc("gosaki_about_page_fields_save"') && ledeFn.includes("fieldKey: FIELD_KEY"));
+assert("no direct site_page_fields update", !handler.includes(".update("));
 assert("multi save has no per-field insert", !multiFn.includes(".insert("));
 assert("handler mirror byte match", handler === mirror);
 assert("handler service role disconnected", handler.includes("SUPABASE_SERVICE_ROLE_CONNECTED = false"));

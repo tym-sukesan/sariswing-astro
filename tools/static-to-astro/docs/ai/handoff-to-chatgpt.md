@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-about-rpc-table-grant PASS
+Current phase: gosaki-about-rpc-only-write PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -20,10 +20,20 @@ READY_FOR_OPERATOR_GATED_ROLLOUT: false
 seedAppliedStaging: true
 ```
 
-## Gosaki About RPC table grant (2026-10-10)
+## Gosaki About RPC-only write (2026-10-10)
+
+- Do not apply `GRANT INSERT, UPDATE ON TABLE public.site_page_fields`. That model was not applied and is superseded.
+- The RPC stays `SECURITY INVOKER`. There is no `SECURITY DEFINER`. Authenticated receives column `INSERT` on `site_id, site_slug, page_key, field_key, value_text, published, sort_order` and `UPDATE (value_text)` only. Existing `SELECT` stays.
+- Restrictive policies `site_page_fields_about_rpc_insert` and `site_page_fields_about_rpc_update` are added beside the existing permissive policies. Both call `gosaki_about_rpc_write_allowed`, which requires transaction-local `app.gosaki_about_rpc_write=1`, `can_write_site`, `site_slug=gosaki-piano`, `page_key=about`, and `gosaki_about_field_key_allowed`. The RPC sets the marker with `set_config(..., true)` before `SELECT … FOR UPDATE`. Direct PostgREST INSERT/UPDATE cannot set that marker.
+- The allowlist function is the single list for the RPC and the policies: the four profile keys and the five bands' name, body, and image alt.
+- profile.lede-only Save no longer calls `.update({ value_text })`. It calls `gosaki_about_page_fields_save`. The response still returns `changedFields: ["value_text"]`, `before` / `after`, and the optimistic lock.
+- Rollback drops only the two new policies, the RPC, the two helper functions, and those column grants. It does not drop the existing SELECT or admin policies and does not revoke SELECT.
+- SQL is not applied. Edge is not deployed. Secrets are unchanged.
+
+## Gosaki About RPC table grant (2026-10-10) — superseded, do not apply
 
 - Live kmjq already has `site_page_fields_admin_insert` and `site_page_fields_admin_update` (`can_write_site`), and authenticated SELECT. Table INSERT and UPDATE for `authenticated` are absent. `gosaki_about_page_fields_save` is not live.
-- The RPC stays `SECURITY INVOKER`. The template adds `GRANT INSERT, UPDATE ON TABLE public.site_page_fields TO authenticated`. Column grants are narrower on paper, but `SELECT … FOR UPDATE` and the non-DEFINER `updated_at` / audit triggers need the table privileges. anon is not granted. `service_role` is not used.
+- Superseded before apply. The template no longer grants table INSERT/UPDATE.
 - RLS, `site_slug=gosaki-piano`, `page_key=about`, the field allowlist, and the optimistic lock are unchanged.
 - Rollback drops the function and revokes only that table INSERT/UPDATE. It does not revoke SELECT or any column grants the RLS template may already hold. Schedule, YouTube, and Discography do not write `site_page_fields`.
 - Operator SELECT: `schedules_site_writer_update` and `site_embeds_admin_delete_youtube` are already live. Do not re-apply them.

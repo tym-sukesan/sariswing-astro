@@ -6,17 +6,66 @@
 -- One call is one transaction. Validation returns before any write.
 -- A write that does not match its optimistic lock RAISE EXCEPTION and rolls
 -- the whole call back (no partial site_page_fields update).
--- Authz: SECURITY INVOKER + public.can_write_site(site_id). No service_role.
--- Scope: site_slug = gosaki-piano, page_key = about, allowlisted field keys.
+-- Authz: SECURITY INVOKER. No SECURITY DEFINER. No service_role.
+-- Writes: column INSERT/UPDATE for authenticated, plus RESTRICTIVE RLS.
+--   Direct PostgREST writes have no transaction-local marker and fail RLS.
+--   SELECT stays on the existing table grant. Existing permissive policies stay.
+-- Scope: site_slug = gosaki-piano, page_key = about, shared allowlist function.
+-- Marker: app.gosaki_about_rpc_write = 1, set_config(..., true) is transaction-local.
 -- Does not change image URLs. Does not touch Contents.
--- Table privilege: GRANT INSERT, UPDATE ON site_page_fields TO authenticated.
---   Column grants in the RLS template do not cover SELECT ... FOR UPDATE,
---   nor columns written by the non-DEFINER updated_at / audit triggers.
---   RLS policies still require can_write_site. anon is not granted.
 -- Rollback: cms-core-v2-gosaki-about-page-fields-save-rpc-rollback.template.sql
 -- =============================================================================
 
 BEGIN;
+
+CREATE OR REPLACE FUNCTION public.gosaki_about_field_key_allowed(p_field_key text)
+RETURNS boolean
+LANGUAGE sql
+IMMUTABLE
+SECURITY INVOKER
+SET search_path = pg_catalog
+AS $$
+  SELECT btrim(coalesce(p_field_key, '')) IN (
+    'profile.heading',
+    'profile.body',
+    'profile.image_alt',
+    'profile.lede',
+    'bands.gosakirika-trio.name',
+    'bands.gosakirika-trio.body',
+    'bands.gosakirika-trio.image_alt',
+    'bands.onomatope.name',
+    'bands.onomatope.body',
+    'bands.onomatope.image_alt',
+    'bands.careless-hornets.name',
+    'bands.careless-hornets.body',
+    'bands.careless-hornets.image_alt',
+    'bands.kikioto.name',
+    'bands.kikioto.body',
+    'bands.kikioto.image_alt',
+    'bands.caribbean-function.name',
+    'bands.caribbean-function.body',
+    'bands.caribbean-function.image_alt'
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION public.gosaki_about_rpc_write_allowed(
+  p_site_id uuid,
+  p_site_slug text,
+  p_page_key text,
+  p_field_key text
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY INVOKER
+SET search_path = pg_catalog, public
+AS $$
+  SELECT current_setting('app.gosaki_about_rpc_write', true) = '1'
+    AND public.can_write_site(p_site_id)
+    AND btrim(coalesce(p_site_slug, '')) = 'gosaki-piano'
+    AND btrim(coalesce(p_page_key, '')) = 'about'
+    AND public.gosaki_about_field_key_allowed(p_field_key);
+$$;
 
 CREATE OR REPLACE FUNCTION public.gosaki_about_page_fields_save(
   p_site_slug text,
@@ -39,7 +88,6 @@ DECLARE
   v_lock text;
   v_expected timestamptz;
   v_part text;
-  v_stable text;
   v_seen text[] := ARRAY[]::text[];
   v_row public.site_page_fields%ROWTYPE;
   v_found boolean;
@@ -78,33 +126,18 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'error', 'Forbidden', 'detail', 'can_write_site denied', 'http_status', 403);
   END IF;
 
+  -- Transaction-local only. Required before SELECT ... FOR UPDATE, because the
+  -- restrictive UPDATE policy also filters locked rows. Dies at transaction end.
+  PERFORM set_config('app.gosaki_about_rpc_write', '1', true);
+
   FOR v_item IN SELECT value FROM jsonb_array_elements(p_fields) AS t(value)
   LOOP
     v_field_key := btrim(coalesce(v_item->>'fieldKey', ''));
     v_value := btrim(coalesce(v_item->>'nextValueText', v_item->>'valueText', ''));
     v_lock := nullif(btrim(coalesce(v_item->>'expectedBeforeUpdatedAt', '')), '');
-    v_part := NULL;
-    v_stable := NULL;
+    v_part := CASE WHEN v_field_key LIKE '%.image_alt' THEN 'image_alt' ELSE 'text' END;
 
-    IF v_field_key = ANY (v_seen) OR v_field_key = '' THEN
-      RETURN jsonb_build_object('ok', false, 'error', 'field_not_allowed', 'detail', v_field_key, 'http_status', 400);
-    END IF;
-
-    IF v_field_key IN ('profile.heading', 'profile.body', 'profile.image_alt', 'profile.lede') THEN
-      v_part := CASE WHEN v_field_key = 'profile.image_alt' THEN 'image_alt' ELSE 'text' END;
-    ELSIF v_field_key ~ '^bands\.(gosakirika-trio|onomatope|careless-hornets|kikioto|caribbean-function)\.(name|body|image_alt)$' THEN
-      v_stable := split_part(v_field_key, '.', 2);
-      v_part := split_part(v_field_key, '.', 3);
-      IF v_stable NOT IN (
-        'gosakirika-trio',
-        'onomatope',
-        'careless-hornets',
-        'kikioto',
-        'caribbean-function'
-      ) THEN
-        RETURN jsonb_build_object('ok', false, 'error', 'field_not_allowed', 'detail', v_field_key, 'http_status', 400);
-      END IF;
-    ELSE
+    IF v_field_key = ANY (v_seen) OR v_field_key = '' OR NOT public.gosaki_about_field_key_allowed(v_field_key) THEN
       RETURN jsonb_build_object('ok', false, 'error', 'field_not_allowed', 'detail', v_field_key, 'http_status', 400);
     END IF;
 
@@ -244,14 +277,54 @@ $$;
 COMMENT ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) IS
   'Atomic Gosaki About site_page_fields save. INVOKER. can_write_site required. gosaki-piano/about allowlist only. RAISE rolls back. No service_role.';
 
+REVOKE ALL ON FUNCTION public.gosaki_about_field_key_allowed(text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.gosaki_about_field_key_allowed(text) FROM anon;
+REVOKE ALL ON FUNCTION public.gosaki_about_field_key_allowed(text) FROM service_role;
+GRANT EXECUTE ON FUNCTION public.gosaki_about_field_key_allowed(text) TO authenticated;
+
+REVOKE ALL ON FUNCTION public.gosaki_about_rpc_write_allowed(uuid, text, text, text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.gosaki_about_rpc_write_allowed(uuid, text, text, text) FROM anon;
+REVOKE ALL ON FUNCTION public.gosaki_about_rpc_write_allowed(uuid, text, text, text) FROM service_role;
+GRANT EXECUTE ON FUNCTION public.gosaki_about_rpc_write_allowed(uuid, text, text, text) TO authenticated;
+
 REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM anon;
 REVOKE ALL ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) FROM service_role;
 GRANT EXECUTE ON FUNCTION public.gosaki_about_page_fields_save(text, text, jsonb) TO authenticated;
 
--- INVOKER writes and SELECT ... FOR UPDATE need table INSERT/UPDATE.
--- Idempotent if already present. Does not grant anon, service_role, or DELETE.
--- Does not replace RLS: site_page_fields_admin_insert / _admin_update stay in force.
-GRANT INSERT, UPDATE ON TABLE public.site_page_fields TO authenticated;
+GRANT INSERT (
+  site_id,
+  site_slug,
+  page_key,
+  field_key,
+  value_text,
+  published,
+  sort_order
+) ON TABLE public.site_page_fields TO authenticated;
+
+GRANT UPDATE (value_text) ON TABLE public.site_page_fields TO authenticated;
+
+DROP POLICY IF EXISTS site_page_fields_about_rpc_insert ON public.site_page_fields;
+CREATE POLICY site_page_fields_about_rpc_insert
+  ON public.site_page_fields
+  AS RESTRICTIVE
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    public.gosaki_about_rpc_write_allowed(site_id, site_slug, page_key, field_key)
+  );
+
+DROP POLICY IF EXISTS site_page_fields_about_rpc_update ON public.site_page_fields;
+CREATE POLICY site_page_fields_about_rpc_update
+  ON public.site_page_fields
+  AS RESTRICTIVE
+  FOR UPDATE
+  TO authenticated
+  USING (
+    public.gosaki_about_rpc_write_allowed(site_id, site_slug, page_key, field_key)
+  )
+  WITH CHECK (
+    public.gosaki_about_rpc_write_allowed(site_id, site_slug, page_key, field_key)
+  );
 
 COMMIT;

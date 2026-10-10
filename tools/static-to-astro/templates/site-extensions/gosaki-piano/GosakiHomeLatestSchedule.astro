@@ -4,6 +4,7 @@ import { withBase } from "../lib/with-base.ts";
 import {
   gosakiHomeScheduleDateLabel,
   gosakiHomeScheduleItemPath,
+  gosakiHomeScheduleTimeLabel,
   gosakiHomeScheduleTitle,
   gosakiScheduleImageUrl,
   selectGosakiHomeLatestSchedules,
@@ -23,6 +24,7 @@ const scheduleHref = withBase("/schedule/");
             const title = gosakiHomeScheduleTitle(ev.title);
             const dateLabel = gosakiHomeScheduleDateLabel(ev);
             const venue = String(ev.venue || "").trim();
+            const timeLabel = gosakiHomeScheduleTimeLabel(ev);
             const imageUrl = gosakiScheduleImageUrl(ev.image_url);
             const itemPath = gosakiHomeScheduleItemPath(ev);
             const itemHref = itemPath ? withBase(itemPath) : null;
@@ -31,24 +33,24 @@ const scheduleHref = withBase("/schedule/");
                 {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
                 {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
                 {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                {timeLabel ? <p class="gosaki-home-schedule__time">{timeLabel}</p> : null}
               </span>
             );
+            const flyer = imageUrl ? (
+              <img class="gosaki-home-schedule__flyer" src={imageUrl} alt="" />
+            ) : null;
             return (
               <li class="gosaki-home-schedule__item">
                 {itemHref ? (
-                  <a class="gosaki-home-schedule__link" href={itemHref}>
-                    {imageUrl ? (
-                      <img class="gosaki-home-schedule__thumb" src={imageUrl} alt="" />
-                    ) : null}
+                  <a class="gosaki-home-schedule__card gosaki-home-schedule__link" href={itemHref}>
                     {copy}
+                    {flyer}
                   </a>
                 ) : (
-                  <>
-                    {imageUrl ? (
-                      <img class="gosaki-home-schedule__thumb" src={imageUrl} alt="" />
-                    ) : null}
+                  <div class="gosaki-home-schedule__card">
                     {copy}
-                  </>
+                    {flyer}
+                  </div>
                 )}
               </li>
             );

@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-schedule-image-nav-reuse PASS
+Current phase: gosaki-schedule-horizontal-card PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -22,6 +22,12 @@ POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki Schedule horizontal card layout (2026-10-10)
+
+- Month cards and Home cards are centered at max-width 1000px. On PC the text is on the left and the flyer is 380px on the right. On screens 768px and below they stack, with the image under the text at full card width.
+- Home shows 開場 and 開演 when those fields exist, one side alone when only one exists, and no time line when both are empty. The link remains `/schedule/YYYY-MM/#<legacy_id>`.
+- Missing `image_url` leaves the text column only. Schedule Save, Edge, RPC, and RLS are unchanged.
 
 ## Gosaki Schedule image, deep link, and image reuse (2026-10-10)
 

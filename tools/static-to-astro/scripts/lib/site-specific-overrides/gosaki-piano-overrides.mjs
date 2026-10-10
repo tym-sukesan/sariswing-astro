@@ -2781,35 +2781,71 @@ body.wix-static-export .gosaki-home-schedule__link:focus-visible .gosaki-home-sc
   }
 }
 
+body.wix-static-export .gosaki-schedule-month {
+  max-width: 1080px;
+}
+
 body.wix-static-export .gosaki-schedule-event-card {
+  display: flex !important;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2.5rem;
+  width: 100% !important;
+  max-width: 1000px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 1.75rem 2rem !important;
   scroll-margin-top: 7rem;
+  box-sizing: border-box;
+}
+
+body.wix-static-export .gosaki-schedule-event-copy {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 body.wix-static-export .gosaki-schedule-event-image {
-  margin: 0 0 0.85rem !important;
-  max-width: 420px;
+  flex: 0 0 380px;
+  width: 380px;
+  max-width: 380px;
+  margin: 0 !important;
 }
 
 body.wix-static-export .gosaki-schedule-event-image img {
   display: block;
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   height: auto;
   border-radius: 4px;
 }
 
-@media (max-width: 768px) {
-  body.wix-static-export .gosaki-schedule-event-image,
-  body.wix-static-export .gosaki-schedule-event-image img {
-    width: 100%;
-    max-width: 100%;
-  }
+body.wix-static-export .gosaki-home-schedule {
+  max-width: 1000px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
+body.wix-static-export .gosaki-home-schedule__item {
+  padding: 0 0 1.25rem;
+  border-bottom: 0;
+}
+
+body.wix-static-export .gosaki-home-schedule__card,
 body.wix-static-export .gosaki-home-schedule__link {
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
-  gap: 0.85rem;
+  gap: 2.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.75rem 2rem;
+  background: #fff;
+  border: 1px solid var(--gosaki-line);
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
 }
 
 body.wix-static-export .gosaki-home-schedule__copy {
@@ -2817,21 +2853,44 @@ body.wix-static-export .gosaki-home-schedule__copy {
   flex: 1 1 auto;
 }
 
-body.wix-static-export .gosaki-home-schedule__thumb {
+body.wix-static-export .gosaki-home-schedule__time {
+  margin: 0.45rem 0 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--gosaki-ink-soft);
+}
+
+body.wix-static-export .gosaki-home-schedule__flyer {
   display: block;
-  width: auto;
-  max-width: 96px;
-  max-height: 96px;
+  flex: 0 0 380px;
+  width: 380px;
+  max-width: 380px;
   height: auto;
   object-fit: contain;
-  flex: 0 0 auto;
   border-radius: 4px;
 }
 
 @media (max-width: 768px) {
-  body.wix-static-export .gosaki-home-schedule__thumb {
-    max-width: 72px;
-    max-height: 72px;
+  body.wix-static-export .gosaki-home-schedule {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  body.wix-static-export .gosaki-schedule-event-card,
+  body.wix-static-export .gosaki-home-schedule__card,
+  body.wix-static-export .gosaki-home-schedule__link {
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 100% !important;
+    padding: 1rem 1.125rem !important;
+  }
+
+  body.wix-static-export .gosaki-schedule-event-image,
+  body.wix-static-export .gosaki-schedule-event-image img,
+  body.wix-static-export .gosaki-home-schedule__flyer {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 100%;
   }
 }
 

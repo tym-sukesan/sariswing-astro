@@ -9,6 +9,10 @@ export type GosakiHomeScheduleRow = {
   date_status?: string | null;
   title?: string | null;
   venue?: string | null;
+  open_time?: string | null;
+  openTime?: string | null;
+  start_time?: string | null;
+  startTime?: string | null;
   sort_order?: number | null;
   monthMembership?: { kind?: string } | null;
 };
@@ -97,6 +101,16 @@ export function gosakiHomeScheduleItemPath(row: GosakiScheduleIdentity | null | 
   if (!month) return null;
   const anchor = gosakiScheduleEventAnchorId(row);
   return anchor ? `${month}#${anchor}` : month;
+}
+
+/** open only, start only, both, or empty when neither is set. */
+export function gosakiHomeScheduleTimeLabel(row: GosakiHomeScheduleRow | null | undefined): string {
+  const open = String(row?.open_time || row?.openTime || "").trim();
+  const start = String(row?.start_time || row?.startTime || "").trim();
+  if (open && start) return `開場 ${open} / 開演 ${start}`;
+  if (open) return `開場 ${open}`;
+  if (start) return `開演 ${start}`;
+  return "";
 }
 
 /** http(s) flyer only. Empty and other schemes render nothing. */

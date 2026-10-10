@@ -106,14 +106,10 @@ function safeScheduleImageUrl(url) {
       const anchor = gosakiScheduleEventAnchorId(ev);
       return (
         <article class="gosaki-schedule-event-card" id={anchor || undefined}>
+          <div class="gosaki-schedule-event-copy">
           <h1 class="gosaki-schedule-event-date font_0">
             {ev.date_display || ev.date}
           </h1>
-          {imageUrl ? (
-            <p class="gosaki-schedule-event-image">
-              <img src={imageUrl} alt="" loading="lazy" decoding="async" />
-            </p>
-          ) : null}
           <div class="gosaki-schedule-event-body wixui-rich-text">
             {ev.title && <p>{ev.title}</p>}
             {ev.venue && <p>会場：{ev.venue}</p>}
@@ -130,6 +126,12 @@ function safeScheduleImageUrl(url) {
               return <p>{line}</p>;
             })}
           </div>
+          </div>
+          {imageUrl ? (
+            <p class="gosaki-schedule-event-image">
+              <img src={imageUrl} alt="" loading="lazy" decoding="async" />
+            </p>
+          ) : null}
         </article>
       );
     })

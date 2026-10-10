@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki Schedule horizontal card layout (2026-10-10):** **PASS local / not committed** — Phase `gosaki-schedule-horizontal-card` · month and Home cards max-width 1000px · PC text left / flyer 380px right · SP stacks text then full-width image · Home adds 開場/開演 when present · deep link stays `/schedule/YYYY-MM/#legacy_id` · verifiers: image/home-date **32/0**, home latest **22/0**, final-ux **12/0**.
+
 **Gosaki Schedule image, deep link, and image reuse (2026-10-10):** **PASS local / not committed** — Phase `gosaki-schedule-image-nav-reuse` · month flyer max-width 420px (mobile 100%) · Home thumb only when `image_url` is http(s) · Home href `/schedule/YYYY-MM/#<legacy_id>` · same-day events stay distinct · admin picks existing flyer URLs from loaded rows without Storage upload · Save Edge/RPC unchanged · verifiers: image/home-date **32/0**, home latest **21/0**, final-ux **12/0**, image upload **28/0**.
 
 **Gosaki production FTP upload timeout (2026-10-10):** **PASS local / not committed** — Phase `gosaki-production-ftp-upload-timeout` · upload step `timeout-minutes: 5` · lftp `net:reconnect-interval-base 5` and `net:reconnect-interval-max 30` · mirror line, `--delete` absent, `net:max-retries 5`, `net:timeout 30`, clobber, excludes, and remote dir guard unchanged · no FTP / deploy · verifier: deploy **182/0**.

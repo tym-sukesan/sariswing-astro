@@ -59,9 +59,12 @@ assert(
   !imageBlock.includes("gosaki-schedule-event-date"),
 );
 assert(
-  "month-card image is 420px on PC and full width on mobile",
-  imageBlock.includes("max-width: 420px") &&
+  "month and home cards are 1000px with a 380px flyer, stacked on mobile",
+  imageBlock.includes("max-width: 1000px") &&
+    imageBlock.includes("flex: 0 0 380px") &&
+    imageBlock.includes("max-width: 380px") &&
     imageBlock.includes("@media (max-width: 768px)") &&
+    imageBlock.includes("flex-direction: column") &&
     imageBlock.includes(".gosaki-schedule-event-image img") &&
     imageBlock.includes("max-width: 100%"),
 );
@@ -70,7 +73,8 @@ const homeTpl = readRel("templates/site-extensions/gosaki-piano/GosakiHomeLatest
 assert(
   "Home thumbnail renders only from gosakiScheduleImageUrl",
   homeTpl.includes("gosakiScheduleImageUrl") &&
-    homeTpl.includes("gosaki-home-schedule__thumb") &&
+    homeTpl.includes("gosaki-home-schedule__flyer") &&
+    homeTpl.includes("gosakiHomeScheduleTimeLabel") &&
     homeTpl.includes("imageUrl ? ("),
 );
 

@@ -19,6 +19,7 @@ import {
   applyGosakiHomeLatestSchedule,
   gosakiHomeScheduleItemPath,
   gosakiHomeScheduleMonthPath,
+  gosakiHomeScheduleTimeLabel,
   gosakiScheduleEventAnchorId,
   gosakiScheduleImageUrl,
   gosakiHomeScheduleTodayJst,
@@ -123,6 +124,13 @@ assert(
   gosakiScheduleEventAnchorId({ id: "abc-def", date: "2026-10-01" }) === "event-abc-def",
 );
 assert(
+  "time line is both, one side, or omitted",
+  gosakiHomeScheduleTimeLabel({ open_time: "18:00", start_time: "19:00" }) === "開場 18:00 / 開演 19:00" &&
+    gosakiHomeScheduleTimeLabel({ open_time: "18:00" }) === "開場 18:00" &&
+    gosakiHomeScheduleTimeLabel({ start_time: "19:00" }) === "開演 19:00" &&
+    gosakiHomeScheduleTimeLabel({}) === "",
+);
+assert(
   "image url kept only for http(s)",
   gosakiScheduleImageUrl(sameDayA.image_url) === "https://cdn.example/a.jpg" &&
     gosakiScheduleImageUrl("") === null &&
@@ -170,7 +178,8 @@ const homeTpl = fs.readFileSync(path.join(tmp, "src/components/GosakiHomeLatestS
 assert(
   "home items link to month pages and keep hub CTA",
   homeTpl.includes("gosakiHomeScheduleItemPath") &&
-    homeTpl.includes("gosaki-home-schedule__thumb") &&
+    homeTpl.includes("gosaki-home-schedule__flyer") &&
+    homeTpl.includes("gosakiHomeScheduleTimeLabel") &&
     homeTpl.includes("gosaki-home-schedule__link") &&
     homeTpl.includes("Scheduleを見る") &&
     homeTpl.includes('withBase("/schedule/")'),

@@ -52,6 +52,16 @@ export function gosakiHomeScheduleItemPath(row) {
   return anchor ? `${month}#${anchor}` : month;
 }
 
+/** open only, start only, both, or empty when neither is set. */
+export function gosakiHomeScheduleTimeLabel(row) {
+  const open = String(row?.open_time || row?.openTime || "").trim();
+  const start = String(row?.start_time || row?.startTime || "").trim();
+  if (open && start) return `開場 ${open} / 開演 ${start}`;
+  if (open) return `開場 ${open}`;
+  if (start) return `開演 ${start}`;
+  return "";
+}
+
 /** http(s) flyer only. Empty and other schemes render nothing. */
 export function gosakiScheduleImageUrl(url) {
   const raw = String(url || "").trim();

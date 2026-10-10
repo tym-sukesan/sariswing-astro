@@ -325,7 +325,7 @@ const eventsJson = JSON.stringify(events);
           autocomplete="off"
         />
         <span class="gosaki-schedule-content-panel__field-note">
-          URLを直接入力するか、下からファイルを選んでアップロード（JPG / PNG / WebP・長辺1600px・2MBまで）。アップロードだけでは公開されません。保存を押してください。
+          URLを直接入力するか、既存画像から選ぶか、ファイルをアップロードできます（JPG / PNG / WebP・長辺1600px・2MBまで）。既存画像の選択では新しいアップロードは行いません。反映には保存が必要です。
         </span>
       </label>
       <div
@@ -352,6 +352,17 @@ const eventsJson = JSON.stringify(events);
           data-gosaki-schedule-image-upload-status
           role="status"
         ></p>
+      </div>
+      <div
+        class="gosaki-schedule-image-library admin-form__field--full"
+        data-gosaki-schedule-image-library
+        hidden
+      >
+        <p class="admin-form__label">既存画像から選択</p>
+        <div
+          class="gosaki-schedule-image-library__list"
+          data-gosaki-schedule-image-library-list
+        ></div>
       </div>
       <div
         class="gosaki-schedule-content-panel__image-preview admin-form__field--full"

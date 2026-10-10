@@ -3,8 +3,9 @@ import schedules from "../data/gosaki-schedules.json";
 import { withBase } from "../lib/with-base.ts";
 import {
   gosakiHomeScheduleDateLabel,
-  gosakiHomeScheduleMonthPath,
+  gosakiHomeScheduleItemPath,
   gosakiHomeScheduleTitle,
+  gosakiScheduleImageUrl,
   selectGosakiHomeLatestSchedules,
 } from "../lib/gosaki-home-latest-schedule.ts";
 
@@ -22,21 +23,31 @@ const scheduleHref = withBase("/schedule/");
             const title = gosakiHomeScheduleTitle(ev.title);
             const dateLabel = gosakiHomeScheduleDateLabel(ev);
             const venue = String(ev.venue || "").trim();
-            const monthPath = gosakiHomeScheduleMonthPath(ev.date);
-            const monthHref = monthPath ? withBase(monthPath) : null;
+            const imageUrl = gosakiScheduleImageUrl(ev.image_url);
+            const itemPath = gosakiHomeScheduleItemPath(ev);
+            const itemHref = itemPath ? withBase(itemPath) : null;
+            const copy = (
+              <span class="gosaki-home-schedule__copy">
+                {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
+                {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
+                {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+              </span>
+            );
             return (
               <li class="gosaki-home-schedule__item">
-                {monthHref ? (
-                  <a class="gosaki-home-schedule__link" href={monthHref}>
-                    {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
-                    {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
-                    {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                {itemHref ? (
+                  <a class="gosaki-home-schedule__link" href={itemHref}>
+                    {imageUrl ? (
+                      <img class="gosaki-home-schedule__thumb" src={imageUrl} alt="" />
+                    ) : null}
+                    {copy}
                   </a>
                 ) : (
                   <>
-                    {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
-                    {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
-                    {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                    {imageUrl ? (
+                      <img class="gosaki-home-schedule__thumb" src={imageUrl} alt="" />
+                    ) : null}
+                    {copy}
                   </>
                 )}
               </li>

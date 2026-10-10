@@ -58,10 +58,20 @@ assert(
   "Home SP date is not in month-card selectors",
   !imageBlock.includes("gosaki-schedule-event-date"),
 );
-assert("month-card image CSS max-width 100%", imageBlock.includes(".gosaki-schedule-event-image img"));
 assert(
-  "Home template has no flyer img",
-  !readRel("templates/site-extensions/gosaki-piano/GosakiHomeLatestSchedule.astro").includes("<img"),
+  "month-card image is 420px on PC and full width on mobile",
+  imageBlock.includes("max-width: 420px") &&
+    imageBlock.includes("@media (max-width: 768px)") &&
+    imageBlock.includes(".gosaki-schedule-event-image img") &&
+    imageBlock.includes("max-width: 100%"),
+);
+assert("month card keeps scroll-margin for fragment jumps", imageBlock.includes("scroll-margin-top: 7rem"));
+const homeTpl = readRel("templates/site-extensions/gosaki-piano/GosakiHomeLatestSchedule.astro");
+assert(
+  "Home thumbnail renders only from gosakiScheduleImageUrl",
+  homeTpl.includes("gosakiScheduleImageUrl") &&
+    homeTpl.includes("gosaki-home-schedule__thumb") &&
+    homeTpl.includes("imageUrl ? ("),
 );
 
 assert(
@@ -177,6 +187,52 @@ const g9g4a2 = readRel(
   "scripts/verify-g9g4a2-framework-single-text-field-operational-commonization-c1.mjs",
 );
 assert("G-9g4a2 still forbids image_url on generic single-field path", g9g4a2.includes("forbidden payload field: image_url"));
+
+assert(
+  "month card id uses legacy_id anchor",
+  GOSAKI_SCHEDULE_LIST_ASTRO.includes("function gosakiScheduleEventAnchorId") &&
+    GOSAKI_SCHEDULE_LIST_ASTRO.includes("id={anchor || undefined}") &&
+    !GOSAKI_SCHEDULE_LIST_ASTRO.includes("id={ev.date"),
+);
+assert(
+  "admin offers existing image choices",
+  adminAstro.includes("data-gosaki-schedule-image-library") &&
+    adminAstro.includes("既存画像から選択"),
+);
+const choiceAt = opEdit.indexOf("data-gosaki-schedule-image-choice");
+const uploadCallAt = opEdit.indexOf("void runScheduleImageUpload()");
+const choiceBranch = choiceAt >= 0 && uploadCallAt > choiceAt ? opEdit.slice(choiceAt, uploadCallAt) : "";
+assert(
+  "existing image choice writes image_url and does not upload",
+  choiceBranch.includes("image_url: url") &&
+    !choiceBranch.includes("uploadGosakiScheduleImage") &&
+    !choiceBranch.includes("runScheduleImageUpload") &&
+    opEdit.includes("await uploadGosakiScheduleImage("),
+);
+
+const reuseStart = opEdit.indexOf("function isSafeHttpUrl");
+const reuseEnd = opEdit.indexOf("function renderScheduleImageLibrary");
+const reuseSource = opEdit
+  .slice(reuseStart, reuseEnd)
+  .replace("function isSafeHttpUrl(raw: string): boolean", "function isSafeHttpUrl(raw)")
+  .replace(
+    /export function listReusableScheduleImageUrls\(\s*events:[\s\S]*?\): string\[\]/,
+    "function listReusableScheduleImageUrls(events)",
+  )
+  .replaceAll(": string[]", "")
+  .replaceAll("<string>", "");
+const listReusableScheduleImageUrls = new Function(`${reuseSource}\nreturn listReusableScheduleImageUrls;`)();
+const reused = listReusableScheduleImageUrls([
+  { imageUrl: "" },
+  { imageUrl: "https://cdn.example/a.jpg" },
+  { imageUrl: "https://cdn.example/a.jpg" },
+  { imageUrl: "javascript:alert(1)" },
+  { imageUrl: " https://cdn.example/b.jpg " },
+]);
+assert(
+  "reusable urls drop empty, unsafe, and duplicates",
+  reused.join("|") === "https://cdn.example/a.jpg|https://cdn.example/b.jpg",
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

@@ -17,7 +17,10 @@ import {
 import {
   GOSAKI_HOME_LATEST_SCHEDULE_LIMIT,
   applyGosakiHomeLatestSchedule,
+  gosakiHomeScheduleItemPath,
   gosakiHomeScheduleMonthPath,
+  gosakiScheduleEventAnchorId,
+  gosakiScheduleImageUrl,
   gosakiHomeScheduleTodayJst,
   injectGosakiHomeLatestScheduleIntoHomePage,
   selectGosakiHomeLatestSchedules,
@@ -95,6 +98,36 @@ assert(
     gosakiHomeScheduleMonthPath("2026-10-01") === "/schedule/2026-10/",
 );
 assert("month path rejects non-ISO", gosakiHomeScheduleMonthPath("tbd") === null && gosakiHomeScheduleMonthPath("") === null);
+const sameDayA = {
+  date: "2026-10-01",
+  legacy_id: "schedule-2026-10-001",
+  id: "11111111-1111-1111-1111-111111111111",
+  image_url: "https://cdn.example/a.jpg",
+};
+const sameDayB = {
+  date: "2026-10-01",
+  legacy_id: "schedule-2026-10-002",
+  id: "22222222-2222-2222-2222-222222222222",
+  image_url: "",
+};
+assert(
+  "same-day events use distinct legacy_id fragments",
+  gosakiScheduleEventAnchorId(sameDayA) === "schedule-2026-10-001" &&
+    gosakiScheduleEventAnchorId(sameDayB) === "schedule-2026-10-002" &&
+    gosakiHomeScheduleItemPath(sameDayA) === "/schedule/2026-10/#schedule-2026-10-001" &&
+    gosakiHomeScheduleItemPath(sameDayB) === "/schedule/2026-10/#schedule-2026-10-002" &&
+    !String(gosakiHomeScheduleItemPath(sameDayA)).endsWith("#2026-10-01"),
+);
+assert(
+  "missing legacy_id falls back to event-id",
+  gosakiScheduleEventAnchorId({ id: "abc-def", date: "2026-10-01" }) === "event-abc-def",
+);
+assert(
+  "image url kept only for http(s)",
+  gosakiScheduleImageUrl(sameDayA.image_url) === "https://cdn.example/a.jpg" &&
+    gosakiScheduleImageUrl("") === null &&
+    gosakiScheduleImageUrl("javascript:alert(1)") === null,
+);
 
 const slotted = `---\nimport BaseLayout from "../layouts/BaseLayout.astro";\n---\n\n<BaseLayout>\n${GOSAKI_HOME_SCHEDULE_SLOT}\n</BaseLayout>\n`;
 const injected = injectGosakiHomeLatestScheduleIntoHomePage(slotted);
@@ -136,7 +169,8 @@ assert("apply writes component + lib", applied.applied === true && applied.count
 const homeTpl = fs.readFileSync(path.join(tmp, "src/components/GosakiHomeLatestSchedule.astro"), "utf8");
 assert(
   "home items link to month pages and keep hub CTA",
-  homeTpl.includes("gosakiHomeScheduleMonthPath") &&
+  homeTpl.includes("gosakiHomeScheduleItemPath") &&
+    homeTpl.includes("gosaki-home-schedule__thumb") &&
     homeTpl.includes("gosaki-home-schedule__link") &&
     homeTpl.includes("Scheduleを見る") &&
     homeTpl.includes('withBase("/schedule/")'),

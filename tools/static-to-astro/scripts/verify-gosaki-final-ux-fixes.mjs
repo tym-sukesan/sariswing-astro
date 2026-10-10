@@ -84,7 +84,7 @@ const homeTpl = fs.readFileSync(
 assert(
   "home wraps items as month links and keeps CTA",
   homeTpl.includes("gosaki-home-schedule__link") &&
-    homeTpl.includes("gosakiHomeScheduleMonthPath") &&
+    homeTpl.includes("gosakiHomeScheduleItemPath") &&
     homeTpl.includes("Scheduleを見る") &&
     homeTpl.includes('withBase("/schedule/")'),
 );

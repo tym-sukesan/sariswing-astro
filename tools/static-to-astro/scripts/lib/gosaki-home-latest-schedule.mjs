@@ -35,6 +35,36 @@ export function gosakiHomeScheduleMonthPath(date) {
   return `/schedule/${raw.slice(0, 7)}/`;
 }
 
+/** Stable fragment id. legacy_id first; DB id only when legacy_id is absent. */
+export function gosakiScheduleEventAnchorId(row) {
+  const legacy = String(row?.legacy_id || row?.legacyId || "").trim();
+  if (/^[A-Za-z][A-Za-z0-9_-]*$/.test(legacy)) return legacy;
+  const id = String(row?.id || "").trim();
+  if (/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(id)) return `event-${id}`;
+  return null;
+}
+
+/** Month path plus the event fragment. Date is never the anchor. */
+export function gosakiHomeScheduleItemPath(row) {
+  const month = gosakiHomeScheduleMonthPath(row?.date);
+  if (!month) return null;
+  const anchor = gosakiScheduleEventAnchorId(row);
+  return anchor ? `${month}#${anchor}` : month;
+}
+
+/** http(s) flyer only. Empty and other schemes render nothing. */
+export function gosakiScheduleImageUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    return raw;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Calendar date in Asia/Tokyo (JST), YYYY-MM-DD.
  * @param {Date} [now]

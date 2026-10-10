@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-ftp-upload-timeout PASS
+Current phase: gosaki-schedule-image-nav-reuse PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -22,6 +22,13 @@ POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki Schedule image, deep link, and image reuse (2026-10-10)
+
+- Month-page flyers use max-width 420px on PC and 100% width on mobile, with height auto. Missing `image_url` still renders the text card only.
+- Home lists a thumbnail only when `image_url` is http(s). The link is `/schedule/YYYY-MM/#<legacy_id>`. The fragment is `legacy_id`, not the date, so two events on the same day stay distinct. Cards use `scroll-margin-top: 7rem`.
+- The admin picker lists unique http(s) `image_url` values already loaded with the schedule rows. Choosing one writes that URL into the form and does not call the Storage upload. Direct URL entry and file upload stay.
+- Schedule Save Edge, RPC, and RLS are unchanged. No DB write.
 
 ## Gosaki production FTP upload timeout (2026-10-10)
 

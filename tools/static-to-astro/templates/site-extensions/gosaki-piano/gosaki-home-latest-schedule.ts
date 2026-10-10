@@ -74,3 +74,40 @@ export function gosakiHomeScheduleMonthPath(date: unknown): string | null {
   if (!isIsoDate(raw)) return null;
   return `/schedule/${raw.slice(0, 7)}/`;
 }
+
+type GosakiScheduleIdentity = {
+  legacy_id?: string | null;
+  legacyId?: string | null;
+  id?: string | null;
+  date?: string | null;
+};
+
+/** Stable fragment id. legacy_id first; DB id only when legacy_id is absent. */
+export function gosakiScheduleEventAnchorId(row: GosakiScheduleIdentity | null | undefined): string | null {
+  const legacy = String(row?.legacy_id || row?.legacyId || "").trim();
+  if (/^[A-Za-z][A-Za-z0-9_-]*$/.test(legacy)) return legacy;
+  const id = String(row?.id || "").trim();
+  if (/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(id)) return `event-${id}`;
+  return null;
+}
+
+/** Month path plus the event fragment. Date is never the anchor. */
+export function gosakiHomeScheduleItemPath(row: GosakiScheduleIdentity | null | undefined): string | null {
+  const month = gosakiHomeScheduleMonthPath(row?.date);
+  if (!month) return null;
+  const anchor = gosakiScheduleEventAnchorId(row);
+  return anchor ? `${month}#${anchor}` : month;
+}
+
+/** http(s) flyer only. Empty and other schemes render nothing. */
+export function gosakiScheduleImageUrl(url: unknown): string | null {
+  const raw = String(url || "").trim();
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    return raw;
+  } catch {
+    return null;
+  }
+}

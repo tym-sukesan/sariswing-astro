@@ -2781,17 +2781,58 @@ body.wix-static-export .gosaki-home-schedule__link:focus-visible .gosaki-home-sc
   }
 }
 
+body.wix-static-export .gosaki-schedule-event-card {
+  scroll-margin-top: 7rem;
+}
+
 body.wix-static-export .gosaki-schedule-event-image {
   margin: 0 0 0.85rem !important;
-  max-width: 100%;
+  max-width: 420px;
 }
 
 body.wix-static-export .gosaki-schedule-event-image img {
   display: block;
   width: 100%;
-  max-width: 100%;
+  max-width: 420px;
   height: auto;
   border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-schedule-event-image,
+  body.wix-static-export .gosaki-schedule-event-image img {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+body.wix-static-export .gosaki-home-schedule__link {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+body.wix-static-export .gosaki-home-schedule__copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+body.wix-static-export .gosaki-home-schedule__thumb {
+  display: block;
+  width: auto;
+  max-width: 96px;
+  max-height: 96px;
+  height: auto;
+  object-fit: contain;
+  flex: 0 0 auto;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-home-schedule__thumb {
+    max-width: 72px;
+    max-height: 72px;
+  }
 }
 
 `;

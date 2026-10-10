@@ -61,6 +61,15 @@ function linkifyVenueWebsiteLine(line) {
   return { kind: "link", prefix, href: raw, text: raw };
 }
 
+/** Same rule as gosakiScheduleEventAnchorId. Date is never the id. */
+function gosakiScheduleEventAnchorId(row) {
+  const legacy = String(row?.legacy_id || row?.legacyId || "").trim();
+  if (/^[A-Za-z][A-Za-z0-9_-]*$/.test(legacy)) return legacy;
+  const id = String(row?.id || "").trim();
+  if (/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(id)) return \`event-\${id}\`;
+  return null;
+}
+
 /** Month-card flyer: empty or non-http(s) → no image. */
 function safeScheduleImageUrl(url) {
   const raw = String(url || "").trim();
@@ -94,8 +103,9 @@ function safeScheduleImageUrl(url) {
       const skipDesc = new Set();
       if (timeLine) skipDesc.add(\`時間：\${timeLine}\`);
       const imageUrl = safeScheduleImageUrl(ev.image_url);
+      const anchor = gosakiScheduleEventAnchorId(ev);
       return (
-        <article class="gosaki-schedule-event-card">
+        <article class="gosaki-schedule-event-card" id={anchor || undefined}>
           <h1 class="gosaki-schedule-event-date font_0">
             {ev.date_display || ev.date}
           </h1>

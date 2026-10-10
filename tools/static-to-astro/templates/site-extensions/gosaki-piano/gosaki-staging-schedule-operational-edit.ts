@@ -380,6 +380,55 @@ function isSafeHttpUrl(raw: string): boolean {
   }
 }
 
+/**
+ * Existing flyer URLs already on loaded schedule rows.
+ * Empty values are dropped. The same URL is kept once, first-seen order.
+ * Does not upload and does not query Storage.
+ */
+export function listReusableScheduleImageUrls(
+  events: Array<{ imageUrl?: string | null }>,
+): string[] {
+  const seen = new Set<string>();
+  const urls: string[] = [];
+  for (const event of events ?? []) {
+    const url = String(event?.imageUrl ?? "").trim();
+    if (!url || !isSafeHttpUrl(url) || seen.has(url)) continue;
+    seen.add(url);
+    urls.push(url);
+  }
+  return urls;
+}
+
+function renderScheduleImageLibrary(
+  root: HTMLElement,
+  events: ScheduleOperationalEvent[],
+): void {
+  const box = root.querySelector("[data-gosaki-schedule-image-library]");
+  const list = root.querySelector("[data-gosaki-schedule-image-library-list]");
+  if (!(box instanceof HTMLElement) || !(list instanceof HTMLElement)) return;
+  const urls = listReusableScheduleImageUrls(events);
+  const current = String(readForm(root).image_url || "").trim();
+  list.replaceChildren();
+  if (!urls.length) {
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  for (const url of urls) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "gosaki-schedule-image-library__choice";
+    button.dataset.gosakiScheduleImageChoice = url;
+    button.setAttribute("aria-pressed", url === current ? "true" : "false");
+    button.title = "この画像を使う";
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "";
+    button.append(img);
+    list.append(button);
+  }
+}
+
 function syncScheduleImagePreview(root: HTMLElement): void {
   const wrap = root.querySelector("[data-gosaki-schedule-image-preview]");
   const img = wrap?.querySelector("img");
@@ -717,6 +766,7 @@ export function initGosakiScheduleOperationalEdit(
       }
       events = result.events;
       writeEventsJson(root, events);
+      renderScheduleImageLibrary(root, events);
       if (mode === "view") {
         renderScheduleOperationalList(root, events);
         applyScheduleSearch(
@@ -848,6 +898,7 @@ export function initGosakiScheduleOperationalEdit(
     if (editMode instanceof HTMLElement) editMode.hidden = false;
     if (viewToolbar instanceof HTMLElement) viewToolbar.hidden = true;
     writeForm(root, snap);
+    renderScheduleImageLibrary(root, events);
     applyModeFieldLocks(next);
     baseline = { ...snap };
     invalidateDryRun();
@@ -927,6 +978,17 @@ export function initGosakiScheduleOperationalEdit(
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
+
+    const imageChoice = t.closest("[data-gosaki-schedule-image-choice]");
+    if (imageChoice instanceof HTMLElement) {
+      ev.preventDefault();
+      const url = String(imageChoice.dataset.gosakiScheduleImageChoice || "").trim();
+      if (!isSafeHttpUrl(url)) return;
+      writeForm(root, { image_url: url });
+      renderScheduleImageLibrary(root, events);
+      onFormEdited();
+      return;
+    }
 
     if (t.closest("[data-gosaki-schedule-image-upload]")) {
       ev.preventDefault();

@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the About field-lock hydration fix together with the already-local About RPC-only write model. Do not apply SQL, deploy Edge, or change Secrets from this phase.
+1. **Primary:** operator-gated commit of the Discography public track reflection fix. The next Production Deploy is what writes the saved extra track line into `/discography/`. Do not add a new build-read env. About field-lock hydration and the workflow Save UI arms remain separate uncommitted edits.
 2. After that commit, the production admin package must be rebuilt so `/admin/about` sends the hydrated `profile.lede` lock. The workflow Save UI / build-read change is a separate uncommitted workflow edit.
 3. If the About RPC is not yet live, apply `cms-core-v2-gosaki-about-page-fields-save-rpc.template.sql` once on kmjq, then deploy `gosaki-about-supabase-save-dry-run`. Do not re-apply `schedules_site_writer_update` or `site_embeds_admin_delete_youtube`.
 4. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).

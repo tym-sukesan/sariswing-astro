@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-about-field-lock-hydration PASS
+Current phase: gosaki-discography-public-track-build-read PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -13,11 +13,22 @@ PUSH: false
 ftpApply: false
 EDGE_DEPLOY: false
 SQL_APPLY: false
+EXISTING_DISCOGRAPHY_BUILD_READ: true
+ENV_NAME: PUBLIC_SUPABASE_URL + PUBLIC_SUPABASE_ANON_KEY
+FALLBACK_SAFE: true
+SAVED_TRACK_CHANGE_REFLECTS_IN_BUILD: true
 LOCK_HYDRATION_FIXED: true
 POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki Discography public track reflection (2026-10-10)
+
+- Public `/discography/` is generated from the Wix fixture. Production convert already anon-reads `discography` and `discography_tracks` when `supabaseFeatures.discography` is true and `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY` are set. There is no separate Discography build-read env.
+- The track patcher returned the static album whenever the DB track count differed from the HTML paragraph count. A saved extra line, including a trailing 「。」, therefore never appeared after deploy.
+- A valid title list now rewrites that album's track paragraphs, including one added or removed line. Equal titles leave the HTML unchanged (4 albums / 34 tracks). An empty title, a title containing HTML, or a title that cannot be placed leaves that album's static block unchanged. A failed or empty Supabase read still returns `discographyDataSource: "wix-html"`.
+- Save RPC, Edge, RLS, About, YouTube, Schedule, and Contents Save are unchanged. No new env. No DB write.
 
 ## Gosaki About field-lock hydration (2026-10-10)
 

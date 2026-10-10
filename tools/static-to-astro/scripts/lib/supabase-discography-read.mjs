@@ -366,6 +366,8 @@ function replaceTrackParagraphTitle(pHtml, oldPlain, newPlain) {
 
 /**
  * Patch Track List titles inside one Wix repeater item from Supabase tracks.
+ * A longer or shorter valid title list rewrites that block. Empty, HTML, or
+ * unreplaceable titles leave the static block unchanged.
  * @param {string} segment
  * @param {ReturnType<typeof normalizeDiscographyTrackRecord>[]} tracks
  */
@@ -394,29 +396,57 @@ export function patchDiscographyItemTracks(segment, tracks) {
     paragraphs.push({ full: match[0], plain });
   }
 
-  if (paragraphs.length !== tracks.length) {
+  const nextTitles = tracks.map((row) => String(row?.title ?? "").trim());
+  if (!paragraphs.length || nextTitles.some((title) => !title || /[<>]/.test(title))) {
     return { segment, patched: false, changedTitles: [] };
   }
 
-  let newTrackBlock = trackBlock;
-  /** @type {string[]} */
-  const changedTitles = [];
-  let patched = false;
-
-  for (let i = 0; i < paragraphs.length; i++) {
-    const { full, plain } = paragraphs[i];
-    const nextTitle = String(tracks[i]?.title ?? "").trim();
-    if (!nextTitle || plain === nextTitle) continue;
-
-    const newParagraph = replaceTrackParagraphTitle(full, plain, nextTitle);
-    if (newParagraph === full) continue;
-
-    newTrackBlock = newTrackBlock.replace(full, newParagraph);
-    changedTitles.push(nextTitle);
-    patched = true;
+  const first = paragraphs[0];
+  const last = paragraphs[paragraphs.length - 1];
+  const regionStart = trackBlock.indexOf(first.full);
+  const regionEnd = trackBlock.lastIndexOf(last.full) + last.full.length;
+  if (regionStart < 0 || regionEnd <= regionStart) {
+    return { segment, patched: false, changedTitles: [] };
   }
 
-  if (!patched) return { segment, patched: false, changedTitles: [] };
+  /** @type {string[]} */
+  const separators = [];
+  let cursor = regionStart;
+  for (let i = 0; i < paragraphs.length; i++) {
+    const at = trackBlock.indexOf(paragraphs[i].full, cursor);
+    if (at < 0) return { segment, patched: false, changedTitles: [] };
+    if (i > 0) separators.push(trackBlock.slice(cursor, at));
+    cursor = at + paragraphs[i].full.length;
+  }
+  const between = separators[separators.length - 1] ?? "";
+
+  /** @type {string[]} */
+  const rebuilt = [];
+  /** @type {string[]} */
+  const changedTitles = [];
+  for (let i = 0; i < nextTitles.length; i++) {
+    const base = i < paragraphs.length ? paragraphs[i] : paragraphs[paragraphs.length - 1];
+    const nextTitle = nextTitles[i];
+    if (base.plain === nextTitle) {
+      rebuilt.push(base.full);
+      continue;
+    }
+    const nextParagraph = replaceTrackParagraphTitle(base.full, base.plain, nextTitle);
+    if (nextParagraph === base.full) {
+      return { segment, patched: false, changedTitles: [] };
+    }
+    rebuilt.push(nextParagraph);
+    changedTitles.push(nextTitle);
+  }
+
+  let joined = rebuilt[0] ?? "";
+  for (let i = 1; i < rebuilt.length; i++) {
+    joined += (separators[i - 1] ?? between) + rebuilt[i];
+  }
+  const newTrackBlock = trackBlock.slice(0, regionStart) + joined + trackBlock.slice(regionEnd);
+  if (newTrackBlock === trackBlock) {
+    return { segment, patched: false, changedTitles: [] };
+  }
 
   return {
     segment: segment.slice(0, tlIdx) + newTrackBlock + segment.slice(blockEnd),

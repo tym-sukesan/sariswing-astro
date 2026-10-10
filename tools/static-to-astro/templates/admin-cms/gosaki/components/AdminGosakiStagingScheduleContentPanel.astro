@@ -363,6 +363,28 @@ const eventsJson = JSON.stringify(events);
           class="gosaki-schedule-image-library__list"
           data-gosaki-schedule-image-library-list
         ></div>
+        <div
+          class="gosaki-schedule-image-library__actions"
+          data-gosaki-schedule-image-library-actions
+          hidden
+        >
+          <button
+            type="button"
+            class="gosaki-admin-btn gosaki-admin-btn--secondary"
+            data-gosaki-schedule-image-library-more
+            hidden
+          >
+            もっと表示する
+          </button>
+          <button
+            type="button"
+            class="gosaki-admin-btn gosaki-admin-btn--secondary"
+            data-gosaki-schedule-image-library-collapse
+            hidden
+          >
+            折りたたむ
+          </button>
+        </div>
       </div>
       <div
         class="gosaki-schedule-content-panel__image-preview admin-form__field--full"
@@ -405,6 +427,13 @@ const eventsJson = JSON.stringify(events);
         変更がありません
       </p>
       <div class="gosaki-admin-save-area__actions">
+        <button
+          type="button"
+          class="gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn"
+          data-gosaki-edit-cancel
+        >
+          一覧へ戻る
+        </button>
         <button
           type="button"
           class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"

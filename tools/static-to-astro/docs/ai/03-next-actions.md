@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the Schedule horizontal card layout (month and Home, 1000px, text left / flyer right). FTP upload timeout, Discography public track reflection, About field-lock hydration, and the workflow Save UI arms remain separate uncommitted edits. Do not add `--delete`.
+1. **Primary:** operator-gated commit of the shared admin Save bar and the Schedule image library paging (6, then 6). Keep it separate from the Schedule horizontal card, FTP timeout, Discography public track reflection, About field-lock hydration, and the workflow Save UI arms. Do not add `--delete`.
 2. After that commit, the production admin package must be rebuilt so `/admin/about` sends the hydrated `profile.lede` lock. The workflow Save UI / build-read change is a separate uncommitted workflow edit.
 3. If the About RPC is not yet live, apply `cms-core-v2-gosaki-about-page-fields-save-rpc.template.sql` once on kmjq, then deploy `gosaki-about-supabase-save-dry-run`. Do not re-apply `schedules_site_writer_update` or `site_embeds_admin_delete_youtube`.
 4. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).

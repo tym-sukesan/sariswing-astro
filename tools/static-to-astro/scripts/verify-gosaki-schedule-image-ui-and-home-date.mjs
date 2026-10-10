@@ -238,5 +238,51 @@ assert(
   reused.join("|") === "https://cdn.example/a.jpg|https://cdn.example/b.jpg",
 );
 
+const moreAt = opEdit.indexOf('closest("[data-gosaki-schedule-image-library-more]")');
+const collapseAt = opEdit.indexOf('closest("[data-gosaki-schedule-image-library-collapse]")');
+const pagingBranch =
+  moreAt >= 0 && choiceAt > moreAt ? opEdit.slice(moreAt, choiceAt) : "";
+assert(
+  "load more and collapse do not upload",
+  pagingBranch.includes("data-gosaki-schedule-image-library-collapse") &&
+    pagingBranch.includes("GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE") &&
+    !pagingBranch.includes("uploadGosakiScheduleImage") &&
+    !pagingBranch.includes("runScheduleImageUpload") &&
+    adminAstro.includes("もっと表示する") &&
+    adminAstro.includes("折りたたむ"),
+);
+
+const winStart = opEdit.indexOf("export const GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE");
+const winEnd = opEdit.indexOf("function syncScheduleImagePreview");
+const winSource = opEdit
+  .slice(winStart, winEnd)
+  .replace("export const", "const")
+  .replace(
+    /export function scheduleImageLibraryWindow\([\s\S]*?\)\s*:\s*\{[\s\S]*?\}\s*\{/,
+    "function scheduleImageLibraryWindow(total, visibleCount) {",
+  );
+const scheduleImageLibraryWindow = new Function(
+  `${winSource}\nreturn scheduleImageLibraryWindow;`,
+)();
+const windowCases = [
+  [0, 6, { shown: 0, canLoadMore: false, canCollapse: false }],
+  [4, 6, { shown: 4, canLoadMore: false, canCollapse: false }],
+  [6, 6, { shown: 6, canLoadMore: false, canCollapse: false }],
+  [7, 6, { shown: 6, canLoadMore: true, canCollapse: false }],
+  [7, 12, { shown: 7, canLoadMore: false, canCollapse: true }],
+  [13, 6, { shown: 6, canLoadMore: true, canCollapse: false }],
+  [13, 12, { shown: 12, canLoadMore: true, canCollapse: true }],
+  [13, 18, { shown: 13, canLoadMore: false, canCollapse: true }],
+];
+for (const [total, visible, expected] of windowCases) {
+  const actual = scheduleImageLibraryWindow(total, visible);
+  assert(
+    `image window total=${total} visible=${visible}`,
+    actual.shown === expected.shown &&
+      actual.canLoadMore === expected.canLoadMore &&
+      actual.canCollapse === expected.canCollapse,
+  );
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

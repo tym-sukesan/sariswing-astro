@@ -405,28 +405,56 @@ function renderScheduleImageLibrary(
 ): void {
   const box = root.querySelector("[data-gosaki-schedule-image-library]");
   const list = root.querySelector("[data-gosaki-schedule-image-library-list]");
+  const actions = root.querySelector("[data-gosaki-schedule-image-library-actions]");
+  const more = root.querySelector("[data-gosaki-schedule-image-library-more]");
+  const collapse = root.querySelector("[data-gosaki-schedule-image-library-collapse]");
   if (!(box instanceof HTMLElement) || !(list instanceof HTMLElement)) return;
   const urls = listReusableScheduleImageUrls(events);
   const current = String(readForm(root).image_url || "").trim();
+  const visibleCount = Number(box.getAttribute("data-visible-count") || "") || GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE;
+  const windowState = scheduleImageLibraryWindow(urls.length, visibleCount);
   list.replaceChildren();
   if (!urls.length) {
     box.hidden = true;
     return;
   }
   box.hidden = false;
-  for (const url of urls) {
+  box.setAttribute("data-visible-count", String(windowState.shown));
+  for (const url of urls.slice(0, windowState.shown)) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "gosaki-schedule-image-library__choice";
     button.dataset.gosakiScheduleImageChoice = url;
     button.setAttribute("aria-pressed", url === current ? "true" : "false");
-    button.title = "この画像を使う";
+    button.title = url === current ? "選択中" : "この画像を使う";
     const img = document.createElement("img");
     img.src = url;
     img.alt = "";
     button.append(img);
     list.append(button);
   }
+  if (more instanceof HTMLElement) more.hidden = !windowState.canLoadMore;
+  if (collapse instanceof HTMLElement) collapse.hidden = !windowState.canCollapse;
+  if (actions instanceof HTMLElement) {
+    actions.hidden = !windowState.canLoadMore && !windowState.canCollapse;
+  }
+}
+
+export const GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE = 6;
+
+export function scheduleImageLibraryWindow(
+  total: number,
+  visibleCount: number,
+): { shown: number; canLoadMore: boolean; canCollapse: boolean } {
+  const page = GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE;
+  const count = Math.max(0, Number(total) || 0);
+  const requested = Math.max(page, Number(visibleCount) || page);
+  const shown = Math.min(count, requested);
+  return {
+    shown,
+    canLoadMore: shown < count,
+    canCollapse: shown > page,
+  };
 }
 
 function syncScheduleImagePreview(root: HTMLElement): void {
@@ -898,6 +926,10 @@ export function initGosakiScheduleOperationalEdit(
     if (editMode instanceof HTMLElement) editMode.hidden = false;
     if (viewToolbar instanceof HTMLElement) viewToolbar.hidden = true;
     writeForm(root, snap);
+    const library = root.querySelector("[data-gosaki-schedule-image-library]");
+    if (library instanceof HTMLElement) {
+      library.setAttribute("data-visible-count", String(GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE));
+    }
     renderScheduleImageLibrary(root, events);
     applyModeFieldLocks(next);
     baseline = { ...snap };
@@ -978,6 +1010,24 @@ export function initGosakiScheduleOperationalEdit(
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
+
+    const libraryBox = root.querySelector("[data-gosaki-schedule-image-library]");
+    if (t.closest("[data-gosaki-schedule-image-library-more]") && libraryBox instanceof HTMLElement) {
+      ev.preventDefault();
+      const current = Number(libraryBox.getAttribute("data-visible-count") || "") || GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE;
+      libraryBox.setAttribute(
+        "data-visible-count",
+        String(current + GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE),
+      );
+      renderScheduleImageLibrary(root, events);
+      return;
+    }
+    if (t.closest("[data-gosaki-schedule-image-library-collapse]") && libraryBox instanceof HTMLElement) {
+      ev.preventDefault();
+      libraryBox.setAttribute("data-visible-count", String(GOSAKI_SCHEDULE_IMAGE_LIBRARY_PAGE_SIZE));
+      renderScheduleImageLibrary(root, events);
+      return;
+    }
 
     const imageChoice = t.closest("[data-gosaki-schedule-image-choice]");
     if (imageChoice instanceof HTMLElement) {

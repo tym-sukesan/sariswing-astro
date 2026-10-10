@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-schedule-horizontal-card PASS
+Current phase: gosaki-admin-save-bar PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -22,6 +22,12 @@ POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki admin save bar and image library paging (2026-10-10)
+
+- Schedule, Discography, YouTube, and About use one fixed Save bar. On PC it matches the 960px content column and keeps Cancel / Save on the right. On SP it is full width with large tap targets. The form has bottom padding so the bar does not cover the last fields.
+- Status copy stays: 変更がありません, 未保存の変更があります, 保存しました, and validation text such as 入力内容を確認してください. Save enabled/disabled logic, Edge, RPC, and approval IDs are unchanged.
+- Existing schedule images show 6 at first. もっと表示する adds 6. 折りたたむ returns to 6. Six or fewer hides both controls. The chosen image is marked 選択中 and does not upload.
 
 ## Gosaki Schedule horizontal card layout (2026-10-10)
 

@@ -53,7 +53,7 @@ jobs:
         working-directory: tools/static-to-astro
         run: npm ci
 
-      - name: Build Gosaki production package (Save arms unset)
+      - name: Build Gosaki production package (Supabase Save UI and build-read)
         working-directory: tools/static-to-astro
         env:
           PUBLIC_SUPABASE_URL: ${{ secrets.GOSAKI_PRODUCTION_SUPABASE_URL }}
@@ -61,24 +61,15 @@ jobs:
           PUBLIC_GOSAKI_PRODUCTION_DEPLOY_UI_ARMED: "true"
         run: |
           unset \
-            PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED \
-            PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED \
             PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED \
-            PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED \
             PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED \
-            PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED \
-            CMS_KIT_SITE_EMBEDS_BUILD_READ \
-            CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ \
             SUPABASE_SERVICE_ROLE_KEY
-          # Operator-gated later (do not set in this step until parity SELECT matches live HTML):
-          # PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true
-          # PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true
-          # PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true
-          # PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true
-          # CMS_KIT_SITE_EMBEDS_BUILD_READ=true
-          # CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true
-          # Keep unset: PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED
-          # Keep unset: PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED
+          export PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED=true
+          export PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true
+          export PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true
+          export PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=true
+          export CMS_KIT_SITE_EMBEDS_BUILD_READ=true
+          export CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true
           npm run build:gosaki:production
 
       - name: Assert production public-dist package

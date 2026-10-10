@@ -113,6 +113,9 @@ assert("upload ssl-allow no", uploadStep.includes("set ftp:ssl-allow no"));
 assert("upload passive-mode", uploadStep.includes("set ftp:passive-mode on"));
 assert("upload max-retries", uploadStep.includes("set net:max-retries 5"));
 assert("upload timeout", uploadStep.includes("set net:timeout 30"));
+assert("upload step timeout-minutes 5", /^\s+timeout-minutes:\s*5\s*$/m.test(uploadStep));
+assert("upload reconnect base", uploadStep.includes("set net:reconnect-interval-base 5"));
+assert("upload reconnect max", uploadStep.includes("set net:reconnect-interval-max 30"));
 assert("upload clobber", uploadStep.includes("set xfer:clobber on"));
 assert("upload cd remote dir", uploadStep.includes('cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"'));
 assert(

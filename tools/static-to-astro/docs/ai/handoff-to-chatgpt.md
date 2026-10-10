@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-public-track-build-read PASS
+Current phase: gosaki-production-ftp-upload-timeout PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -22,6 +22,12 @@ POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki production FTP upload timeout (2026-10-10)
+
+- The production upload step now fails after 5 minutes. lftp reconnect waits are capped at 5 seconds base and 30 seconds max.
+- `mirror -R` is unchanged. `--delete` is still absent. `net:max-retries 5`, `net:timeout 30`, and `xfer:clobber on` stay. Remote dir guard, excludes, and FTP secret names are unchanged. Sariswing `deploy.yml` is unchanged.
+- A timed-out step does not run a remote cleanup. Re-run overwrites the same directory. No FTP or deploy was executed.
 
 ## Gosaki Discography public track reflection (2026-10-10)
 

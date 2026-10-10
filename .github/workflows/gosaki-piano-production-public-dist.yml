@@ -108,6 +108,7 @@ jobs:
           sudo apt-get install -y lftp
 
       - name: Upload public-dist via lftp mirror -R (delete disabled)
+        timeout-minutes: 5
         env:
           GOSAKI_PRODUCTION_FTP_HOST: ${{ secrets.GOSAKI_PRODUCTION_FTP_HOST }}
           GOSAKI_PRODUCTION_FTP_USER: ${{ secrets.GOSAKI_PRODUCTION_FTP_USER }}
@@ -123,6 +124,8 @@ jobs:
           set ftp:passive-mode on
           set net:max-retries 5
           set net:timeout 30
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-max 30
           set xfer:clobber on
           cd "${GOSAKI_PRODUCTION_FTP_REMOTE_DIR}"
           lcd output/manual-upload/gosaki-piano-production/public-dist/

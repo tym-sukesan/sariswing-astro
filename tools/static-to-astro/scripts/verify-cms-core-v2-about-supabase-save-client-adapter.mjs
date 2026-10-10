@@ -269,6 +269,118 @@ if (!mod?.sanitizeAboutSupabaseDryRunEndpointDisplay) runMirrorContracts();
   assert("supabase dry-run omits fileSha requirement", !d.currentFileSha);
 }
 
+const LEDE_LOCK = "2026-09-23T16:15:21.16404+00:00";
+const NEXT_LEDE_LOCK = "2026-10-10T01:02:03.000Z";
+function loadAboutLockFns(source) {
+  const start = source.indexOf("export const ABOUT_BAND_STABLE_IDS");
+  const end = source.indexOf("/** G-20u28");
+  const ledeStart = source.indexOf("export function extractAboutProfileLedeFromBody");
+  const ledeEnd = source.indexOf("/**\n * Overlay profile.lede");
+  if (start < 0 || end < 0 || ledeStart < 0 || ledeEnd < 0) return null;
+  const js = source
+    .slice(start, end)
+    .concat("\n", source.slice(ledeStart, ledeEnd))
+    .replace(/^export /gm, "")
+    .replace(
+      /function aboutFieldLocksFromSaveDisplay\(input: \{[\s\S]*?\}\):[\s\S]*?\{/,
+      "function aboutFieldLocksFromSaveDisplay(input) {",
+    )
+    .replace(/ as const/g, "")
+    .replace(/ as readonly string\[\]/g, "")
+    .replace(/ as Record<string, unknown>/g, "")
+    .replace(/: AboutContentFormSnapshot/g, "")
+    .replace(/: AboutSupabaseFieldWrite\[\]/g, "")
+    .replace(/: Record<string, unknown> \| null \| undefined/g, "")
+    .replace(/\?: Record<string, string \| null> \| null/g, "")
+    .replace(/: Record<string, string \| null> \| null/g, "")
+    .replace(/: Record<string, string \| null> = \{\}/g, " = {}")
+    .replace(/: Record<string, string \| null>/g, "")
+    .replace(/\?: Array<\{[\s\S]*?\}>/g, "")
+    .replace(/: Array<\{[\s\S]*?\}>/g, "")
+    .replace(/\?: string \| null/g, "")
+    .replace(/: string \| null/g, "")
+    .replace(/part: "name" \| "body" \| "image_alt"/g, "part")
+    .replace(/: string/g, "")
+    .replace(/: boolean/g, "")
+    .replace(/\): \{ ok: true; fields \} \| \{ ok: false; error \}/g, ")")
+    .replace(/type AboutSupabaseFieldWrite = \{[\s\S]*?\};\n/g, "");
+  return new Function(
+    `${js}; return { buildAboutSupabaseFieldWrites, aboutFieldLocksFromReadFields, aboutFieldLocksFromSaveDisplay };`,
+  )();
+}
+const lockFns = loadAboutLockFns(adminLib);
+if (lockFns) {
+  const { buildAboutSupabaseFieldWrites, aboutFieldLocksFromReadFields, aboutFieldLocksFromSaveDisplay } = lockFns;
+  const locks = aboutFieldLocksFromReadFields(
+    [
+      { fieldKey: "profile.lede", updated_at: "2026-09-23 16:15:21.16404+00" },
+      { fieldKey: "profile.heading", valueText: "About", updatedAt: null },
+    ],
+    null,
+  );
+  assert("read lock keeps existing profile.lede updated_at", locks["profile.lede"] === "2026-09-23 16:15:21.16404+00");
+  assert("read lock keeps explicit null", locks["profile.heading"] === null);
+  assert("read lock omits a field that is not in the row set", !Object.hasOwn(locks, "bands.gosakirika-trio.name"));
+
+  const built = buildAboutSupabaseFieldWrites(
+    {
+      profile: { heading: "Heading", body: "Lede paragraph\n\nRest", imageAlt: "" },
+      bands: [{ id: "band-gosakirika-trio", name: "Trio", body: "Bio", imageAlt: "" }],
+    },
+    { "profile.lede": LEDE_LOCK },
+  );
+  assert("field write builder ok", built.ok === true);
+  const ledeWrite = built.ok ? built.fields.find((field) => field.fieldKey === "profile.lede") : null;
+  const bandWrite = built.ok
+    ? built.fields.find((field) => field.fieldKey === "bands.gosakirika-trio.name")
+    : null;
+  assert("existing profile.lede lock is sent", ledeWrite?.expectedBeforeUpdatedAt === LEDE_LOCK);
+  assert("new band field lock stays null", bandWrite?.expectedBeforeUpdatedAt === null);
+
+  const stale = buildAboutSupabaseFieldWrites(
+    {
+      profile: { heading: "Heading", body: "Lede paragraph", imageAlt: "" },
+      bands: [{ id: "band-gosakirika-trio", name: "Trio", body: "Bio", imageAlt: "" }],
+    },
+    { "profile.lede": "stale-lock" },
+  );
+  const staleLede = stale.ok ? stale.fields.find((field) => field.fieldKey === "profile.lede") : null;
+  assert("stale lock is sent unchanged", staleLede?.expectedBeforeUpdatedAt === "stale-lock");
+
+  const refreshed = aboutFieldLocksFromSaveDisplay({
+    fieldLocks: {
+      "profile.lede": NEXT_LEDE_LOCK,
+      "bands.gosakirika-trio.name": NEXT_LEDE_LOCK,
+    },
+    fields: [{ fieldKey: "profile.lede", updatedAt: "ignored-when-fieldLocks-present" }],
+  });
+  assert("save fieldLocks replace profile.lede", refreshed?.["profile.lede"] === NEXT_LEDE_LOCK);
+  assert("save fieldLocks replace new band", refreshed?.["bands.gosakirika-trio.name"] === NEXT_LEDE_LOCK);
+
+  const fromFields = aboutFieldLocksFromSaveDisplay({
+    fields: [{ fieldKey: "profile.lede", updated_at: NEXT_LEDE_LOCK }],
+  });
+  assert("save fields.updatedAt refreshes profile.lede", fromFields?.["profile.lede"] === NEXT_LEDE_LOCK);
+} else {
+  assert("about field lock helpers load from admin source", false);
+}
+
+{
+  const invalidateStart = aboutEdit.indexOf("function invalidateDryRun()");
+  const invalidateEnd = aboutEdit.indexOf("function applyDryRunButtonUi()", invalidateStart);
+  const invalidateBody = aboutEdit.slice(invalidateStart, invalidateEnd);
+  assert("editing does not drop hydrated field locks", !/supabaseFieldLocks\s*=\s*null/.test(invalidateBody));
+  assert("hydrate stores per-field locks", aboutEdit.includes("aboutFieldLocksFromReadFields"));
+  assert("save refreshes locks before the next edit", aboutEdit.includes("aboutFieldLocksFromSaveDisplay"));
+  const handler = read("supabase/functions/gosaki-about-supabase-save-dry-run/handler.ts");
+  assert(
+    "edge still fail-closes a mismatched lock",
+    handler.includes('error: "stale_optimistic_lock"') &&
+      handler.includes("field.expectedBeforeUpdatedAt !== before.updatedAt") &&
+      handler.includes("status: 409"),
+  );
+}
+
 // --- Fixture: dry-run missing updatedAt fails ---
 {
   const body = {

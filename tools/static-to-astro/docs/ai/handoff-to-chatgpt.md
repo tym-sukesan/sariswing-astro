@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-about-rpc-only-write PASS
+Current phase: gosaki-about-field-lock-hydration PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -13,12 +13,18 @@ PUSH: false
 ftpApply: false
 EDGE_DEPLOY: false
 SQL_APPLY: false
-BUILD_READ_ENABLED: false
-READY_TO_COMMIT: true
-READY_TO_APPLY_ABOUT_SQL: true
-READY_FOR_OPERATOR_GATED_ROLLOUT: false
+LOCK_HYDRATION_FIXED: true
+POST_SAVE_LOCK_REFRESH_FIXED: true
+SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki About field-lock hydration (2026-10-10)
+
+- Production About Save returned 409 `stale_optimistic_lock` for `profile.lede` because the client sent `expectedBeforeUpdatedAt: null`.
+- The read already returned the row `updated_at`. Any later edit called `invalidateDryRun()`, which set `supabaseFieldLocks = null` before dry-run and Save. The same clear ran after a successful Save, so the new lock was discarded.
+- Form edits no longer drop the lock map. Existing rows keep their `updated_at`. Fields absent from the read stay null. After Save, `fieldLocks` or `fields.updatedAt` is merged into the map.
+- The atomic RPC, RLS, and Edge handler are unchanged. A mismatched lock is still HTTP 409. Contents, Schedule, Discography, and YouTube are unchanged.
 
 ## Gosaki About RPC-only write (2026-10-10)
 

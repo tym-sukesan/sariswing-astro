@@ -199,6 +199,59 @@ export function buildAboutSupabaseFieldWrites(
   return { ok: true, fields };
 }
 
+function readAboutFieldUpdatedAt(record: Record<string, unknown> | null | undefined): string | null {
+  if (!record) return null;
+  const raw = record.updatedAt ?? record.updated_at;
+  if (raw == null) return null;
+  const text = String(raw).trim();
+  return text || null;
+}
+
+/** Per-field optimistic lock from a site_page_fields read. Missing rows stay absent. */
+export function aboutFieldLocksFromReadFields(
+  fields: Array<{ fieldKey?: string; updatedAt?: string | null; updated_at?: string | null }>,
+  profileLedeUpdatedAt?: string | null,
+): Record<string, string | null> {
+  const locks: Record<string, string | null> = {};
+  for (const field of fields ?? []) {
+    const fieldKey = String(field?.fieldKey ?? "").trim();
+    if (!fieldKey) continue;
+    locks[fieldKey] = readAboutFieldUpdatedAt(field as Record<string, unknown>);
+  }
+  const lede = String(profileLedeUpdatedAt ?? "").trim();
+  if (lede && locks["profile.lede"] == null) locks["profile.lede"] = lede;
+  return locks;
+}
+
+/**
+ * Locks to merge after dry-run or Save.
+ * A field omitted from the response is left to the caller. An explicit null stays null.
+ */
+export function aboutFieldLocksFromSaveDisplay(input: {
+  fieldLocks?: Record<string, string | null> | null;
+  fields?: Array<{ fieldKey?: string; updatedAt?: string | null; updated_at?: string | null }>;
+  profileLedeUpdatedAt?: string | null;
+}): Record<string, string | null> | null {
+  const fromMap = input.fieldLocks;
+  if (fromMap && typeof fromMap === "object" && !Array.isArray(fromMap)) {
+    const locks: Record<string, string | null> = {};
+    for (const [key, raw] of Object.entries(fromMap)) {
+      const fieldKey = key.trim();
+      if (!fieldKey) continue;
+      const text = raw == null ? "" : String(raw).trim();
+      locks[fieldKey] = text || null;
+    }
+    if (Object.keys(locks).length > 0) return locks;
+  }
+  if (input.fields?.length) {
+    const locks = aboutFieldLocksFromReadFields(input.fields, input.profileLedeUpdatedAt);
+    if (Object.keys(locks).length > 0) return locks;
+  }
+  const lede = String(input.profileLedeUpdatedAt ?? "").trim();
+  if (lede) return { "profile.lede": lede };
+  return null;
+}
+
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 
@@ -2115,7 +2168,7 @@ export function sanitizeAboutSupabaseReadDisplay(
           return {
             fieldKey: String(record.fieldKey ?? "").trim(),
             valueText: String(record.valueText ?? ""),
-            updatedAt: record.updatedAt == null ? null : String(record.updatedAt),
+            updatedAt: readAboutFieldUpdatedAt(record),
           };
         })
         .filter((row) => row.fieldKey.length > 0)
@@ -2133,12 +2186,7 @@ export function sanitizeAboutSupabaseReadDisplay(
     fieldKey: typeof data.fieldKey === "string" ? data.fieldKey : undefined,
     valueText: valueText || undefined,
     fields,
-    updatedAt:
-      data.updatedAt == null
-        ? null
-        : typeof data.updatedAt === "string"
-          ? data.updatedAt
-          : String(data.updatedAt),
+    updatedAt: readAboutFieldUpdatedAt(data),
     didWrite: false,
     dbWrite: false,
     networkWrite: false,
@@ -2608,7 +2656,7 @@ export function sanitizeAboutSupabaseSaveEndpointDisplay(
           return {
             fieldKey: String(record.fieldKey ?? "").trim(),
             valueText: String(record.valueText ?? ""),
-            updatedAt: record.updatedAt == null ? null : String(record.updatedAt),
+            updatedAt: readAboutFieldUpdatedAt(record),
           };
         })
         .filter((row) => row.fieldKey.length > 0)

@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki About field-lock hydration (2026-10-10):** **PASS local / not committed** — Phase `gosaki-about-field-lock-hydration` · production Save sent `profile.lede.expectedBeforeUpdatedAt = null` because form edits cleared the hydrated `updated_at` map · locks now stay across edits · Save payload uses that map · a missing row stays null · Save success merges `fieldLocks` / `fields.updatedAt` · Edge / RPC / Contents / Schedule / Discography / YouTube unchanged · verifier: About Save client adapter **44/0**.
+
 **Gosaki About RPC-only write (2026-10-10):** **PASS local / not applied** — Phase `gosaki-about-rpc-only-write` · table `GRANT INSERT, UPDATE` removed and must not be applied · `SECURITY INVOKER` · column `INSERT` plus `UPDATE (value_text)` for `authenticated` · restrictive policies `site_page_fields_about_rpc_insert` / `site_page_fields_about_rpc_update` require transaction-local `app.gosaki_about_rpc_write=1`, `can_write_site`, `gosaki-piano`, `about`, and the shared allowlist · direct PostgREST writes fail closed · profile.lede Save uses the same RPC · no SQL apply / Edge deploy / Secret change / commit · verifier: atomic+overlay **123/0**.
 
 **Gosaki About RPC table grant (2026-10-10):** **SUPERSEDED** — Phase `gosaki-about-rpc-table-grant` · table grant was not applied · do not apply that model.

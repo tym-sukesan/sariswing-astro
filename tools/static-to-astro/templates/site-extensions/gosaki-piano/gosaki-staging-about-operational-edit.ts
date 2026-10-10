@@ -20,6 +20,8 @@ import {
   userMessageForSaveFailure,
 } from "./gosaki-staging-one-click-save";
 import {
+  aboutFieldLocksFromReadFields,
+  aboutFieldLocksFromSaveDisplay,
   applyAboutSupabaseFieldsToSnapshot,
   buildAboutSupabaseDryRunEndpointRequest,
   buildAboutSupabaseReadEndpointRequest,
@@ -365,6 +367,16 @@ export function initGosakiAboutOperationalEdit(
     });
   }
 
+  function rememberAboutFieldLocks(next: Record<string, string | null> | null) {
+    if (!next) return;
+    supabaseFieldLocks = { ...(supabaseFieldLocks ?? {}), ...next };
+    const lede = String(supabaseFieldLocks["profile.lede"] ?? "").trim();
+    if (lede) {
+      supabaseLedeUpdatedAtBaseline = lede;
+      root.dataset.gosakiAboutLedeUpdatedAt = lede;
+    }
+  }
+
   function invalidateDryRun() {
     dryRunOk = false;
     dryRunNoChange = false;
@@ -373,7 +385,6 @@ export function initGosakiAboutOperationalEdit(
     dryRunFileSha = null;
     dryRunExpectedBefore = null;
     dryRunExpectedBeforeUpdatedAt = null;
-    supabaseFieldLocks = null;
     void refreshSaveGate();
   }
 
@@ -578,14 +589,12 @@ export function initGosakiAboutOperationalEdit(
                 },
               };
           writeFormSnapshot(nextSnap);
-          supabaseFieldLocks = Object.fromEntries(
-            (display.fields ?? []).map((field) => [field.fieldKey, field.updatedAt ?? null]),
+          supabaseFieldLocks = aboutFieldLocksFromReadFields(
+            display.fields ?? [],
+            display.updatedAt,
           );
           supabaseLedeUpdatedAtBaseline =
-            display.updatedAt != null && String(display.updatedAt).trim()
-              ? String(display.updatedAt)
-              : null;
-          // Keep baseline for future Save lock (not shown in UI).
+            String(supabaseFieldLocks["profile.lede"] ?? display.updatedAt ?? "").trim() || null;
           root.dataset.gosakiAboutLedeUpdatedAt = supabaseLedeUpdatedAtBaseline ?? "";
           baselineFingerprint = formFingerprint(snap);
           dryRunOk = false;
@@ -778,13 +787,22 @@ export function initGosakiAboutOperationalEdit(
       dryRunFileSha = display.currentFileSha ?? null;
       dryRunExpectedBefore = display.current ?? display.before ?? (isSupabasePath ? next : null);
       dryRunExpectedBeforeUpdatedAt = resolveDryRunLockUpdatedAt(display);
-      if (isSupabasePath && display.fieldLocks) supabaseFieldLocks = display.fieldLocks;
+      if (isSupabasePath) {
+        rememberAboutFieldLocks(
+          aboutFieldLocksFromSaveDisplay({
+            fieldLocks: display.fieldLocks,
+            fields: display.fields,
+            profileLedeUpdatedAt: dryRunExpectedBeforeUpdatedAt,
+          }),
+        );
+      }
       if (isSupabasePath && dryRunExpectedBeforeUpdatedAt) {
-        // Ensure Save builder can read updatedAt from expectedBefore object.
         (dryRunExpectedBefore as { updatedAt?: string }).updatedAt =
           dryRunExpectedBeforeUpdatedAt;
-        supabaseLedeUpdatedAtBaseline = dryRunExpectedBeforeUpdatedAt;
-        root.dataset.gosakiAboutLedeUpdatedAt = dryRunExpectedBeforeUpdatedAt;
+        if (!String(supabaseFieldLocks?.["profile.lede"] ?? "").trim()) {
+          supabaseLedeUpdatedAtBaseline = dryRunExpectedBeforeUpdatedAt;
+          root.dataset.gosakiAboutLedeUpdatedAt = dryRunExpectedBeforeUpdatedAt;
+        }
       }
       setLocalValidation(pendingOneClickSave ? "確認中…" : "確認完了", true);
       showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">確認完了</p>`);
@@ -1001,9 +1019,6 @@ export function initGosakiAboutOperationalEdit(
           const nextSnap = applyAboutSupabaseFieldsToSnapshot(snap, display.fields);
           writeFormSnapshot(nextSnap);
           baselineFingerprint = formFingerprint(nextSnap);
-          supabaseFieldLocks =
-            display.fieldLocks ??
-            Object.fromEntries(display.fields.map((field) => [field.fieldKey, field.updatedAt ?? null]));
         } else {
           // Legacy single-field after is { valueText, updatedAt } — overlay lede only.
           const lede =
@@ -1015,11 +1030,17 @@ export function initGosakiAboutOperationalEdit(
           writeFormSnapshot(snap);
           baselineFingerprint = formFingerprint(snap);
         }
-        const nextUpdatedAt =
-          String(display.afterUpdatedAt ?? "").trim() ||
-          String((display.after as { updatedAt?: string } | undefined)?.updatedAt ?? "").trim() ||
-          String(supabaseFieldLocks?.["profile.lede"] ?? "").trim() ||
-          null;
+        rememberAboutFieldLocks(
+          aboutFieldLocksFromSaveDisplay({
+            fieldLocks: display.fieldLocks,
+            fields: display.fields,
+            profileLedeUpdatedAt:
+              String(display.afterUpdatedAt ?? "").trim() ||
+              String((display.after as { updatedAt?: string } | undefined)?.updatedAt ?? "").trim() ||
+              null,
+          }),
+        );
+        const nextUpdatedAt = String(supabaseFieldLocks?.["profile.lede"] ?? "").trim() || null;
         supabaseLedeUpdatedAtBaseline = nextUpdatedAt;
         root.dataset.gosakiAboutLedeUpdatedAt = nextUpdatedAt ?? "";
       } else {

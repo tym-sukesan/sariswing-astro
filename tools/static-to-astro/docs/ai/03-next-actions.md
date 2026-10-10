@@ -3,11 +3,10 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary:** operator-gated commit of the About RPC-only write model. Do not apply SQL, deploy Edge, or arm production from this phase. Do not apply the superseded table `GRANT INSERT, UPDATE`.
-2. After commit, apply `cms-core-v2-gosaki-about-page-fields-save-rpc.template.sql` once on kmjq. That file creates the RPC, the column grants, and the two restrictive policies. Then deploy `gosaki-about-supabase-save-dry-run`, because profile.lede Save now calls the RPC.
-3. Do not re-apply `schedules_site_writer_update` or `site_embeds_admin_delete_youtube`. Operator SELECT confirmed both policies are already live. Discography needs no new SQL. Schedule and YouTube Edge redeploy remain separate from this grant.
-4. After a SELECT-only parity check, one workflow change may set `CMS_KIT_SITE_EMBEDS_BUILD_READ` and `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` to true. The About overlay is ready for that flag. Re-applying the current public HTML is a no-op. A DB read failure keeps the JSON page.
-5. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).
+1. **Primary:** operator-gated commit of the About field-lock hydration fix together with the already-local About RPC-only write model. Do not apply SQL, deploy Edge, or change Secrets from this phase.
+2. After that commit, the production admin package must be rebuilt so `/admin/about` sends the hydrated `profile.lede` lock. The workflow Save UI / build-read change is a separate uncommitted workflow edit.
+3. If the About RPC is not yet live, apply `cms-core-v2-gosaki-about-page-fields-save-rpc.template.sql` once on kmjq, then deploy `gosaki-about-supabase-save-dry-run`. Do not re-apply `schedules_site_writer_update` or `site_embeds_admin_delete_youtube`.
+4. `readyForAnyFutureFtpApply: false` · vsbvnd STOP · Contents Save arms stay unset · `seedAppliedStaging: true` (historical About lede seed; do not re-apply).
 
 ## 0. Gosaki About RPC-only write (2026-10-10)
 

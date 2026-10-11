@@ -8,9 +8,17 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  discographySupabaseReadSuccess,
+  discographyWixReadFallback,
   findDiscographyRepeaterItemBounds,
+  loadDiscographyDataForBuild,
   patchDiscographyItemTracks,
 } from "./lib/supabase-discography-read.mjs";
+import {
+  applyGosakiDiscographyPublicList,
+  renderGosakiDiscographyAlbumItem,
+} from "./lib/gosaki-discography-public-list-render.mjs";
+import { createGosakiPianoHookMethods } from "./lib/gosaki-site-generator-hooks-adapter.mjs";
 
 const toolRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = path.resolve(toolRoot, "../..");
@@ -21,6 +29,18 @@ const readSource = fs.readFileSync(
 );
 const hookSource = fs.readFileSync(
   path.join(toolRoot, "scripts/lib/gosaki-site-generator-hooks-adapter.mjs"),
+  "utf8",
+);
+const renderSource = fs.readFileSync(
+  path.join(toolRoot, "scripts/lib/gosaki-discography-public-list-render.mjs"),
+  "utf8",
+);
+const adminSource = fs.readFileSync(
+  path.join(toolRoot, "templates/site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit.ts"),
+  "utf8",
+);
+const edgeSource = fs.readFileSync(
+  path.join(repoRoot, "supabase/functions/gosaki-discography-save-dry-run/handler.ts"),
   "utf8",
 );
 const workflowSource = fs.readFileSync(
@@ -96,11 +116,29 @@ check(
   "read failure stays on wix-html",
   readSource.includes('discographyDataSource: "wix-html"') &&
     readSource.includes("Supabase read failed") &&
-    readSource.includes("supabase_empty_or_error"),
+    readSource.includes("supabase_read_failed") &&
+    readSource.includes("supabase_env_missing") &&
+    readSource.includes("supabase_response_invalid"),
 );
 check(
-  "hook patches only a supabase bundle",
-  hookSource.includes('discographyDataSource === "supabase"'),
+  "published zero is a successful read",
+  readSource.includes("0 published discography rows") &&
+    !readSource.includes("supabase_empty_or_error"),
+);
+check(
+  "hook renders a successful supabase read",
+  hookSource.includes("applyGosakiDiscographyPublicList") &&
+    !hookSource.includes("findDiscographyRepeaterItemBounds") &&
+    !hookSource.includes("patchGosakiDiscographySupabaseFields"),
+);
+check(
+  "renderer does not place albums by title",
+  !renderSource.includes("findDiscographyRepeaterItemBounds"),
+);
+check(
+  "admin save and edge are outside this renderer",
+  !adminSource.includes("applyGosakiDiscographyPublicList") &&
+    !edgeSource.includes("gosaki-discography-public-list-render"),
 );
 
 for (const album of albums) {
@@ -165,6 +203,338 @@ check(
   removed.patched &&
     trackTitles(removed.segment).join("\n") === sample.titles.slice(0, -1).join("\n") &&
     !trackTitles(removed.segment).includes(sample.titles.at(-1)),
+);
+
+const FIXTURE_ALBUMS = [
+  {
+    title: "Continuous",
+    legacy_id: "discography-001",
+    artist: "ごさきりかこTrio Feat.石川周之介",
+    sort_order: 1,
+    catalog_number: "GSRT-0002",
+  },
+  { title: "SKYLARK", legacy_id: "discography-002", artist: "後藤沙紀", sort_order: 2, catalog_number: "STU-001" },
+  {
+    title: "About Us!!",
+    legacy_id: "discography-003",
+    artist: "ごさきりかこtrio",
+    sort_order: 3,
+    catalog_number: "GSRT-0001",
+  },
+  {
+    title: "Ja-Jaaaaan!",
+    legacy_id: "discography-004",
+    artist: "新谷健介オノマトペ",
+    sort_order: 4,
+    label: "Mardi Gras JAPAN Records",
+    catalog_number: "OMP-001",
+  },
+];
+const tracksByTitle = new Map(albums.map((album) => [album.title, album.titles]));
+const parityReleases = FIXTURE_ALBUMS.map((row) => ({
+  ...row,
+  description: "後藤沙紀 / piano",
+  purchase_url: "https://gosakirikako.base.shop/",
+  streaming_url: "javascript:alert(1)",
+  cover_image_url: "https://example.test/cover.png",
+  release_date: "2023-07-26",
+}));
+const tracksByLegacyId = Object.fromEntries(
+  FIXTURE_ALBUMS.map((row) => [
+    row.legacy_id,
+    tracksByTitle.get(row.title).map((title, index) => ({
+      title,
+      sort_order: index + 1,
+      track_number: index + 1,
+    })),
+  ]),
+);
+const parityBundle = {
+  discographyDataSource: "supabase",
+  readStatus: "ok",
+  releases: [parityReleases[2], parityReleases[0], parityReleases[3], parityReleases[1]],
+  tracksByLegacyId,
+  trackRowCount: 34,
+};
+const rendered = applyGosakiDiscographyPublicList(html, parityBundle);
+const renderedIds = [...rendered.html.matchAll(/data-gosaki-discography-legacy-id="([^"]+)"/g)].map(
+  (match) => match[1],
+);
+
+function renderedTrackTitles(pageHtml, legacyId) {
+  const start = pageHtml.indexOf(`id="comp-lley4qy2__cms-${legacyId}"`);
+  const end = pageHtml.indexOf(`id="comp-lley693e__cms-${legacyId}"`);
+  const block = pageHtml.slice(start, end);
+  return [...block.matchAll(TRACK_PARAGRAPH_RE)]
+    .map((match) => plainFromParagraph(match[0]))
+    .filter((title) => title && title !== "Track List");
+}
+
+check("data-driven render replaces the repeater", rendered.replaced && rendered.summary?.renderMode === "data-driven");
+check(
+  "data-driven attribute is on the repeater element",
+  rendered.html.includes('<div id="comp-llexymel" data-gosaki-discography-render="data-driven"') &&
+    rendered.html.includes('[id="comp-llexymel"]'),
+);
+check(
+  "album order follows sort_order rather than input order",
+  renderedIds.join() === "discography-001,discography-002,discography-003,discography-004",
+);
+check(
+  "rendered track lists match the current 34 titles",
+  FIXTURE_ALBUMS.every(
+    (row) => renderedTrackTitles(rendered.html, row.legacy_id).join("\n") === tracksByTitle.get(row.title).join("\n"),
+  ) &&
+    FIXTURE_ALBUMS.reduce((sum, row) => sum + renderedTrackTitles(rendered.html, row.legacy_id).length, 0) === 34,
+);
+check(
+  "generated ids are unique and are not the wix item ids",
+  !rendered.html.includes('id="comp-llexymga__item1"') &&
+    !rendered.html.includes('id="comp-llexymga__item-j9r9uz7e"') &&
+    new Set([...rendered.html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1])).size ===
+      [...rendered.html.matchAll(/\sid="([^"]+)"/g)].length,
+);
+check(
+  "page chrome stays",
+  rendered.html.includes('id="SITE_HEADER"') &&
+    rendered.html.includes('id="SITE_FOOTER"') &&
+    rendered.html.includes('id="comp-llexymel"'),
+);
+check(
+  "unsafe urls are omitted and db text is escaped into the list",
+  rendered.html.includes("https://gosakirikako.base.shop/") &&
+    !rendered.html.includes("javascript:") &&
+    rendered.html.includes("Mardi Gras JAPAN Records") &&
+    rendered.html.includes("後藤沙紀 / piano"),
+);
+
+const longer = renderGosakiDiscographyAlbumItem(parityReleases[0], [
+  ...tracksByLegacyId["discography-001"],
+  { title: "Extra Line" },
+]);
+const shorter = renderGosakiDiscographyAlbumItem(
+  parityReleases[0],
+  tracksByLegacyId["discography-001"].slice(0, -1),
+);
+check(
+  "track count can grow or shrink",
+  renderedTrackTitles(longer, "discography-001").length === tracksByLegacyId["discography-001"].length + 1 &&
+    renderedTrackTitles(shorter, "discography-001").length === tracksByLegacyId["discography-001"].length - 1 &&
+    renderedTrackTitles(longer, "discography-001").at(-1) === "Extra Line",
+);
+
+const tied = applyGosakiDiscographyPublicList(html, {
+  discographyDataSource: "supabase",
+  readStatus: "ok",
+  releases: [
+    { legacy_id: "discography-002", title: "Second", sort_order: 5 },
+    { legacy_id: "discography-001", title: "First", sort_order: 5 },
+  ],
+  tracksByLegacyId: {},
+});
+check(
+  "legacy_id breaks equal sort_order",
+  [...tied.html.matchAll(/data-gosaki-discography-legacy-id="([^"]+)"/g)].map((match) => match[1]).join() ===
+    "discography-001,discography-002",
+);
+
+const escaped = renderGosakiDiscographyAlbumItem(
+  { legacy_id: "discography-009", title: "<script>alert(1)</script>", artist: "A & B" },
+  [{ title: "<b>x</b>" }],
+);
+check(
+  "titles are escaped",
+  !escaped.includes("<script>") && escaped.includes("&lt;script&gt;") && escaped.includes("A &amp; B"),
+);
+const blocked = renderGosakiDiscographyAlbumItem(
+  {
+    legacy_id: "discography-008",
+    title: "No Cover",
+    cover_image_url: "javascript:alert(1)",
+    purchase_url: "javascript:alert(1)",
+  },
+  [],
+);
+check("javascript urls are dropped", !blocked.includes("javascript:") && !blocked.includes("<img"));
+
+const failedRead = applyGosakiDiscographyPublicList(html, {
+  discographyDataSource: "wix-html",
+  readStatus: "failed",
+  fallbackReason: "supabase_read_failed",
+  releases: parityReleases,
+  tracksByLegacyId,
+});
+check(
+  "read failure keeps the wix list",
+  !failedRead.replaced &&
+    failedRead.html === html &&
+    failedRead.html.includes('id="comp-llexymga__item1"') &&
+    !failedRead.html.includes("discographyRender=data-driven"),
+);
+
+const emptyRead = applyGosakiDiscographyPublicList(html, {
+  ...discographySupabaseReadSuccess({
+    releases: [],
+    tracks: [],
+    tracksByLegacyId: {},
+    siteSlug: "gosaki-piano",
+  }),
+});
+check(
+  "zero published rows clear the list without looking like a read failure",
+  emptyRead.replaced &&
+    emptyRead.summary?.renderMode === "data-driven-empty" &&
+    emptyRead.summary?.readStatus === "ok" &&
+    emptyRead.html.includes("publishedCount=0") &&
+    !emptyRead.html.includes('id="comp-llexymga__item1"') &&
+    emptyRead.html.includes('id="SITE_FOOTER"'),
+);
+
+const invalidRows = applyGosakiDiscographyPublicList(html, {
+  discographyDataSource: "supabase",
+  readStatus: "ok",
+  releases: [{ legacy_id: "discography-001", title: "" }],
+  tracksByLegacyId: {},
+});
+check(
+  "unrenderable rows keep the whole wix list",
+  !invalidRows.replaced &&
+    invalidRows.summary?.renderMode === "wix-fallback" &&
+    invalidRows.summary?.fallbackReason === "rows_not_renderable" &&
+    invalidRows.html.includes('id="comp-llexymga__item1"'),
+);
+
+const hooks = createGosakiPianoHookMethods();
+check(
+  "other routes are not rewritten",
+  hooks.patchDiscographyPageMainHtml(html, { route: "/about/" }, { discographyBundle: parityBundle }) === null &&
+    hooks.patchDiscographyPageMainHtml(html, { route: "/schedule/" }, { discographyBundle: parityBundle }) === null,
+);
+
+const envMissing = await loadDiscographyDataForBuild({
+  env: { PUBLIC_SUPABASE_URL: "", PUBLIC_SUPABASE_ANON_KEY: "" },
+  toolRoot: path.join(toolRoot, "fixtures/gosaki-piano-ci"),
+  logPrefix: "discography-parity-test",
+});
+const failedBundle = discographyWixReadFallback("supabase_read_failed", "gosaki-piano");
+check(
+  "env miss and read failure stay distinct from an empty success",
+  envMissing.discographyDataSource === "wix-html" &&
+    envMissing.readStatus === "failed" &&
+    envMissing.fallbackReason === "supabase_env_missing" &&
+    failedBundle.readStatus === "failed" &&
+    failedBundle.fallbackReason === "supabase_read_failed" &&
+    emptyRead.summary?.discographyDataSource === "supabase",
+);
+
+const contentAlbum = renderGosakiDiscographyAlbumItem(
+  {
+    legacy_id: "discography-003",
+    title: "About Us!!",
+    artist: "ごさきりかこtrio",
+    release_display: "Release 2019.01.11",
+    release_date: "2019-01-11",
+    catalog_number: "GSRT-0001",
+    price: "2,500(tax in)",
+    purchase_note: "Thank you SOLD OUT!\n各種サブスクにてお聴きいただけます",
+    cover_image_url: "https://example.test/about.jpg",
+    streaming_url: "https://www.tunecore.co.jp/artists/gosakirikakotrio?lang=ja",
+  },
+  [],
+);
+check(
+  "price purchase note release display and cover url render",
+  contentAlbum.includes("GSRT-0001 2,500(tax in)") &&
+    contentAlbum.includes("Thank you SOLD OUT!") &&
+    contentAlbum.includes("各種サブスクにてお聴きいただけます") &&
+    contentAlbum.includes("Release 2019.01.11") &&
+    !contentAlbum.includes("Release 2019.1.11") &&
+    contentAlbum.includes('src="https://example.test/about.jpg"'),
+);
+const datedAlbum = renderGosakiDiscographyAlbumItem(
+  { legacy_id: "discography-010", title: "Later", release_date: "2024-03-05", release_display: "   " },
+  [],
+);
+check("empty release_display falls back to release_date", datedAlbum.includes("Release 2024.3.5"));
+const duplicatedNote = renderGosakiDiscographyAlbumItem(
+  {
+    legacy_id: "discography-004",
+    title: "Ja",
+    description: "players\nライブ会場でご購入いただけます",
+    purchase_note: "ライブ会場でご購入いただけます",
+    catalog_number: "OMP-001",
+    price: "2,000 (tax in)",
+  },
+  [],
+);
+check(
+  "a personnel line that repeats the purchase note is shown once",
+  duplicatedNote.includes("players") &&
+    duplicatedNote.split("ライブ会場でご購入いただけます").length - 1 === 1,
+);
+const unsafeContent = renderGosakiDiscographyAlbumItem(
+  {
+    legacy_id: "discography-011",
+    title: "Safe",
+    price: "<b>9</b>",
+    purchase_note: "<script>note</script>",
+    cover_image_url: "javascript:alert(1)",
+    purchase_url: "not a url",
+  },
+  [],
+);
+check(
+  "price and purchase note are escaped and bad urls stay out",
+  unsafeContent.includes("&lt;b&gt;9&lt;/b&gt;") &&
+    unsafeContent.includes("&lt;script&gt;note&lt;/script&gt;") &&
+    !unsafeContent.includes("<script>") &&
+    !unsafeContent.includes("<img") &&
+    !unsafeContent.includes("not a url"),
+);
+check(
+  "public select includes the content columns so a missing column stays a read failure",
+  readSource.includes("price,purchase_note,release_display") &&
+    readSource.includes("supabase_read_failed"),
+);
+
+const cssSource = fs.readFileSync(
+  path.join(toolRoot, "scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs"),
+  "utf8",
+);
+check(
+  "data-driven list css is scoped and stacks on small screens",
+  cssSource.includes('#comp-llexymel[data-gosaki-discography-render="data-driven"]') &&
+    cssSource.includes("grid-template-columns: 260px minmax(0, 1fr) !important") &&
+    cssSource.includes("grid-template-columns: minmax(0, 1fr) !important") &&
+    cssSource.includes("overflow-x: clip !important") &&
+    !cssSource.includes("#SITE_HEADER[data-gosaki-discography-render") &&
+    !cssSource.includes("#SITE_FOOTER[data-gosaki-discography-render"),
+);
+
+const sqlTemplate = fs.readFileSync(
+  path.join(toolRoot, "scripts/supabase/gosaki-discography-price-purchase-note-release-display.template.sql"),
+  "utf8",
+);
+const saveRpc = fs.readFileSync(
+  path.join(repoRoot, "supabase/migrations/20260721100000_gosaki_discography_operational_save_rpc.sql"),
+  "utf8",
+);
+check(
+  "content sql template guards the four albums and does not change the save rpc",
+  sqlTemplate.includes("DO NOT EXECUTE") &&
+    sqlTemplate.includes("PRECHECK") &&
+    sqlTemplate.includes("POSTCHECK") &&
+    sqlTemplate.includes("site_slug = 'gosaki-piano'") &&
+    sqlTemplate.includes("2,500(tax in)") &&
+    sqlTemplate.includes("Release 2019.01.11") &&
+    sqlTemplate.includes("REFUSING overwrite") &&
+    sqlTemplate.includes("a row outside 001-004 changed") &&
+    sqlTemplate.includes("an outside snapshot row is missing") &&
+    !sqlTemplate.toLowerCase().includes("disable trigger") &&
+    !sqlTemplate.includes("service_role") &&
+    !sqlTemplate.includes("GRANT ") &&
+    !saveRpc.includes("purchase_note") &&
+    !saveRpc.includes("release_display"),
 );
 
 if (failures.length) {

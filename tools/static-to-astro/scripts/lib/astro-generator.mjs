@@ -1215,7 +1215,7 @@ export function printGenerationSummary(result) {
   }
   if (result.gosakiDiscographyDataSummary?.discographyDataSource) {
     console.log(
-      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist + ${result.gosakiDiscographyDataSummary.labelPatchCount ?? 0} label + ${result.gosakiDiscographyDataSummary.trackPatchCount ?? 0} track patch(es); ${result.gosakiDiscographyDataSummary.trackRowCount ?? 0} track rows)`,
+      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} render=${result.gosakiDiscographyDataSummary.renderMode ?? "n/a"} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.trackRowCount ?? 0} track rows${result.gosakiDiscographyDataSummary.fallbackReason ? `; fallbackReason=${result.gosakiDiscographyDataSummary.fallbackReason}` : ""})`,
     );
   } else if (
     (result.discographyBundle ?? result.gosakiDiscographyBundle)?.discographyDataSource === "wix-html"

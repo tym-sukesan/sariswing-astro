@@ -2894,5 +2894,158 @@ body.wix-static-export .gosaki-home-schedule__flyer {
   }
 }
 
+/* --- gosaki-discography-public-list-layout --- */
+/* List only. Header, footer, and nav rules above are unchanged. */
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"],
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .TmK0x,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .Exmq9 {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  overflow-x: clip !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album-item {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 0 2.5rem !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album * {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  float: none !important;
+  transform: none !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__grid {
+  display: grid !important;
+  grid-template-columns: 260px minmax(0, 1fr) !important;
+  column-gap: 1.75rem !important;
+  row-gap: 0.75rem !important;
+  align-items: start !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__cover {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 260px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__body {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album__body,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album__body * {
+  width: auto !important;
+  height: auto !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere !important;
+  text-overflow: clip !important;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__cover,
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__body {
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__cover {
+    grid-row: 1 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__body {
+    grid-row: 2 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__cover,
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__grid {
+    display: grid !important;
+    grid-template-columns: 260px minmax(0, 1fr) !important;
+    grid-auto-flow: row !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__cover {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    order: 0 !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 260px !important;
+    margin: 0 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__body {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    order: 0 !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__title,
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__title h2 {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 0 0.75rem !important;
+    white-space: normal !important;
+  }
+}
+
 `;
 }

@@ -1,7 +1,35 @@
-Last updated: 2026-10-10
+Last updated: 2026-10-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki Discography extra fields edit (2026-10-12):** **local only / arm off** — Phase `gosaki-discography-extra-fields-edit-local` · six columns save through `gosaki_discography_operational_save_extra_fields` · existing Save RPC is unchanged · mixed core+extra edits are refused before either POST · verifier **PASS 15** · pglast **15 statements** · `READY_FOR_EXTRA_FIELDS_INTEGRATION_REVIEW: true` · SQL apply and Edge deploy stay false.
+
+**Gosaki Discography admin create / publish wiring (2026-10-12):** **local only / arms off** — Phase `gosaki-discography-admin-create-publish-wiring-local` · create arm off keeps the local dry-run · create arm on POSTs `operation: create` · unpublished cards can POST `operation: setPublished` after confirm, using the live-read lock · existing edit Save is unchanged · verifier **PASS 20** · `READY_FOR_CREATE_PUBLISH_ROLLOUT_REVIEW: true` · live create test, SQL apply, and Edge deploy stay false.
+
+**Gosaki Discography create and publish Edge (2026-10-11):** **local only / not deployed** — Phase `gosaki-discography-create-publish-edge-local` · `operation: create` and `operation: setPublished` sit before the existing `save` branch · arms `GOSAKI_DISCOGRAPHY_CREATE_ARMED` and `GOSAKI_DISCOGRAPHY_SET_PUBLISHED_ARMED` default off · verifier **PASS 22** · `READY_FOR_ADMIN_CREATE_PUBLISH_WIRING: true` · Edge deploy false.
+
+**Gosaki Discography set-published RPC (2026-10-11):** **template only / SQL not applied** — Phase `gosaki-discography-set-published-rpc-local` · `gosaki_discography_operational_set_published` changes one `gosaki-piano` row from `published=false` to `true` · `can_write_site` and optimistic lock required · already published returns 422 · verifier **PASS 12** · `READY_FOR_SET_PUBLISHED_RPC_REVIEW: true`.
+
+**Gosaki Discography admin create UI (2026-10-11):** **local dry-run only** — Phase `gosaki-discography-admin-create-ui-local` · 「作品を追加」reuses the existing form and fixed Save bar · create Save validates locally and does not fetch · existing edit Save still posts through the current path · verifier **PASS 35** · `READY_FOR_CREATE_EDGE_IMPLEMENTATION: false` · `READY_FOR_LIVE_CREATE_TEST: false`.
+
+**Gosaki Discography create RPC security review (2026-10-11):** **template reviewed / SQL not applied** — Phase `gosaki-discography-create-rpc-security-review` · `can_write_site` uses `auth.uid()` · album and track inserts share one subtransaction · existing rows are not locked · verifier **PASS 7** · `READY_FOR_CREATE_RPC_APPLY_REVIEW: true` · `READY_FOR_PUBLIC_DEPLOY_REVIEW: false`.
+
+**Gosaki Discography create RPC (2026-10-11):** **template only / reviewed** — Phase `gosaki-discography-create-rpc-local` · `gosaki_discography_operational_create` allocates `discography-NNN`, inserts the album and tracks together, and forces `published=false` · existing Save RPC is unchanged.
+
+**Gosaki Discography live read local parity (2026-10-11):** **live anon read OK / deploy review not ready** — Phase `gosaki-discography-live-read-local-parity` · kmjq anon SELECT returned 4 published albums and 34 tracks · SKYLARK `purchase_url` in the database is `https://gosakirikako.base.shop/` while the Wix page uses `https://gosaakiii.base.shop/` · verifier **59/0** · `READY_FOR_PUBLIC_DEPLOY_REVIEW: false`.
+
+**Gosaki Discography SQL postcheck fix (2026-10-11):** **operator applied** — Phase `gosaki-discography-sql-postcheck-final-fix` · three nullable columns and the 001–004 backfill are on kmjq · this session did not re-run SQL.
+
+**Gosaki Discography SQL final preflight (2026-10-11):** **template revised / superseded by the postcheck fix** — Phase `gosaki-discography-sql-final-preflight` · trigger stays enabled · backfill may advance `updated_at` · only `gosaki-piano` `discography-001`–`004`.
+
+**Gosaki Discography public list content and layout (2026-10-11):** **PASS local / SQL not applied** — Phase `gosaki-discography-public-list-layout-and-content-render` · renderer prints `price`, newline `purchase_note`, `release_display` (else formatted `release_date`), and https covers · a missing column stays a Wix-list read failure · list CSS is scoped to the data-driven repeater · SQL template has PRECHECK, guarded backfill, and POSTCHECK · verifier **58/0** · `READY_FOR_CREATE_PHASE: false`.
+
+**Gosaki Discography content model design (2026-10-11):** **design only / no code** — Phase `gosaki-discography-content-model-final-design` · nullable `price`, `purchase_note`, `release_display` · existing Save RPC stays · covers already have public Storage objects (HEAD 200) and committed `wix-local` files · list CSS should be class-based and scoped to the data-driven repeater · create RPC and Storage upload stay later · `READY_FOR_CREATE_PHASE: false`.
+
+**Gosaki Discography public parity review (2026-10-11):** **STOP / not a public cutover** — Phase `gosaki-discography-public-parity-review` · existing 4 albums lose price and purchase-intro copy in the data-driven list because those strings are not columns · release dates for 2019 and 2015 drop the Wix zero-pad · no live kmjq SELECT (worktree has no `tools/static-to-astro/.env.local`) · PC/SP review used the Wix fixture against a column-only render · schema not implemented · `READY_FOR_CREATE_PHASE: false`.
+
+**Gosaki Discography public list render (2026-10-11):** **PASS local / not committed** — Phase `gosaki-discography-public-data-render-parity` · a successful anon read replaces only the `#comp-llexymel` repeater items from published rows · header, footer, nav, and the page shell stay · read failure leaves the Wix list · zero published rows clear that list and stay `readStatus=ok` · unrenderable rows keep the whole Wix list · identity is `legacy_id` · price and shop-intro sentences are not DB columns and are not copied from Wix · no create / Admin / RPC / Edge / DB write · verifier: public track build-read **51/0**.
 
 **Gosaki admin save bar and image library paging (2026-10-10):** **PASS local / not committed** — Phase `gosaki-admin-save-bar` · Schedule / Discography / YouTube / About share a viewport-bottom Save bar (960px on PC, full width on SP) · enablement, Edge, RPC, and approval IDs unchanged · existing schedule images start at 6, then 6 more, with collapse · selecting one does not upload · verifiers: save bar **31/0**, image/home-date **41/0**, image upload **28/0**.
 

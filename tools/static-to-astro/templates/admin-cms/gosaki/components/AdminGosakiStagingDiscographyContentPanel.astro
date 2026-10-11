@@ -93,6 +93,16 @@ function display(value: string | null | undefined): string {
 
   {/* —— View mode —— */}
   <div class="gosaki-discography-content-panel__view" data-gosaki-disc-view-mode>
+    <div class="gosaki-discography-content-panel__create-row">
+      <button
+        type="button"
+        class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        data-gosaki-disc-create-start
+      >
+        作品を追加
+      </button>
+    </div>
+    <p class="gosaki-discography-content-panel__create-notice" data-gosaki-disc-create-publish-notice hidden role="status"></p>
     {
       albums.length === 0 ? (
         <p class="gosaki-admin-content-panel__empty">Discography データがありません。</p>
@@ -142,6 +152,7 @@ function display(value: string | null | undefined): string {
     <form
       class="gosaki-discography-content-panel__form"
       data-gosaki-disc-edit-form
+      data-discography-form-mode="edit"
       data-album-legacy-id=""
       data-expected-before-updated-at=""
       data-original-snapshot=""
@@ -189,6 +200,67 @@ function display(value: string | null | undefined): string {
             autocomplete="off"
           />
         </label>
+        <div data-gosaki-disc-create-only hidden>
+          <label class="gosaki-discography-content-panel__field">
+            <span class="gosaki-discography-content-panel__label">表示用発売日</span>
+            <input
+              class="gosaki-discography-content-panel__control"
+              type="text"
+              data-gosaki-disc-create-field="release_display"
+              autocomplete="off"
+            />
+          </label>
+          <label class="gosaki-discography-content-panel__field">
+            <span class="gosaki-discography-content-panel__label">カタログ番号</span>
+            <input
+              class="gosaki-discography-content-panel__control"
+              type="text"
+              data-gosaki-disc-create-field="catalog_number"
+              autocomplete="off"
+            />
+          </label>
+          <label class="gosaki-discography-content-panel__field">
+            <span class="gosaki-discography-content-panel__label">価格</span>
+            <input
+              class="gosaki-discography-content-panel__control"
+              type="text"
+              data-gosaki-disc-create-field="price"
+              autocomplete="off"
+            />
+          </label>
+          <label class="gosaki-discography-content-panel__field">
+            <span class="gosaki-discography-content-panel__label">購入案内</span>
+            <textarea
+              class="gosaki-discography-content-panel__control gosaki-discography-content-panel__control--textarea"
+              data-gosaki-disc-create-field="purchase_note"
+              rows="3"
+            />
+          </label>
+          <label class="gosaki-discography-content-panel__field">
+            <span class="gosaki-discography-content-panel__label">配信URL</span>
+            <input
+              class="gosaki-discography-content-panel__control"
+              type="url"
+              data-gosaki-disc-create-field="streaming_url"
+              autocomplete="off"
+            />
+          </label>
+          <label class="gosaki-discography-content-panel__field">
+            <span class="gosaki-discography-content-panel__label">ジャケットURL</span>
+            <input
+              class="gosaki-discography-content-panel__control"
+              type="url"
+              data-gosaki-disc-create-field="cover_image_url"
+              autocomplete="off"
+            />
+          </label>
+          <div class="gosaki-discography-content-panel__cover">
+            <img data-gosaki-disc-create-cover-preview alt="" hidden />
+          </div>
+          <p class="gosaki-discography-content-panel__hint" role="note">
+            新しい作品は下書きです。作品IDは自動で割り当てられます。ファイルのアップロードはできません。
+          </p>
+        </div>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">レーベル</span>
           <input
@@ -248,6 +320,39 @@ function display(value: string | null | undefined): string {
         <p class="gosaki-discography-content-panel__hint" role="note">
           固定数の曲入力欄は使いません。行を増減して曲数を調整します。
         </p>
+      </section>
+
+      <section
+        class="gosaki-discography-form-section"
+        aria-labelledby="gosaki-disc-section-extra"
+        data-gosaki-disc-extra-fields
+        hidden
+      >
+        <h3 class="gosaki-discography-form-section__title" id="gosaki-disc-section-extra">追加項目</h3>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">表示用発売日</span>
+          <input class="gosaki-discography-content-panel__control" type="text" data-gosaki-disc-extra-field="release_display" autocomplete="off" />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">カタログ番号</span>
+          <input class="gosaki-discography-content-panel__control" type="text" data-gosaki-disc-extra-field="catalog_number" autocomplete="off" />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">価格</span>
+          <input class="gosaki-discography-content-panel__control" type="text" data-gosaki-disc-extra-field="price" autocomplete="off" />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">購入案内</span>
+          <textarea class="gosaki-discography-content-panel__control gosaki-discography-content-panel__control--textarea" data-gosaki-disc-extra-field="purchase_note" rows="3"></textarea>
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">配信URL</span>
+          <input class="gosaki-discography-content-panel__control" type="url" data-gosaki-disc-extra-field="streaming_url" autocomplete="off" />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">ジャケットURL</span>
+          <input class="gosaki-discography-content-panel__control" type="url" data-gosaki-disc-extra-field="cover_image_url" autocomplete="off" />
+        </label>
       </section>
 
       <section
@@ -391,6 +496,21 @@ function display(value: string | null | undefined): string {
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__create-row {
+    margin: 0 0 0.85rem;
+  }
+
+  .gosaki-discography-content-panel__create-notice {
+    margin: 0 0 0.85rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #166534;
+    font-size: 0.9rem;
+    font-weight: 600;
   }
 
   .gosaki-discography-content-panel__unsaved {

@@ -22,8 +22,9 @@ export const GOSAKI_DISCOGRAPHY_SITE_CONFIG = {
  */
 export const DISCOGRAPHY_SITE_SLUG_COLUMN_READY = true;
 
+/** A missing price/purchase_note/release_display column is a read error and keeps the Wix list. */
 export const DISCOGRAPHY_SELECT =
-  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published,release_date,description,cover_image_url";
+  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published,release_date,description,cover_image_url,price,purchase_note,release_display";
 
 export const DISCOGRAPHY_TRACKS_SELECT =
   "id,discography_legacy_id,track_number,title,sort_order";
@@ -41,6 +42,16 @@ export function normalizeDiscographyUrl(url) {
 }
 
 /**
+ * Trim ends only. Internal newlines in purchase_note stay.
+ * @param {unknown} value
+ */
+function nullableDiscographyText(value) {
+  if (value == null) return null;
+  const text = String(value).trim();
+  return text ? text : null;
+}
+
+/**
  * @param {Record<string, unknown>} row
  */
 export function normalizeDiscographyRecord(row) {
@@ -55,6 +66,9 @@ export function normalizeDiscographyRecord(row) {
     release_date: row.release_date != null ? String(row.release_date).trim() : null,
     description: row.description != null ? String(row.description).trim() : null,
     cover_image_url: row.cover_image_url != null ? String(row.cover_image_url).trim() : null,
+    price: nullableDiscographyText(row.price),
+    purchase_note: nullableDiscographyText(row.purchase_note),
+    release_display: nullableDiscographyText(row.release_display),
     sort_order: Number(row.sort_order ?? 0),
     published: row.published !== false,
   };
@@ -121,6 +135,11 @@ export async function loadDiscographyTracksFromSupabase({ env, siteSlug = null, 
   const { data, error } = await query;
 
   if (error) throw new Error(error.message);
+  if (data != null && !Array.isArray(data)) {
+    const invalid = new Error("discography tracks response invalid");
+    invalid.reason = "supabase_response_invalid";
+    throw invalid;
+  }
   return (data ?? []).map((row) => normalizeDiscographyTrackRecord(row));
 }
 
@@ -145,7 +164,8 @@ export async function loadDiscographyRowsFromSupabase({ env, siteSlug = null, re
     .from("discography")
     .select(DISCOGRAPHY_SELECT)
     .eq("published", true)
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .order("legacy_id", { ascending: true });
 
   if (requireSiteSlugFilter && siteSlug) {
     query = query.eq("site_slug", siteSlug);
@@ -154,6 +174,11 @@ export async function loadDiscographyRowsFromSupabase({ env, siteSlug = null, re
   const { data, error } = await query;
 
   if (error) throw new Error(error.message);
+  if (data != null && !Array.isArray(data)) {
+    const invalid = new Error("discography response invalid");
+    invalid.reason = "supabase_response_invalid";
+    throw invalid;
+  }
   return (data ?? []).map((row) => normalizeDiscographyRecord(row));
 }
 
@@ -600,6 +625,53 @@ export function injectDiscographyDataSourceMarker(html, source) {
 }
 
 /**
+ * Successful anon read, including zero published albums.
+ * Empty is not a read failure.
+ * @param {{
+ *   releases: ReturnType<typeof normalizeDiscographyRecord>[],
+ *   tracks: ReturnType<typeof normalizeDiscographyTrackRecord>[],
+ *   tracksByLegacyId: Record<string, ReturnType<typeof normalizeDiscographyTrackRecord>[]>,
+ *   siteSlug: string,
+ * }} input
+ */
+export function discographySupabaseReadSuccess(input) {
+  const releases = input.releases ?? [];
+  const tracks = input.tracks ?? [];
+  return {
+    discographyDataSource: "supabase",
+    readStatus: "ok",
+    fallbackReason: null,
+    releases,
+    tracks,
+    tracksByLegacyId: input.tracksByLegacyId ?? {},
+    rowCount: releases.length,
+    publishedCount: releases.length,
+    trackRowCount: tracks.length,
+    siteSlug: input.siteSlug,
+  };
+}
+
+/**
+ * Read did not succeed. Callers must leave the Wix list in place.
+ * @param {string} fallbackReason
+ * @param {string} siteSlug
+ */
+export function discographyWixReadFallback(fallbackReason, siteSlug) {
+  return {
+    discographyDataSource: "wix-html",
+    readStatus: "failed",
+    fallbackReason,
+    releases: [],
+    tracks: [],
+    tracksByLegacyId: {},
+    rowCount: 0,
+    publishedCount: 0,
+    trackRowCount: 0,
+    siteSlug,
+  };
+}
+
+/**
  * Generic discography read for convert/build (anon key only).
  *
  * @param {{
@@ -622,16 +694,7 @@ export async function loadDiscographyDataForBuild(opts = {}) {
   } = opts;
 
   if (requireSiteSlugFilter && !legacyUnfilteredRead && !DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
-    return {
-      discographyDataSource: "wix-html",
-      fallbackReason: "discography_site_slug_column_pending",
-      releases: [],
-      tracks: [],
-      tracksByLegacyId: {},
-      rowCount: 0,
-      trackRowCount: 0,
-      siteSlug,
-    };
+    return discographyWixReadFallback("discography_site_slug_column_pending", siteSlug);
   }
 
   const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
@@ -644,42 +707,34 @@ export async function loadDiscographyDataForBuild(opts = {}) {
         siteSlug,
         requireSiteSlugFilter: useSiteSlugFilter,
       });
-      if (releases.length > 0) {
-        const tracks = await loadDiscographyTracksFromSupabase({
-          env: readEnv,
-          siteSlug,
-          requireSiteSlugFilter: useSiteSlugFilter,
-        });
-        const tracksByLegacyId = groupDiscographyTracksByLegacyId(tracks);
-        return {
-          discographyDataSource: "supabase",
-          fallbackReason: null,
-          releases,
-          tracks,
-          tracksByLegacyId,
-          rowCount: releases.length,
-          trackRowCount: tracks.length,
-          siteSlug,
-        };
+      const tracks =
+        releases.length > 0
+          ? await loadDiscographyTracksFromSupabase({
+              env: readEnv,
+              siteSlug,
+              requireSiteSlugFilter: useSiteSlugFilter,
+            })
+          : [];
+      const tracksByLegacyId = groupDiscographyTracksByLegacyId(tracks);
+      if (releases.length === 0) {
+        console.warn(`[${logPrefix}] Supabase read succeeded with 0 published discography rows`);
       }
-      console.warn(`[${logPrefix}] Supabase returned 0 discography rows; using wix-html`);
+      return discographySupabaseReadSuccess({
+        releases,
+        tracks,
+        tracksByLegacyId,
+        siteSlug,
+      });
     } catch (err) {
+      const reason =
+        err?.reason === "supabase_response_invalid" ? "supabase_response_invalid" : "supabase_read_failed";
       console.warn(`[${logPrefix}] Supabase read failed (${err.message}); using wix-html`);
+      return discographyWixReadFallback(reason, siteSlug);
     }
-  } else {
-    console.log(`[${logPrefix}] discographyDataSource=wix-html (Supabase env not configured)`);
   }
 
-  return {
-    discographyDataSource: "wix-html",
-    fallbackReason: readEnv ? "supabase_empty_or_error" : "supabase_env_missing",
-    releases: [],
-    tracks: [],
-    tracksByLegacyId: {},
-    rowCount: 0,
-    trackRowCount: 0,
-    siteSlug,
-  };
+  console.log(`[${logPrefix}] discographyDataSource=wix-html (Supabase env not configured)`);
+  return discographyWixReadFallback("supabase_env_missing", siteSlug);
 }
 
 /**

@@ -7,6 +7,27 @@
  */
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
+import {
+  DISCOGRAPHY_CREATE_APPROVAL_ID,
+  DISCOGRAPHY_CREATE_ARMED_ENV,
+  DISCOGRAPHY_CREATE_OPERATION,
+  DISCOGRAPHY_CREATE_RPC_NAME,
+  DISCOGRAPHY_SET_PUBLISHED_APPROVAL_ID,
+  DISCOGRAPHY_SET_PUBLISHED_ARMED_ENV,
+  DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+  DISCOGRAPHY_SET_PUBLISHED_RPC_NAME,
+  isDiscographyEdgeArmExactTrue,
+  mapDiscographyWriteRpcResult,
+  validateDiscographyCreateRequest,
+  validateDiscographySetPublishedRequest,
+} from "./create-publish.ts";
+import {
+  DISCOGRAPHY_EXTRA_FIELDS_APPROVAL_ID,
+  DISCOGRAPHY_EXTRA_FIELDS_ARMED_ENV,
+  DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+  DISCOGRAPHY_EXTRA_FIELDS_RPC_NAME,
+  validateDiscographyExtraFieldsRequest,
+} from "./extra-fields.ts";
 
 export const G20U36D_READBACK_ROOT_PLACEMENT_PHASE = "G-20u36d-readback-root-placement";
 export const G20U36D_RELEASE_ID_SELECT_FIX_ROOT_PLACEMENT_PHASE =
@@ -70,6 +91,24 @@ export function isDiscographySaveArmed(
   getEnv: (key: string) => string | undefined = (key) => Deno.env.get(key),
 ): boolean {
   return getEnv(SAVE_ARMED_ENV) === "true";
+}
+
+export function isDiscographyCreateArmed(
+  getEnv: (key: string) => string | undefined = (key) => Deno.env.get(key),
+): boolean {
+  return isDiscographyEdgeArmExactTrue(getEnv(DISCOGRAPHY_CREATE_ARMED_ENV));
+}
+
+export function isDiscographySetPublishedArmed(
+  getEnv: (key: string) => string | undefined = (key) => Deno.env.get(key),
+): boolean {
+  return isDiscographyEdgeArmExactTrue(getEnv(DISCOGRAPHY_SET_PUBLISHED_ARMED_ENV));
+}
+
+export function isDiscographyExtraFieldsArmed(
+  getEnv: (key: string) => string | undefined = (key) => Deno.env.get(key),
+): boolean {
+  return isDiscographyEdgeArmExactTrue(getEnv(DISCOGRAPHY_EXTRA_FIELDS_ARMED_ENV));
 }
 
 /** G-20u36e — one-off controlled Save slice (local implementation · not deployed in this phase). */
@@ -2738,6 +2777,429 @@ export async function handleOperationalDiscographySaveHttp(input: {
   };
 }
 
+function buildCreatePublishFailure(input: {
+  operation: string;
+  reasonCode: string;
+  message: string;
+  status: number;
+  approvalId?: string;
+  legacyId?: string;
+}): DryRunHandlerResult {
+  return {
+    ok: false,
+    operation: input.operation,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    approvalId: String(input.approvalId ?? ""),
+    legacyId: String(input.legacyId ?? ""),
+    reasonCode: input.reasonCode,
+    errors: [input.message],
+    warnings: [],
+    wouldWrite: false,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    updatedRows: 0,
+    status: input.status,
+    serverTime: new Date().toISOString(),
+  };
+}
+
+/**
+ * Create one unpublished album. Armed only by GOSAKI_DISCOGRAPHY_CREATE_ARMED.
+ * Does not accept legacy_id or published from the caller.
+ */
+export async function handleDiscographyCreateHttp(input: {
+  request: DryRunRequest;
+  authorizationHeader?: string | null;
+  supabaseUrl?: string;
+  anonKey?: string;
+  isCreateArmed?: () => boolean;
+}): Promise<DryRunHandlerResult> {
+  const request = input.request ?? {};
+  const approvalId = String(request.approvalId ?? "").trim();
+  const serviceRoleErrors = assertNoServiceRoleInPayload(request);
+  if (serviceRoleErrors.length > 0) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: "service_role_forbidden",
+      message: serviceRoleErrors[0],
+      status: 400,
+      approvalId,
+    });
+  }
+
+  const validated = validateDiscographyCreateRequest(request);
+  if (!validated.ok) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: validated.reasonCode,
+      message: validated.message,
+      status: validated.status,
+      approvalId,
+    });
+  }
+
+  const armed =
+    typeof input.isCreateArmed === "function" ? input.isCreateArmed() : isDiscographyCreateArmed();
+  if (!armed) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: "create_not_armed",
+      message: `Create is not armed on server (${DISCOGRAPHY_CREATE_ARMED_ENV}=false)`,
+      status: 403,
+      approvalId,
+    });
+  }
+
+  const bearer = extractBearerToken(input.authorizationHeader);
+  if (!bearer) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: "missing_authorization",
+      message: "Authorization Bearer token is required",
+      status: 401,
+      approvalId,
+    });
+  }
+
+  let client: SupabaseClient;
+  try {
+    client = createUserJwtSupabaseClient({
+      supabaseUrl: input.supabaseUrl ?? "",
+      anonKey: input.anonKey ?? "",
+      authorizationHeader: `Bearer ${bearer}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const production = /production/i.test(message);
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: production ? "production_ref_blocked" : "config_error",
+      message: production ? "production Supabase ref is blocked" : "create config error",
+      status: production ? 403 : 500,
+      approvalId,
+    });
+  }
+
+  const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+  if (!writeAuthz.ok) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: writeAuthz.reasonCode,
+      message: writeAuthz.message,
+      status: writeAuthz.status,
+      approvalId,
+    });
+  }
+
+  const { data: rpcData, error: rpcError } = await client.rpc(DISCOGRAPHY_CREATE_RPC_NAME, validated.rpcArgs);
+  const mapped = mapDiscographyWriteRpcResult(rpcData, rpcError);
+  if (!mapped.ok || mapped.published !== false || !mapped.legacyId) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_CREATE_OPERATION,
+      reasonCode: mapped.reasonCode,
+      message: mapped.message || "create RPC rejected",
+      status: mapped.status,
+      approvalId,
+      legacyId: mapped.legacyId,
+    });
+  }
+
+  return {
+    ok: true,
+    operation: DISCOGRAPHY_CREATE_OPERATION,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    approvalId: DISCOGRAPHY_CREATE_APPROVAL_ID,
+    rpc: DISCOGRAPHY_CREATE_RPC_NAME,
+    legacyId: mapped.legacyId,
+    published: false,
+    sortOrder: mapped.sortOrder,
+    trackCount: mapped.trackCount,
+    reasonCode: "ok",
+    errors: [],
+    warnings: [],
+    wouldWrite: true,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: true,
+    status: 200,
+    serverTime: new Date().toISOString(),
+  };
+}
+
+/**
+ * Publish one unpublished album. Armed only by GOSAKI_DISCOGRAPHY_SET_PUBLISHED_ARMED.
+ * Accepts legacyId, expectedBeforeUpdatedAt, and published=true only.
+ */
+export async function handleDiscographySetPublishedHttp(input: {
+  request: DryRunRequest;
+  authorizationHeader?: string | null;
+  supabaseUrl?: string;
+  anonKey?: string;
+  isSetPublishedArmed?: () => boolean;
+}): Promise<DryRunHandlerResult> {
+  const request = input.request ?? {};
+  const approvalId = String(request.approvalId ?? "").trim();
+  const legacyId = String(request.legacyId ?? "").trim();
+  const serviceRoleErrors = assertNoServiceRoleInPayload(request);
+  if (serviceRoleErrors.length > 0) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: "service_role_forbidden",
+      message: serviceRoleErrors[0],
+      status: 400,
+      approvalId,
+      legacyId,
+    });
+  }
+
+  const validated = validateDiscographySetPublishedRequest(request);
+  if (!validated.ok) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: validated.reasonCode,
+      message: validated.message,
+      status: validated.status,
+      approvalId,
+      legacyId,
+    });
+  }
+
+  const armed =
+    typeof input.isSetPublishedArmed === "function"
+      ? input.isSetPublishedArmed()
+      : isDiscographySetPublishedArmed();
+  if (!armed) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: "set_published_not_armed",
+      message: `setPublished is not armed on server (${DISCOGRAPHY_SET_PUBLISHED_ARMED_ENV}=false)`,
+      status: 403,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  const bearer = extractBearerToken(input.authorizationHeader);
+  if (!bearer) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: "missing_authorization",
+      message: "Authorization Bearer token is required",
+      status: 401,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  let client: SupabaseClient;
+  try {
+    client = createUserJwtSupabaseClient({
+      supabaseUrl: input.supabaseUrl ?? "",
+      anonKey: input.anonKey ?? "",
+      authorizationHeader: `Bearer ${bearer}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const production = /production/i.test(message);
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: production ? "production_ref_blocked" : "config_error",
+      message: production ? "production Supabase ref is blocked" : "setPublished config error",
+      status: production ? 403 : 500,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+  if (!writeAuthz.ok) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: writeAuthz.reasonCode,
+      message: writeAuthz.message,
+      status: writeAuthz.status,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  const { data: rpcData, error: rpcError } = await client.rpc(
+    DISCOGRAPHY_SET_PUBLISHED_RPC_NAME,
+    validated.rpcArgs,
+  );
+  const mapped = mapDiscographyWriteRpcResult(rpcData, rpcError);
+  if (!mapped.ok || mapped.published !== true || !mapped.updatedAt) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+      reasonCode: mapped.reasonCode,
+      message: mapped.message || "setPublished RPC rejected",
+      status: mapped.status,
+      approvalId,
+      legacyId: mapped.legacyId || validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  return {
+    ok: true,
+    operation: DISCOGRAPHY_SET_PUBLISHED_OPERATION,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    approvalId: DISCOGRAPHY_SET_PUBLISHED_APPROVAL_ID,
+    rpc: DISCOGRAPHY_SET_PUBLISHED_RPC_NAME,
+    legacyId: mapped.legacyId,
+    published: true,
+    updated_at: mapped.updatedAt,
+    updatedAt: mapped.updatedAt,
+    reasonCode: "ok",
+    errors: [],
+    warnings: [],
+    wouldWrite: true,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: true,
+    status: 200,
+    serverTime: new Date().toISOString(),
+  };
+}
+
+/**
+ * Update the six extra release columns. Armed only by GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_ARMED.
+ * Does not write published, tracks, sort_order, or the existing Save columns.
+ */
+export async function handleDiscographyExtraFieldsHttp(input: {
+  request: DryRunRequest;
+  authorizationHeader?: string | null;
+  supabaseUrl?: string;
+  anonKey?: string;
+  isExtraFieldsArmed?: () => boolean;
+}): Promise<DryRunHandlerResult> {
+  const request = input.request ?? {};
+  const approvalId = String(request.approvalId ?? "").trim();
+  const legacyId = String(request.legacyId ?? "").trim();
+  const serviceRoleErrors = assertNoServiceRoleInPayload(request);
+  if (serviceRoleErrors.length > 0) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: "service_role_forbidden",
+      message: serviceRoleErrors[0],
+      status: 400,
+      approvalId,
+      legacyId,
+    });
+  }
+
+  const validated = validateDiscographyExtraFieldsRequest(request as unknown as Record<string, unknown>);
+  if (!validated.ok) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: validated.reasonCode,
+      message: validated.message,
+      status: validated.status,
+      approvalId,
+      legacyId,
+    });
+  }
+
+  const armed =
+    typeof input.isExtraFieldsArmed === "function"
+      ? input.isExtraFieldsArmed()
+      : isDiscographyExtraFieldsArmed();
+  if (!armed) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: "extra_fields_not_armed",
+      message: `saveExtraFields is not armed on server (${DISCOGRAPHY_EXTRA_FIELDS_ARMED_ENV}=false)`,
+      status: 403,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  const bearer = extractBearerToken(input.authorizationHeader);
+  if (!bearer) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: "missing_authorization",
+      message: "Authorization Bearer token is required",
+      status: 401,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  let client: SupabaseClient;
+  try {
+    client = createUserJwtSupabaseClient({
+      supabaseUrl: input.supabaseUrl ?? "",
+      anonKey: input.anonKey ?? "",
+      authorizationHeader: `Bearer ${bearer}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const production = /production/i.test(message);
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: production ? "production_ref_blocked" : "config_error",
+      message: production ? "production Supabase ref is blocked" : "extra-fields config error",
+      status: production ? 403 : 500,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  const writeAuthz = await assertCanWriteSiteForSiteSlug(client, SITE_SLUG);
+  if (!writeAuthz.ok) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: writeAuthz.reasonCode,
+      message: writeAuthz.message,
+      status: writeAuthz.status,
+      approvalId,
+      legacyId: validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  const { data: rpcData, error: rpcError } = await client.rpc(
+    DISCOGRAPHY_EXTRA_FIELDS_RPC_NAME,
+    validated.rpcArgs,
+  );
+  const mapped = mapDiscographyWriteRpcResult(rpcData, rpcError);
+  if (!mapped.ok || !mapped.updatedAt || !mapped.legacyId) {
+    return buildCreatePublishFailure({
+      operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+      reasonCode: mapped.reasonCode,
+      message: mapped.message || "extra-fields RPC rejected",
+      status: mapped.status,
+      approvalId,
+      legacyId: mapped.legacyId || validated.rpcArgs.p_legacy_id,
+    });
+  }
+
+  return {
+    ok: true,
+    operation: DISCOGRAPHY_EXTRA_FIELDS_OPERATION,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    approvalId: DISCOGRAPHY_EXTRA_FIELDS_APPROVAL_ID,
+    rpc: DISCOGRAPHY_EXTRA_FIELDS_RPC_NAME,
+    legacyId: mapped.legacyId,
+    updated_at: mapped.updatedAt,
+    updatedAt: mapped.updatedAt,
+    reasonCode: "ok",
+    errors: [],
+    warnings: [],
+    wouldWrite: true,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: true,
+    status: 200,
+    serverTime: new Date().toISOString(),
+  };
+}
+
 /**
  * HTTP handler entry — POST/json · dryRun (sync) · controlled save deferred to async path.
  * Sync path: schema-only baseline (readBack null) when readBack disabled.
@@ -2759,6 +3221,20 @@ export function handleDiscographyEdgeDryRunHttp(input: {
   }
 
   const request = (input.body ?? {}) as DryRunRequest;
+
+  if (
+    request.operation === DISCOGRAPHY_CREATE_OPERATION ||
+    request.operation === DISCOGRAPHY_SET_PUBLISHED_OPERATION ||
+    request.operation === DISCOGRAPHY_EXTRA_FIELDS_OPERATION
+  ) {
+    return buildCreatePublishFailure({
+      operation: String(request.operation),
+      reasonCode: "operation_requires_async",
+      message: "create and setPublished require the async handler",
+      status: 400,
+      approvalId: String(request.approvalId ?? ""),
+    });
+  }
 
   if (request.operation === CONTROLLED_SAVE_OPERATION) {
     return buildControlledSaveFailure({
@@ -2793,6 +3269,9 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
     supabaseUrl?: string;
     anonKey?: string;
     isSaveArmed?: () => boolean;
+    isCreateArmed?: () => boolean;
+    isSetPublishedArmed?: () => boolean;
+    isExtraFieldsArmed?: () => boolean;
   } = {},
 ): Promise<DryRunHandlerResult> {
   const envelope = validateHttpEnvelope(input);
@@ -2806,6 +3285,36 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
   }
 
   const request = (input.body ?? {}) as DryRunRequest;
+
+  if (request.operation === DISCOGRAPHY_CREATE_OPERATION) {
+    return handleDiscographyCreateHttp({
+      request,
+      authorizationHeader: input.authorizationHeader ?? null,
+      supabaseUrl: options.supabaseUrl,
+      anonKey: options.anonKey,
+      isCreateArmed: options.isCreateArmed,
+    });
+  }
+
+  if (request.operation === DISCOGRAPHY_SET_PUBLISHED_OPERATION) {
+    return handleDiscographySetPublishedHttp({
+      request,
+      authorizationHeader: input.authorizationHeader ?? null,
+      supabaseUrl: options.supabaseUrl,
+      anonKey: options.anonKey,
+      isSetPublishedArmed: options.isSetPublishedArmed,
+    });
+  }
+
+  if (request.operation === DISCOGRAPHY_EXTRA_FIELDS_OPERATION) {
+    return handleDiscographyExtraFieldsHttp({
+      request,
+      authorizationHeader: input.authorizationHeader ?? null,
+      supabaseUrl: options.supabaseUrl,
+      anonKey: options.anonKey,
+      isExtraFieldsArmed: options.isExtraFieldsArmed,
+    });
+  }
 
   if (request.operation === CONTROLLED_SAVE_OPERATION) {
     const approvalId = String(request.approvalId ?? "").trim();

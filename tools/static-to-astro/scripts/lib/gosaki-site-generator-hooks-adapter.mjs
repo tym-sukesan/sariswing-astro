@@ -30,10 +30,7 @@ import { isCmsFeatureEnabled } from "./site-cms-features.mjs";
 import { matchRegistryFixtureDir } from "./site-fixture-match.mjs";
 import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
 import { wrapGosakiDiscographyAlbumTitleHtml } from "./gosaki-discography-album-title-display.mjs";
-import {
-  injectDiscographyDataSourceMarker,
-  patchGosakiDiscographySupabaseFields,
-} from "./supabase-discography-read.mjs";
+import { applyGosakiDiscographyPublicList } from "./gosaki-discography-public-list-render.mjs";
 import { registerSiteGeneratorHookFactory } from "./site-generator-hooks.mjs";
 
 /**
@@ -110,23 +107,10 @@ export function createGosakiPianoHookMethods() {
       let html = mainHtml;
       /** @type {Record<string, unknown> | null} */
       let summary = null;
-      if (bundle?.discographyDataSource === "supabase" && bundle?.releases?.length) {
-        const patched = patchGosakiDiscographySupabaseFields(
-          html,
-          bundle.releases,
-          bundle.tracksByLegacyId,
-        );
-        html = injectDiscographyDataSourceMarker(patched.html, "supabase");
-        summary = {
-          discographyDataSource: "supabase",
-          rowCount: bundle.releases.length,
-          patchCount: patched.patches.length,
-          purchasePatchCount: patched.purchasePatches.length,
-          artistPatchCount: patched.artistPatches.length,
-          labelPatchCount: patched.labelPatches?.length ?? 0,
-          trackPatchCount: patched.trackPatches?.length ?? 0,
-          trackRowCount: bundle.trackRowCount ?? 0,
-        };
+      if (bundle?.discographyDataSource === "supabase" && bundle?.readStatus !== "failed") {
+        const applied = applyGosakiDiscographyPublicList(html, bundle);
+        html = applied.html;
+        summary = applied.summary;
       }
       const wrapped = wrapGosakiDiscographyAlbumTitleHtml(html);
       html = wrapped.html;

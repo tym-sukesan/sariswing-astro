@@ -21,6 +21,28 @@ import {
   isGosakiSaveNotArmedResponse,
   userMessageForSaveFailure,
 } from "./gosaki-staging-one-click-save";
+import {
+  GOSAKI_DISCOGRAPHY_CREATE_SAVED_MESSAGE_PREFIX,
+  GOSAKI_DISCOGRAPHY_PUBLISH_SITE_UPDATE_MESSAGE,
+  gosakiDiscographyCreateCoverPreviewUrl,
+  gosakiDiscographyCreateFingerprint,
+  gosakiDiscographyCreateSaveBar,
+  gosakiDiscographyEdgeFailureMessage,
+  gosakiDiscographyPublishAvailability,
+  runGosakiDiscographyCreateEdgeAttempt,
+  runGosakiDiscographySetPublishedEdgeAttempt,
+  validateGosakiDiscographyCreateInput,
+  type GosakiDiscographyCreateInput,
+} from "./gosaki-discography-create-draft";
+import {
+  GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_LOCK_MESSAGE,
+  GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE,
+  GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_SAVED_MESSAGE,
+  GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_STOPPED_MESSAGE,
+  GOSAKI_DISCOGRAPHY_EXTRA_FIELD_KEYS,
+  classifyGosakiDiscographyEditChanges,
+  runGosakiDiscographyExtraFieldsEdgeAttempt,
+} from "./gosaki-discography-extra-fields";
 
 export type DiscographyOperationalAlbum = {
   legacyId: string;
@@ -29,6 +51,9 @@ export type DiscographyOperationalAlbum = {
   releaseDate?: string | null;
   label?: string | null;
   catalogNumber?: string | null;
+  price?: string | null;
+  purchaseNote?: string | null;
+  releaseDisplay?: string | null;
   published?: boolean;
   coverImageUrl?: string | null;
   purchaseUrl?: string | null;
@@ -87,6 +112,9 @@ export type DiscographyOperationalEditDeps = {
   siteSlug?: string;
   anonKey?: string;
   fetchImpl?: typeof fetch;
+  createArmed?: boolean;
+  setPublishedArmed?: boolean;
+  extraFieldsArmed?: boolean;
 };
 
 const UNSAVED_LEAVE =
@@ -119,6 +147,133 @@ function field(form: HTMLFormElement, name: string): HTMLInputElement | HTMLText
   return form.querySelector(`[data-gosaki-disc-field="${name}"]`);
 }
 
+function createField(
+  form: HTMLFormElement,
+  name: string,
+): HTMLInputElement | HTMLTextAreaElement | null {
+  return form.querySelector(`[data-gosaki-disc-create-field="${name}"]`);
+}
+
+function readCreateInput(form: HTMLFormElement): GosakiDiscographyCreateInput {
+  const shared = (name: string) => field(form, name)?.value ?? "";
+  const created = (name: string) => createField(form, name)?.value ?? "";
+  return {
+    title: shared("title"),
+    artist: shared("artist"),
+    releaseDate: shared("release_date"),
+    releaseDisplay: created("release_display"),
+    label: shared("label"),
+    catalogNumber: created("catalog_number"),
+    price: created("price"),
+    purchaseNote: created("purchase_note"),
+    description: shared("description"),
+    purchaseUrl: shared("purchase_url"),
+    streamingUrl: created("streaming_url"),
+    coverImageUrl: created("cover_image_url"),
+    trackListText: shared("tracks"),
+  };
+}
+
+function isCreateDirty(form: HTMLFormElement): boolean {
+  return Object.values(readCreateInput(form)).some((value) => String(value).trim() !== "");
+}
+
+function clearCreateFields(form: HTMLFormElement) {
+  form.querySelectorAll("[data-gosaki-disc-create-field]").forEach((el) => {
+    if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) el.value = "";
+  });
+}
+
+function setCreateOnlyVisible(root: HTMLElement, visible: boolean) {
+  root.querySelectorAll("[data-gosaki-disc-create-only]").forEach((el) => {
+    if (el instanceof HTMLElement) el.hidden = !visible;
+  });
+}
+
+function readExtraFields(form: HTMLFormElement): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const key of GOSAKI_DISCOGRAPHY_EXTRA_FIELD_KEYS) {
+    const extra = form.querySelector(`[data-gosaki-disc-extra-field="${key}"]`);
+    out[key] =
+      extra instanceof HTMLInputElement || extra instanceof HTMLTextAreaElement ? extra.value : "";
+  }
+  return out;
+}
+
+function extraSnapshot(snap: Record<string, unknown>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const key of GOSAKI_DISCOGRAPHY_EXTRA_FIELD_KEYS) out[key] = String(snap[key] ?? "");
+  return out;
+}
+
+function editClassForSave(form: HTMLFormElement) {
+  const kind = classifyFormEdit(form);
+  if (kind === "none" && isDirty(form)) return "core";
+  return kind;
+}
+
+function classifyFormEdit(form: HTMLFormElement) {
+  const raw = form.dataset.originalSnapshot || "";
+  let original: Record<string, unknown> = {};
+  try {
+    original = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+  } catch {
+    original = {};
+  }
+  const current = readFormSnapshot(form);
+  return classifyGosakiDiscographyEditChanges({
+    originalCore: original,
+    currentCore: current,
+    originalExtra: extraSnapshot(original),
+    currentExtra: readExtraFields(form),
+  });
+}
+
+function setExtraFieldsVisible(root: HTMLElement, visible: boolean) {
+  const section = root.querySelector("[data-gosaki-disc-extra-fields]");
+  if (section instanceof HTMLElement) section.hidden = !visible;
+}
+
+function setEditCoverSectionVisible(root: HTMLElement, visible: boolean) {
+  const section = root.querySelector("[data-gosaki-disc-form-section='cover']");
+  if (section instanceof HTMLElement) section.hidden = !visible;
+}
+
+function renderCreateCover(root: HTMLElement, raw: string) {
+  const img = root.querySelector("[data-gosaki-disc-create-cover-preview]");
+  if (!(img instanceof HTMLImageElement)) return;
+  const safe = gosakiDiscographyCreateCoverPreviewUrl(raw);
+  if (!safe) {
+    img.hidden = true;
+    img.removeAttribute("src");
+    return;
+  }
+  img.alt = "";
+  img.hidden = false;
+  img.src = safe;
+}
+
+function emptyCreateSnapshot(): ReturnType<typeof snapshotFromAlbum> {
+  return {
+    legacyId: "",
+    title: "",
+    artist: "",
+    release_date: "",
+    label: "",
+    purchase_url: "",
+    description: "",
+    tracks: "",
+    catalog_number: "",
+    published: "false",
+    streaming_url: "",
+    cover_image_url: "",
+    price: "",
+    purchase_note: "",
+    release_display: "",
+    updatedAt: "",
+  };
+}
+
 function snapshotFromAlbum(album: DiscographyOperationalAlbum) {
   return {
     legacyId: album.legacyId,
@@ -133,6 +288,9 @@ function snapshotFromAlbum(album: DiscographyOperationalAlbum) {
     published: album.published !== false ? "true" : "false",
     streaming_url: album.streamingUrl ?? "",
     cover_image_url: album.coverImageUrl ?? "",
+    price: album.price ?? "",
+    purchase_note: album.purchaseNote ?? "",
+    release_display: album.releaseDisplay ?? "",
     updatedAt: album.updatedAt ?? "",
   };
 }
@@ -154,6 +312,12 @@ function applySnapshotToForm(form: HTMLFormElement, snap: ReturnType<typeof snap
   set("published", snap.published);
   set("streaming_url", snap.streaming_url);
   set("cover_image_url", snap.cover_image_url);
+  for (const key of GOSAKI_DISCOGRAPHY_EXTRA_FIELD_KEYS) {
+    const extra = form.querySelector(`[data-gosaki-disc-extra-field="${key}"]`);
+    if (extra instanceof HTMLInputElement || extra instanceof HTMLTextAreaElement) {
+      extra.value = String(snap[key] ?? "");
+    }
+  }
   const tracks = field(form, "tracks");
   if (tracks) tracks.setAttribute("data-original-track-list", snap.tracks);
   form.dataset.albumLegacyId = snap.legacyId;
@@ -383,6 +547,45 @@ function updateDiscographyAlbumCardElement(
       '<button type="button" class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary" data-gosaki-edit-start>編集</button>';
     summary.appendChild(toolbar);
   }
+  syncDiscographyDraftPublishControl(summary, album);
+}
+
+function syncDiscographyDraftPublishControl(
+  summary: HTMLElement,
+  album: DiscographyOperationalAlbum,
+): void {
+  const meta = summary.querySelector(".gosaki-discography-content-panel__album-meta");
+  const availability = gosakiDiscographyPublishAvailability(album);
+  const existingBadge = summary.querySelector("[data-gosaki-disc-draft-badge]");
+  const existingButton = summary.querySelector("[data-gosaki-disc-publish]");
+  if (!availability.showPublish) {
+    existingBadge?.remove();
+    existingButton?.remove();
+    return;
+  }
+  if (meta instanceof HTMLElement && !(existingBadge instanceof HTMLElement)) {
+    const badge = document.createElement("p");
+    badge.className = "gosaki-admin-content-panel__meta";
+    badge.setAttribute("data-gosaki-disc-draft-badge", "true");
+    badge.textContent = "下書き";
+    meta.appendChild(badge);
+  }
+  let button = existingButton;
+  if (!(button instanceof HTMLButtonElement)) {
+    button = document.createElement("button");
+    button.type = "button";
+    button.className =
+      "gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn";
+    button.setAttribute("data-gosaki-disc-publish", "true");
+    button.textContent = "公開";
+    const toolbar = summary.querySelector("[data-gosaki-edit-toolbar]");
+    if (toolbar instanceof HTMLElement) toolbar.appendChild(button);
+    else summary.appendChild(button);
+  }
+  const lock = String(album.updatedAt ?? "").trim();
+  button.disabled = !availability.enabled;
+  if (lock) button.setAttribute("data-gosaki-disc-publish-updated-at", lock);
+  else button.removeAttribute("data-gosaki-disc-publish-updated-at");
 }
 
 /**
@@ -428,6 +631,7 @@ export function renderDiscographyOperationalAlbumList(
       const wrap = document.createElement("ul");
       wrap.innerHTML = buildDiscographyAlbumCardHtml(album);
       item = wrap.firstElementChild as HTMLElement;
+      if (item) updateDiscographyAlbumCardElement(item, album);
     }
     nextItems.push(item);
   }
@@ -481,6 +685,31 @@ export function initGosakiDiscographyOperationalEdit(
   let saveNotArmedLocked = false;
   let saveSuccessSticky = false;
   let liveReadState: "pending" | "ready" | "error" = "pending";
+  let createConfirmedFingerprint = "";
+  let createValidationMessage = "";
+  let publishInFlight = false;
+
+  const createUiArmed = () =>
+    typeof deps.createArmed === "boolean"
+      ? deps.createArmed
+      : document.body?.getAttribute("data-gosaki-discography-create-armed") === "true";
+  const setPublishedUiArmed = () =>
+    typeof deps.setPublishedArmed === "boolean"
+      ? deps.setPublishedArmed
+      : document.body?.getAttribute("data-gosaki-discography-set-published-armed") === "true";
+  const extraFieldsUiArmed = () =>
+    typeof deps.extraFieldsArmed === "boolean"
+      ? deps.extraFieldsArmed
+      : document.body?.getAttribute("data-gosaki-discography-extra-fields-armed") === "true";
+
+  const setCreatePublishNotice = (message: string) => {
+    const notice = root.querySelector("[data-gosaki-disc-create-publish-notice]");
+    if (!(notice instanceof HTMLElement)) return;
+    notice.hidden = message.length === 0;
+    notice.textContent = message;
+  };
+
+  const edgeFetch = () => deps.fetchImpl ?? globalThis.fetch.bind(globalThis);
 
   const setUserSaveMessage = (message: string) => {
     if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = message;
@@ -523,7 +752,10 @@ export function initGosakiDiscographyOperationalEdit(
       else if (phase === "ready") setLiveReadUi("ready");
       else setLiveReadUi("error", error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
     },
-    shouldDefer: () => root.dataset.mode === "edit" && isDirty(form),
+    shouldDefer: () => {
+      const kind = editClassForSave(form);
+      return root.dataset.mode === "edit" && (kind === "core" || kind === "extra" || kind === "mixed");
+    },
     fetchLive: async () => {
       const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
       const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
@@ -562,7 +794,39 @@ export function initGosakiDiscographyOperationalEdit(
     }
   };
 
+  const applyCreateSaveBar = () => {
+    const bar = gosakiDiscographyCreateSaveBar({
+      dirty: isCreateDirty(form),
+      inFlight: saveInFlight,
+      validationMessage: createValidationMessage,
+      confirmed:
+        createConfirmedFingerprint !== "" &&
+        createConfirmedFingerprint === gosakiDiscographyCreateFingerprint(readCreateInput(form)),
+    });
+    if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = bar.reason;
+    if (saveBtn instanceof HTMLButtonElement) {
+      saveBtn.disabled = !bar.enabled;
+      saveBtn.setAttribute("aria-disabled", bar.enabled ? "false" : "true");
+      saveBtn.textContent = "保存";
+    }
+    if (saveInFlightEl instanceof HTMLElement) saveInFlightEl.hidden = !bar.inFlightVisible;
+    if (saveValidationEl instanceof HTMLElement) {
+      saveValidationEl.hidden = !bar.validationVisible;
+      if (bar.validationVisible) saveValidationEl.textContent = createValidationMessage;
+      else saveValidationEl.textContent = "";
+    }
+    if (saveSuccessEl instanceof HTMLElement) {
+      saveSuccessEl.hidden = !bar.successVisible;
+      saveSuccessEl.textContent = bar.successMessage;
+    }
+    setUnsaved(root, isCreateDirty(form));
+  };
+
   const refreshSaveUi = async () => {
+    if (form.dataset.discographyFormMode === "create") {
+      applyCreateSaveBar();
+      return;
+    }
     if (deps.getAccessToken) {
       try {
         const token = await deps.getAccessToken();
@@ -601,7 +865,18 @@ export function initGosakiDiscographyOperationalEdit(
 
     if (saveReasonEl instanceof HTMLElement) {
       const dirty = isDirty(form);
-      if (indeterminateLocked) {
+      const editClass = editClassForSave(form);
+      if (editClass === "mixed") {
+        saveReasonEl.textContent = GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE;
+      } else if (editClass === "extra") {
+        if (!authenticated) saveReasonEl.textContent = "ログインが必要です";
+        else if (!String(form.dataset.expectedBeforeUpdatedAt ?? "").trim()) {
+          saveReasonEl.textContent = GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_LOCK_MESSAGE;
+        } else if (!extraFieldsUiArmed()) {
+          saveReasonEl.textContent = GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_STOPPED_MESSAGE;
+        } else if (saveInFlight) saveReasonEl.textContent = "保存中…";
+        else saveReasonEl.textContent = GOSAKI_SAVE_DIRTY_USER_MESSAGE;
+      } else if (indeterminateLocked) {
         saveReasonEl.textContent = "結果が確認できません。自動では再試行しません。";
       } else if (saveNotArmedLocked) {
         saveReasonEl.textContent = GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE;
@@ -627,14 +902,26 @@ export function initGosakiDiscographyOperationalEdit(
     }
     if (saveBtn instanceof HTMLButtonElement) {
       const dirty = isDirty(form);
-      const canClick =
+      const editClass = editClassForSave(form);
+      const coreCanClick =
         isClientSaveArmed(deps.saveArmed) &&
         authenticated &&
         dirty &&
+        editClass === "core" &&
         !saveInFlight &&
         !dryRunInFlight &&
         !indeterminateLocked &&
         !saveNotArmedLocked;
+      const extraCanClick =
+        editClass === "extra" &&
+        authenticated &&
+        Boolean(String(form.dataset.expectedBeforeUpdatedAt ?? "").trim()) &&
+        !saveInFlight &&
+        !dryRunInFlight &&
+        !indeterminateLocked;
+      const mixedCanClick =
+        editClass === "mixed" && authenticated && !saveInFlight && !dryRunInFlight && !indeterminateLocked;
+      const canClick = coreCanClick || extraCanClick || mixedCanClick;
       saveBtn.disabled = !canClick;
       saveBtn.setAttribute("aria-disabled", canClick ? "false" : "true");
       saveBtn.textContent = "保存";
@@ -643,20 +930,104 @@ export function initGosakiDiscographyOperationalEdit(
   };
 
   const refreshDirty = () => {
+    if (form.dataset.discographyFormMode === "create") {
+      createValidationMessage = "";
+      const fingerprint = gosakiDiscographyCreateFingerprint(readCreateInput(form));
+      if (createConfirmedFingerprint && createConfirmedFingerprint !== fingerprint) {
+        createConfirmedFingerprint = "";
+      }
+      renderCreateCover(root, readCreateInput(form).coverImageUrl);
+      applyCreateSaveBar();
+      return;
+    }
     saveNotArmedLocked = false;
     saveSuccessSticky = false;
-    const dirty = isDirty(form);
+    const dirty = editClassForSave(form) !== "none";
     setUnsaved(root, dirty);
+    renderCover(root, readExtraFields(form).cover_image_url);
     if (dirty || (dryRunLockedFingerprint && editableFingerprint(readFormSnapshot(form)) !== dryRunLockedFingerprint)) {
       clearDryRunLock();
     }
     void refreshSaveUi();
   };
 
+  const resetCreateChrome = () => {
+    form.dataset.discographyFormMode = "edit";
+    clearCreateFields(form);
+    setCreateOnlyVisible(root, false);
+    setExtraFieldsVisible(root, true);
+    setEditCoverSectionVisible(root, true);
+    createConfirmedFingerprint = "";
+    createValidationMessage = "";
+    renderCreateCover(root, "");
+    root.querySelectorAll("[data-gosaki-edit-cancel]").forEach((cancelBtn) => {
+      cancelBtn.textContent = "編集をやめる";
+    });
+  };
+
+  const enterCreate = () => {
+    const leavingDirty =
+      root.dataset.mode === "edit" &&
+      (form.dataset.discographyFormMode === "create" ? isCreateDirty(form) : isDirty(form));
+    if (leavingDirty && !window.confirm(UNSAVED_LEAVE)) return;
+    form.dataset.discographyFormMode = "create";
+    applySnapshotToForm(form, emptyCreateSnapshot());
+    clearCreateFields(form);
+    setCreateOnlyVisible(root, true);
+    setExtraFieldsVisible(root, false);
+    setEditCoverSectionVisible(root, false);
+    renderCreateCover(root, "");
+    root.querySelectorAll("[data-gosaki-edit-cancel]").forEach((cancelBtn) => {
+      cancelBtn.textContent = "追加をやめる";
+    });
+    if (statusEl instanceof HTMLElement) statusEl.textContent = "新しい作品を下書きとして追加します";
+    setCreatePublishNotice("");
+    resultEl.textContent = "";
+    const dryPanel = root.querySelector("[data-gosaki-disc-dry-run-panel]");
+    if (dryPanel instanceof HTMLElement) dryPanel.hidden = true;
+    createConfirmedFingerprint = "";
+    createValidationMessage = "";
+    clearDryRunLock();
+    setMode(root, "edit");
+    setUnsaved(root, false);
+    applyCreateSaveBar();
+  };
+
+  const presentCreateLocalDryRun = async () => {
+    if (saveInFlight) return;
+    const input = readCreateInput(form);
+    if (!isCreateDirty(form)) {
+      createValidationMessage = "";
+      applyCreateSaveBar();
+      return;
+    }
+    saveInFlight = true;
+    createValidationMessage = "";
+    applyCreateSaveBar();
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    const result = validateGosakiDiscographyCreateInput(input);
+    saveInFlight = false;
+    if (!result.ok) {
+      createValidationMessage = result.message;
+      createConfirmedFingerprint = "";
+      applyCreateSaveBar();
+      return;
+    }
+    createConfirmedFingerprint = gosakiDiscographyCreateFingerprint(input);
+    createValidationMessage = "";
+    resultEl.hidden = false;
+    resultEl.textContent = JSON.stringify(result.payload, null, 2);
+    const dryPanel = root.querySelector("[data-gosaki-disc-dry-run-panel]");
+    if (dryPanel instanceof HTMLElement) dryPanel.hidden = false;
+    form.dataset.createDryRunPayload = JSON.stringify(result.payload);
+    applyCreateSaveBar();
+  };
+
   const enterEdit = (legacyId: string) => {
     if (liveReadState !== "ready") return;
     const album = albumById.get(legacyId);
     if (!album) return;
+    resetCreateChrome();
     const snap = snapshotFromAlbum(album);
     applySnapshotToForm(form, snap);
     renderCover(root, snap.cover_image_url);
@@ -668,6 +1039,7 @@ export function initGosakiDiscographyOperationalEdit(
   };
 
   const leaveEdit = () => {
+    resetCreateChrome();
     setMode(root, "view");
     setUnsaved(root, false);
     resultEl.textContent = "（まだ確認していません）";
@@ -675,9 +1047,141 @@ export function initGosakiDiscographyOperationalEdit(
     void refreshSaveUi();
   };
 
+  const presentCreateEdgeSave = async () => {
+    if (saveInFlight) return;
+    const input = readCreateInput(form);
+    saveInFlight = true;
+    createValidationMessage = "";
+    applyCreateSaveBar();
+    const token = (await deps.getAccessToken?.()) ?? "";
+    const endpoint = (document.body?.dataset.gosakiDiscographySaveEndpoint || "").trim();
+    const anonKey = (document.body?.dataset.gosakiSupabaseAnonKey || deps.anonKey || "").trim();
+    const endpointSafe = Boolean(token && endpoint && deps.assertSaveEndpointSafe(endpoint));
+    let result: Awaited<ReturnType<typeof runGosakiDiscographyCreateEdgeAttempt>>;
+    try {
+      result = await runGosakiDiscographyCreateEdgeAttempt({
+        armed: true,
+        createInput: input,
+        endpoint,
+        anonKey,
+        accessToken: token,
+        endpointSafe,
+        fetchImpl: edgeFetch(),
+      });
+    } catch {
+      saveInFlight = false;
+      createValidationMessage = "保存に失敗しました。";
+      applyCreateSaveBar();
+      return;
+    }
+    saveInFlight = false;
+    const legacyId = String(result.body.legacyId ?? "").trim();
+    const saved =
+      result.called &&
+      result.status === 200 &&
+      result.body.ok === true &&
+      result.body.published === false &&
+      /^discography-[0-9]{3}$/.test(legacyId);
+    if (!saved) {
+      if (!result.called) {
+        const local = validateGosakiDiscographyCreateInput(input);
+        createValidationMessage = !local.ok
+          ? local.message
+          : token
+            ? "保存先が不正です。"
+            : "ログインが必要です";
+      } else {
+        createValidationMessage = gosakiDiscographyEdgeFailureMessage(
+          result.status,
+          String(result.body.reasonCode ?? ""),
+        );
+      }
+      applyCreateSaveBar();
+      return;
+    }
+    setCreatePublishNotice(`${GOSAKI_DISCOGRAPHY_CREATE_SAVED_MESSAGE_PREFIX}（${legacyId}）`);
+    leaveEdit();
+    await liveSession.requestManualReload();
+  };
+
+  const presentSetPublished = async (legacyId: string) => {
+    if (publishInFlight) return;
+    const album = albumById.get(legacyId);
+    if (!album || album.published !== false) return;
+    const availability = gosakiDiscographyPublishAvailability(album);
+    if (!availability.enabled) {
+      setCreatePublishNotice("公開できません。更新日時がありません。");
+      return;
+    }
+    if (!setPublishedUiArmed()) {
+      setCreatePublishNotice("公開操作は現在停止しています。");
+      return;
+    }
+    const title = album.title || legacyId;
+    if (
+      !window.confirm(
+        `「${title}」を公開しますか？公開後も、公開サイトへの反映には「公開サイトを更新」が必要です。`,
+      )
+    ) {
+      return;
+    }
+    publishInFlight = true;
+    const token = (await deps.getAccessToken?.()) ?? "";
+    const endpoint = (document.body?.dataset.gosakiDiscographySaveEndpoint || "").trim();
+    const anonKey = (document.body?.dataset.gosakiSupabaseAnonKey || deps.anonKey || "").trim();
+    const endpointSafe = Boolean(token && endpoint && deps.assertSaveEndpointSafe(endpoint));
+    let result: Awaited<ReturnType<typeof runGosakiDiscographySetPublishedEdgeAttempt>>;
+    try {
+      result = await runGosakiDiscographySetPublishedEdgeAttempt({
+        armed: true,
+        confirmAccepted: true,
+        published: album.published,
+        legacyId: album.legacyId,
+        expectedBeforeUpdatedAt: album.updatedAt,
+        endpoint,
+        anonKey,
+        accessToken: token,
+        endpointSafe,
+        fetchImpl: edgeFetch(),
+      });
+    } catch {
+      publishInFlight = false;
+      setCreatePublishNotice("保存に失敗しました。");
+      return;
+    }
+    publishInFlight = false;
+    const publishedNow =
+      result.called && result.status === 200 && result.body.ok === true && result.body.published === true;
+    if (!publishedNow) {
+      setCreatePublishNotice(
+        result.called
+          ? gosakiDiscographyEdgeFailureMessage(result.status, String(result.body.reasonCode ?? ""))
+          : token
+            ? "保存先が不正です。"
+            : "ログインが必要です",
+      );
+      return;
+    }
+    setCreatePublishNotice(GOSAKI_DISCOGRAPHY_PUBLISH_SITE_UPDATE_MESSAGE);
+    await liveSession.requestManualReload();
+  };
+
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
+    const createStart = t.closest("[data-gosaki-disc-create-start]");
+    if (createStart instanceof HTMLElement) {
+      enterCreate();
+      return;
+    }
+    const publishBtn = t.closest("[data-gosaki-disc-publish]");
+    if (publishBtn instanceof HTMLButtonElement) {
+      const item = publishBtn.closest("[data-gosaki-disc-album-summary]");
+      const legacyId = item?.getAttribute("data-gosaki-disc-album-summary") || "";
+      if (!legacyId) return;
+      void presentSetPublished(legacyId);
+      return;
+    }
     const startBtn = t.closest("[data-gosaki-edit-start]");
     if (startBtn instanceof HTMLElement) {
       if (liveReadState !== "ready") return;
@@ -693,7 +1197,9 @@ export function initGosakiDiscographyOperationalEdit(
 
   root.querySelectorAll("[data-gosaki-edit-cancel]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (isDirty(form) && !window.confirm(UNSAVED_LEAVE)) return;
+      const dirty =
+        form.dataset.discographyFormMode === "create" ? isCreateDirty(form) : isDirty(form);
+      if (dirty && !window.confirm(UNSAVED_LEAVE)) return;
       const raw = form.dataset.originalSnapshot;
       if (raw) {
         try {
@@ -1020,8 +1526,87 @@ export function initGosakiDiscographyOperationalEdit(
     });
   });
 
+  const presentExtraFieldsSave = async () => {
+    if (saveInFlight) return;
+    const kind = editClassForSave(form);
+    if (kind === "mixed") {
+      setUserSaveMessage(GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE);
+      return;
+    }
+    if (kind !== "extra") return;
+    const legacyId = String(form.dataset.albumLegacyId ?? "").trim();
+    const expected = String(form.dataset.expectedBeforeUpdatedAt ?? "").trim();
+    if (!expected) {
+      setUserSaveMessage(GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_LOCK_MESSAGE);
+      return;
+    }
+    if (!extraFieldsUiArmed()) {
+      setUserSaveMessage(GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_STOPPED_MESSAGE);
+      return;
+    }
+    saveInFlight = true;
+    setUserSaveMessage("保存中…");
+    const token = (await deps.getAccessToken?.()) ?? "";
+    const endpoint = (document.body?.dataset.gosakiDiscographySaveEndpoint || "").trim();
+    const anonKey = (document.body?.dataset.gosakiSupabaseAnonKey || deps.anonKey || "").trim();
+    const endpointSafe = Boolean(token && endpoint && deps.assertSaveEndpointSafe(endpoint));
+    let result: Awaited<ReturnType<typeof runGosakiDiscographyExtraFieldsEdgeAttempt>>;
+    try {
+      result = await runGosakiDiscographyExtraFieldsEdgeAttempt({
+        armed: true,
+        legacyId,
+        expectedBeforeUpdatedAt: expected,
+        fields: readExtraFields(form),
+        endpoint,
+        anonKey,
+        accessToken: token,
+        endpointSafe,
+        fetchImpl: edgeFetch(),
+      });
+    } catch {
+      saveInFlight = false;
+      setUserSaveMessage("保存に失敗しました。");
+      if (saveBtn instanceof HTMLButtonElement) saveBtn.disabled = false;
+      return;
+    }
+    saveInFlight = false;
+    const updatedAt = String(result.body.updatedAt ?? result.body.updated_at ?? "").trim();
+    const saved = result.called && result.status === 200 && result.body.ok === true && updatedAt.length > 0;
+    if (!saved) {
+      setUserSaveMessage(
+        result.called
+          ? gosakiDiscographyEdgeFailureMessage(result.status, String(result.body.reasonCode ?? ""))
+          : token
+            ? "保存先が不正です。"
+            : "ログインが必要です",
+      );
+      if (saveBtn instanceof HTMLButtonElement) saveBtn.disabled = false;
+      return;
+    }
+    setCreatePublishNotice(GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_SAVED_MESSAGE);
+    leaveEdit();
+    await liveSession.requestManualReload();
+  };
+
   if (saveBtn instanceof HTMLButtonElement) {
     saveBtn.addEventListener("click", async () => {
+      if (form.dataset.discographyFormMode === "create") {
+        if (createUiArmed()) {
+          await presentCreateEdgeSave();
+          return;
+        }
+        await presentCreateLocalDryRun();
+        return;
+      }
+      const editClass = editClassForSave(form);
+      if (editClass === "mixed") {
+        setUserSaveMessage(GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE);
+        return;
+      }
+      if (editClass === "extra") {
+        await presentExtraFieldsSave();
+        return;
+      }
       if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
       if (saveNotArmedLocked) {
         setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);

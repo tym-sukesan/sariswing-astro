@@ -461,6 +461,14 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-staging-discography-operational-edit.ts",
   );
+  const discographyCreateDraftSrc = path.join(
+    templateRoot,
+    "gosaki-discography-create-draft.ts",
+  );
+  const discographyExtraFieldsSrc = path.join(
+    templateRoot,
+    "gosaki-discography-extra-fields.ts",
+  );
   const scheduleEditSrc = path.join(
     templateRoot,
     "gosaki-staging-schedule-operational-edit.ts",
@@ -505,6 +513,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     libSrc,
     saveArmUtilsSrc,
     discographyEditSrc,
+    discographyCreateDraftSrc,
     scheduleEditSrc,
     youtubeEditSrc,
     youtubeMultiEditSrc,
@@ -545,6 +554,14 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     discographyEditSrc,
     path.join(path.dirname(libDest), "gosaki-staging-discography-operational-edit.ts"),
+  );
+  fs.copyFileSync(
+    discographyCreateDraftSrc,
+    path.join(path.dirname(libDest), "gosaki-discography-create-draft.ts"),
+  );
+  fs.copyFileSync(
+    discographyExtraFieldsSrc,
+    path.join(path.dirname(libDest), "gosaki-discography-extra-fields.ts"),
   );
   fs.copyFileSync(
     scheduleEditSrc,

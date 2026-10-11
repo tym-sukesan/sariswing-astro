@@ -494,10 +494,12 @@ assert(
     summary: { ...BASELINE_DISCO_OUT.summary },
   });
   assert(
-    "discography keeps repeater id/class + purchase href",
+    "discography invalid legacy id keeps the wix list",
     disco.html.includes('id="comp-llexymga__item-1"') &&
       disco.html.includes('class="wixui-repeater__item"') &&
-      disco.html.includes('href="https://new.base.shop/"') &&
+      disco.html.includes('href="https://old.base.shop/"') &&
+      disco.html.includes("discographyRender=wix-fallback") &&
+      disco.html.includes("fallbackReason=rows_not_renderable") &&
       disco.html.includes("discographyDataSource=supabase"),
   );
   assert(

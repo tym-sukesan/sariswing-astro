@@ -903,6 +903,25 @@ export function isG20u41DiscographyOperationalSaveArmed(env: ImportMetaEnv): boo
   return isSaveArmExactTrue(env[G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv]);
 }
 
+export const GOSAKI_DISCOGRAPHY_CREATE_UI_ARMED_ENV = "PUBLIC_GOSAKI_DISCOGRAPHY_CREATE_UI_ARMED";
+export const GOSAKI_DISCOGRAPHY_SET_PUBLISHED_UI_ARMED_ENV =
+  "PUBLIC_GOSAKI_DISCOGRAPHY_SET_PUBLISHED_UI_ARMED";
+
+export function isGosakiDiscographyCreateUiArmed(env: ImportMetaEnv): boolean {
+  return isSaveArmExactTrue(env[GOSAKI_DISCOGRAPHY_CREATE_UI_ARMED_ENV as keyof ImportMetaEnv]);
+}
+
+export function isGosakiDiscographySetPublishedUiArmed(env: ImportMetaEnv): boolean {
+  return isSaveArmExactTrue(env[GOSAKI_DISCOGRAPHY_SET_PUBLISHED_UI_ARMED_ENV as keyof ImportMetaEnv]);
+}
+
+export const GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_UI_ARMED_ENV =
+  "PUBLIC_GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_UI_ARMED";
+
+export function isGosakiDiscographyExtraFieldsUiArmed(env: ImportMetaEnv): boolean {
+  return isSaveArmExactTrue(env[GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_UI_ARMED_ENV as keyof ImportMetaEnv]);
+}
+
 export function assertG20u41DiscographySaveEndpointSafe(endpoint: string): boolean {
   return assertG20u36cDiscographyDryRunEndpointSafe(endpoint);
 }

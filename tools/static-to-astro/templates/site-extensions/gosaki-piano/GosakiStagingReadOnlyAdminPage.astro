@@ -48,6 +48,9 @@ import {
   evaluateDiscographyOperationalSaveGate,
   isDiscographySaveConflictResponse,
   isG20u41DiscographyOperationalSaveArmed,
+  isGosakiDiscographyCreateUiArmed,
+  isGosakiDiscographySetPublishedUiArmed,
+  isGosakiDiscographyExtraFieldsUiArmed,
   resolveG20u41DiscographySaveEndpoint,
   assertG20u41DiscographySaveEndpointSafe,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -122,6 +125,9 @@ const saveEndpoint = youtubeSupabasePathEnabled
 const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
 const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
 const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
+const discographyCreateArmed = isGosakiDiscographyCreateUiArmed(import.meta.env);
+const discographySetPublishedArmed = isGosakiDiscographySetPublishedUiArmed(import.meta.env);
+const discographyExtraFieldsArmed = isGosakiDiscographyExtraFieldsUiArmed(import.meta.env);
 const scheduleSaveArmed = isG20u45ScheduleOperationalSaveArmed(import.meta.env);
 const productionDeployUiArmed = isGosakiProductionDeployUiArmed(import.meta.env);
 const scheduleDryRunEndpointRaw = resolveGosakiScheduleDryRunEndpoint(import.meta.env);
@@ -233,6 +239,9 @@ const showClientScript = true;
     data-g20u41-discography-save-operation={G20U41_DISCOGRAPHY_SAVE_OPERATION}
     data-g20u41-discography-save-approval-id={G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID}
     data-gosaki-discography-save-armed={discographySaveArmed ? "true" : "false"}
+    data-gosaki-discography-create-armed={discographyCreateArmed ? "true" : "false"}
+    data-gosaki-discography-set-published-armed={discographySetPublishedArmed ? "true" : "false"}
+    data-gosaki-discography-extra-fields-armed={discographyExtraFieldsArmed ? "true" : "false"}
     data-g20u36c-discography-dry-run-operation={G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION}
     data-g20u36c-discography-dry-run-approval-id={G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID}
     data-gosaki-supabase-url={supabaseUrl}
@@ -920,6 +929,9 @@ const showClientScript = true;
           saveOperation: G20U41_DISCOGRAPHY_SAVE_OPERATION,
           expectedSaveApprovalId: G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
           saveArmed: body?.dataset.gosakiDiscographySaveArmed === "true",
+          createArmed: body?.dataset.gosakiDiscographyCreateArmed === "true",
+          setPublishedArmed: body?.dataset.gosakiDiscographySetPublishedArmed === "true",
+          extraFieldsArmed: body?.dataset.gosakiDiscographyExtraFieldsArmed === "true",
           conflictMessage: G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
           getAccessToken: resolveDiscographyAccessToken,

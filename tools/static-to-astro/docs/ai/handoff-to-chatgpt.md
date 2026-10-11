@@ -5,7 +5,14 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-admin-save-bar PASS
+Current phase: gosaki-discography-extra-fields-edit-local (arm off, SQL not applied)
+READY_FOR_EXTRA_FIELDS_INTEGRATION_REVIEW: true
+READY_FOR_CREATE_PUBLISH_ROLLOUT_REVIEW: true
+READY_FOR_ADMIN_CREATE_PUBLISH_WIRING: true
+READY_FOR_SET_PUBLISHED_RPC_REVIEW: true
+READY_FOR_LIVE_CREATE_TEST: false
+READY_FOR_PUBLIC_DEPLOY_REVIEW: false
+Previous phase: gosaki-admin-save-bar PASS
 Worktree: /Users/toyamayusuke/sariswing-astro-gosaki-main-merge
 BRANCH: gosaki-main-merge-prep
 COMMIT: false
@@ -22,6 +29,68 @@ POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki Discography create and publish Edge (2026-10-11)
+
+- Local only on `gosaki-discography-save-dry-run`. Async `operation: create` calls `gosaki_discography_operational_create`. Async `operation: setPublished` calls `gosaki_discography_operational_set_published`. Existing `operation: save` is unchanged. Server arms are `GOSAKI_DISCOGRAPHY_CREATE_ARMED` and `GOSAKI_DISCOGRAPHY_SET_PUBLISHED_ARMED`, both default off. The sync dry-run path rejects the new operations and does not call an RPC. Verifier PASS 22. Edge was not deployed.
+
+## Gosaki Discography set-published RPC (2026-10-11)
+
+- Template only: `scripts/supabase/gosaki-discography-operational-set-published-rpc.template.sql`. It publishes one unpublished `gosaki-piano` row when `can_write_site` passes and `expected_before_updated_at` matches. Already published returns 422. A lock mismatch returns 409. Only `published` and `updated_at` are written. EXECUTE is for `authenticated` only. The function owner must be the discography table owner. Verifier PASS 12. SQL was not applied.
+
+## Gosaki Discography admin create UI (2026-10-11)
+
+- 「作品を追加」opens the existing Discography form in create mode. The fixed Save bar validates a local dry-run payload for `gosaki_discography_operational_create` and does not fetch. `published` is false and the caller does not send `legacy_id`. Existing album Save still uses its current post path. Verifier PASS 35. No Edge implementation and no live create test.
+
+## Gosaki Discography create RPC security review (2026-10-11)
+
+- Reviewed the create template only. `can_write_site` uses `auth.uid()` and has no user-id argument. Album and track inserts sit in one exception subtransaction. The template no longer locks existing albums. EXECUTE stays limited to `authenticated`. Verifier PASS 7. SQL was not applied.
+
+## Gosaki Discography create RPC (2026-10-11)
+
+- Template only: `scripts/supabase/gosaki-discography-operational-create-rpc.template.sql`. It creates unpublished `gosaki-piano` albums, allocates `discography-NNN` with an advisory lock and a 999 cap, and inserts tracks in the same transaction. `can_write_site` is required. EXECUTE is for `authenticated` only. Table privileges and the existing Save RPC are unchanged. Verifier PASS 7. SQL was not applied.
+
+## Gosaki Discography live read local parity (2026-10-11)
+
+- Anon SELECT on kmjq returned 4 published albums and 34 tracks. The local data-driven page shows price, purchase note, release display, https covers, personnel, and track lists. PC layout is a 260px jacket beside the text. SP stacks the jacket above the text, with no horizontal scroll and no header overlap.
+- The renderer omits a personnel line when it is the same text as `purchase_note`, so Ja-Jaaaaan shows the venue sentence once. Verifier 59/0.
+- Unresolved: live `discography-002.purchase_url` is `https://gosakirikako.base.shop/`. The Wix fixture uses `https://gosaakiii.base.shop/` for SKYLARK. No deploy.
+
+## Gosaki Discography SQL postcheck fix (2026-10-11)
+
+- Operator confirmed the kmjq read-only PRECHECK: four gosaki-piano rows, the three columns absent, anon SELECT only, `discography_set_updated_at` enabled. This session did not re-query or apply.
+- APPLY's outside POSTCHECK now raises if any snapshotted outside id is gone, including when a delete and insert leave the count unchanged. Value comparison, trigger, grants, and the Save RPC are unchanged. Verifier 58/0.
+
+## Gosaki Discography SQL final preflight (2026-10-11)
+
+- Template only. `updated_at` trigger is not disabled. A real backfill UPDATE may advance `updated_at`, which makes an in-flight Save 409 until the admin reloads. The Save RPC column list is unchanged and does not clear `price`, `purchase_note`, or `release_display`.
+- UPDATE is limited to `gosaki-piano` `discography-001` through `004`. A different non-null value aborts. A row that already matches is skipped. Outside rows are compared with their pre-update values, including values that are already filled.
+- Live SELECT PRECHECK was not run: this worktree has no anon URL or anon key. Verifier 58/0.
+
+## Gosaki Discography public list content and layout (2026-10-11)
+
+- Local only. The public renderer prints `price`, newline `purchase_note`, and `release_display` when present. An empty `release_display` uses `release_date`. https covers render. A missing column is a read failure and leaves the Wix list. Zero published rows stay a successful empty list.
+- List CSS is limited to `#comp-llexymel[data-gosaki-discography-render="data-driven"]`: PC 260px cover plus text, SP one column. Header, footer, and nav are unchanged.
+- SQL template `scripts/supabase/gosaki-discography-price-purchase-note-release-display.template.sql` is not applied. It backfills only `gosaki-piano` `discography-001` through `004`, and refuses a different non-null value. Save RPC is unchanged. Verifier 57/0.
+
+## Gosaki Discography content model design (2026-10-11)
+
+- Design only. Nullable text columns: `price`, `purchase_note` (newlines allowed), `release_display`. Existing operational Save RPC keeps its column list and does not clear the new columns.
+- Four jackets: fixture uses wixstatic; committed files are `tools/static-to-astro/assets/gosaki-piano/wix-local/discography-*.png|jpg`; documented Storage URLs returned HTTP 200 on HEAD. Live `cover_image_url` was not re-selected. New upload and Storage policy can wait.
+- List layout should use classes under `#comp-llexymel[data-gosaki-discography-render="data-driven"]`: PC two columns, SP one column. Header, footer, and nav stay. Wix fallback stays on the old rules.
+
+## Gosaki Discography public parity review (2026-10-11)
+
+- STOP. The data-driven list drops price and purchase-intro copy for all 4 existing albums. Those strings are not DB columns. Do not backfill them from Wix inside the renderer, and do not apply a schema change until a later approved phase.
+- Safe public page: keep the current Wix repeater. Future albums need nullable `price` and `purchase_note` (newline-capable) on `public.discography`, then a backfill of the 4 rows.
+- No live kmjq anon SELECT in this worktree (`tools/static-to-astro/.env.local` absent). `READY_FOR_CREATE_PHASE: false`. `gosakiHomeLatestScheduleSummary` baseline mismatch is a separate pre-existing key-list gap.
+
+## Gosaki Discography public list render (2026-10-11)
+
+- On a successful Supabase read, only the Discography repeater items inside `#comp-llexymel` are regenerated from published rows. Header, footer, nav, and the page shell stay.
+- Album identity is `legacy_id`. Order is `sort_order`, then `legacy_id`. Track lines follow the track rows. Personnel is `description`. Cover, purchase, and streaming links render only for http(s) URLs.
+- Env missing, read failure, or a non-array response leaves the Wix list. Zero published rows clear the list and stay a successful read. A row set that cannot be rendered (missing title, bad `legacy_id`, blank track title) keeps the whole Wix list.
+- Price and the shop-intro sentences are not columns and are not copied from the Wix HTML. Create, Admin, RPC, Edge, Storage, and deploy were not changed. Not committed.
 
 ## Gosaki admin save bar and image library paging (2026-10-10)
 

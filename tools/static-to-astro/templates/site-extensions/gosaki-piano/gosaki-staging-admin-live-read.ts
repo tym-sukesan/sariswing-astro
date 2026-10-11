@@ -18,7 +18,7 @@ const SCHEDULE_SELECT =
   "id,legacy_id,site_slug,date,month,title,venue,open_time,start_time,price,description,image_url,published,updated_at,sort_order";
 
 const DISCOGRAPHY_SELECT =
-  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published,release_date,description,cover_image_url,updated_at";
+  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published,release_date,description,cover_image_url,updated_at,price,purchase_note,release_display";
 
 const DISCOGRAPHY_TRACKS_SELECT =
   "id,discography_legacy_id,track_number,title,sort_order,site_slug";
@@ -46,6 +46,9 @@ export type GosakiAdminLiveDiscographyAlbum = {
   releaseDate?: string | null;
   label?: string | null;
   catalogNumber?: string | null;
+  price?: string | null;
+  purchaseNote?: string | null;
+  releaseDisplay?: string | null;
   published?: boolean;
   coverImageUrl?: string | null;
   purchaseUrl?: string | null;
@@ -259,6 +262,9 @@ export async function fetchGosakiDiscographyAuthenticatedLive(input: {
       releaseDate: row.release_date != null ? String(row.release_date) : null,
       label: row.label != null ? String(row.label) : null,
       catalogNumber: row.catalog_number != null ? String(row.catalog_number) : null,
+      price: row.price != null ? String(row.price) : null,
+      purchaseNote: row.purchase_note != null ? String(row.purchase_note) : null,
+      releaseDisplay: row.release_display != null ? String(row.release_display) : null,
       published: row.published !== false,
       coverImageUrl: row.cover_image_url != null ? String(row.cover_image_url) : null,
       purchaseUrl: row.purchase_url != null ? String(row.purchase_url) : null,

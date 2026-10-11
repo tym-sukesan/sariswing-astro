@@ -161,17 +161,16 @@ export const BASELINE_DISCO_HTML_IN =
 
 export const BASELINE_DISCO_OUT = Object.freeze({
   html:
-    `<!-- CMS_TARGET: DISCOGRAPHY_INDEX discographyDataSource=supabase -->` +
+    `<!-- CMS_TARGET: DISCOGRAPHY_INDEX discographyDataSource=supabase discographyRender=wix-fallback readStatus=ok fallbackReason=rows_not_renderable -->` +
     `<div id="comp-llexymga__item-1" class="wixui-repeater__item"><div>「Baseline Album」</div>` +
-    `<a href="https://new.base.shop/">https://new.base.shop/</a></div>`,
+    `<a href="https://old.base.shop/">https://old.base.shop/</a></div>`,
   summary: Object.freeze({
     discographyDataSource: "supabase",
+    readStatus: "ok",
+    renderMode: "wix-fallback",
+    fallbackReason: "rows_not_renderable",
     rowCount: 1,
-    patchCount: 1,
-    purchasePatchCount: 1,
-    artistPatchCount: 0,
-    labelPatchCount: 0,
-    trackPatchCount: 0,
+    publishedCount: 1,
     trackRowCount: 0,
   }),
 });

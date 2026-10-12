@@ -86,6 +86,25 @@ assert(
     !createSql.includes("gosaki_discography_operational_save_extra_fields") &&
     !publishSql.includes("gosaki_discography_operational_save_extra_fields"),
 );
+const extraGuardAt = sql.indexOf("do $save_extra_fields_owner_check$");
+const extraGuardEnd = sql.indexOf("$save_extra_fields_owner_check$;", extraGuardAt);
+const extraGuard = extraGuardAt >= 0 && extraGuardEnd > extraGuardAt
+  ? sql.slice(extraGuardAt, extraGuardEnd)
+  : "";
+assert(
+  "owner guard uses the current_user keyword",
+  extraGuard.includes("if current_user in ('anon', 'authenticated') then") &&
+    extraGuard.includes("if current_user is distinct from v_owner then") &&
+    extraGuard.includes("STOP: current_user must be the owner of public.discography") &&
+    extraGuard.includes("p.proname = 'gosaki_discography_operational_save_extra_fields'") &&
+    extraGuard.includes("STOP: public.gosaki_discography_operational_save_extra_fields already exists") &&
+    extraGuard.indexOf("already exists") < extraGuard.indexOf("if current_user in") &&
+    sql.includes("create function public.gosaki_discography_operational_save_extra_fields(") &&
+    !sql.toLowerCase().includes("create or replace") &&
+    !extraGuard.includes("pg_catalog.current_user") &&
+    !sql.includes("pg_catalog.current_user") &&
+    sql.includes("select current_user as apply_role;"),
+);
 assert(
   "update writes only the six columns and updated_at",
   ["price", "purchase_note", "release_display", "catalog_number", "streaming_url", "cover_image_url", "updated_at"].every(

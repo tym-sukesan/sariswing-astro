@@ -53,7 +53,8 @@ check("template is marked not to execute and is staging-only",
     sql.includes("POSTCHECK"));
 
 check("publish function is separate from save and create",
-  sql.includes("create or replace function public.gosaki_discography_operational_set_published(") &&
+  sql.includes("create function public.gosaki_discography_operational_set_published(") &&
+    !sql.toLowerCase().includes("create or replace") &&
     !sql.includes("create or replace function public.gosaki_discography_operational_save(") &&
     !sql.includes("create or replace function public.gosaki_discography_operational_create(") &&
     !saveMigration.includes("gosaki_discography_operational_set_published") &&
@@ -62,14 +63,27 @@ check("publish function is separate from save and create",
     !edgeHandler.includes("gosaki_discography_operational_set_published") &&
     !edgeCopy.includes("gosaki_discography_operational_set_published"));
 
+const publishGuardAt = sql.indexOf("do $set_published_owner_check$");
+const publishGuardEnd = sql.indexOf("$set_published_owner_check$;", publishGuardAt);
+const publishGuard = publishGuardAt >= 0 && publishGuardEnd > publishGuardAt
+  ? sql.slice(publishGuardAt, publishGuardEnd)
+  : "";
 check("authz is can_write_site for gosaki-piano and the owner is the table owner",
   sql.includes("security definer") &&
     sql.includes("set search_path = pg_catalog, public") &&
     sql.includes("public.can_write_site(v_site_id)") &&
     sql.includes("v_site_slug <> 'gosaki-piano'") &&
     sql.includes("can_write_site_denied") &&
-    sql.includes("current_user must be the owner of public.discography") &&
-    sql.includes("anon and authenticated must not own this function") &&
+    publishGuard.includes("current_user must be the owner of public.discography") &&
+    publishGuard.includes("anon and authenticated must not own this function") &&
+    publishGuard.includes("if current_user in ('anon', 'authenticated') then") &&
+    publishGuard.includes("if current_user is distinct from v_owner then") &&
+    publishGuard.includes("p.proname = 'gosaki_discography_operational_set_published'") &&
+    publishGuard.includes("STOP: public.gosaki_discography_operational_set_published already exists") &&
+    publishGuard.indexOf("already exists") < publishGuard.indexOf("if current_user in") &&
+    !publishGuard.includes("pg_catalog.current_user") &&
+    !sql.includes("pg_catalog.current_user") &&
+    sql.includes("select current_user as apply_role;") &&
     !sql.includes("public.is_admin()"));
 
 check("legacy id and optimistic lock are required",

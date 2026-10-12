@@ -7,8 +7,10 @@
 -- Does not change Admin UI, Edge Functions, RLS, or table privileges.
 -- Does not use a privileged service key.
 --
--- The function owner is the role that runs this script. That role must own
--- the discography tables. anon and authenticated must not own it.
+-- The function owner is current_user at APPLY time. APPLY stops unless that
+-- role owns both public.discography and public.discography_tracks.
+-- anon and authenticated must not be current_user and must not own either table.
+-- A mismatch raises an exception before the function is created.
 -- search_path is fixed on the function. can_write_site reads auth.uid()
 -- and takes no user id from the caller.
 --
@@ -62,7 +64,7 @@ where table_schema = 'public'
     'published'
   )
 order by column_name;
--- Expect all 17 columns.
+-- Expect all 16 columns.
 
 select column_name
 from information_schema.columns
@@ -83,13 +85,82 @@ from public.discography
 where legacy_id ~ '^discography-[0-9]{3}$';
 -- STOP if this value is >= 999.
 
+select c.relname as table_name, r.rolname as table_owner
+from pg_catalog.pg_class c
+join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+join pg_catalog.pg_roles r on r.oid = c.relowner
+where n.nspname = 'public'
+  and c.relname in ('discography', 'discography_tracks')
+order by c.relname;
+-- STOP unless both owners are the same role, that role is current_user,
+-- and neither owner is anon or authenticated.
+
 -- =============================================================================
 -- APPLY (write) — DO NOT RUN until a separate explicit approval
 -- =============================================================================
 
 begin;
 
-create or replace function public.gosaki_discography_operational_create(
+do $create_owner_check$
+declare
+  v_discography_owner name;
+  v_tracks_owner name;
+begin
+  if exists (
+    select 1
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'gosaki_discography_operational_create'
+  ) then
+    raise exception 'STOP: public.gosaki_discography_operational_create already exists';
+  end if;
+
+  select r.rolname
+  into v_discography_owner
+  from pg_catalog.pg_class c
+  join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+  join pg_catalog.pg_roles r on r.oid = c.relowner
+  where n.nspname = 'public'
+    and c.relname = 'discography';
+
+  select r.rolname
+  into v_tracks_owner
+  from pg_catalog.pg_class c
+  join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+  join pg_catalog.pg_roles r on r.oid = c.relowner
+  where n.nspname = 'public'
+    and c.relname = 'discography_tracks';
+
+  if v_discography_owner is null then
+    raise exception 'STOP: public.discography owner is missing';
+  end if;
+
+  if v_tracks_owner is null then
+    raise exception 'STOP: public.discography_tracks owner is missing';
+  end if;
+
+  if v_discography_owner in ('anon', 'authenticated')
+     or v_tracks_owner in ('anon', 'authenticated') then
+    raise exception 'STOP: anon and authenticated must not own public.discography or public.discography_tracks';
+  end if;
+
+  if current_user in ('anon', 'authenticated') then
+    raise exception 'STOP: anon and authenticated must not own this function';
+  end if;
+
+  if v_discography_owner is distinct from v_tracks_owner then
+    raise exception 'STOP: public.discography and public.discography_tracks must have the same owner';
+  end if;
+
+  if current_user is distinct from v_discography_owner
+     or current_user is distinct from v_tracks_owner then
+    raise exception 'STOP: current_user must be the owner of public.discography and public.discography_tracks';
+  end if;
+end
+$create_owner_check$;
+
+create function public.gosaki_discography_operational_create(
   p_site_slug text,
   p_title text,
   p_artist text,
@@ -529,6 +600,22 @@ grant execute on function public.gosaki_discography_operational_create(
 ) to authenticated;
 
 commit;
+
+-- =============================================================================
+-- POSTCHECK (read-only) — run after APPLY commits
+-- =============================================================================
+
+select p.proname,
+       p.prosecdef as security_definer,
+       r.rolname as function_owner,
+       p.proconfig
+from pg_catalog.pg_proc p
+join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+join pg_catalog.pg_roles r on r.oid = p.proowner
+where n.nspname = 'public'
+  and p.proname = 'gosaki_discography_operational_create';
+-- Expect security_definer true, function_owner equal to both table owners,
+-- and proconfig containing search_path=pg_catalog, public.
 
 -- This template does not add table write privileges.
 -- anon stays without EXECUTE. RLS policies are unchanged.

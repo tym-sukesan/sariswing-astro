@@ -5,7 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-extra-fields-edit-local (arm off, SQL not applied)
+Current phase: gosaki-discography-rpc-final-fail-closed-hardening (template only, SQL not applied)
+READY_FOR_CREATE_RPC_APPLY_APPROVAL: true
+READY_FOR_CREATE_RPC_FINAL_REVIEW: true
 READY_FOR_EXTRA_FIELDS_INTEGRATION_REVIEW: true
 READY_FOR_CREATE_PUBLISH_ROLLOUT_REVIEW: true
 READY_FOR_ADMIN_CREATE_PUBLISH_WIRING: true
@@ -29,6 +31,18 @@ POST_SAVE_LOCK_REFRESH_FIXED: true
 SAFE_TO_COMMIT: true
 seedAppliedStaging: true
 ```
+
+## Gosaki Discography RPC fail-closed create (2026-10-13)
+
+- Local templates only. create, setPublished, and saveExtraFields use `CREATE FUNCTION`. Each APPLY guard raises when any public function with that name already exists, including a different argument list. Owner checks remain. The create PRECHECK comment expects 16 columns. Function bodies are unchanged. Verifiers: create PASS 8, setPublished PASS 12, extra fields PASS 16. SQL was not applied. `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`.
+
+## Gosaki Discography remaining RPC owner guards (2026-10-13)
+
+- Local templates only. setPublished and saveExtraFields now use the SQL keyword `current_user` in the owner guard and in the PRECHECK role display. None of the three RPC templates still contain `pg_catalog.current_user`. Function bodies are unchanged. Verifiers: create PASS 8, setPublished PASS 12, extra fields PASS 16. SQL was not applied. `READY_FOR_THREE_RPC_SQL_FINAL_REVIEW: true`.
+
+## Gosaki Discography create RPC owner guard (2026-10-13)
+
+- Local template only. The create guard's three executable `current_user` references are the SQL keyword. PostgreSQL 16 parses that keyword as `SQLValueFunction` / `SVFOP_CURRENT_USER`. `pg_catalog.current_user` parses as a column reference and is no longer in the guard. The create function body is unchanged. Verifier PASS 8. SQL was not applied. `READY_FOR_CREATE_RPC_SQL_INSPECTION: true`.
 
 ## Gosaki Discography create and publish Edge (2026-10-11)
 

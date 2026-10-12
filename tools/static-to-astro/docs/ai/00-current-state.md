@@ -1,7 +1,13 @@
-Last updated: 2026-10-12
+Last updated: 2026-10-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Gosaki Discography RPC fail-closed create (2026-10-13):** **local template only / SQL not applied** — Phase `gosaki-discography-rpc-final-fail-closed-hardening` · three RPC templates use `CREATE FUNCTION` · an existing public function of the same name, including an overload, raises before create · owner checks stay · create column comment says 16 · function bodies unchanged · verifiers create **PASS 8**, setPublished **PASS 12**, extra fields **PASS 16** · `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`.
+
+**Gosaki Discography remaining RPC owner guards (2026-10-13):** **local template only / SQL not applied** — Phase `gosaki-discography-remaining-rpc-owner-guard-fix` · setPublished and saveExtraFields owner checks, plus their PRECHECK role display, use the SQL keyword `current_user` · all three RPC templates have no `pg_catalog.current_user` · function bodies are unchanged · verifiers create **PASS 8**, setPublished **PASS 12**, extra fields **PASS 16** · `READY_FOR_THREE_RPC_SQL_FINAL_REVIEW: true`.
+
+**Gosaki Discography create RPC owner guard (2026-10-13):** **local template only / SQL not applied** — Phase `gosaki-discography-create-rpc-owner-guard` · the create guard uses the SQL keyword `current_user`, not `pg_catalog.current_user` · PostgreSQL 16 parses that keyword as `SQLValueFunction` / `SVFOP_CURRENT_USER` · APPLY still raises before `CREATE FUNCTION` unless `current_user` owns both discography tables · function body, `SECURITY DEFINER`, `search_path`, and `GRANT`/`REVOKE` are unchanged · verifier **PASS 8** · `READY_FOR_CREATE_RPC_SQL_INSPECTION: true`.
 
 **Gosaki Discography extra fields edit (2026-10-12):** **local only / arm off** — Phase `gosaki-discography-extra-fields-edit-local` · six columns save through `gosaki_discography_operational_save_extra_fields` · existing Save RPC is unchanged · mixed core+extra edits are refused before either POST · verifier **PASS 15** · pglast **15 statements** · `READY_FOR_EXTRA_FIELDS_INTEGRATION_REVIEW: true` · SQL apply and Edge deploy stay false.
 

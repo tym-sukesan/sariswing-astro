@@ -1,9 +1,9 @@
-Last updated: 2026-10-12
+Last updated: 2026-10-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-0. **STOP before rollout and before SQL apply.** `gosaki-discography-extra-fields-edit-local` adds `gosaki_discography_operational_save_extra_fields` and Edge `operation: saveExtraFields`. Arms `PUBLIC_GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_UI_ARMED` and `GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_ARMED` stay off. Do not apply this RPC. Do not deploy the Edge function. Do not apply the create RPC or `gosaki_discography_operational_set_published`. `READY_FOR_EXTRA_FIELDS_INTEGRATION_REVIEW: true`.
+0. **STOP before SQL apply.** The three Discography RPC templates now use `CREATE FUNCTION` and stop when the same function name already exists in `public`. `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`. Do not apply them until a separate explicit approval. Do not deploy Edge.
 
 1. **Primary:** operator-gated commit of the shared admin Save bar and the Schedule image library paging (6, then 6). Keep it separate from the Schedule horizontal card, FTP timeout, Discography public track reflection, About field-lock hydration, and the workflow Save UI arms. Do not add `--delete`.
 2. After that commit, the production admin package must be rebuilt so `/admin/about` sends the hydrated `profile.lede` lock. The workflow Save UI / build-read change is a separate uncommitted workflow edit.

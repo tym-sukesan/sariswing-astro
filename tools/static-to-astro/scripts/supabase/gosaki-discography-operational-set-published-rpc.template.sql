@@ -25,7 +25,7 @@
 
 select current_database() as database_name;
 
-select pg_catalog.current_user as apply_role;
+select current_user as apply_role;
 
 select r.rolname as discography_table_owner
 from pg_catalog.pg_class c
@@ -74,6 +74,16 @@ do $set_published_owner_check$
 declare
   v_owner name;
 begin
+  if exists (
+    select 1
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'gosaki_discography_operational_set_published'
+  ) then
+    raise exception 'STOP: public.gosaki_discography_operational_set_published already exists';
+  end if;
+
   select r.rolname
   into v_owner
   from pg_catalog.pg_class c
@@ -86,17 +96,17 @@ begin
     raise exception 'STOP: public.discography owner is missing';
   end if;
 
-  if pg_catalog.current_user in ('anon', 'authenticated') then
+  if current_user in ('anon', 'authenticated') then
     raise exception 'STOP: anon and authenticated must not own this function';
   end if;
 
-  if pg_catalog.current_user is distinct from v_owner then
+  if current_user is distinct from v_owner then
     raise exception 'STOP: current_user must be the owner of public.discography';
   end if;
 end
 $set_published_owner_check$;
 
-create or replace function public.gosaki_discography_operational_set_published(
+create function public.gosaki_discography_operational_set_published(
   p_site_slug text,
   p_legacy_id text,
   p_expected_before_updated_at timestamptz,

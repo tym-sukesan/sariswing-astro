@@ -44,7 +44,8 @@ check("template is marked not to execute and is staging-only",
     sql.includes("APPLY"));
 
 check("create function is separate from the save function",
-  sql.includes("create or replace function public.gosaki_discography_operational_create(") &&
+  sql.includes("create function public.gosaki_discography_operational_create(") &&
+    !sql.toLowerCase().includes("create or replace") &&
     !sql.includes("create or replace function public.gosaki_discography_operational_save(") &&
     !saveMigration.includes("gosaki_discography_operational_create") &&
     !saveTemplate.includes("gosaki_discography_operational_create") &&
@@ -91,6 +92,39 @@ check("input checks cover the create fields and urls",
     sql.includes("javascript:%") &&
     sql.includes("'^https?://'"));
 
+const applyAt = sql.indexOf("-- APPLY (write)");
+const ownerGuardAt = sql.indexOf("do $create_owner_check$");
+const ownerGuardEnd = sql.indexOf("$create_owner_check$;", ownerGuardAt);
+const ownerGuard = ownerGuardAt >= 0 && ownerGuardEnd > ownerGuardAt
+  ? sql.slice(ownerGuardAt, ownerGuardEnd)
+  : "";
+const createFnAt = sql.indexOf("create function public.gosaki_discography_operational_create(");
+const precheckAt = sql.indexOf("-- PRECHECK (read-only)");
+const postcheckAt = sql.indexOf("-- POSTCHECK (read-only)");
+check("owner mismatch stops before the function is created",
+  precheckAt >= 0 &&
+    applyAt > precheckAt &&
+    postcheckAt > createFnAt &&
+    ownerGuardAt > applyAt &&
+    createFnAt > ownerGuardEnd &&
+    ownerGuard.includes("c.relname = 'discography'") &&
+    ownerGuard.includes("c.relname = 'discography_tracks'") &&
+    ownerGuard.includes("STOP: public.discography owner is missing") &&
+    ownerGuard.includes("STOP: public.discography_tracks owner is missing") &&
+    ownerGuard.includes("anon and authenticated must not own public.discography or public.discography_tracks") &&
+    ownerGuard.includes("anon and authenticated must not own this function") &&
+    ownerGuard.includes("public.discography and public.discography_tracks must have the same owner") &&
+    ownerGuard.includes("current_user must be the owner of public.discography and public.discography_tracks") &&
+    ownerGuard.includes("raise exception") &&
+    !ownerGuard.includes("pg_catalog.current_user") &&
+    ownerGuard.includes("if current_user in ('anon', 'authenticated') then") &&
+    ownerGuard.includes("if current_user is distinct from v_discography_owner") &&
+    ownerGuard.includes("or current_user is distinct from v_tracks_owner then") &&
+    ownerGuard.includes("p.proname = 'gosaki_discography_operational_create'") &&
+    ownerGuard.includes("STOP: public.gosaki_discography_operational_create already exists") &&
+    ownerGuard.indexOf("already exists") < ownerGuard.indexOf("if current_user in") &&
+    sql.includes("Expect all 16 columns"));
+
 check("execute is granted only to authenticated and table grants stay absent",
   sql.includes("revoke all on function public.gosaki_discography_operational_create(") &&
     sql.includes("from public") &&
@@ -112,4 +146,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("PASS 7");
+console.log("PASS 8");

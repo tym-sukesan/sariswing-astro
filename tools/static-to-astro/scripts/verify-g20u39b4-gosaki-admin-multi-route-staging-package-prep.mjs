@@ -492,8 +492,8 @@ assert(
     discographyPanelSrc.includes('data-gosaki-disc-field="tracks"'),
 );
 assert(
-  "discography image edit deferred",
-  discographyPanelSrc.includes("画像変更は後続フェーズ") &&
+  "discography cover upload does not use the sariswing images helper",
+  discographyPanelSrc.includes('data-gosaki-disc-cover-upload="edit"') &&
     !discographyPanelSrc.includes("uploadAdminImage") &&
     !discographyPanelSrc.includes("data-image-upload"),
 );
@@ -1275,6 +1275,12 @@ assert(
   "tmp schedule image upload lib copied",
   fs.existsSync(
     path.join(tmpOut, "src/lib/gosaki-schedule-image-upload.ts"),
+  ),
+);
+assert(
+  "tmp discography cover upload lib copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/lib/gosaki-discography-cover-upload.ts"),
   ),
 );
 assert(

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-0. **Discography list centering is ready for review.** The album list is centered with the page title. `READY_FOR_DISCOGRAPHY_CENTERING_REVIEW: true`. Do not rebuild, commit, push, or run the production workflow until a separate approval.
+0. **Discography cover optimization is ready for review.** `READY_FOR_COVER_UPLOAD_OPTIMIZATION_REVIEW: true`. The existing Storage INSERT template is unchanged in its predicates and is still not applied. Browser 12MB / 2MB checks are not the server guarantee. Do not apply SQL, upload to Storage, commit, push, or run the production workflow until a separate approval.
+
+**Discography list centering is ready for review.** The album list is centered with the page title. `READY_FOR_DISCOGRAPHY_CENTERING_REVIEW: true`. Do not rebuild, commit, push, or run the production workflow until a separate approval.
 
 **A new Gosaki production build can be prepared.** Operator reports the four album descriptions and the SKYLARK purchase URL are updated in the database. Cover files match the public artwork at 260×260. Do not upload the existing `public-dist` package. `READY_FOR_FINAL_PRODUCTION_BUILD: true`. FTP, push, and the production workflow stay off until a separate approval.
 

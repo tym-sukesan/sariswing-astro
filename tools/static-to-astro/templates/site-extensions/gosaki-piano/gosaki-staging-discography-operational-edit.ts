@@ -35,6 +35,10 @@ import {
   type GosakiDiscographyCreateInput,
 } from "./gosaki-discography-create-draft";
 import {
+  formatGosakiDiscographyCoverBytes,
+  uploadGosakiDiscographyCover,
+} from "./gosaki-discography-cover-upload.ts";
+import {
   GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_LOCK_MESSAGE,
   GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE,
   GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_SAVED_MESSAGE,
@@ -412,11 +416,12 @@ function setMode(root: HTMLElement, mode: "view" | "edit") {
 function renderCover(root: HTMLElement, url: string) {
   const wrap = root.querySelector("[data-gosaki-disc-cover-preview]");
   if (!(wrap instanceof HTMLElement)) return;
-  if (url) {
-    wrap.innerHTML = `<img src="${url.replace(/"/g, "&quot;")}" alt="" loading="lazy" decoding="async" /><p class="gosaki-discography-content-panel__hint">画像変更は後続フェーズです。</p>`;
-  } else {
-    wrap.innerHTML = `<p class="gosaki-discography-content-panel__hint">画像なし · 画像変更は後続フェーズです。</p>`;
+  const safe = gosakiDiscographyCreateCoverPreviewUrl(url);
+  if (!safe) {
+    wrap.innerHTML = `<p class="gosaki-discography-content-panel__hint">画像なし</p>`;
+    return;
   }
+  wrap.innerHTML = `<img src="${safe.replace(/"/g, "&quot;")}" alt="" loading="lazy" decoding="async" />`;
 }
 
 function updateAlbumCacheUpdatedAt(
@@ -690,6 +695,7 @@ export function initGosakiDiscographyOperationalEdit(
   let createConfirmedFingerprint = "";
   let createValidationMessage = "";
   let publishInFlight = false;
+  let coverUploadInFlight = false;
 
   const createUiArmed = () =>
     typeof deps.createArmed === "boolean"
@@ -962,6 +968,7 @@ export function initGosakiDiscographyOperationalEdit(
     createConfirmedFingerprint = "";
     createValidationMessage = "";
     renderCreateCover(root, "");
+    clearCoverUploadUi();
     root.querySelectorAll("[data-gosaki-edit-cancel]").forEach((cancelBtn) => {
       cancelBtn.textContent = "編集をやめる";
     });
@@ -979,6 +986,7 @@ export function initGosakiDiscographyOperationalEdit(
     setExtraFieldsVisible(root, false);
     setEditCoverSectionVisible(root, false);
     renderCreateCover(root, "");
+    clearCoverUploadUi();
     root.querySelectorAll("[data-gosaki-edit-cancel]").forEach((cancelBtn) => {
       cancelBtn.textContent = "追加をやめる";
     });
@@ -1168,9 +1176,111 @@ export function initGosakiDiscographyOperationalEdit(
     await liveSession.requestManualReload();
   };
 
+  const setCoverUploadStatus = (which: string | null, message: string) => {
+    const status = root.querySelector(`[data-gosaki-disc-cover-upload-status="${which}"]`);
+    if (status instanceof HTMLElement) status.textContent = message;
+  };
+
+  const setCoverUploadBusy = (busy: boolean) => {
+    root.querySelectorAll("[data-gosaki-disc-cover-upload], [data-gosaki-disc-cover-file]").forEach((el) => {
+      if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement) el.disabled = busy;
+    });
+  };
+
+  function clearCoverUploadUi() {
+    root.querySelectorAll("[data-gosaki-disc-cover-file]").forEach((el) => {
+      if (el instanceof HTMLInputElement) el.value = "";
+    });
+    root.querySelectorAll("[data-gosaki-disc-cover-upload-status]").forEach((el) => {
+      if (el instanceof HTMLElement) el.textContent = "";
+    });
+  }
+
+  const coverUrlInput = (which: "create" | "edit") => {
+    const selector =
+      which === "create"
+        ? '[data-gosaki-disc-create-field="cover_image_url"]'
+        : '[data-gosaki-disc-extra-field="cover_image_url"]';
+    const input = form.querySelector(selector);
+    return input instanceof HTMLInputElement ? input : null;
+  };
+
+  async function runCoverUpload(which: "create" | "edit"): Promise<void> {
+    if (coverUploadInFlight || root.dataset.mode === "view") return;
+    const fileInput = root.querySelector(`[data-gosaki-disc-cover-file="${which}"]`);
+    if (!(fileInput instanceof HTMLInputElement)) return;
+    const file = fileInput.files?.[0];
+    if (!file) {
+      setCoverUploadStatus(which, "ファイルを選択してください。");
+      return;
+    }
+
+    const previousUrl = coverUrlInput(which)?.value ?? "";
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
+    const anonKey = String(deps.anonKey ?? "").trim();
+    if (!token || !supabaseUrl || !anonKey) {
+      setCoverUploadStatus(which, "ログインが必要です。これまでのジャケットURLはそのままです。");
+      return;
+    }
+
+    coverUploadInFlight = true;
+    setCoverUploadBusy(true);
+    setCoverUploadStatus(which, "画像を最適化しています");
+    let beforeBytes = file.size;
+    let afterBytes = 0;
+    try {
+      const publicUrl = await uploadGosakiDiscographyCover({
+        file,
+        supabaseUrl,
+        anonKey,
+        accessToken: token,
+        legacyId: which === "edit" ? readFormSnapshot(form).legacyId : "new",
+        productionProjectRefStop: deps.productionProjectRefStop,
+        fetchImpl: deps.fetchImpl,
+        onPhase(phase, info) {
+          beforeBytes = info.beforeBytes;
+          if (typeof info.afterBytes === "number") afterBytes = info.afterBytes;
+          setCoverUploadStatus(
+            which,
+            phase === "optimize" ? "画像を最適化しています" : "アップロードしています",
+          );
+        },
+      });
+      const input = coverUrlInput(which);
+      if (input) input.value = publicUrl;
+      fileInput.value = "";
+      const sizes =
+        afterBytes > 0
+          ? `（${formatGosakiDiscographyCoverBytes(beforeBytes)} → ${formatGosakiDiscographyCoverBytes(afterBytes)}）`
+          : "";
+      const saved =
+        which === "create"
+          ? "ジャケットURLに設定しました。下書きとして保存すると記録されます。公開ページにはまだ出ません。"
+          : "ジャケットURLに設定しました。保存を押すと作品に記録されます。公開設定は変わりません。公開ページは「公開サイトを更新」まで変わりません。";
+      setCoverUploadStatus(which, `アップロード完了${sizes}。${saved}`);
+      refreshDirty();
+    } catch (error) {
+      const input = coverUrlInput(which);
+      if (input) input.value = previousUrl;
+      const message = error instanceof Error ? error.message : "アップロードに失敗しました。";
+      setCoverUploadStatus(which, `${message} これまでのジャケットURLはそのままです。`);
+      refreshDirty();
+    } finally {
+      coverUploadInFlight = false;
+      setCoverUploadBusy(false);
+    }
+  }
+
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
+    const uploadBtn = t.closest("[data-gosaki-disc-cover-upload]");
+    if (uploadBtn instanceof HTMLButtonElement) {
+      const which = uploadBtn.getAttribute("data-gosaki-disc-cover-upload");
+      if (which === "create" || which === "edit") void runCoverUpload(which);
+      return;
+    }
     const createStart = t.closest("[data-gosaki-disc-create-start]");
     if (createStart instanceof HTMLElement) {
       enterCreate();
@@ -1215,7 +1325,21 @@ export function initGosakiDiscographyOperationalEdit(
   });
 
   form.addEventListener("input", refreshDirty);
-  form.addEventListener("change", refreshDirty);
+  form.addEventListener("change", (ev) => {
+    const target = ev.target;
+    if (target instanceof HTMLInputElement && target.matches("[data-gosaki-disc-cover-file]")) {
+      const which = target.getAttribute("data-gosaki-disc-cover-file");
+      const selected = target.files?.[0];
+      setCoverUploadStatus(
+        which,
+        selected
+          ? `画像を選択しました（${selected.name}、${formatGosakiDiscographyCoverBytes(selected.size)}）`
+          : "",
+      );
+      return;
+    }
+    refreshDirty();
+  });
 
   const runInternalDryRun = async (): Promise<boolean> => {
     if (dryRunInFlight || saveInFlight || indeterminateLocked) return false;

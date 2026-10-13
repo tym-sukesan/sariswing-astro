@@ -263,8 +263,30 @@ function display(value: string | null | undefined): string {
           <div class="gosaki-discography-content-panel__cover">
             <img data-gosaki-disc-create-cover-preview alt="" hidden />
           </div>
+          <div class="gosaki-discography-content-panel__cover-upload" data-gosaki-disc-cover-upload-toolbar="create">
+            <label class="gosaki-discography-content-panel__cover-file">
+              <span class="gosaki-discography-content-panel__label">ジャケット画像を選択</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                data-gosaki-disc-cover-file="create"
+              />
+            </label>
+            <button
+              type="button"
+              class="gosaki-admin-btn gosaki-admin-btn--secondary"
+              data-gosaki-disc-cover-upload="create"
+            >
+              ジャケット画像をアップロード
+            </button>
+            <p
+              class="gosaki-discography-content-panel__cover-status"
+              data-gosaki-disc-cover-upload-status="create"
+              role="status"
+            ></p>
+          </div>
           <p class="gosaki-discography-content-panel__hint" role="note">
-            新しい作品は下書きです。作品IDは自動で割り当てられます。ファイルのアップロードはできません。
+            新しい作品は下書きです。作品IDは保存時に自動で割り当てられます。画像はブラウザ内で長辺1200pxのWebPに軽量化してからアップロードします。URLの直接入力も残ります。保存するまで作品データは変わりません。公開ページへは、保存したあと管理トップの「公開サイトを更新」で反映します。
           </p>
         </div>
         <label class="gosaki-discography-content-panel__field">
@@ -358,6 +380,7 @@ function display(value: string | null | undefined): string {
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">ジャケットURL</span>
           <input class="gosaki-discography-content-panel__control" type="url" data-gosaki-disc-extra-field="cover_image_url" autocomplete="off" />
+          <span class="gosaki-discography-content-panel__hint">URLを直接入力するか、下のボタンで画像をアップロードできます。</span>
         </label>
       </section>
 
@@ -368,8 +391,33 @@ function display(value: string | null | undefined): string {
       >
         <h3 class="gosaki-discography-form-section__title" id="gosaki-disc-section-cover">ジャケット画像</h3>
         <div class="gosaki-discography-content-panel__cover" data-gosaki-disc-cover-preview>
-          <p class="gosaki-discography-content-panel__hint">画像変更は後続フェーズです。</p>
+          <p class="gosaki-discography-content-panel__hint">画像なし</p>
         </div>
+        <div class="gosaki-discography-content-panel__cover-upload" data-gosaki-disc-cover-upload-toolbar="edit">
+          <label class="gosaki-discography-content-panel__cover-file">
+            <span class="gosaki-discography-content-panel__label">ジャケット画像を選択</span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              data-gosaki-disc-cover-file="edit"
+            />
+          </label>
+          <button
+            type="button"
+            class="gosaki-admin-btn gosaki-admin-btn--secondary"
+            data-gosaki-disc-cover-upload="edit"
+          >
+            ジャケット画像をアップロード
+          </button>
+          <p
+            class="gosaki-discography-content-panel__cover-status"
+            data-gosaki-disc-cover-upload-status="edit"
+            role="status"
+          ></p>
+        </div>
+        <p class="gosaki-discography-content-panel__hint" role="note">
+          JPG / PNG / WebP。ブラウザ内で長辺1200pxのWebPに軽量化してからアップロードします。保存を押すまで作品データは変わりません。公開設定は変わりません。公開ページは「公開サイトを更新」まで変わりません。
+        </p>
       </section>
     </form>
 
@@ -692,6 +740,46 @@ function display(value: string | null | undefined): string {
     height: auto;
     border-radius: 4px;
     border: 1px solid #e5e7eb;
+  }
+
+  .gosaki-discography-content-panel__cover-upload {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gosaki-discography-content-panel__cover-file {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gosaki-discography-content-panel__cover-file input {
+    max-width: 100%;
+  }
+
+  .gosaki-discography-content-panel__cover-status {
+    flex-basis: 100%;
+    margin: 0;
+    color: #374151;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 640px) {
+    .gosaki-discography-content-panel__cover-upload {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .gosaki-discography-content-panel__cover-upload .gosaki-admin-btn {
+      width: 100%;
+    }
   }
 
   .gosaki-discography-content-panel__section-title {

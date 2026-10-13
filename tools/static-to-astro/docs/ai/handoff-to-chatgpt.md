@@ -5,7 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-horizontal-centering-fix
+Current phase: gosaki-discography-cover-upload-auto-optimize
+READY_FOR_COVER_UPLOAD_OPTIMIZATION_REVIEW: true
+Input: JPEG / PNG / WebP, magic bytes checked, raw max 12MB
+Output: long edge max 1200, no upscale, no crop, WebP 0.85, hard cap 2MB
+Failure: original file is not uploaded; previous cover_image_url stays
+Path: gosaki-piano/discography/{legacyId|new}/{random}.webp
+Browser limits are not the Storage guarantee
+Orphan object if Save is cancelled after upload: yes, no DELETE policy
+SQL change required: no
+SQL apply: false
+STORAGE_UPLOAD: false
+COMMIT: false
+PUSH: false
+```
+
+```txt
+Previous phase: gosaki-discography-cover-image-upload-implementation
+READY_FOR_COVER_UPLOAD_RELEASE_REVIEW: true
+Bucket: site-assets
+Path: gosaki-piano/discography/{legacyId|new}/{random}.ext
+Upsert: false
+Save: existing create or saveExtraFields after the URL is filled
+Public HTML: unchanged until 公開サイトを更新
+SQL apply: false
+EDGE_DEPLOY: false
+STORAGE_UPLOAD: false
+COMMIT: false
+PUSH: false
+```
+
+```txt
+Previous phase: gosaki-discography-horizontal-centering-fix
 READY_FOR_DISCOGRAPHY_CENTERING_REVIEW: true
 Cause: Wix margin calc((100% - 980px) / 2) remained after left 77px was cleared
 Fix: list width min(825px, 100%), margin-inline auto, section min-width 0

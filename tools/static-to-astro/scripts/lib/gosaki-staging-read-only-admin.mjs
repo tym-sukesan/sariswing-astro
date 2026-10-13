@@ -497,6 +497,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-schedule-image-upload.ts",
   );
+  const discographyCoverUploadSrc = path.join(
+    templateRoot,
+    "gosaki-discography-cover-upload.ts",
+  );
   const productionDeploySrc = path.join(templateRoot, "gosaki-production-deploy.ts");
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
@@ -521,6 +525,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     oneClickSaveSrc,
     adminLiveReadSrc,
     scheduleImageUploadSrc,
+    discographyCoverUploadSrc,
     productionDeploySrc,
     packagePathsSrc,
     cssSrc,
@@ -590,6 +595,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     scheduleImageUploadSrc,
     path.join(path.dirname(libDest), "gosaki-schedule-image-upload.ts"),
+  );
+  fs.copyFileSync(
+    discographyCoverUploadSrc,
+    path.join(path.dirname(libDest), "gosaki-discography-cover-upload.ts"),
   );
   fs.copyFileSync(
     productionDeploySrc,

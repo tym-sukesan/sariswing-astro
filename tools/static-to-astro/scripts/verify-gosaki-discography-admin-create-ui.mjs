@@ -54,7 +54,7 @@ assert("create button sits on the list view", panel.includes("data-gosaki-disc-c
 assert("create reuses the existing form and save bar", panel.includes("data-gosaki-disc-edit-form") && panel.includes("gosaki-admin-save-area") && panel.includes("data-gosaki-disc-save"));
 assert("one save button remains", (panel.match(/data-gosaki-disc-save(?!-)/g) || []).length === 1);
 assert("edit cancel label remains in the panel", panel.includes("編集をやめる"));
-assert("edit cover note remains", panel.includes("画像変更は後続フェーズ"));
+assert("edit cover upload remains beside the URL field", panel.includes('data-gosaki-disc-cover-upload="edit"') && panel.includes('data-gosaki-disc-extra-field="cover_image_url"'));
 assert("create fields are hidden until create mode", panel.includes('data-gosaki-disc-create-only hidden'));
 assert(
   "create accepts the new text fields and track textarea",
@@ -62,7 +62,7 @@ assert(
     panel.includes(`data-gosaki-disc-create-field="${name}"`),
   ) && panel.includes('data-gosaki-disc-field="tracks"'),
 );
-assert("create has a cover preview and no file input", panel.includes("data-gosaki-disc-create-cover-preview") && !panel.includes('type="file"'));
+assert("create has a cover preview and a jpeg/png/webp file input", panel.includes("data-gosaki-disc-create-cover-preview") && panel.includes('data-gosaki-disc-cover-file="create"') && panel.includes("image/jpeg,image/png,image/webp"));
 assert("published and legacy id stay out of the visible create fields", !panel.includes('data-gosaki-disc-create-field="published"') && !panel.includes('data-gosaki-disc-create-field="legacy_id"'));
 
 assert("mode switches among view, create, and edit", gosakiDiscographyPanelModeAfter("create") === "create" && gosakiDiscographyPanelModeAfter("edit") === "edit" && gosakiDiscographyPanelModeAfter("cancel") === "view");

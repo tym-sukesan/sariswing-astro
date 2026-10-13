@@ -506,9 +506,21 @@ check(
   cssSource.includes('#comp-llexymel[data-gosaki-discography-render="data-driven"]') &&
     cssSource.includes("grid-template-columns: 260px minmax(0, 1fr) !important") &&
     cssSource.includes("grid-template-columns: minmax(0, 1fr) !important") &&
+    cssSource.includes("grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important") &&
+    cssSource.includes("gosaki-discography-album__details") &&
     cssSource.includes("overflow-x: clip !important") &&
     !cssSource.includes("#SITE_HEADER[data-gosaki-discography-render") &&
     !cssSource.includes("#SITE_FOOTER[data-gosaki-discography-render"),
+);
+const detailsStart = longer.indexOf("gosaki-discography-album__details");
+const detailsSlice = longer.slice(detailsStart, longer.indexOf("gosaki-discography-album__meta"));
+check(
+  "track list and personnel share a details row under the title",
+  detailsStart > longer.indexOf("gosaki-discography-album__title") &&
+    detailsSlice.includes("gosaki-discography-album__tracks") &&
+    detailsSlice.includes("gosaki-discography-album__personnel") &&
+    !detailsSlice.includes("gosaki-discography-album__meta") &&
+    longer.indexOf("gosaki-discography-album__meta") > detailsStart,
 );
 
 const sqlTemplate = fs.readFileSync(

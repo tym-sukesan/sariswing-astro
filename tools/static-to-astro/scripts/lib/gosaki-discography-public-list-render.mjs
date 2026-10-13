@@ -202,8 +202,10 @@ export function renderGosakiDiscographyAlbumItem(row, tracks = []) {
     `<div class="gosaki-discography-album__body">` +
     `<div id="${titleId}" class="N8MGzv _v6ohL ZS_qLz PO9MfV ${titleId} wixui-rich-text gosaki-discography-album__title" data-testid="richTextElement">` +
     `<h2 class="font_2 wixui-rich-text__text" style="font-size:20px; line-height:normal;"><span class="wixui-rich-text__text">${heading}</span></h2></div>` +
+    `<div class="gosaki-discography-album__details">` +
     `<div id="${trackId}" class="N8MGzv _v6ohL ZS_qLz PO9MfV ${trackId} wixui-rich-text gosaki-discography-album__tracks" data-testid="richTextElement">${trackParagraphs}</div>` +
     `<div id="${personnelId}" class="N8MGzv _v6ohL ZS_qLz PO9MfV ${personnelId} wixui-rich-text gosaki-discography-album__personnel" data-testid="richTextElement">${personnelParagraphs}</div>` +
+    `</div>` +
     `<div id="${releaseId}" class="N8MGzv _v6ohL ZS_qLz PO9MfV ${releaseId} wixui-rich-text gosaki-discography-album__meta" data-testid="richTextElement">${releaseParts.join("")}</div>` +
     `</div></div></div></div></div>`
   );

@@ -5,7 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-release-final-review-and-commit
+Current phase: gosaki-discography-desktop-track-personnel-layout-fix
+READY_FOR_DISCOGRAPHY_LAYOUT_REVIEW: true
+PC: jacket left; title; Track List and Personnel in two columns; meta below
+SP max-width 768px: cover, title, Track List, Personnel, meta stacked
+CSS scope: #comp-llexymel[data-gosaki-discography-render="data-driven"]
+Verifier: PASS 60
+COMMIT: false
+PUSH: false
+FTP: false
+PRODUCTION_BUILD: false
+```
+
+```txt
+Previous phase: gosaki-discography-release-final-review-and-commit
 READY_FOR_FINAL_PRODUCTION_BUILD: true
 READY_FOR_PUBLIC_DEPLOY_REVIEW: false
 Covers: same artwork, Storage 260x260, public pages 520 or 315 square

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-0. **A new Gosaki production build can be prepared.** Operator reports the four album descriptions and the SKYLARK purchase URL are updated in the database. Cover files match the public artwork at 260×260. Do not upload the existing `public-dist` package. `READY_FOR_FINAL_PRODUCTION_BUILD: true`. FTP, push, and the production workflow stay off until a separate approval.
+0. **Discography PC layout is ready for review.** Track List and Personnel are side by side on PC and stacked at max-width 768px. `READY_FOR_DISCOGRAPHY_LAYOUT_REVIEW: true`. Do not rebuild, commit, push, or run the production workflow until a separate approval.
+
+**A new Gosaki production build can be prepared.** Operator reports the four album descriptions and the SKYLARK purchase URL are updated in the database. Cover files match the public artwork at 260×260. Do not upload the existing `public-dist` package. `READY_FOR_FINAL_PRODUCTION_BUILD: true`. FTP, push, and the production workflow stay off until a separate approval.
 
 The three Discography RPC templates now use `CREATE FUNCTION` and stop when the same function name already exists in `public`. `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`. Do not apply them until a separate explicit approval. Do not deploy Edge.
 

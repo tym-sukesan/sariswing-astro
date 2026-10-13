@@ -2962,9 +2962,33 @@ body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-drive
 body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__body {
   grid-column: 2 !important;
   grid-row: 1 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  row-gap: 0.75rem !important;
+  align-items: start !important;
   min-width: 0 !important;
   width: auto !important;
   height: auto !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__details {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  column-gap: 1.75rem !important;
+  row-gap: 0.75rem !important;
+  align-items: start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__title,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__title h2,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__meta,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__tracks,
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__personnel {
+  margin: 0 !important;
+  min-width: 0 !important;
 }
 
 body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album__body,
@@ -3002,6 +3026,27 @@ body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-drive
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__details {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__title {
+    order: 1 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__details {
+    order: 2 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__meta {
+    order: 3 !important;
+  }
+
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__tracks,
+  body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album .gosaki-discography-album__personnel {
+    order: 0 !important;
   }
 }
 
@@ -3042,7 +3087,7 @@ body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-drive
     top: auto !important;
     width: auto !important;
     max-width: 100% !important;
-    margin: 0 0 0.75rem !important;
+    margin: 0 !important;
     white-space: normal !important;
   }
 }

@@ -9,6 +9,7 @@ import {
   GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_APPROVAL_ID,
   GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE,
   classifyGosakiDiscographyEditChanges,
+  discographySnapshotAfterCoreSave,
   runGosakiDiscographyExtraFieldsEdgeAttempt,
 } from "../templates/site-extensions/gosaki-piano/gosaki-discography-extra-fields.ts";
 import { validateDiscographyExtraFieldsRequest } from "../scripts/edge-functions/gosaki-discography-save-dry-run/extra-fields.ts";
@@ -143,13 +144,14 @@ assert(
     client.includes("await fetch(saveEndpoint,"),
 );
 assert(
-  "new client arm stays off unless exact true and the workflow does not enable it",
+  "new client arm stays off unless exact true and production workflow bakes it true",
   page.includes("data-gosaki-discography-extra-fields-armed") &&
     page.includes('saveArmed: body?.dataset.gosakiDiscographySaveArmed === "true"') &&
     !isSaveArmExactTrue(undefined) &&
     !isSaveArmExactTrue("TRUE") &&
     isSaveArmExactTrue("true") &&
-    !workflow.includes("PUBLIC_GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_UI_ARMED") &&
+    workflow.includes("export PUBLIC_GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_UI_ARMED=true") &&
+    workflow.includes("export PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true") &&
     !workflow.includes("GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_ARMED"),
 );
 
@@ -188,6 +190,84 @@ const mixed = classifyGosakiDiscographyEditChanges({
 });
 assert("change detection separates core, extra, and mixed", coreOnly === "core" && extraOnly === "extra" && mixed === "mixed");
 assert("mixed message does not describe a successful save", GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_MIXED_MESSAGE.includes("別々に保存"));
+
+const savedExtra = {
+  price: "1000",
+  purchase_note: "shop",
+  release_display: "Release 2023.7.26",
+  catalog_number: "G-1",
+  streaming_url: "",
+  cover_image_url: "https://example.test/a.jpg",
+};
+const savedBaseline = discographySnapshotAfterCoreSave({
+  currentCore: {
+    title: "Album",
+    artist: "",
+    release_date: "",
+    label: "",
+    purchase_url: "",
+    description: "",
+    tracks: "One",
+    catalog_number: "",
+    published: "true",
+    streaming_url: "",
+    cover_image_url: "",
+    updatedAt: "old",
+  },
+  currentExtra: savedExtra,
+  nextUpdatedAt: "2026-10-13T00:00:00.000Z",
+});
+const cleanAfterSave = classifyGosakiDiscographyEditChanges({
+  originalCore: savedBaseline,
+  currentCore: savedBaseline,
+  originalExtra: savedBaseline,
+  currentExtra: savedExtra,
+});
+const wipedBaseline = { ...savedBaseline };
+delete wipedBaseline.price;
+delete wipedBaseline.purchase_note;
+delete wipedBaseline.release_display;
+const falseDirty = classifyGosakiDiscographyEditChanges({
+  originalCore: wipedBaseline,
+  currentCore: wipedBaseline,
+  originalExtra: wipedBaseline,
+  currentExtra: savedExtra,
+});
+const stillDirty = classifyGosakiDiscographyEditChanges({
+  originalCore: original,
+  currentCore: { ...original, title: "Album 2" },
+  originalExtra: original,
+  currentExtra: original,
+});
+assert(
+  "successful save baseline keeps extra fields and the new lock",
+  cleanAfterSave === "none" &&
+    savedBaseline.price === "1000" &&
+    savedBaseline.purchase_note === "shop" &&
+    savedBaseline.release_display === "Release 2023.7.26" &&
+    savedBaseline.catalog_number === "G-1" &&
+    savedBaseline.updatedAt === "2026-10-13T00:00:00.000Z",
+);
+assert("dropping extra fields from the baseline still looks unsaved", falseDirty === "extra");
+assert("a failed save keeps the previous unsaved core edit", stillDirty === "core");
+const coreSaveFn = client.slice(client.indexOf("const executeSaveAfterDryRun"), client.indexOf("const dryRunBtns"));
+const coreOk = coreSaveFn.slice(coreSaveFn.indexOf("if (display.ok === true)"), coreSaveFn.indexOf("} else {"));
+const coreFail = coreSaveFn.slice(coreSaveFn.indexOf("} else {"), coreSaveFn.indexOf("} catch"));
+assert(
+  "core save rewrites the baseline only after ok",
+  coreOk.includes("discographySnapshotAfterCoreSave") && !coreFail.includes("originalSnapshot"),
+);
+const extraHelperAt = client.indexOf(
+  "discographySnapshotAfterCoreSave",
+  client.indexOf("const presentExtraFieldsSave"),
+);
+const extraFail = client.slice(client.lastIndexOf("if (!saved)", extraHelperAt), extraHelperAt);
+assert(
+  "extra-field save rewrites the baseline only after success",
+  extraHelperAt > client.indexOf("const presentExtraFieldsSave") &&
+    extraFail.includes("return;") &&
+    extraFail.indexOf("return;") < extraFail.indexOf("originalSnapshot"),
+);
 
 const endpoint = "https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-discography-save-dry-run";
 const lock = "2026-10-12T00:00:00.000Z";

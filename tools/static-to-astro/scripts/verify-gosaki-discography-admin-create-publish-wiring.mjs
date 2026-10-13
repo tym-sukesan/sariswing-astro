@@ -146,9 +146,10 @@ assert(
     isSaveArmExactTrue("true"),
 );
 assert(
-  "workflow does not turn the new arms on",
-  !workflow.includes("PUBLIC_GOSAKI_DISCOGRAPHY_CREATE_UI_ARMED") &&
-    !workflow.includes("PUBLIC_GOSAKI_DISCOGRAPHY_SET_PUBLISHED_UI_ARMED") &&
+  "production workflow bakes the new client arms true and leaves server arms unset",
+  workflow.includes("export PUBLIC_GOSAKI_DISCOGRAPHY_CREATE_UI_ARMED=true") &&
+    workflow.includes("export PUBLIC_GOSAKI_DISCOGRAPHY_SET_PUBLISHED_UI_ARMED=true") &&
+    workflow.includes("export PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true") &&
     !workflow.includes("GOSAKI_DISCOGRAPHY_CREATE_ARMED") &&
     !workflow.includes("GOSAKI_DISCOGRAPHY_SET_PUBLISHED_ARMED"),
 );

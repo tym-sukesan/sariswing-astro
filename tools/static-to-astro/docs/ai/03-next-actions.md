@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-0. **Discography publish UX copy is local only.** Album publish stays `published=false → true`. Site update stays on the portal 「公開サイトを更新」 button. Do not treat `published=true` as site-reflected. Do not deploy the public Discography renderer until the SKYLARK purchase URL is resolved. `READY_FOR_PUBLISH_UX_CODE_REVIEW: true`. Push, FTP, and public renderer deploy stay off.
+0. **A new Gosaki production build can be prepared.** Operator reports the four album descriptions and the SKYLARK purchase URL are updated in the database. Cover files match the public artwork at 260×260. Do not upload the existing `public-dist` package. `READY_FOR_FINAL_PRODUCTION_BUILD: true`. FTP, push, and the production workflow stay off until a separate approval.
 
 The three Discography RPC templates now use `CREATE FUNCTION` and stop when the same function name already exists in `public`. `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`. Do not apply them until a separate explicit approval. Do not deploy Edge.
 

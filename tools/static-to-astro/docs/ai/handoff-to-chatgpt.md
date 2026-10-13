@@ -5,7 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-publish-ux-copy-implementation (local UI copy only)
+Current phase: gosaki-discography-release-final-review-and-commit
+READY_FOR_FINAL_PRODUCTION_BUILD: true
+READY_FOR_PUBLIC_DEPLOY_REVIEW: false
+Covers: same artwork, Storage 260x260, public pages 520 or 315 square
+Save baseline: extra fields kept after success; failure stays dirty
+Workflow client arms: SAVE, CREATE, SET_PUBLISHED, EXTRA_FIELDS true
+Workflow server arms: unset
+Old production package: do not deploy
+PUSH: false
+FTP: false
+```
+
+```txt
+Previous phase: gosaki-discography-release-blockers-local-fix (local only)
+READY_FOR_PUBLIC_RENDERER_FIX_REVIEW: false
+READY_FOR_PUBLIC_DEPLOY_REVIEW: false
+Renderer text invented: false
+Missing DB description: Continuous track credits; Ja-Jaaaaan Tom Fischer
+Save baseline: extra fields kept after successful core and extra-field save
+Workflow client arms: CREATE, SET_PUBLISHED, EXTRA_FIELDS true
+Workflow server arms: unset
+Old production package: do not deploy
+COMMIT: false
+PUSH: false
+```
+
+```txt
+Previous phase: gosaki-discography-publish-ux-copy-implementation (local UI copy only)
 READY_FOR_PUBLISH_UX_CODE_REVIEW: true
 READY_FOR_PUBLIC_DEPLOY_REVIEW: false
 Album button: 公開対象にする

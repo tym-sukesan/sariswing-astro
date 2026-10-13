@@ -60,6 +60,27 @@ export function classifyGosakiDiscographyEditChanges(input: {
   return "none";
 }
 
+/**
+ * Baseline after a successful core or extra-field save.
+ * Extra inputs stay in the snapshot so a core save does not look like an extra edit.
+ */
+export function discographySnapshotAfterCoreSave(input: {
+  currentCore: Record<string, unknown>;
+  currentExtra: Record<string, unknown>;
+  nextUpdatedAt: string;
+}): Record<string, string> {
+  const snap: Record<string, string> = {};
+  for (const [key, value] of Object.entries(input.currentCore)) {
+    if (key === "updatedAt") continue;
+    snap[key] = String(value ?? "");
+  }
+  for (const key of GOSAKI_DISCOGRAPHY_EXTRA_FIELD_KEYS) {
+    snap[key] = String(input.currentExtra[key] ?? "");
+  }
+  snap.updatedAt = input.nextUpdatedAt;
+  return snap;
+}
+
 export function validateGosakiDiscographyExtraFields(input: Record<string, unknown>):
   | {
       ok: true;

@@ -41,6 +41,7 @@ import {
   GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_STOPPED_MESSAGE,
   GOSAKI_DISCOGRAPHY_EXTRA_FIELD_KEYS,
   classifyGosakiDiscographyEditChanges,
+  discographySnapshotAfterCoreSave,
   runGosakiDiscographyExtraFieldsEdgeAttempt,
 } from "./gosaki-discography-extra-fields";
 
@@ -1461,8 +1462,11 @@ export function initGosakiDiscographyOperationalEdit(
               : "";
         if (nextUpdatedAt) {
           form.dataset.expectedBeforeUpdatedAt = nextUpdatedAt;
-          const snap = readFormSnapshot(form);
-          snap.updatedAt = nextUpdatedAt;
+          const snap = discographySnapshotAfterCoreSave({
+            currentCore: readFormSnapshot(form),
+            currentExtra: readExtraFields(form),
+            nextUpdatedAt,
+          });
           form.dataset.originalSnapshot = JSON.stringify(snap);
           const tracksField = field(form, "tracks");
           if (tracksField) tracksField.setAttribute("data-original-track-list", snap.tracks);
@@ -1584,6 +1588,15 @@ export function initGosakiDiscographyOperationalEdit(
       if (saveBtn instanceof HTMLButtonElement) saveBtn.disabled = false;
       return;
     }
+    form.dataset.expectedBeforeUpdatedAt = updatedAt;
+    form.dataset.originalSnapshot = JSON.stringify(
+      discographySnapshotAfterCoreSave({
+        currentCore: readFormSnapshot(form),
+        currentExtra: readExtraFields(form),
+        nextUpdatedAt: updatedAt,
+      }),
+    );
+    updateAlbumCacheUpdatedAt(albums, legacyId, updatedAt);
     setCreatePublishNotice(GOSAKI_DISCOGRAPHY_EXTRA_FIELDS_SAVED_MESSAGE);
     leaveEdit();
     await liveSession.requestManualReload();

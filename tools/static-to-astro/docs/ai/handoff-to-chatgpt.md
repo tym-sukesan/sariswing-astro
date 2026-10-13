@@ -5,7 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-desktop-track-personnel-layout-fix
+Current phase: gosaki-discography-horizontal-centering-fix
+READY_FOR_DISCOGRAPHY_CENTERING_REVIEW: true
+Cause: Wix margin calc((100% - 980px) / 2) remained after left 77px was cleared
+Fix: list width min(825px, 100%), margin-inline auto, section min-width 0
+1280 list center: 562 -> 640
+Verifier: PASS 61
+COMMIT: false
+PUSH: false
+FTP: false
+PRODUCTION_BUILD: false
+```
+
+```txt
+Previous phase: gosaki-discography-desktop-track-personnel-layout-fix
 READY_FOR_DISCOGRAPHY_LAYOUT_REVIEW: true
 PC: jacket left; title; Track List and Personnel in two columns; meta below
 SP max-width 768px: cover, title, Track List, Personnel, meta stacked

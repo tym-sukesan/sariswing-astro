@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-0. **Discography PC layout is ready for review.** Track List and Personnel are side by side on PC and stacked at max-width 768px. `READY_FOR_DISCOGRAPHY_LAYOUT_REVIEW: true`. Do not rebuild, commit, push, or run the production workflow until a separate approval.
+0. **Discography list centering is ready for review.** The album list is centered with the page title. `READY_FOR_DISCOGRAPHY_CENTERING_REVIEW: true`. Do not rebuild, commit, push, or run the production workflow until a separate approval.
 
 **A new Gosaki production build can be prepared.** Operator reports the four album descriptions and the SKYLARK purchase URL are updated in the database. Cover files match the public artwork at 260×260. Do not upload the existing `public-dist` package. `READY_FOR_FINAL_PRODUCTION_BUILD: true`. FTP, push, and the production workflow stay off until a separate approval.
 

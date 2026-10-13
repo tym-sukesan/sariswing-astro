@@ -2909,6 +2909,19 @@ body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-drive
   overflow-x: clip !important;
 }
 
+body.wix-static-export #comp-lol1i5ga {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] {
+  width: min(825px, 100%) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  justify-self: center !important;
+}
+
 body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-driven"] .gosaki-discography-album-item {
   position: relative !important;
   left: auto !important;

@@ -502,6 +502,14 @@ const cssSource = fs.readFileSync(
   "utf8",
 );
 check(
+  "data-driven list is centered without a fixed offset",
+  cssSource.includes("width: min(825px, 100%) !important") &&
+    cssSource.includes("margin-left: auto !important") &&
+    cssSource.includes("margin-right: auto !important") &&
+    cssSource.includes("justify-self: center !important") &&
+    !cssSource.includes("translateX("),
+);
+check(
   "data-driven list css is scoped and stacks on small screens",
   cssSource.includes('#comp-llexymel[data-gosaki-discography-render="data-driven"]') &&
     cssSource.includes("grid-template-columns: 260px minmax(0, 1fr) !important") &&

@@ -5,7 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-discography-rpc-final-fail-closed-hardening (template only, SQL not applied)
+Current phase: gosaki-discography-publish-ux-copy-implementation (local UI copy only)
+READY_FOR_PUBLISH_UX_CODE_REVIEW: true
+READY_FOR_PUBLIC_DEPLOY_REVIEW: false
+Album button: 公開対象にする
+Status: published=false 下書き / published=true 公開対象
+Site update: portal 公開サイトを更新 only
+Deploy from album button: false
+SKYLARK purchase URL: unresolved
+Public discography renderer: not on main
+COMMIT: UX copy only
+PUSH: false
+```
+
+```txt
+Previous phase: gosaki-discography-rpc-final-fail-closed-hardening (template only, SQL not applied)
 READY_FOR_CREATE_RPC_APPLY_APPROVAL: true
 READY_FOR_CREATE_RPC_FINAL_REVIEW: true
 READY_FOR_EXTRA_FIELDS_INTEGRATION_REVIEW: true

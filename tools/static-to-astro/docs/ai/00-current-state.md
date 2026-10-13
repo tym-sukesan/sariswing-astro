@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki Discography publish UX copy (2026-10-13):** **local UI copy only** — Phase `gosaki-discography-publish-ux-copy-implementation` · the album button is 「公開対象にする」 · `published=false` shows 「下書き」 and `published=true` shows 「公開対象」 · the album button does not start Deploy · verifiers wiring **PASS 20**, create UI **PASS 35**, extra fields **PASS 16** · `READY_FOR_PUBLISH_UX_CODE_REVIEW: true` · SKYLARK URL unchanged · public renderer still not on `main`.
+
 **Gosaki Discography RPC fail-closed create (2026-10-13):** **local template only / SQL not applied** — Phase `gosaki-discography-rpc-final-fail-closed-hardening` · three RPC templates use `CREATE FUNCTION` · an existing public function of the same name, including an overload, raises before create · owner checks stay · create column comment says 16 · function bodies unchanged · verifiers create **PASS 8**, setPublished **PASS 12**, extra fields **PASS 16** · `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`.
 
 **Gosaki Discography remaining RPC owner guards (2026-10-13):** **local template only / SQL not applied** — Phase `gosaki-discography-remaining-rpc-owner-guard-fix` · setPublished and saveExtraFields owner checks, plus their PRECHECK role display, use the SQL keyword `current_user` · all three RPC templates have no `pg_catalog.current_user` · function bodies are unchanged · verifiers create **PASS 8**, setPublished **PASS 12**, extra fields **PASS 16** · `READY_FOR_THREE_RPC_SQL_FINAL_REVIEW: true`.

@@ -13,7 +13,7 @@ export const GOSAKI_DISCOGRAPHY_SET_PUBLISHED_EDGE_APPROVAL_ID =
   "gosaki-discography-operational-set-published";
 export const GOSAKI_DISCOGRAPHY_CREATE_SAVED_MESSAGE_PREFIX = "下書きとして保存しました";
 export const GOSAKI_DISCOGRAPHY_PUBLISH_SITE_UPDATE_MESSAGE =
-  "公開しました。公開サイトを更新してください。";
+  "公開対象に設定しました。公開サイトへの反映には、管理ポータルの「公開サイトを更新」が必要です。";
 
 export type GosakiDiscographyCreateInput = {
   title: string;

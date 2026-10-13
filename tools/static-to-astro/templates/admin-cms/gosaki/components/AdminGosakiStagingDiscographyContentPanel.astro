@@ -61,6 +61,9 @@ function display(value: string | null | undefined): string {
     <p class="gosaki-admin-content-panel__subtitle" data-gosaki-disc-status>
       アルバムの確認と編集ができます
     </p>
+    <p class="gosaki-admin-content-panel__subtitle" data-gosaki-disc-site-update-note>
+      作品を公開対象にしても、公開サイトにはすぐには反映されません。反映は管理トップの「公開サイトを更新」から行います。この更新はディスコグラフィだけでなく、サイト全体が対象です。
+    </p>
     <p class="gosaki-admin-content-panel__meta" role="status">
       <strong>{releaseCount}</strong> releases · <strong>{trackCount}</strong> tracks
       {
@@ -133,6 +136,9 @@ function display(value: string | null | undefined): string {
                     {display(album.artist)} · {display(album.releaseDate)} · {album.trackCount ?? 0} tracks
                   </p>
                   <p class="gosaki-admin-content-panel__meta">{display(album.label)}</p>
+                  <p class="gosaki-admin-content-panel__meta" data-gosaki-disc-draft-badge="true">
+                    {album.published === false ? "下書き" : "公開対象"}
+                  </p>
                 </div>
                 <AdminGosakiStagingEditToolbar mode="view" editLabel="編集" />
               </div>

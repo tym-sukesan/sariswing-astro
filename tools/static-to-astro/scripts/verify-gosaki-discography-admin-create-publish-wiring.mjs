@@ -154,10 +154,16 @@ assert(
 );
 assert(
   "draft cards expose a draft label and publish control from live read",
-  client.includes('badge.textContent = "下書き"') &&
-    client.includes('button.textContent = "公開"') &&
+  client.includes('album.published === false ? "下書き" : "公開対象"') &&
+    client.includes('button.textContent = "公開対象にする"') &&
     client.includes("syncDiscographyDraftPublishControl") &&
-    client.includes("album.updatedAt"),
+    client.includes("album.updatedAt") &&
+    !publishFn.includes("gosaki-production-deploy") &&
+    !publishFn.includes("workflow_dispatch") &&
+    panel.includes("data-gosaki-disc-site-update-note") &&
+    panel.includes("サイト全体が対象です") &&
+    panel.includes("公開対象") &&
+    !panel.includes('href="/admin/"'),
 );
 assert(
   "create success refreshes live read and failure does not insert a card",
@@ -174,7 +180,10 @@ assert(
     publishFn.includes("expectedBeforeUpdatedAt: album.updatedAt") &&
     publishFn.includes("GOSAKI_DISCOGRAPHY_PUBLISH_SITE_UPDATE_MESSAGE") &&
     publishFn.indexOf("if (!publishedNow)") < publishFn.indexOf("requestManualReload") &&
-    GOSAKI_DISCOGRAPHY_PUBLISH_SITE_UPDATE_MESSAGE.includes("公開サイトを更新"),
+    GOSAKI_DISCOGRAPHY_PUBLISH_SITE_UPDATE_MESSAGE ===
+      "公開対象に設定しました。公開サイトへの反映には、管理ポータルの「公開サイトを更新」が必要です。" &&
+    publishFn.includes("公開対象に設定します") &&
+    publishFn.includes("この操作だけでは公開サイトに反映されません"),
 );
 
 const off = mockFetch({ status: 200, body: { ok: true } });

@@ -558,17 +558,18 @@ function syncDiscographyDraftPublishControl(
   const availability = gosakiDiscographyPublishAvailability(album);
   const existingBadge = summary.querySelector("[data-gosaki-disc-draft-badge]");
   const existingButton = summary.querySelector("[data-gosaki-disc-publish]");
-  if (!availability.showPublish) {
-    existingBadge?.remove();
-    existingButton?.remove();
-    return;
-  }
-  if (meta instanceof HTMLElement && !(existingBadge instanceof HTMLElement)) {
-    const badge = document.createElement("p");
+  const statusLabel = album.published === false ? "下書き" : "公開対象";
+  let badge = existingBadge;
+  if (meta instanceof HTMLElement && !(badge instanceof HTMLElement)) {
+    badge = document.createElement("p");
     badge.className = "gosaki-admin-content-panel__meta";
     badge.setAttribute("data-gosaki-disc-draft-badge", "true");
-    badge.textContent = "下書き";
     meta.appendChild(badge);
+  }
+  if (badge instanceof HTMLElement) badge.textContent = statusLabel;
+  if (!availability.showPublish) {
+    existingButton?.remove();
+    return;
   }
   let button = existingButton;
   if (!(button instanceof HTMLButtonElement)) {
@@ -577,11 +578,11 @@ function syncDiscographyDraftPublishControl(
     button.className =
       "gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn";
     button.setAttribute("data-gosaki-disc-publish", "true");
-    button.textContent = "公開";
     const toolbar = summary.querySelector("[data-gosaki-edit-toolbar]");
     if (toolbar instanceof HTMLElement) toolbar.appendChild(button);
     else summary.appendChild(button);
   }
+  button.textContent = "公開対象にする";
   const lock = String(album.updatedAt ?? "").trim();
   button.disabled = !availability.enabled;
   if (lock) button.setAttribute("data-gosaki-disc-publish-updated-at", lock);
@@ -1110,17 +1111,17 @@ export function initGosakiDiscographyOperationalEdit(
     if (!album || album.published !== false) return;
     const availability = gosakiDiscographyPublishAvailability(album);
     if (!availability.enabled) {
-      setCreatePublishNotice("公開できません。更新日時がありません。");
+      setCreatePublishNotice("公開対象にできません。更新日時がありません。");
       return;
     }
     if (!setPublishedUiArmed()) {
-      setCreatePublishNotice("公開操作は現在停止しています。");
+      setCreatePublishNotice("公開対象の設定は現在停止しています。");
       return;
     }
     const title = album.title || legacyId;
     if (
       !window.confirm(
-        `「${title}」を公開しますか？公開後も、公開サイトへの反映には「公開サイトを更新」が必要です。`,
+        `「${title}」を公開対象に設定します。この操作だけでは公開サイトに反映されません。サイトへの反映には、管理ポータルの「公開サイトを更新」が必要です。続けますか？`,
       )
     ) {
       return;

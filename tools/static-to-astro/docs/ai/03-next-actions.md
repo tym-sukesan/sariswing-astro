@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-0. **STOP before SQL apply.** The three Discography RPC templates now use `CREATE FUNCTION` and stop when the same function name already exists in `public`. `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`. Do not apply them until a separate explicit approval. Do not deploy Edge.
+0. **Discography publish UX copy is local only.** Album publish stays `published=false → true`. Site update stays on the portal 「公開サイトを更新」 button. Do not treat `published=true` as site-reflected. Do not deploy the public Discography renderer until the SKYLARK purchase URL is resolved. `READY_FOR_PUBLISH_UX_CODE_REVIEW: true`. Push, FTP, and public renderer deploy stay off.
+
+The three Discography RPC templates now use `CREATE FUNCTION` and stop when the same function name already exists in `public`. `READY_FOR_CREATE_RPC_APPLY_APPROVAL: true`. Do not apply them until a separate explicit approval. Do not deploy Edge.
 
 1. **Primary:** operator-gated commit of the shared admin Save bar and the Schedule image library paging (6, then 6). Keep it separate from the Schedule horizontal card, FTP timeout, Discography public track reflection, About field-lock hydration, and the workflow Save UI arms. Do not add `--delete`.
 2. After that commit, the production admin package must be rebuilt so `/admin/about` sends the hydrated `profile.lede` lock. The workflow Save UI / build-read change is a separate uncommitted workflow edit.

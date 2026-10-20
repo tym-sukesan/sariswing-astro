@@ -2,11 +2,9 @@
 import schedules from "../data/gosaki-schedules.json";
 import { withBase } from "../lib/with-base.ts";
 import {
-  gosakiHomeScheduleDateLabel,
+  gosakiHomeScheduleDateParts,
   gosakiHomeScheduleItemPath,
-  gosakiHomeScheduleTimeLabel,
   gosakiHomeScheduleTitle,
-  gosakiScheduleImageUrl,
   selectGosakiHomeLatestSchedules,
 } from "../lib/gosaki-home-latest-schedule.ts";
 
@@ -22,35 +20,33 @@ const scheduleHref = withBase("/schedule/");
         <ul class="gosaki-home-schedule__list">
           {events.map((ev) => {
             const title = gosakiHomeScheduleTitle(ev.title);
-            const dateLabel = gosakiHomeScheduleDateLabel(ev);
+            const dateParts = gosakiHomeScheduleDateParts(ev);
             const venue = String(ev.venue || "").trim();
-            const timeLabel = gosakiHomeScheduleTimeLabel(ev);
-            const imageUrl = gosakiScheduleImageUrl(ev.image_url);
             const itemPath = gosakiHomeScheduleItemPath(ev);
             const itemHref = itemPath ? withBase(itemPath) : null;
-            const copy = (
-              <span class="gosaki-home-schedule__copy">
-                {dateLabel ? <p class="gosaki-home-schedule__date">{dateLabel}</p> : null}
-                {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
-                {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
-                {timeLabel ? <p class="gosaki-home-schedule__time">{timeLabel}</p> : null}
-              </span>
+            const body = (
+              <>
+                {dateParts ? (
+                  <span class="gosaki-home-schedule__badge">
+                    <span class="gosaki-home-schedule__badge-year">{dateParts.year}</span>
+                    <span class="gosaki-home-schedule__badge-day">{dateParts.monthDay}</span>
+                    <span class="gosaki-home-schedule__badge-week">{dateParts.weekday}</span>
+                  </span>
+                ) : null}
+                <span class="gosaki-home-schedule__copy">
+                  {title ? <p class="gosaki-home-schedule__name">{title}</p> : null}
+                  {venue ? <p class="gosaki-home-schedule__venue">{venue}</p> : null}
+                </span>
+              </>
             );
-            const flyer = imageUrl ? (
-              <img class="gosaki-home-schedule__flyer" src={imageUrl} alt="" />
-            ) : null;
             return (
               <li class="gosaki-home-schedule__item">
                 {itemHref ? (
                   <a class="gosaki-home-schedule__card gosaki-home-schedule__link" href={itemHref}>
-                    {copy}
-                    {flyer}
+                    {body}
                   </a>
                 ) : (
-                  <div class="gosaki-home-schedule__card">
-                    {copy}
-                    {flyer}
-                  </div>
+                  <div class="gosaki-home-schedule__card">{body}</div>
                 )}
               </li>
             );

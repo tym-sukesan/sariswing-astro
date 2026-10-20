@@ -11,7 +11,7 @@ import { GOSAKI_HOME_SCHEDULE_SLOT } from "./gosaki-home-stale-this-week-hide.mj
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const GOSAKI_HOME_LATEST_SCHEDULE_LIMIT = 4;
+export const GOSAKI_HOME_LATEST_SCHEDULE_LIMIT = 6;
 export const GOSAKI_HOME_LATEST_SCHEDULE_TEMPLATE_REL =
   "templates/site-extensions/gosaki-piano/GosakiHomeLatestSchedule.astro";
 export const GOSAKI_HOME_LATEST_SCHEDULE_LIB_REL =

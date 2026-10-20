@@ -33,10 +33,10 @@ export const GOSAKI_CONTACT_HUBSPOT_EMBED_SOURCE_CORE = "core-renderHubspotConfi
 
 export const GOSAKI_CONTACT_HUBSPOT_ALLOWLIST = {
   provider: "hubspot",
-  scriptSrc: "https://js.hsforms.net/forms/embed/21392032.js",
-  portalId: "21392032",
-  formId: "57909d0c-9b9f-470a-8a18-e176d1d1a459",
-  region: "na1",
+  scriptSrc: "https://js-na2.hsforms.net/forms/embed/247741173.js",
+  portalId: "247741173",
+  formId: "ea708d79-074d-4611-96c0-19b547336c1c",
+  region: "na2",
 };
 
 /** Staging is the routine convert environment for Gosaki Contact HubSpot. */
@@ -112,8 +112,8 @@ export function loadGosakiContactHubspotConfig(toolRoot) {
 }
 
 /**
- * Frozen legacy builder (allowlist string concat). Kept for shadow-compare / audit.
- * Generation / apply path must use `buildGosakiContactHubspotEmbedHtmlViaCore`.
+ * Gosaki Contact embed. The shared HubSpot renderer only allows na1/eu1/ap1 on
+ * js.hsforms.net, so this page uses the Gosaki allowlist script instead.
  *
  * @param {Record<string, unknown>} config
  */
@@ -264,9 +264,7 @@ export function applyGosakiContactHubspotEmbed(outDir, toolRoot, options = {}) {
 
   let embedHtml;
   try {
-    embedHtml = buildGosakiContactHubspotEmbedHtmlViaCore(loaded.config, {
-      environment: GOSAKI_CONTACT_HUBSPOT_CORE_ENVIRONMENT,
-    });
+    embedHtml = buildGosakiContactHubspotEmbedHtml(loaded.config);
   } catch (err) {
     return {
       applied: false,

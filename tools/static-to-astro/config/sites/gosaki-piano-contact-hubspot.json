@@ -4,8 +4,8 @@
   "version": 1,
   "enabled": true,
   "provider": "hubspot",
-  "region": "na1",
-  "portalId": "21392032",
-  "formId": "57909d0c-9b9f-470a-8a18-e176d1d1a459",
-  "scriptSrc": "https://js.hsforms.net/forms/embed/21392032.js"
+  "region": "na2",
+  "portalId": "247741173",
+  "formId": "ea708d79-074d-4611-96c0-19b547336c1c",
+  "scriptSrc": "https://js-na2.hsforms.net/forms/embed/247741173.js"
 }

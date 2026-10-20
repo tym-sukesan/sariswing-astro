@@ -3175,5 +3175,214 @@ body.wix-static-export #SITE_HEADER .global-nav a[href*="contact"].is-current {
   }
 }
 
+/* Home schedule cards. Two columns on PC, one on a phone. The circle is the date. */
+body.wix-static-export .gosaki-home-schedule {
+  max-width: 960px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+body.wix-static-export .gosaki-home-schedule__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35rem 2rem;
+}
+
+body.wix-static-export .gosaki-home-schedule__item {
+  padding: 0;
+  border-bottom: 0;
+}
+
+body.wix-static-export .gosaki-home-schedule__card,
+body.wix-static-export .gosaki-home-schedule__link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+body.wix-static-export .gosaki-home-schedule__badge {
+  flex: 0 0 5.2rem;
+  width: 5.2rem;
+  height: 5.2rem;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.15;
+}
+
+body.wix-static-export .gosaki-home-schedule__badge-year,
+body.wix-static-export .gosaki-home-schedule__badge-week {
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+
+body.wix-static-export .gosaki-home-schedule__badge-day {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+body.wix-static-export .gosaki-home-schedule__copy {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-home-schedule__list {
+    grid-template-columns: 1fr;
+  }
+
+  body.wix-static-export .gosaki-home-schedule__card,
+  body.wix-static-export .gosaki-home-schedule__link {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0;
+  }
+}
+
+body.wix-static-export .gosaki-home-schedule__more a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 14rem;
+  margin-top: 0.35rem;
+  padding: 0.72rem 2.4rem;
+  background: #111;
+  color: #fff;
+  border: 0;
+  border-bottom: 0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+body.wix-static-export .gosaki-home-schedule__more a::after {
+  content: "";
+  width: 0.42em;
+  height: 0.42em;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+body.wix-static-export .gosaki-home-schedule__link {
+  border-radius: 12px;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.wix-static-export .gosaki-home-schedule__link:hover,
+  body.wix-static-export .gosaki-home-schedule__link:focus-visible {
+    background: rgba(17, 17, 17, 0.045);
+    transform: translateY(-2px);
+  }
+
+  body.wix-static-export .gosaki-home-schedule__more a:hover,
+  body.wix-static-export .gosaki-home-schedule__more a:focus-visible {
+    color: #fff;
+    background: #2a2a2a;
+    border-bottom-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(17, 17, 17, 0.12);
+  }
+
+  body.wix-static-export .gosaki-home-schedule__more a:hover::after,
+  body.wix-static-export .gosaki-home-schedule__more a:focus-visible::after {
+    transform: translateX(3px) rotate(45deg);
+  }
+}
+
+body.wix-static-export .gosaki-home-schedule__link:focus-visible {
+  background: rgba(17, 17, 17, 0.045);
+  outline: 1px solid rgba(17, 17, 17, 0.35);
+  outline-offset: 3px;
+}
+
+body.wix-static-export .gosaki-home-schedule__more a:focus-visible {
+  color: #fff;
+  background: #2a2a2a;
+  border-bottom-color: transparent;
+  outline: 1px solid rgba(17, 17, 17, 0.35);
+  outline-offset: 3px;
+}
+
+@media (hover: none), (pointer: coarse) {
+  body.wix-static-export .gosaki-home-schedule__link:hover {
+    background: transparent;
+    transform: none;
+  }
+
+  body.wix-static-export .gosaki-home-schedule__link:hover .gosaki-home-schedule__name {
+    color: var(--gosaki-ink);
+  }
+
+  body.wix-static-export .gosaki-home-schedule__more a:hover {
+    color: #fff;
+    background: #111;
+    transform: none;
+    box-shadow: none;
+  }
+
+  body.wix-static-export .gosaki-home-schedule__more a:hover::after {
+    transform: rotate(45deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.wix-static-export .gosaki-home-schedule__link,
+  body.wix-static-export .gosaki-home-schedule__more a,
+  body.wix-static-export .gosaki-home-schedule__more a::after {
+    transition: none;
+  }
+
+  body.wix-static-export .gosaki-home-schedule__link:hover,
+  body.wix-static-export .gosaki-home-schedule__link:focus-visible,
+  body.wix-static-export .gosaki-home-schedule__more a:hover,
+  body.wix-static-export .gosaki-home-schedule__more a:focus-visible {
+    transform: none;
+  }
+
+  body.wix-static-export .gosaki-home-schedule__more a:hover::after,
+  body.wix-static-export .gosaki-home-schedule__more a:focus-visible::after {
+    transform: rotate(45deg);
+  }
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > #comp-jsh29kfc,
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > interact-element
+    > #comp-jsh29kfc {
+    margin-top: 20px !important;
+  }
+}
+
 `;
 }

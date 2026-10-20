@@ -1,4 +1,4 @@
-export const GOSAKI_HOME_LATEST_SCHEDULE_LIMIT = 4;
+export const GOSAKI_HOME_LATEST_SCHEDULE_LIMIT = 6;
 
 export type GosakiHomeScheduleRow = {
   published?: boolean;
@@ -70,6 +70,26 @@ export function gosakiHomeScheduleTitle(title: unknown): string {
 
 export function gosakiHomeScheduleDateLabel(row: GosakiHomeScheduleRow): string {
   return String(row.date_display || row.dateDisplay || row.date || "").trim();
+}
+
+/** Year, month/day, and English weekday for a calendar date at Asia/Tokyo midnight. */
+export function gosakiHomeScheduleDateParts(row: GosakiHomeScheduleRow | null | undefined): {
+  year: string;
+  monthDay: string;
+  weekday: string;
+} | null {
+  const raw = String(row?.date || "");
+  if (!isIsoDate(raw)) return null;
+  const [year, month, day] = raw.split("-");
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tokyo",
+    weekday: "short",
+  }).format(new Date(`${raw}T00:00:00+09:00`));
+  return {
+    year,
+    monthDay: `${Number(month)}/${Number(day)}`,
+    weekday: `(${weekday})`,
+  };
 }
 
 /** Month page path for a published ISO date. Null when not YYYY-MM-DD. */

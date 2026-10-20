@@ -114,6 +114,7 @@
       "kind": "favicon",
       "role": "favicon",
       "pages": ["head"],
+      "skipDownload": true,
       "downloadUrl": "https://static.parastorage.com/client/pfavico.ico"
     }
   ]

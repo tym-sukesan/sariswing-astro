@@ -17,6 +17,8 @@ import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.m
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiHomeLatestSchedule } from "./gosaki-home-latest-schedule.mjs";
+import { applyGosakiHomeRepresentativeSeo } from "./gosaki-home-representative-seo.mjs";
+import { applyGosakiPublicPresentation } from "./gosaki-public-presentation.mjs";
 import { applyGosakiHomeStaleThisWeekHide } from "./gosaki-home-stale-this-week-hide.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
@@ -264,6 +266,13 @@ export function createGosakiPianoHookMethods() {
       // After HTML injects: copy committed Wix media and rewrite CDN URLs.
       applyGosakiWixLocalAssets(outDir, toolRoot);
 
+      const gosakiPublicPresentationSummary = applyGosakiPublicPresentation(outDir, toolRoot);
+
+      const gosakiHomeRepresentativeSeoSummary = applyGosakiHomeRepresentativeSeo(outDir);
+      if (gosakiHomeRepresentativeSeoSummary.applied && gosakiHomeRepresentativeSeoSummary.pagePath) {
+        writtenPaths.push(gosakiHomeRepresentativeSeoSummary.pagePath);
+      }
+
       return {
         gosakiBandProfilesSummary,
         gosakiAboutContentSummary,
@@ -272,6 +281,8 @@ export function createGosakiPianoHookMethods() {
         gosakiYoutubeEmbedSummary,
         gosakiContactHubspotSummary,
         gosakiReadOnlyAdminSummary,
+        gosakiHomeRepresentativeSeoSummary,
+        gosakiPublicPresentationSummary,
         writtenPaths,
       };
     },

@@ -3105,5 +3105,75 @@ body.wix-static-export #comp-llexymel[data-gosaki-discography-render="data-drive
   }
 }
 
+/* Home KV caption. Two elements so Pianist and the name can use different sizes. */
+body.wix-static-export #comp-mbl1cpz3 .gosaki-kv-caption {
+  position: absolute;
+  right: clamp(12px, 2.4vw, 28px);
+  bottom: clamp(10px, 2vw, 24px);
+  z-index: 2;
+  margin: 0;
+  max-width: calc(100% - 24px);
+  color: #fff;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+  line-height: 1.05;
+  text-align: right;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+body.wix-static-export #comp-mbl1cpz3 .gosaki-kv-caption__role {
+  display: block;
+  font-size: 20px;
+  letter-spacing: 0.16em;
+}
+
+body.wix-static-export #comp-mbl1cpz3 .gosaki-kv-caption__name {
+  display: block;
+  margin-top: 0.06em;
+  font-size: 54px;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #comp-mbl1cpz3 .gosaki-kv-caption__name {
+    font-size: clamp(36px, 12vw, 54px);
+  }
+}
+
+/* Contact button. Order comes from the nav DOM, not from flex order. */
+body.wix-static-export #SITE_HEADER .global-nav a[href*="contact"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #5b4d43;
+  border: 1px solid rgba(91, 77, 67, 0.28);
+  border-radius: 999px;
+  padding: 0.38rem 0.95rem;
+  line-height: 1.2;
+  margin-inline-start: 0.35rem;
+}
+
+body.wix-static-export #SITE_HEADER .global-nav a[href*="contact"]:hover,
+body.wix-static-export #SITE_HEADER .global-nav a[href*="contact"].is-current {
+  color: #993500;
+  background: #fff;
+  border-color: #993500;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav li:has(a[href*="contact"]) {
+    display: flex;
+    justify-content: center;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav a[href*="contact"] {
+    width: auto;
+    margin: 0.7rem auto 0.2rem;
+    min-width: 8.5rem;
+  }
+}
+
 `;
 }

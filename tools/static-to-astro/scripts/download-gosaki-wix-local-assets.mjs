@@ -50,6 +50,10 @@ fs.mkdirSync(destDir, { recursive: true });
 let ok = 0;
 let fail = 0;
 for (const asset of manifest.assets) {
+  if (asset.skipDownload === true) {
+    console.log(`SKIP ${asset.file} skipDownload`);
+    continue;
+  }
   const dest = path.join(destDir, asset.file);
   let lastErr = null;
   let saved = false;

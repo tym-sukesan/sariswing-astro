@@ -368,6 +368,20 @@ const showClientScript = true;
         var authSignOutBtn = document.getElementById("gra-auth-sign-out-btn");
         var authEmail = document.getElementById("gra-auth-email");
         var authPassword = document.getElementById("gra-auth-password");
+        var resetSuccessNote = document.getElementById("gra-auth-reset-success");
+        try {
+          var resetParams = new URLSearchParams(window.location.search);
+          if (resetParams.get("reset") === "success" && resetSuccessNote) {
+            resetSuccessNote.hidden = false;
+            resetParams.delete("reset");
+            var resetQuery = resetParams.toString();
+            window.history.replaceState(
+              null,
+              "",
+              window.location.pathname + (resetQuery ? "?" + resetQuery : ""),
+            );
+          }
+        } catch (_resetNote) {}
         var authPurpose = document.querySelector("[data-gosaki-auth-purpose]");
         var gated = document.querySelector("[data-gosaki-admin-gated]");
         var adminPage = (body.dataset.gosakiAdminPage || "portal").trim();
@@ -446,10 +460,14 @@ const showClientScript = true;
             authStatus.hidden = true;
             authStatus.textContent = "";
           }
+          var resetSuccess = document.getElementById("gra-auth-reset-success");
+          if (resetSuccess) resetSuccess.hidden = true;
           var badge = document.getElementById("gra-auth-signed-badge");
           if (badge) badge.textContent = label;
           if (authPurpose) authPurpose.hidden = true;
           if (authLoginForm) authLoginForm.hidden = true;
+          var forgotLink = document.getElementById("gra-auth-forgot");
+          if (forgotLink) forgotLink.hidden = true;
           if (authSignedIn) authSignedIn.hidden = false;
           clearPasswordField();
           if (authEmail) authEmail.value = "";
@@ -490,6 +508,8 @@ const showClientScript = true;
           if (badge) badge.textContent = "";
           if (authPurpose) authPurpose.hidden = false;
           if (authLoginForm) authLoginForm.hidden = !supabaseAuthConfigured;
+          var forgotLink = document.getElementById("gra-auth-forgot");
+          if (forgotLink) forgotLink.hidden = false;
           if (authSignedIn) authSignedIn.hidden = true;
           if (authEmail) authEmail.value = "";
           clearPasswordField();

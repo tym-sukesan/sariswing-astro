@@ -503,6 +503,8 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   );
   const productionDeploySrc = path.join(templateRoot, "gosaki-production-deploy.ts");
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
+  const passwordResetPageSrc = path.join(templateRoot, "GosakiAdminPasswordResetPage.astro");
+  const passwordResetLibSrc = path.join(templateRoot, "gosaki-admin-password-reset.mjs");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
     "AdminGosakiStagingNav.astro",
@@ -528,6 +530,8 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     discographyCoverUploadSrc,
     productionDeploySrc,
     packagePathsSrc,
+    passwordResetPageSrc,
+    passwordResetLibSrc,
     cssSrc,
     chromeCssSrc,
   ]) {
@@ -605,6 +609,8 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     path.join(path.dirname(libDest), "gosaki-production-deploy.ts"),
   );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
+  fs.copyFileSync(passwordResetLibSrc, path.join(path.dirname(libDest), "gosaki-admin-password-reset.mjs"));
+  fs.copyFileSync(passwordResetPageSrc, path.join(outDir, "src/components/GosakiAdminPasswordResetPage.astro"));
   fs.copyFileSync(cssSrc, cssDest);
   fs.copyFileSync(chromeCssSrc, chromeCssDest);
 
@@ -644,6 +650,24 @@ import GosakiStagingReadOnlyAdminPage from "${ups}/GosakiStagingReadOnlyAdminPag
     pagePaths.push(route.rel);
   }
 
+  for (const authPage of [
+    { rel: "src/pages/admin/forgot-password/index.astro", mode: "forgot" },
+    { rel: "src/pages/admin/reset-password/index.astro", mode: "reset" },
+  ]) {
+    const pageDest = path.join(outDir, authPage.rel);
+    fs.mkdirSync(path.dirname(pageDest), { recursive: true });
+    fs.writeFileSync(
+      pageDest,
+      `---
+import GosakiAdminPasswordResetPage from "../../../components/GosakiAdminPasswordResetPage.astro";
+---
+<GosakiAdminPasswordResetPage mode="${authPage.mode}" />
+`,
+      "utf8",
+    );
+    pagePaths.push(authPage.rel);
+  }
+
   const discographyBundle = /** @type {any} */ (options.discographyBundle);
   const scheduleBundle = /** @type {any} */ (options.scheduleBundle);
   const dashboardSnapshot = buildReadOnlyAdminDashboardSnapshot({
@@ -677,9 +701,13 @@ import GosakiStagingReadOnlyAdminPage from "${ups}/GosakiStagingReadOnlyAdminPag
     applied: true,
     reason: null,
     adminRoute: "/admin/",
-    adminRoutes: GOSAKI_ADMIN_MULTI_ROUTE_PAGES.map((r) =>
-      r.page === "portal" ? "/admin/" : `/admin/${r.page}/`,
-    ),
+    adminRoutes: [
+      ...GOSAKI_ADMIN_MULTI_ROUTE_PAGES.map((r) =>
+        r.page === "portal" ? "/admin/" : `/admin/${r.page}/`,
+      ),
+      "/admin/forgot-password/",
+      "/admin/reset-password/",
+    ],
     pagePath: GOSAKI_READ_ONLY_ADMIN_PAGE_REL,
     pagePaths,
     componentPath: GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL,
